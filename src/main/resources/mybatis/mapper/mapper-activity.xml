@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.publish.dao.ActivityDao">
+    <select id="getActivityAdditionByContentId" resultType="java.util.Map">
+        select * from publish_activity_addition where content_id = #{contentId}
+    </select>
+    <select id="getActivityAdditionById" resultType="java.util.Map">
+        select * from publish_activity_addition where activity_addition_id = #{id}
+    </select>
+
+    <update id="updateActivityAddition">
+        update publish_activity_addition
+        set update_date = now()
+        <if test="addition.actual_participant_number != null">
+            ,actual_participant_number = #{addition.actual_participant_number}
+        </if>
+        <if test="addition.applicant_number != null">
+            ,applicant_number = #{addition.applicant_number}
+        </if>
+        <if test="addition.summary != null and addition.summary != ''">
+            ,summary = #{addition.summary}
+        </if>
+        where activity_addition_id = #{addition.activity_addition_id} and update_date = #{addition.update_date}
+    </update>
+
+    <insert id="addParticipant">
+        insert into publish_activity_participant
+        <foreach collection="participant" index="key" open="(" separator="," close=")">
+            ${key}
+        </foreach>
+        values
+        <foreach collection="participant" item="value" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </insert>
+
+    <select id="getParticipantById" resultType="java.util.Map">
+        select ap.activity_participant_id,
+        ap.user_id,
+        ap.content_id,
+        ap.is_participated,
+        ap.participate_length,
+        DATE_FORMAT(ap.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
+        DATE_FORMAT(ap.update_date, '%Y-%m-%d %H:%i:%s') as update_date,
+        u.username,
+        u.email
+        from publish_activity_participant ap
+        inner join sys_user u on u.user_id = ap.user_id
+        where ap.activity_participant_id = #{id}
+    </select>
+    <select id="getParticipantByContentId" resultType="java.util.Map">
+        select ap.activity_participant_id,
+        ap.user_id,
+        ap.content_id,
+        ap.is_participated,
+        ap.participate_length,
+        DATE_FORMAT(ap.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
+        DATE_FORMAT(ap.update_date, '%Y-%m-%d %H:%i:%s') as update_date,
+        u.username,
+        u.email
+        from publish_activity_participant ap
+        inner join sys_user u on u.user_id = ap.user_id
+        where ap.content_id = #{contentId} and ap.user_id = #{userId}
+    </select>
+
+    <update id="updateParticipant">
+        update publish_activity_participant set
+        is_participated = #{participant.is_participated},
+        participate_length = #{participant.participate_length},
+        update_date = now()
+        where activity_participant_id = #{participant.activity_participant_id} and update_date = #{participant.update_date}
+    </update>
+
+    <insert id="addIntegralMoving">
+        insert into integral_moving
+        <foreach collection="integralMoving" index="key" open="(" separator="," close=")">
+            ${key}
+        </foreach>
+        values
+        <foreach collection="integralMoving" item="value" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </insert>
+
+    <select id="queryParticipant" resultType="java.util.Map">
+        select ap.activity_participant_id,
+        ap.user_id,
+        ap.content_id,
+        ap.is_participated,
+        ap.participate_length,
+        DATE_FORMAT(ap.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
+        DATE_FORMAT(ap.update_date, '%Y-%m-%d %H:%i:%s') as update_date,
+        u.username,
+        u.email
+        from publish_activity_participant ap
+        inner join sys_user u on u.user_id = ap.user_id
+        where ap.content_id = #{contentId}
+    </select>
+
+</mapper>

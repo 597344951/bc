@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.common.dao.SimpleDao">
+    <sql id="where">
+        <if test="queryParam != null" >
+            <foreach collection="queryParam" open="where" item="value" index="key" separator="and">
+                ${key} = #{value}
+            </foreach>
+        </if>
+    </sql>
+
+    <select id="get" resultType="java.util.Map">
+        select * from ${tableName}
+        <include refid="where"/>
+    </select>
+
+    <select id="query" resultType="java.util.Map">
+        select * from ${tableName}
+        <include refid="where"/>
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="data.id">
+        insert into ${tableName}
+        <foreach collection="data" index="key" open="(" separator="," close=")">
+            ${key}
+        </foreach>
+        values
+        <foreach collection="data" item="value" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </insert>
+
+    <insert id="adds">
+        insert into ${tableName}
+        <foreach collection="data[0]" index="key" open="(" separator="," close=")">
+            ${key}
+        </foreach>
+        values
+        <foreach collection="data" item="kv" separator=",">
+            <foreach collection="kv" item="v" open="(" separator="," close=")">
+                #{v}
+            </foreach>
+        </foreach>
+    </insert>
+
+    <update id="update">
+        update ${tableName}
+        <foreach collection="data" item="value" index="key" open="set" separator=",">
+            ${key} = #{value}
+        </foreach>
+        <include refid="where"/>
+    </update>
+</mapper>

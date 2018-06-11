@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.PartyUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.PartyUserInfo">
+    <id column="party_user_id" jdbcType="INTEGER" property="partyUserId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="join_date_formal" jdbcType="TIMESTAMP" property="joinDateFormal" />
+    <result column="join_date_reserve" jdbcType="TIMESTAMP" property="joinDateReserve" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+    <result column="work_nature" jdbcType="INTEGER" property="workNature" />
+    <result column="join_work_date" jdbcType="TIMESTAMP" property="joinWorkDate" />
+    <result column="appointment_time_length" jdbcType="INTEGER" property="appointmentTimeLength" />
+    <result column="join_party_branch_type_id" jdbcType="INTEGER" property="joinPartyBranchTypeId" />
+    <result column="first_line_situation" jdbcType="INTEGER" property="firstLineSituation" />
+    <result column="party_staff" jdbcType="INTEGER" property="partyStaff" />
+    <result column="party_representative" jdbcType="INTEGER" property="partyRepresentative" />
+    <result column="volunteer" jdbcType="INTEGER" property="volunteer" />
+    <result column="difficult_user" jdbcType="INTEGER" property="difficultUser" />
+    <result column="advanced_user" jdbcType="INTEGER" property="advancedUser" />
+    <result column="positive_user" jdbcType="INTEGER" property="positiveUser" />
+    <result column="develop_user" jdbcType="INTEGER" property="developUser" />
+    <result column="missing_user" jdbcType="INTEGER" property="missingUser" />
+    <result column="introduce" jdbcType="VARCHAR" property="introduce" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    party_user_id, type, join_date_formal, join_date_reserve, status, work_unit, work_nature, 
+    join_work_date, appointment_time_length, join_party_branch_type_id, first_line_situation, 
+    party_staff, party_representative, volunteer, difficult_user, advanced_user, positive_user, 
+    develop_user, missing_user, introduce
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from party_user_info
+    where party_user_id = #{partyUserId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from party_user_info
+    where party_user_id = #{partyUserId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.PartyUserInfo">
+    insert into party_user_info (party_user_id, type, join_date_formal, 
+      join_date_reserve, status, work_unit, 
+      work_nature, join_work_date, appointment_time_length, 
+      join_party_branch_type_id, first_line_situation, 
+      party_staff, party_representative, volunteer, 
+      difficult_user, advanced_user, positive_user, 
+      develop_user, missing_user, introduce
+      )
+    values (#{partyUserId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{joinDateFormal,jdbcType=TIMESTAMP}, 
+      #{joinDateReserve,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{workUnit,jdbcType=VARCHAR}, 
+      #{workNature,jdbcType=INTEGER}, #{joinWorkDate,jdbcType=TIMESTAMP}, #{appointmentTimeLength,jdbcType=INTEGER}, 
+      #{joinPartyBranchTypeId,jdbcType=INTEGER}, #{firstLineSituation,jdbcType=INTEGER}, 
+      #{partyStaff,jdbcType=INTEGER}, #{partyRepresentative,jdbcType=INTEGER}, #{volunteer,jdbcType=INTEGER}, 
+      #{difficultUser,jdbcType=INTEGER}, #{advancedUser,jdbcType=INTEGER}, #{positiveUser,jdbcType=INTEGER}, 
+      #{developUser,jdbcType=INTEGER}, #{missingUser,jdbcType=INTEGER}, #{introduce,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.PartyUserInfo">
+    insert into party_user_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="partyUserId != null">
+        party_user_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="joinDateFormal != null">
+        join_date_formal,
+      </if>
+      <if test="joinDateReserve != null">
+        join_date_reserve,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="workUnit != null">
+        work_unit,
+      </if>
+      <if test="workNature != null">
+        work_nature,
+      </if>
+      <if test="joinWorkDate != null">
+        join_work_date,
+      </if>
+      <if test="appointmentTimeLength != null">
+        appointment_time_length,
+      </if>
+      <if test="joinPartyBranchTypeId != null">
+        join_party_branch_type_id,
+      </if>
+      <if test="firstLineSituation != null">
+        first_line_situation,
+      </if>
+      <if test="partyStaff != null">
+        party_staff,
+      </if>
+      <if test="partyRepresentative != null">
+        party_representative,
+      </if>
+      <if test="volunteer != null">
+        volunteer,
+      </if>
+      <if test="difficultUser != null">
+        difficult_user,
+      </if>
+      <if test="advancedUser != null">
+        advanced_user,
+      </if>
+      <if test="positiveUser != null">
+        positive_user,
+      </if>
+      <if test="developUser != null">
+        develop_user,
+      </if>
+      <if test="missingUser != null">
+        missing_user,
+      </if>
+      <if test="introduce != null">
+        introduce,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="partyUserId != null">
+        #{partyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="joinDateFormal != null">
+        #{joinDateFormal,jdbcType=TIMESTAMP},
+      </if>
+      <if test="joinDateReserve != null">
+        #{joinDateReserve,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="workUnit != null">
+        #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="workNature != null">
+        #{workNature,jdbcType=INTEGER},
+      </if>
+      <if test="joinWorkDate != null">
+        #{joinWorkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appointmentTimeLength != null">
+        #{appointmentTimeLength,jdbcType=INTEGER},
+      </if>
+      <if test="joinPartyBranchTypeId != null">
+        #{joinPartyBranchTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="firstLineSituation != null">
+        #{firstLineSituation,jdbcType=INTEGER},
+      </if>
+      <if test="partyStaff != null">
+        #{partyStaff,jdbcType=INTEGER},
+      </if>
+      <if test="partyRepresentative != null">
+        #{partyRepresentative,jdbcType=INTEGER},
+      </if>
+      <if test="volunteer != null">
+        #{volunteer,jdbcType=INTEGER},
+      </if>
+      <if test="difficultUser != null">
+        #{difficultUser,jdbcType=INTEGER},
+      </if>
+      <if test="advancedUser != null">
+        #{advancedUser,jdbcType=INTEGER},
+      </if>
+      <if test="positiveUser != null">
+        #{positiveUser,jdbcType=INTEGER},
+      </if>
+      <if test="developUser != null">
+        #{developUser,jdbcType=INTEGER},
+      </if>
+      <if test="missingUser != null">
+        #{missingUser,jdbcType=INTEGER},
+      </if>
+      <if test="introduce != null">
+        #{introduce,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.PartyUserInfo">
+    update party_user_info
+    <set>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="joinDateFormal != null">
+        join_date_formal = #{joinDateFormal,jdbcType=TIMESTAMP},
+      </if>
+      <if test="joinDateReserve != null">
+        join_date_reserve = #{joinDateReserve,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="workUnit != null">
+        work_unit = #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="workNature != null">
+        work_nature = #{workNature,jdbcType=INTEGER},
+      </if>
+      <if test="joinWorkDate != null">
+        join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appointmentTimeLength != null">
+        appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
+      </if>
+      <if test="joinPartyBranchTypeId != null">
+        join_party_branch_type_id = #{joinPartyBranchTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="firstLineSituation != null">
+        first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
+      </if>
+      <if test="partyStaff != null">
+        party_staff = #{partyStaff,jdbcType=INTEGER},
+      </if>
+      <if test="partyRepresentative != null">
+        party_representative = #{partyRepresentative,jdbcType=INTEGER},
+      </if>
+      <if test="volunteer != null">
+        volunteer = #{volunteer,jdbcType=INTEGER},
+      </if>
+      <if test="difficultUser != null">
+        difficult_user = #{difficultUser,jdbcType=INTEGER},
+      </if>
+      <if test="advancedUser != null">
+        advanced_user = #{advancedUser,jdbcType=INTEGER},
+      </if>
+      <if test="positiveUser != null">
+        positive_user = #{positiveUser,jdbcType=INTEGER},
+      </if>
+      <if test="developUser != null">
+        develop_user = #{developUser,jdbcType=INTEGER},
+      </if>
+      <if test="missingUser != null">
+        missing_user = #{missingUser,jdbcType=INTEGER},
+      </if>
+      <if test="introduce != null">
+        introduce = #{introduce,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where party_user_id = #{partyUserId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.PartyUserInfo">
+    update party_user_info
+    set type = #{type,jdbcType=INTEGER},
+      join_date_formal = #{joinDateFormal,jdbcType=TIMESTAMP},
+      join_date_reserve = #{joinDateReserve,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      work_unit = #{workUnit,jdbcType=VARCHAR},
+      work_nature = #{workNature,jdbcType=INTEGER},
+      join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
+      appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
+      join_party_branch_type_id = #{joinPartyBranchTypeId,jdbcType=INTEGER},
+      first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
+      party_staff = #{partyStaff,jdbcType=INTEGER},
+      party_representative = #{partyRepresentative,jdbcType=INTEGER},
+      volunteer = #{volunteer,jdbcType=INTEGER},
+      difficult_user = #{difficultUser,jdbcType=INTEGER},
+      advanced_user = #{advancedUser,jdbcType=INTEGER},
+      positive_user = #{positiveUser,jdbcType=INTEGER},
+      develop_user = #{developUser,jdbcType=INTEGER},
+      missing_user = #{missingUser,jdbcType=INTEGER},
+      introduce = #{introduce,jdbcType=VARCHAR}
+    where party_user_id = #{partyUserId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryPartyUserInfos" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  bui.base_user_id id,
+	  bui.name name,
+	  bui.sex sex,
+	  nt.name nation,
+	  nt.nt_id nationId,
+	  bui.native_place nativePlace,
+	  bui.home_address_province homeAddressProvince,
+	  bui.home_address_city homeAddressCity,
+	  bui.home_address_area homeAddressArea,
+	  bui.home_address_detail homeAddressDetail,
+	  bui.present_address_province presentAddressProvince,
+	  bui.present_address_city presentAddressCity,
+	  bui.present_address_area presentAddressArea,
+	  bui.present_address_detail presentAddressDetail,
+	  bui.id_card idCard,
+	  bui.birth_date birthDate,
+	  bui.mobile_phone mobilePhone,
+	  bui.email email,
+	  bui.qq qq,
+	  bui.wechat wechat,
+	  bui.id_photo idPhoto,
+	  el.name education,
+	  el.edu_level_eid educationId,
+	  adl.name academicDegree,
+	  adl.ad_d_aid academicDegreeId,
+	  bui.major major,
+	  bui.enrolment_time enrolmentTime,
+	  bui.graduation_time graduationTime,
+	  bui.graduation_school graduationSchool,
+	  bui.speciality_literature specialityLiterature,
+	  bui.speciality_major specialityMajor,
+	  bui.marriage_status marriageStatus,
+	  bui.children_status childrenStatus,
+	  pui.type type,
+	  pui.join_date_formal joinDateFormal,
+	  pui.join_date_reserve joinDateReserve,
+	  pui.status status,
+	  pui.work_unit workUnit,
+	  wnt.name workNature,
+	  wnt.work_nature_id workNatureId,
+	  pui.join_work_date joinWorkDate,
+	  pui.appointment_time_length appointmentTimeLength,
+	  jpbt.join_type joinPartyBranchType,
+	  jpbt.jpbt_id joinPartyBranchTypeId,
+	  flt.first_line_type_name firstLineTypeName,
+	  flt.flt_id firstLineTypeNameId,
+	  pui.party_staff partyStaff,
+	  pui.party_representative partyRepresentative,
+	  pui.volunteer volunteer,
+	  pui.difficult_user difficultUser,
+	  pui.advanced_user advancedUser,
+	  pui.positive_user positiveUser,
+	  pui.develop_user developUser,
+	  pui.missing_user missingUser,
+	  pui.introduce introduce,
+	  oi.org_info_name orgInfoName
+	from
+	  base_user_info bui inner join party_user_info pui 
+	  left join nation_type nt on bui.nation = nt.nt_id 
+	  left join education_level el on bui.education = el.edu_level_eid 
+	  left join academic_degree_level adl on bui.academic_degree = adl.ad_d_aid 
+	  left join work_nature_type wnt on pui.work_nature = wnt.work_nature_id 
+	  left join join_party_branch_type jpbt on pui.join_party_branch_type_id = jpbt.jpbt_id 
+	  left join first_line_type flt on pui.first_line_situation = flt.flt_id 
+	  left join organization_relation _or on bui.base_user_id = _or.org_rlt_user_id
+	  left join organization_information oi on _or.org_rlt_info_id = oi.org_info_id
+	where
+	  bui.base_user_id = pui.party_user_id and
+	  bui.is_party = 1
+	  <if test="id != null and id != ''"> and 
+		  bui.base_user_id = #{id}
+	  </if>
+	  <if test="orgInfoId != null and orgInfoId != ''"> and 
+		  oi.org_info_id = #{orgInfoId}
+	  </if>
+  </select>
+</mapper>

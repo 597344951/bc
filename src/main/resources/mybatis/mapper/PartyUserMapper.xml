@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.PartyUserMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.PartyUser">
+    <id column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="join_date" jdbcType="DATE" property="joinDate" />
+    <result column="party_staff" jdbcType="INTEGER" property="partyStaff" />
+    <result column="part_representative" jdbcType="INTEGER" property="partRepresentative" />
+    <result column="volunteer" jdbcType="INTEGER" property="volunteer" />
+    <result column="difficult_member" jdbcType="INTEGER" property="difficultMember" />
+    <result column="advanced_member" jdbcType="INTEGER" property="advancedMember" />
+    <result column="reserve_member" jdbcType="INTEGER" property="reserveMember" />
+    <result column="reserve_approval_date" jdbcType="DATE" property="reserveApprovalDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    uid, join_date, party_staff, part_representative, volunteer, difficult_member, advanced_member, 
+    reserve_member, reserve_approval_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from party_user
+    where uid = #{uid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from party_user
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.PartyUser">
+    insert into party_user (uid, join_date, party_staff, 
+      part_representative, volunteer, difficult_member, 
+      advanced_member, reserve_member, reserve_approval_date
+      )
+    values (#{uid,jdbcType=INTEGER}, #{joinDate,jdbcType=DATE}, #{partyStaff,jdbcType=INTEGER}, 
+      #{partRepresentative,jdbcType=INTEGER}, #{volunteer,jdbcType=INTEGER}, #{difficultMember,jdbcType=INTEGER}, 
+      #{advancedMember,jdbcType=INTEGER}, #{reserveMember,jdbcType=INTEGER}, #{reserveApprovalDate,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.PartyUser">
+    insert into party_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="joinDate != null">
+        join_date,
+      </if>
+      <if test="partyStaff != null">
+        party_staff,
+      </if>
+      <if test="partRepresentative != null">
+        part_representative,
+      </if>
+      <if test="volunteer != null">
+        volunteer,
+      </if>
+      <if test="difficultMember != null">
+        difficult_member,
+      </if>
+      <if test="advancedMember != null">
+        advanced_member,
+      </if>
+      <if test="reserveMember != null">
+        reserve_member,
+      </if>
+      <if test="reserveApprovalDate != null">
+        reserve_approval_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="joinDate != null">
+        #{joinDate,jdbcType=DATE},
+      </if>
+      <if test="partyStaff != null">
+        #{partyStaff,jdbcType=INTEGER},
+      </if>
+      <if test="partRepresentative != null">
+        #{partRepresentative,jdbcType=INTEGER},
+      </if>
+      <if test="volunteer != null">
+        #{volunteer,jdbcType=INTEGER},
+      </if>
+      <if test="difficultMember != null">
+        #{difficultMember,jdbcType=INTEGER},
+      </if>
+      <if test="advancedMember != null">
+        #{advancedMember,jdbcType=INTEGER},
+      </if>
+      <if test="reserveMember != null">
+        #{reserveMember,jdbcType=INTEGER},
+      </if>
+      <if test="reserveApprovalDate != null">
+        #{reserveApprovalDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.PartyUser">
+    update party_user
+    <set>
+      <if test="joinDate != null">
+        join_date = #{joinDate,jdbcType=DATE},
+      </if>
+      <if test="partyStaff != null">
+        party_staff = #{partyStaff,jdbcType=INTEGER},
+      </if>
+      <if test="partRepresentative != null">
+        part_representative = #{partRepresentative,jdbcType=INTEGER},
+      </if>
+      <if test="volunteer != null">
+        volunteer = #{volunteer,jdbcType=INTEGER},
+      </if>
+      <if test="difficultMember != null">
+        difficult_member = #{difficultMember,jdbcType=INTEGER},
+      </if>
+      <if test="advancedMember != null">
+        advanced_member = #{advancedMember,jdbcType=INTEGER},
+      </if>
+      <if test="reserveMember != null">
+        reserve_member = #{reserveMember,jdbcType=INTEGER},
+      </if>
+      <if test="reserveApprovalDate != null">
+        reserve_approval_date = #{reserveApprovalDate,jdbcType=DATE},
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.PartyUser">
+    update party_user
+    set join_date = #{joinDate,jdbcType=DATE},
+      party_staff = #{partyStaff,jdbcType=INTEGER},
+      part_representative = #{partRepresentative,jdbcType=INTEGER},
+      volunteer = #{volunteer,jdbcType=INTEGER},
+      difficult_member = #{difficultMember,jdbcType=INTEGER},
+      advanced_member = #{advancedMember,jdbcType=INTEGER},
+      reserve_member = #{reserveMember,jdbcType=INTEGER},
+      reserve_approval_date = #{reserveApprovalDate,jdbcType=DATE}
+    where uid = #{uid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryPartyUsers" parameterType="com.zltel.broadcast.um.bean.PartyUser" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from party_user
+		where 
+			1 = 1
+			<if test="uid != null"> and 
+				uid = #{uid}
+			</if>
+			<if test="joinDate != null"> and 
+				join_date = #{joinDate}
+			</if>
+			<if test="partyStaff != null"> and 
+				party_staff = #{partyStaff}
+			</if>
+			<if test="partRepresentative != null"> and 
+				part_representative = #{partRepresentative}
+			</if>
+			<if test="volunteer != null"> and 
+				volunteer = #{volunteer}
+			</if>
+			<if test="difficultMember != null"> and 
+				difficult_member = #{difficultMember}
+			</if>
+			<if test="advancedMember != null"> and 
+				advanced_member = #{advancedMember}
+			</if>
+			<if test="reserveMember != null"> and 
+				reserve_member = #{reserveMember}
+			</if>
+			<if test="reserveApprovalDate != null"> and 
+				reserve_approval_date = #{reserveApprovalDate}
+			</if>
+	</select>
+</mapper>

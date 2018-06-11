@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.terminal.dao.TerminalGroupMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.terminal.bean.TerminalGroup">
+    <id column="oid" jdbcType="INTEGER" property="oid" />
+    <result column="count" jdbcType="VARCHAR" property="count" />
+    <result column="date" jdbcType="VARCHAR" property="date" />
+    <result column="addr" jdbcType="VARCHAR" property="addr" />
+    <result column="ps" jdbcType="VARCHAR" property="ps" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    oid, count, date, addr, ps, name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from terminal_group
+    where oid = #{oid,jdbcType=INTEGER}
+  </select>
+  <select  id="selectOid" parameterType="com.zltel.broadcast.terminal.bean.TerminalGroup" resultType="java.lang.Integer">
+    select oid from terminal_group where 1=1
+    <if test="count != null and count !=''">
+       and count = #{count,jdbcType=VARCHAR}
+      </if>
+      <if test="date != null and date !=''">
+       and date = #{date,jdbcType=VARCHAR}
+      </if>
+      <if test="addr != null and addr !=''">
+       and addr = #{addr,jdbcType=VARCHAR}
+      </if>
+      <if test="ps != null and ps !=''">
+       and ps = #{ps,jdbcType=VARCHAR}
+      </if>
+      <if test="name !=null and name !='' ">
+       and name = #{name,jdbcType=VARCHAR}
+      </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from terminal_group
+    where oid = #{oid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.terminal.bean.TerminalGroup">
+    insert into terminal_group (oid, count, date, 
+      addr, ps, name)
+    values (#{oid,jdbcType=INTEGER}, #{count,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}, 
+      #{addr,jdbcType=VARCHAR}, #{ps,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.terminal.bean.TerminalGroup">
+    insert into terminal_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="oid != null">
+        oid,
+      </if>
+      <if test="count != null">
+        count,
+      </if>
+      <if test="date != null">
+        date,
+      </if>
+      <if test="addr != null">
+        addr,
+      </if>
+      <if test="ps != null">
+        ps,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="oid != null">
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="count != null">
+        #{count,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null">
+        #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null">
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="ps != null">
+        #{ps,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.terminal.bean.TerminalGroup">
+    update terminal_group
+    <set>
+      <if test="count != null">
+        count = #{count,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null">
+        date = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null">
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="ps != null">
+        ps = #{ps,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.terminal.bean.TerminalGroup">
+    update terminal_group
+    set count = #{count,jdbcType=VARCHAR},
+      date = #{date,jdbcType=VARCHAR},
+      addr = #{addr,jdbcType=VARCHAR},
+      ps = #{ps,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+  <select id="queryInfo" parameterType="com.zltel.broadcast.terminal.bean.TerminalGroup" resultMap="BaseResultMap">
+		select
+      *
+		from terminal_group
+		where 
+			1 = 1
+      <if test="oid != null and oid !=''">
+       and oid = #{count,jdbcType=INTEGER}
+      </if>
+	 <if test="count != null and count !=''">
+       and count = #{count,jdbcType=VARCHAR}
+      </if>
+      <if test="date != null and date !=''">
+       and date = #{date,jdbcType=VARCHAR}
+      </if>
+      <if test="addr != null and addr !=''">
+       and addr = #{addr,jdbcType=VARCHAR}
+      </if>
+      <if test="ps != null and ps !=''">
+       and ps = #{ps,jdbcType=VARCHAR}
+      </if>
+      <if test="name !=null and name !='' ">
+       and name = #{name,jdbcType=VARCHAR}
+      </if>
+	</select>
+</mapper>

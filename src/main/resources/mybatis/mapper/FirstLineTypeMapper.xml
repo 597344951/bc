@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.FirstLineTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.FirstLineType">
+    <id column="flt_id" jdbcType="INTEGER" property="fltId" />
+    <result column="first_line_type_name" jdbcType="VARCHAR" property="firstLineTypeName" />
+    <result column="describes" jdbcType="VARCHAR" property="describes" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    flt_id, first_line_type_name, describes
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from first_line_type
+    where flt_id = #{fltId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from first_line_type
+    where flt_id = #{fltId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.FirstLineType">
+    insert into first_line_type (flt_id, first_line_type_name, describes
+      )
+    values (#{fltId,jdbcType=INTEGER}, #{firstLineTypeName,jdbcType=VARCHAR}, #{describes,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.FirstLineType">
+    insert into first_line_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fltId != null">
+        flt_id,
+      </if>
+      <if test="firstLineTypeName != null">
+        first_line_type_name,
+      </if>
+      <if test="describes != null">
+        describes,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fltId != null">
+        #{fltId,jdbcType=INTEGER},
+      </if>
+      <if test="firstLineTypeName != null">
+        #{firstLineTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        #{describes,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.FirstLineType">
+    update first_line_type
+    <set>
+      <if test="firstLineTypeName != null">
+        first_line_type_name = #{firstLineTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where flt_id = #{fltId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.FirstLineType">
+    update first_line_type
+    set first_line_type_name = #{firstLineTypeName,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR}
+    where flt_id = #{fltId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryFirstLineTypes" parameterType="com.zltel.broadcast.um.bean.FirstLineType" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" />
+    from 
+    	first_line_type
+    where
+    	1=1
+    	<if test="firstLineTypeName != null"> and 
+	        first_line_type_name = #{firstLineTypeName}
+	    </if>
+  </select>
+</mapper>

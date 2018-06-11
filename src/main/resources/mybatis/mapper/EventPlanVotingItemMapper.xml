@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.eventplan.dao.EventPlanVotingItemMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.eventplan.bean.EventPlanVotingItem">
+    <id column="event_plan_id" jdbcType="INTEGER" property="eventPlanId" />
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="yes_or_no" jdbcType="INTEGER" property="yesOrNo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    event_plan_id, user_id, yes_or_no
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanVotingItemKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from event_plan_voting_item
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+      and user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanVotingItemKey">
+    delete from event_plan_voting_item
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+      and user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanVotingItem">
+    insert into event_plan_voting_item (event_plan_id, user_id, yes_or_no
+      )
+    values (#{eventPlanId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{yesOrNo,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanVotingItem">
+    insert into event_plan_voting_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eventPlanId != null">
+        event_plan_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="yesOrNo != null">
+        yes_or_no,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eventPlanId != null">
+        #{eventPlanId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="yesOrNo != null">
+        #{yesOrNo,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanVotingItem">
+    update event_plan_voting_item
+    <set>
+      <if test="yesOrNo != null">
+        yes_or_no = #{yesOrNo,jdbcType=INTEGER},
+      </if>
+    </set>
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+      and user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanVotingItem">
+    update event_plan_voting_item
+    set yes_or_no = #{yesOrNo,jdbcType=INTEGER}
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+      and user_id = #{userId,jdbcType=INTEGER}
+  </update>
+</mapper>

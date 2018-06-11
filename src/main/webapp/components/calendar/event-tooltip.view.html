@@ -1,0 +1,95 @@
+<div id="tooltip-container" v-show="data.visiable">
+    <div id="tooltip" class="event-tooltip">
+        <div :class="data.themeClass">
+            <div class="btns">
+                <el-dropdown trigger="click" size="medium" v-if="data.from == 'person'">
+                    <span class="el-dropdown-link">
+                        <i class="glyphicon glyphicon-option-vertical"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>
+                            <i class="padding-right el-icon-edit"></i>编辑计划</el-dropdown-item>
+                        <el-dropdown-item>
+                            <i class="padding-right el-icon-delete"></i>删除计划</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <i class="el-icon-close" @click="data.visiable=false"></i>
+            </div>
+            <!--标题-->
+            <div class="title">
+                <h3>
+                    <span :class="data.priorityClass" style="margin-right:10px;">{{data.priority}}</span>
+                    {{data.title}}</h3>
+            </div>
+        </div>
+        <div class="content">
+            <div class="item">
+                <div>
+                    <i class="el-icon-time"></i>计划时间：
+                </div>
+                <div>
+                    {{data.start|date}} 
+                </div>
+            </div>
+            <div class="item">
+                <div>
+                    <i class="el-icon-date"></i>计划类型：
+                </div>
+                <div>
+                    <template v-if="data.from == 'system' || data.source == 'system'">
+                        内置活动计划
+                    </template>
+                    <template v-else>
+                        自定义计划
+                    </template>
+                </div>
+            </div>
+            <div class="item">
+                <div>
+                    <i class="el-icon-info"></i>计划状态：
+                </div>
+                <div>
+                    <template v-if="data.status == 0">
+                        就绪
+                    </template>
+                    <template v-if="data.status ==1">
+                        正在审核
+                    </template>
+                    <template v-if="data.status == 2">
+                        正在进行
+                    </template>
+                    <template v-if="data.status == -1">
+                        未通过
+                    </template>
+
+                </div>
+            </div>
+            <div class="item" v-if="data.status == 2 || data.status == 1">
+                <div>
+                    <i class="el-icon-share"></i>关联主题：
+                </div>
+                <div>
+                    关联的策划主题
+                </div>
+            </div>
+            <div class="item" v-if="data.status !=0 && data.voteInfo">
+                <div>
+                    <i class="el-icon-document"></i>公示状态：
+                </div>
+                <div>
+                    {{data.voteInfo.status}} ( {{data.voteInfo.agree}} / {{data.voteInfo.total}})
+                </div>
+            </div>
+            <div class="buttons">
+                <div>
+                    <template v-if="data.status == 0">
+                        <el-button size="mini" @click="handle('create')">创建活动</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button size="mini" @click="handle('display')">查看活动</el-button>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

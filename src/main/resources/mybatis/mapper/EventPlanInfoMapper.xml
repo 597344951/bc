@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.eventplan.dao.EventPlanInfoMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    <id column="event_plan_id" jdbcType="INTEGER" property="eventPlanId" />
+    <result column="event_id" jdbcType="INTEGER" property="eventId" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="stime" jdbcType="DATE" property="stime" />
+	<result column="etime" jdbcType="DATE" property="etime" />
+    
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    event_plan_id, event_id, org_id, status, title, user_id,stime , etime
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from event_plan_info
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from event_plan_info
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true"  keyProperty="eventPlanId" keyColumn="event_plan_id" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    insert into event_plan_info (event_plan_id, event_id, org_id, 
+      status, title, user_id, 
+      content,stime,etime)
+    values (#{eventPlanId,jdbcType=INTEGER}, #{eventId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
+      #{content,jdbcType=LONGVARCHAR},
+      #{stime},#{etime})
+  </insert>
+  <insert id="insertSelective"  useGeneratedKeys="true"  keyProperty="eventPlanId"  keyColumn="event_plan_id" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    insert into event_plan_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eventPlanId != null">
+        event_plan_id,
+      </if>
+      <if test="eventId != null">
+        event_id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+       <if test="stime != null">
+        stime,
+      </if>
+       <if test="etime != null">
+        etime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eventPlanId != null">
+        #{eventPlanId,jdbcType=INTEGER},
+      </if>
+      <if test="eventId != null">
+        #{eventId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="stime != null">
+        #{stime},
+      </if>
+       <if test="etime != null">
+        #{etime},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    update event_plan_info
+    <set>
+      <if test="eventId != null">
+        event_id = #{eventId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stime != null">
+       	stime = #{stime},
+      </if>
+       <if test="etime != null">
+       	etime = #{etime},
+      </if>
+    </set>
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    update event_plan_info
+    set event_id = #{eventId,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR},
+      stime = #{stime},etime = #{etime}
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+    update event_plan_info
+    set event_id = #{eventId,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      stime = #{stime},etime = #{etime}
+    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.log.dao.LogMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.log.bean.Log">
+		<id column="log_id" jdbcType="INTEGER" property="logId" />
+		<result column="username" jdbcType="VARCHAR" property="username" />
+		<result column="operation" jdbcType="VARCHAR" property="operation" />
+		<result column="ip" jdbcType="VARCHAR" property="ip" />
+		<result column="level" jdbcType="VARCHAR" property="level" />
+		<result column="method" jdbcType="VARCHAR" property="method" />
+		<result column="date" jdbcType="TIMESTAMP" property="date" />
+		<result column="msg" jdbcType="VARCHAR" property="msg" />
+		<result column="costTime" jdbcType="BIGINT" property="costtime" />
+		<result column="type" jdbcType="INTEGER" property="type" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.log.bean.Log">
+		<result column="params" jdbcType="LONGVARCHAR" property="params" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		log_id, username, operation, ip, level, method, date, msg, costTime, type
+	</sql>
+	<sql id="Blob_Column_List">
+		params
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from log
+		where log_id = #{logId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from log
+		where log_id = #{logId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.log.bean.Log">
+		insert into log (log_id, username, operation,
+		ip, level, method,
+		date, msg,
+		costTime,
+		type, params)
+		values (#{logId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{operation,jdbcType=VARCHAR},
+		#{ip,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR},
+		#{date,jdbcType=TIMESTAMP},
+		#{msg,jdbcType=VARCHAR}, #{costtime,jdbcType=BIGINT},
+		#{type,jdbcType=INTEGER}, #{params,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.log.bean.Log">
+		insert into log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="logId != null">
+				log_id,
+			</if>
+			<if test="username != null">
+				username,
+			</if>
+			<if test="operation != null">
+				operation,
+			</if>
+			<if test="ip != null">
+				ip,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+			<if test="method != null">
+				method,
+			</if>
+			<if test="date != null">
+				date,
+			</if>
+			<if test="msg != null">
+				msg,
+			</if>
+			<if test="costtime != null">
+				costTime,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="params != null">
+				params,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="logId != null">
+				#{logId,jdbcType=INTEGER},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="operation != null">
+				#{operation,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				#{ip,jdbcType=VARCHAR},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				#{method,jdbcType=VARCHAR},
+			</if>
+			<if test="date != null">
+				#{date,jdbcType=TIMESTAMP},
+			</if>
+			<if test="msg != null">
+				#{msg,jdbcType=VARCHAR},
+			</if>
+			<if test="costtime != null">
+				#{costtime,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="params != null">
+				#{params,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.log.bean.Log">
+		update log
+		<set>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="operation != null">
+				operation = #{operation,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				ip = #{ip,jdbcType=VARCHAR},
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				method = #{method,jdbcType=VARCHAR},
+			</if>
+			<if test="date != null">
+				date = #{date,jdbcType=TIMESTAMP},
+			</if>
+			<if test="msg != null">
+				msg = #{msg,jdbcType=VARCHAR},
+			</if>
+			<if test="costtime != null">
+				costTime = #{costtime,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="params != null">
+				params = #{params,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where log_id = #{logId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.log.bean.Log">
+		update log
+		set username = #{username,jdbcType=VARCHAR},
+		operation = #{operation,jdbcType=VARCHAR},
+		ip = #{ip,jdbcType=VARCHAR},
+		level = #{level,jdbcType=VARCHAR},
+		method =
+		#{method,jdbcType=VARCHAR},
+		date = #{date,jdbcType=TIMESTAMP},
+		msg = #{msg,jdbcType=VARCHAR},
+		costTime =
+		#{costtime,jdbcType=BIGINT},
+		type = #{type,jdbcType=INTEGER},
+		params = #{params,jdbcType=LONGVARCHAR}
+		where log_id =
+		#{logId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.log.bean.Log">
+		update log
+		set username = #{username,jdbcType=VARCHAR},
+		operation =
+		#{operation,jdbcType=VARCHAR},
+		ip = #{ip,jdbcType=VARCHAR},
+		level = #{level,jdbcType=VARCHAR},
+		method =
+		#{method,jdbcType=VARCHAR},
+		date = #{date,jdbcType=TIMESTAMP},
+		msg = #{msg,jdbcType=VARCHAR},
+		costTime =
+		#{costtime,jdbcType=BIGINT},
+		type = #{type,jdbcType=INTEGER}
+		where log_id = #{logId,jdbcType=INTEGER}
+	</update>
+	<!-- 查询 Log -->
+	<select id="query" resultMap="ResultMapWithBLOBs" parameterType="com.zltel.broadcast.log.bean.Log">
+		select * from Log
+		<include refid="LogWhere" />
+		order by log_id desc
+	</select>
+	<!-- 查询条件 Log -->
+	<sql id="LogWhere">
+		<where>
+			<if test="date != null">
+				AND date=#{date}
+			</if>
+			<if test="method != null and method != ''">
+				AND method=#{method}
+			</if>
+			<if test="costtime != null">
+				AND costtime=#{costtime}
+			</if>
+			<if test="level != null and level != ''">
+				AND level=#{level}
+			</if>
+			<if test="ip != null and ip != ''">
+				AND ip=#{ip}
+			</if>
+			<if test="logId != null and logId != ''">
+				AND logId=#{logId}
+			</if>
+			<if test="type != null">
+				AND type=#{type}
+			</if>
+			<if test="operation != null and operation != ''">
+				AND operation=#{operation}
+			</if>
+			<if test="username != null and username != '' ">
+				AND username=#{username}
+			</if>
+			<if test="startTime != null">
+				AND date > #{startTime}
+			</if>
+			<if test="endTime != null">
+				<![CDATA[ 
+					AND date < #{endTime}
+				 ]]>
+			</if>
+
+		</where>
+	</sql>
+
+
+</mapper>

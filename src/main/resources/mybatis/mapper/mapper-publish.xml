@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.publish.dao.PublishDao">
+
+    <select id="queryContentByProcess" resultType="java.util.Map">
+        select c.content_id,
+         c.title,
+         c.content_type_id,
+         DATE_FORMAT(c.start_date, '%Y-%m-%d') as start_date,
+         DATE_FORMAT(c.end_date, '%Y-%m-%d') as end_date,
+         c.period,
+         c.user_id,
+         c.snapshot,
+         c.process_item_id,
+         DATE_FORMAT(c.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
+         pi.label,
+         u.username,
+         u.email
+        from publish_content c
+        inner join publish_process_item pi on pi.process_item_id = c.process_item_id
+        inner join sys_user u on u.user_id = c.user_id
+        where c.process_item_id in
+        <foreach collection="processes" item="process" separator="," open="(" close=")">
+            #{process}
+        </foreach>
+        order by c.add_date desc
+    </select>
+
+    <select id="queryProcessState" resultType="java.util.Map">
+        select ps.process_state_id,
+        ps.content_id,
+        ps.user_id,
+        ps.process_item_id,
+        ps.msg,
+        ps.remark,
+        DATE_FORMAT(ps.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
+        ppi.label
+        from publish_process_state ps
+        inner join publish_process_item ppi on ppi.process_item_id = ps.process_item_id
+        where ps.content_id = #{contentId}
+        order by ps.add_date desc
+    </select>
+
+    <select id="queryProcess" resultType="java.util.Map">
+        select p.process_id,
+        p.content_type_id,
+        p.process_item_id,
+        ppi.label
+        from publish_process p
+        inner join publish_process_item ppi on ppi.process_item_id = p.process_item_id
+        where p.content_type_id = #{contentTypeId}
+        order by p.process_sort
+    </select>
+
+    <select id="get" resultType="java.util.Map">
+        select * from publish_content
+        where content_id = #{id}
+    </select>
+
+    <update id="updateTemplate">
+        update publish_content set content = #{template}, update_date = now()
+        where content_id = #{id}
+    </update>
+
+    <update id="updateSnapshot">
+        update publish_content set snapshot = #{snapshot}, update_date = now()
+        where content_id = #{id}
+    </update>
+
+    <update id="offline">
+        <![CDATA[
+          update publish_content set process_item_id = 6
+          where process_item_id = 5 and end_date < now()
+        ]]>
+    </update>
+</mapper>

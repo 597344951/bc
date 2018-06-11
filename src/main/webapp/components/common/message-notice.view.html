@@ -1,0 +1,35 @@
+<el-popover :width="props.width" class="pop-message-button" :placement="props.placement" trigger="click">
+    <div>
+        <div>
+            <div class="ant-card-head">
+                <span>通知信息</span>
+            </div>
+            <div class="ant-card-body">
+                <div class="card-body-item" v-for="d in data" @click="message_click_handler(d)">
+                    <el-row>
+                        <el-col :span="4" class="avatar-container">
+                            <div class="ant-avatar">
+                                <img :src="getAvatar(d)" class="ng-star-inserted">
+                            </div>
+                        </el-col>
+                        <el-col :span="20">
+                            <h5 class="message-title">
+                                {{d.content}}
+                            </h5>
+                            <div class="message-time-description">
+                                <div class="datetime">{{getDateTimeInfo(d)}}</div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </div>
+                <div class="bottom" @click="all_message_click_handler">
+                    <div>查看所有</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <el-badge :value="data.length" :max="99"  slot="reference">
+        <span class="el-icon-bell"></span>
+    </el-badge>
+    <link href="/components/common/message-notice.css" rel="stylesheet">
+</el-popover>

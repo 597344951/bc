@@ -1,0 +1,75 @@
+  
+  .pop-message-button {
+      line-height: 30px;
+      font-size: 18px;
+      cursor: pointer;
+  }
+
+  .ant-card-head {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 16px 24px;
+      border-radius: 2px 2px 0 0;
+      zoom: 1;
+      margin-bottom: -1px;
+      min-height: 35px;
+      font-size: 16px;
+      font-weight: 500;
+      text-overflow: ellipsis;
+  }
+
+  .ant-card-body>.bottom {
+      height: 46px;
+      line-height: 46px;
+      text-align: center;
+      color: rgba(0, 0, 0, .65);
+      border-radius: 0 0 4px 4px;
+      border-top: 1px solid #e8e8e8;
+      transition: all .3s;
+      cursor: pointer;
+  }
+
+  .ant-avatar {
+      width: 32px;
+      height: 32px;
+      margin: auto;
+  }
+
+  .ant-avatar>img {
+      width: 100%;
+      height: 100%;
+      display: block;
+  }
+
+  .card-body-item {
+      margin: 0px 0px;
+      padding: 12px;
+      border-bottom: 1px solid #e8e8e8;
+      cursor: pointer;
+  }
+
+  .card-body-item:hover {
+      background-color: #e6f7ff;
+  }
+
+  .message-title {
+      padding-bottom: 10px;
+      margin: auto;
+      font-size: 14px;
+  }
+
+  .message-time-description {
+      color: rgba(0, 0, 0, .45);
+      font-size: 14px;
+      line-height: 22px;
+  }
+
+  .message-time-description>.datetime {
+      font-size: 12px;
+      margin-top: 4px;
+      line-height: 1.5;
+  }
+
+  .avatar-container {
+      margin-top: 5px;
+  }

@@ -1,0 +1,50 @@
+<el-form ref="addEventForm" :model="addEventDialog.data" label-width="80px">
+    <el-form-item label="计划名称">
+        <el-col :span="8">
+            <el-input v-model="addEventDialog.data.title"></el-input>
+        </el-col>
+    </el-form-item>
+    <el-form-item label="计划时间">
+        <el-col :span="8">
+            <el-date-picker type="date" v-model="addEventDialog.data.stime" placeholder="活动开始日期" style="width: 100%;"></el-date-picker>
+        </el-col>
+        <el-col class="line" :span="1" style="text-align: center;">-</el-col>
+        <el-col :span="8">
+            <el-date-picker type="date" v-model="addEventDialog.data.etime" placeholder="活动结束日期" style="width: 100%;"></el-date-picker>
+        </el-col>
+    </el-form-item>
+    <el-form-item label="计划类型">
+        <el-col :span="8">
+            <el-radio v-model="addEventDialog.data.event_type" label="temp" border>临时计划</el-radio>
+            <el-radio v-model="addEventDialog.data.event_type" label="cycle" border>周期计划</el-radio>
+        </el-col>
+    </el-form-item>
+    <el-form-item label="优先级">
+        <el-col :span="24">
+            <el-radio v-model="addEventDialog.data.priority" label="1">
+                <el-tooltip class="item" effect="dark" content="紧急事件" placement="top-start">
+                    <span class="emergency-level-label">1</span>
+                </el-tooltip>
+            </el-radio>
+            <el-radio v-model="addEventDialog.data.priority" label="2">
+                <el-tooltip class="item" effect="dark" content="高优先等级" placement="top-start">
+                    <span class="high-level-label">2</span>
+                </el-tooltip>
+            </el-radio>
+            <el-radio v-model="addEventDialog.data.priority" label="3">
+                <el-tooltip class="item" effect="dark" content="普通优先等级" placement="top-start">
+                    <span class="normal-level-label">3</span>
+                </el-tooltip>
+            </el-radio>
+            <el-radio v-model="addEventDialog.data.priority" label="4">
+                <el-tooltip class="item" effect="dark" content="低优先等级" placement="top-start">
+                    <span class="low-level-label">4</span>
+                </el-tooltip>
+            </el-radio>
+        </el-col>
+    </el-form-item>
+    <el-form-item>
+        <el-button type="primary" @click="submitEvent">创建</el-button>
+        <el-button @click="addEventDialog.visiable=false">取消</el-button>
+    </el-form-item>
+</el-form>

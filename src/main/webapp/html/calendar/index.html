@@ -1,0 +1,624 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- 引入样式 -->
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+
+    <!-- 先引入 Vue -->
+    <!--<script src="https://unpkg.com/vue/dist/vue.js"></script>-->
+    <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+    <!-- 引入组件库 -->
+    <!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+
+    <script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js" charset="utf-8"></script>
+    <!-- -->
+    <link href="https://cdn.bootcss.com/fullcalendar/3.9.0/fullcalendar.css" rel="stylesheet" charset="utf-8">
+    <link href="https://cdn.bootcss.com/fullcalendar/3.9.0/fullcalendar.print.css" rel="stylesheet" media="print">
+    <script src="https://cdn.bootcss.com/fullcalendar/3.9.0/fullcalendar.js" charset="utf-8"></script>
+    <script src="https://cdn.bootcss.com/fullcalendar/3.9.0/gcal.js"></script>
+    <script src="https://cdn.bootcss.com/fullcalendar/3.9.0/locale/zh-cn.js" charset="utf-8"></script>
+
+    <!--
+    <link href="../assets/fullcalendar-3.9.0/fullcalendar.css" rel="stylesheet" charset="utf-8">
+    <link href="../assets/fullcalendar-3.9.0/fullcalendar.print.css" rel='stylesheet' media='print' />
+    <script src="../assets/fullcalendar-3.9.0/fullcalendar.js"></script>
+    <script src="../assets/fullcalendar-3.9.0/locale/zh-cn.js" charset="utf-8"></script>
+-->
+
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+
+    <script src="https://cdn.bootcss.com/Mock.js/1.0.0/mock.js"></script>
+    <script src="/assets/debug/mock-url-proxy-calendar.js"></script>
+
+    <!--弹窗-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.js"></script>
+
+    <!--font-awsome-->
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!--ueditor-->
+    <script type="text/javascript" charset="utf-8" src="/assets/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/assets/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/assets/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+    <link href="./calendar.css" rel="stylesheet" charset="utf-8">
+    <script src="/assets/js/require.local.js"></script>
+    <script type="module" src="/components/main.js"></script>
+    <script type="module" src="/assets/js/vue-common.js"></script>
+    <style>
+       
+    </style>
+
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <event-tooltip :data="eventData" @callback="toolTipHandleCallback"></event-tooltip>
+
+        <el-row>
+            <el-col :span="3" style="padding:5px;">
+                <h1>计划日历</h1>
+                <div class="card-date">
+                    <div>{{nowDate}}</div>
+                    <div>{{nowDay}}</div>
+                </div>
+                <div class="plane-chose">
+                    <h3>展示计划类型</h3>
+                    <div class="item">
+                        <el-checkbox>历史年度计划</el-checkbox>
+                    </div>
+
+                    <div class="item">
+                        <el-checkbox>临时计划</el-checkbox>
+                    </div>
+                </div>
+                <div class="plane-chose">
+                    <h3>计划优先级</h3>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="紧急事件" placement="right">
+                                <span class="emergency-level-label">1</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="高优先等级" placement="right">
+                                <span class="high-level-label">2</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="普通优先等级" placement="right">
+                                <span class="normal-level-label">3</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="低优先等级" placement="right">
+                                <span class="low-level-label">4</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                </div>
+                <div class="plane-chose">
+                    <h3>计划状态</h3>
+                    <div class="item">
+                        <el-checkbox>可创建</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>正在公示</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>正在进行</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>已结束</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>已关闭</el-checkbox>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="20">
+                <div id="calendar" v-show="calendarDialog.visiable"></div>
+                <!--全屏表单-->
+                <div id="newPlane" v-show="planEditorDialog.visiable">
+                    <div>
+                        <el-button type="primary" icon="el-icon-close" circle @click="caclePlane"></el-button>
+                    </div>
+                    <div>
+                        <h3>{{planEditorDialog.title}}</h3>
+                        <el-form ref="form" :model="planData" label-width="80px">
+                            <el-form-item label="活动名称">
+                                <el-col :span="5">
+                                    <el-input v-model="planData.title"></el-input>
+                                </el-col>
+                            </el-form-item>
+                            <el-form-item label="活动时间">
+                                <el-col :span="5">
+                                    <el-date-picker type="date" v-model="planData.startTime" placeholder="活动开始日期" style="width: 100%;"></el-date-picker>
+                                </el-col>
+                                <el-col class="line" :span="1" style="text-align: center;">-</el-col>
+                                <el-col :span="5">
+                                    <el-date-picker type="date" v-model="planData.endTime" placeholder="活动结束日期" style="width: 100%;"></el-date-picker>
+                                </el-col>
+                            </el-form-item>
+                            <el-form-item label="活动类型">
+                                <el-col :span="5">
+                                    <el-input placeholder="请选择活动类型" v-model="planData.choseActivity.name"></el-input>
+                                </el-col>
+                                <el-col class="line" :span="1" style="text-align: center;"> &nbsp; </el-col>
+                                <el-col :span="5">
+                                    <el-button size="small " type="primary" @click="planSuggestdialog.visiable = true">选择活动</el-button>
+                                </el-col>
+                            </el-form-item>
+                            <el-form-item label="策划模板">
+                                <el-col :span="24">
+                                    <el-radio @change="tpChoseChange" v-model="choseTemplate" :label="null" border>空模板</el-radio>
+                                    <el-radio @change="tpChoseChange" v-for=" tp in planeTemplates" v-model="choseTemplate" :label="tp" :key="tp.id" border>{{tp.name}}</el-radio>
+                                </el-col>
+                            </el-form-item>
+                            <el-form-item label="策划方案">
+                                <el-col :span="24">
+                                    <div id="editor">
+
+                                    </div>
+                                </el-col>
+                            </el-form-item>
+                            <el-form-item label="费用计划">
+                                <el-row :gutter="20">
+                                    <el-col :span="3">
+                                        赞助金额:
+                                        <el-tag type="success">{{sponsorship_fee}} 元</el-tag>
+                                    </el-col>
+                                    <el-col :span="3">
+                                        支出金额:
+                                        <el-tag type="warning">{{cost_fee}} 元</el-tag>
+                                    </el-col>
+                                    <el-col :span="3">
+                                        总计结果:
+                                        <el-tag type="info">{{total_fee}} 元</el-tag>
+                                    </el-col>
+                                    <el-col :span="3">
+                                        <el-button size="small " type="primary" @click="costPlanDataDialog.visiable = true">更改计划</el-button>
+                                    </el-col>
+                                    <el-col :span="10" v-if="total_fee < 0">
+                                        <p class="bg-warning" style="padding: 0 15;color: #f56c6c;">
+                                            <i class="glyphicon glyphicon-warning-sign"></i>警告: 费用超过预算</p>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="submitPlane">立即创建</el-button>
+                                <el-button @click="caclePlane">取消</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+
+                </div>
+                <!---->
+            </el-col>
+        </el-row>
+        <!--dialog-->
+        <el-dialog title="智能活动推荐" :visible.sync="planSuggestdialog.visiable">
+            <plan-suggest :event-data="eventData" :visiable="planSuggestdialog.visiable"  @change="planChoseChange"></plan-suggest-module>
+        </el-dialog>
+        <el-dialog title="新增计划" :visible.sync="addEventDialog.visiable">
+            <add-event :add-event-dialog="addEventDialog" @added-data="addEventCallback"></add-event>
+        </el-dialog>
+        <el-dialog title="费用计划编辑" :visible.sync="costPlanDataDialog.visiable">
+            <cost-plan :cost-plan-data="costPlanData" :cost-type-group="costTypeGroup"></cost-plan>
+        </el-dialog>
+        <!--dialog-->
+    </div>
+</body>
+<script type="module">
+
+    window.appInstince = new Vue({
+        el: '#app',
+        data: {
+            
+            costPlanDataDialog: {
+                visiable: false
+            },
+            //日历对话框
+            calendarDialog: {
+                visiable: true
+            },
+            //活动编辑对话框
+            planEditorDialog: {
+                visiable: false,
+                title: '创建活动'
+            },
+            //活动建议对话框
+            planSuggestdialog: {
+                visiable: false
+            },
+            //新增计划对话框
+            addEventDialog: {
+                visiable: false,
+                data: {}
+            },
+            //数据
+            planData: {
+                choseActivity: {},
+                title: '',
+                startTime: '',
+                endTime: '',
+                content: ''
+            },
+            //选中模板
+            choseTemplate: {},
+
+            planeTemplates: [],
+             
+            //当前选中计划
+            eventData: {
+                title: '测试计划',
+                start: '2018-05-01',
+                type: 'CyclePlan',
+                from: 'festival',
+                voteInfo: {}
+            },
+            costTypeGroup: [
+                {
+                "data": {
+                    "costType": 1,
+                    "name": "进项金额",
+                    "type": 1,
+                    "parent": 0
+                },
+                "children": [
+                    {
+                    "data": {
+                        "costType": 3,
+                        "name": "企业赞助",
+                        "type": 1,
+                        "parent": 1
+                    },
+                    "children": null
+                    },
+                    {
+                    "data": {
+                        "costType": 4,
+                        "name": "个人赞助",
+                        "type": 1,
+                        "parent": 1
+                    },
+                    "children": null
+                    }
+                ]
+                },
+                {
+                "data": {
+                    "costType": 2,
+                    "name": "活动花费",
+                    "type": -1,
+                    "parent": 0
+                },
+                "children": [
+                    {
+                    "data": {
+                        "costType": 5,
+                        "name": "场地",
+                        "type": -1,
+                        "parent": 2
+                    },
+                    "children": null
+                    },
+                    {
+                    "data": {
+                        "costType": 6,
+                        "name": "服装/道具",
+                        "type": -1,
+                        "parent": 2
+                    },
+                    "children": null
+                    },
+                    {
+                    "data": {
+                        "costType": 7,
+                        "name": "人工",
+                        "type": -1,
+                        "parent": 2
+                    },
+                    "children": null
+                    },
+                    {
+                    "data": {
+                        "costType": 8,
+                        "name": "门票花费",
+                        "type": -1,
+                        "parent": 2
+                    },
+                    "children": null
+                    }
+                ]
+                }
+            ],
+            costPlanData: []
+        },
+        mounted() {
+            var ins = this;
+            var editor = UE.getEditor('editor', {
+                allowDivTransToP: false
+                //autoHeightEnabled: false
+            });
+            //事件 回填属性
+            editor.addListener("contentChange", function () {
+                //console.log('内容改变:' + editor.getContent());
+                ins.planData.content = editor.getContent();
+            });
+            this.$refs['ueditor'] = editor;
+            initFullCalendar();
+        },
+        computed: {
+            nowDate() {
+                return moment().format('YYYY-MM-DD');
+            },
+            nowDay() {
+                return moment().format('DD');
+            },
+            //转换花费数据
+            costValues() {
+                const values = this.costPlanData.map(item => {
+                    if (item.$CostType) {
+                        return item.$CostType.type * item.value;
+                    }
+                    return 0;
+                });
+                return values;
+            },
+            //赞助费用
+            sponsorship_fee() {
+                const values = this.costValues;
+                let in_sum = 0;
+                var ay1 = values.filter(i => i > 0);
+                if (ay1.length > 0) in_sum = ay1.reduce((a, b) => a + b);
+                return in_sum;
+            },
+            //花费费用
+            cost_fee() {
+                const values = this.costValues;
+                let minus_sum = 0;
+                let ay2 = values.filter(i => i < 0);
+                if (ay2.length > 0) minus_sum = ay2.reduce((a, b) => a + b);
+                return minus_sum;
+            },
+            //总计费用
+            total_fee() {
+                return this.sponsorship_fee + this.cost_fee;
+            }
+        },
+        methods: {
+            loadCostPlan(){
+                var ins = this;
+                $.ajax({
+                    type: "post",
+                    url: "/plan/costplan",
+                    async: true,
+                    success: function (data) {
+                        var idata = $.parseJSON(data);
+                        ins.costPlanData = ins.initCostType(idata.data);
+                    }
+                });
+            },
+            //tooltip 回调处理
+            toolTipHandleCallback(type,data){
+                console.log('tooltip 回调',type,data);
+                if(type == 'create')this.createPlane();
+
+            },
+            //创建计划
+            createPlane() {
+                this.calendarDialog.visiable = false;
+                this.planEditorDialog.visiable = true;
+                this.showTooltip(false);
+                this.planData.startTime = this.eventData.start;
+                this.planData.endTime = this.eventData.end ? this.eventData.end : this.eventData.start;
+            },
+            //显示计划
+            disPlane() {
+
+            } ,
+            showTooltip(show, event) {
+                this.eventData.visiable = show;
+                if (event) {
+                    var target = event.target;
+                    //弹窗
+                    var popper = new Popper(target, $('#tooltip-container'), {
+                        placement: 'right-start',
+                        flipBehavior: ['left', 'bottom', 'top'],
+                    });
+                }
+            },
+            //加载对应的模版信息
+            loadTemplate(){
+                var ins = this;
+                $.ajax({
+                    type: "post",
+                    url: "/plan/templates",
+                    async: true,
+                    success: function (data) {
+                        var data = $.parseJSON(data);
+                        ins.planeTemplates = data.data;
+                    }
+                });
+            },
+            //模板选择改变
+            tpChoseChange() {
+                if (this.choseTemplate) {
+                    this.$refs.ueditor.setContent(this.choseTemplate.content);
+                    this.planData.title = this.choseTemplate.title;
+                    this.loadCostPlan();
+                } else {
+                    this.$refs.ueditor.setContent("");
+                    this.planData.title = "";
+                    this.costPlanData = [];
+                }
+
+            },
+            //活动计划选择
+            planChoseChange(row){
+                console.log('活动推荐回调:',row);
+                this.planData.choseActivity = row;
+                this.planSuggestdialog.visiable = false;
+                this.loadTemplate();
+            } ,
+            split(str) {
+                return str.split(';');
+            },
+            //提交计划
+            submitPlane() {
+                this.calendarDialog.visiable = true;
+                this.planEditorDialog.visiable = false;
+            },
+            //取消计划
+            caclePlane() {
+                this.calendarDialog.visiable = true;
+                this.planEditorDialog.visiable = false;
+            },
+           
+            //加载花费数据 类型
+            initCostType(rows) {
+                rows.forEach(row => {
+                    let tv = row.costType;
+                    this.costTypeGroup.forEach(e1 => {
+                    e1.children.forEach(e2 => {
+                        if (e2.data.costType == tv) {
+                            row.$CostType = e2.data;
+                        }
+                    })
+                });
+                });
+                return rows;
+            },
+            addEventCallback(data){
+                console.log('已增加事件',data)
+            }
+
+        },components: {
+        }
+    });
+
+    function filterEvent() {
+        $('#calendar').fullCalendar('removeEvents', function (e) {
+            console.log(e);
+        })
+    }
+    /**重新加载事件**/
+    function resetEvent() {
+        $('#calendar').fullCalendar('refetchEvents')
+    }
+
+    function initFullCalendar() {
+        $('#calendar').fullCalendar({
+            aspectRatio: 2,
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,listMonth'
+            },
+            events: function (start, end, timezone, callback) {
+                console.debug(start, end, timezone);
+                //加载事件数据
+                $.ajax({
+                    type: "get",
+                    url: "calendar/list",
+                    async: true,
+                    success: function (data) {
+                        var idata = $.parseJSON(data);
+                        callback(initCalendarData(idata.data));
+                    }
+                });
+            },
+            defaultDate: new Date(),
+            navLinks: true, // can click day/week names to navigate views
+            businessHours: true, // display business hours
+            editable: true,
+            //点击事件
+            dayClick: function (date, event, view) {
+                //check
+                if(moment().isAfter(date)){
+                    appInstince.$message({
+                        message: '只能创建将来的事件信息!',
+                        type: 'warning'
+                    });
+                    return;
+                };
+                appInstince.showTooltip(false);
+                appInstince.addEventDialog.data.startTime = date
+                appInstince.addEventDialog.data.endTime = date;
+                appInstince.addEventDialog.visiable = true;
+            },
+            eventClick: function (data, event, view) {
+                console.log('modify event');
+                data.visiable = false;
+                appInstince.eventData = data;                
+                appInstince.showTooltip(true, event);
+            }
+        });
+
+        //鼠标 滚动切换月份
+        $('#calendar')
+            .bind('mousewheel', function (event, delta) {
+                var delta = event.originalEvent.deltaY;
+                var dir = delta > 0 ? 'Down' : 'Up';
+                if (dir == 'Up') {
+                    $('#calendar').fullCalendar('prev');
+                } else {
+                    $('#calendar').fullCalendar('next');
+                }
+                appInstince.showTooltip(false);
+                return false;
+            });
+    }
+
+    function initCalendarData(datas) {
+        let priorityMap = {
+            "1": "emergency-level",
+            "2": "high-level",
+            "3": "normal-level",
+            "4": "low-level"
+        }
+        let statusMap = {
+            "0": "event-ready",
+            "1": "event-vote",
+            "2": "event-progress",
+            "-1": "event-disable"
+        }
+
+        datas.map((v) => {
+            v.className = ' event-icon ';
+            let priority = v.priority;
+            if (!priority) v.priority = priority = 3;
+
+            let cst = priorityMap[priority]; //计算优先级
+            v.className += " " + cst;
+            v.priorityClass = cst + "-label";
+
+            //计算颜色
+            let tmstr = statusMap[v.status || 0];
+            v.className += " " + tmstr;
+            v.themeClass = tmstr;
+
+
+            v.editable = false;
+        });
+        // console.log(datas);
+        return datas;
+    }
+</script>
+
+</html>

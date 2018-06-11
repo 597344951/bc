@@ -1,0 +1,55 @@
+<div>
+    <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect">
+        <el-submenu index="1">
+            <template slot="title">道具/服装</template>
+            <el-menu-item index="1-1">文化衫定做</el-menu-item>
+            <el-menu-item index="1-2">文娱服饰租用</el-menu-item>
+        </el-submenu>
+        <el-menu-item index="2">活动场地租用</el-menu-item>
+        <el-menu-item index="3">供货商</el-menu-item>
+        <el-menu-item index="4">培训支持</el-menu-item>
+    </el-menu>
+    <div>
+        <!--供应商-->
+        <el-row>
+            <el-col :span="24">
+                <el-form :inline="true" class="demo-form-inline inline-form">
+                    <el-form-item label="送货上门">
+                        <el-select placeholder="送货上门">
+                            <el-option label="是" value="y"></el-option>
+                            <el-option label="否" value="n"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="支持退货">
+                        <el-select placeholder="支持退货">
+                            <el-option label="是" value="y"></el-option>
+                            <el-option label="否" value="n"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary">查询</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-col>
+        </el-row>
+        <el-table style="width: 100%" :data="supplierCompany">
+            <el-table-column prop="name" label="公司名称"></el-table-column>
+            <el-table-column prop="category" label="供应商类型" ></el-table-column>
+            <el-table-column prop="principal" label="负责人" ></el-table-column>
+            <el-table-column prop="tel" label="联系方式" ></el-table-column>
+            <el-table-column prop="address" label="地址"></el-table-column>
+            <el-table-column label="送货上门">
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.delivery === '否' ? 'danger' : 'success'" disable-transitions>{{scope.row.delivery}}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column label="支持退货" >
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.refund === '否' ? 'danger' : 'success'" disable-transitions>{{scope.row.refund}}</el-tag>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!---->
+    </div>
+</div>

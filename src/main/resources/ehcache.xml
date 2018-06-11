@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache name="shirocache">
+
+	<diskStore path="java.io.tmpdir" />
+
+	<defaultCache name="defaut" maxElementsInMemory="5" eternal="false" timeToIdleSeconds="20"
+		timeToLiveSeconds="20" overflowToDisk="false" diskPersistent="false" memoryStoreEvictionPolicy="LRU" />
+
+	<!-- 登录重试记录缓存 锁定10分钟 -->
+	<cache name="passwordRetryCache" maxEntriesLocalHeap="2000" eternal="false" timeToIdleSeconds="3600"
+		timeToLiveSeconds="600" overflowToDisk="false" statistics="true">
+	</cache>
+	<!-- 权限缓存信息 -->
+	<cache name="authorizationCache" maxEntriesLocalHeap="2000" eternal="false" timeToIdleSeconds="3600"
+		timeToLiveSeconds="0" overflowToDisk="false" statistics="true">
+	</cache>
+	<!-- 用户名/密码 登陆信息 -->
+	<cache name="authenticationCache_up" maxEntriesLocalHeap="2000" eternal="false" timeToIdleSeconds="3600"
+		timeToLiveSeconds="0" overflowToDisk="false" statistics="true">
+	</cache>
+	<!-- 用户名/token 登陆信息 -->
+	<cache name="authenticationCache_token" maxEntriesLocalHeap="2000" eternal="false" timeToIdleSeconds="3600"
+		timeToLiveSeconds="0" overflowToDisk="false" statistics="true">
+	</cache>
+	<!--  -->
+	<cache name="shiro-activeSessionCache" maxEntriesLocalHeap="2000" eternal="false" timeToIdleSeconds="3600"
+		timeToLiveSeconds="0" overflowToDisk="false" statistics="true">
+	</cache>
+	<!-- 账户登陆session计数 -->
+	<cache name="shiro-kickout-session" maxEntriesLocalHeap="2000" eternal="false" timeToIdleSeconds="3600"
+		timeToLiveSeconds="0" overflowToDisk="false" statistics="true">
+	</cache>
+
+</ehcache>

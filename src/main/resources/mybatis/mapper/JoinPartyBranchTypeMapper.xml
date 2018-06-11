@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.JoinPartyBranchTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.JoinPartyBranchType">
+    <id column="jpbt_id" jdbcType="INTEGER" property="jpbtId" />
+    <result column="join_type" jdbcType="VARCHAR" property="joinType" />
+    <result column="describes" jdbcType="VARCHAR" property="describes" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    jpbt_id, join_type, describes
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from join_party_branch_type
+    where jpbt_id = #{jpbtId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from join_party_branch_type
+    where jpbt_id = #{jpbtId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.JoinPartyBranchType">
+    insert into join_party_branch_type (jpbt_id, join_type, describes
+      )
+    values (#{jpbtId,jdbcType=INTEGER}, #{joinType,jdbcType=VARCHAR}, #{describes,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.JoinPartyBranchType">
+    insert into join_party_branch_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="jpbtId != null">
+        jpbt_id,
+      </if>
+      <if test="joinType != null">
+        join_type,
+      </if>
+      <if test="describes != null">
+        describes,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="jpbtId != null">
+        #{jpbtId,jdbcType=INTEGER},
+      </if>
+      <if test="joinType != null">
+        #{joinType,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        #{describes,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.JoinPartyBranchType">
+    update join_party_branch_type
+    <set>
+      <if test="joinType != null">
+        join_type = #{joinType,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where jpbt_id = #{jpbtId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.JoinPartyBranchType">
+    update join_party_branch_type
+    set join_type = #{joinType,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR}
+    where jpbt_id = #{jpbtId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryJoinPartyBranchTypes" parameterType="com.zltel.broadcast.um.bean.JoinPartyBranchType" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" />
+    from 
+    	join_party_branch_type
+    where
+    	1=1
+    	<if test="joinType != null"> and 
+	        join_type = #{joinType}
+	    </if>
+  </select>
+</mapper>

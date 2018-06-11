@@ -1,0 +1,38 @@
+<el-table id="planSuggest" :data="suggestData" 
+v-loading.fullscreen.lock="loading.visiable"
+:element-loading-text="loading.title" 
+    style="width: 100%">
+    <el-table-column type="expand">
+        <template slot-scope="scope">
+            <h3>推荐理由</h3>
+            <ol>
+                <li v-for="i in split(scope.row.reason)">{{i}}</li>
+            </ol>
+            <h3>注意事项</h3>
+            <ol>
+                <li v-for="i in split(scope.row.precautions)">{{i}}</li>
+            </ol>
+        </template>
+    </el-table-column>
+    <el-table-column label="id" prop="id" width="50">
+    </el-table-column>
+    <el-table-column label="活动名称" prop="name" width="200">
+    </el-table-column>
+    <el-table-column label="推荐指数" prop="score" width="100">
+    </el-table-column>
+    <el-table-column label="推荐理由">
+        <template slot-scope="scope">
+            <ol>
+                <li v-for="i in split(scope.row.reason)">{{i}}</li>
+            </ol>
+        </template>
+    </el-table-column>
+
+    <el-table-column fixed="right" label="操作" width="120">
+        <template slot-scope="scope">
+            <el-button size="small" @click="activityItemClick(scope.row)">
+                选择
+            </el-button>
+        </template>
+    </el-table-column>
+</el-table>

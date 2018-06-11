@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.OrganizationTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.OrganizationType">
+    <id column="org_type_id" jdbcType="INTEGER" property="orgTypeId" />
+    <result column="org_type_name" jdbcType="VARCHAR" property="orgTypeName" />
+    <result column="org_type_describe" jdbcType="VARCHAR" property="orgTypeDescribe" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    org_type_id, org_type_name, org_type_describe
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from organization_type
+    where org_type_id = #{orgTypeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from organization_type
+    where org_type_id = #{orgTypeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
+    insert into organization_type (org_type_id, org_type_name, org_type_describe
+      )
+    values (#{orgTypeId,jdbcType=INTEGER}, #{orgTypeName,jdbcType=VARCHAR}, #{orgTypeDescribe,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
+    insert into organization_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orgTypeId != null">
+        org_type_id,
+      </if>
+      <if test="orgTypeName != null">
+        org_type_name,
+      </if>
+      <if test="orgTypeDescribe != null">
+        org_type_describe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orgTypeId != null">
+        #{orgTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="orgTypeName != null">
+        #{orgTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgTypeDescribe != null">
+        #{orgTypeDescribe,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
+    update organization_type
+    <set>
+      <if test="orgTypeName != null">
+        org_type_name = #{orgTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgTypeDescribe != null">
+        org_type_describe = #{orgTypeDescribe,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where org_type_id = #{orgTypeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
+    update organization_type
+    set org_type_name = #{orgTypeName,jdbcType=VARCHAR},
+      org_type_describe = #{orgTypeDescribe,jdbcType=VARCHAR}
+    where org_type_id = #{orgTypeId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryOrgTypes" parameterType="com.zltel.broadcast.um.bean.OrganizationType" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from organization_type
+		where 
+			1 = 1
+			<if test="orgTypeId != null"> and 
+				org_type_id = #{orgTypeId}
+			</if>
+			<if test="orgTypeName != null"> and 
+				org_type_name = #{orgTypeName}
+			</if>
+			<if test="orgTypeDescribe != null"> and 
+				org_type_describe = #{orgTypeDescribe}
+			</if>
+	</select>
+</mapper>

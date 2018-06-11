@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.OrganizationInformationMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.OrganizationInformation">
+    <id column="org_info_id" jdbcType="INTEGER" property="orgInfoId" />
+    <result column="org_info_name" jdbcType="VARCHAR" property="orgInfoName" />
+    <result column="org_info_committee_province" jdbcType="VARCHAR" property="orgInfoCommitteeProvince" />
+    <result column="org_info_committee_city" jdbcType="VARCHAR" property="orgInfoCommitteeCity" />
+    <result column="org_info_committee_area" jdbcType="VARCHAR" property="orgInfoCommitteeArea" />
+    <result column="org_info_committee_detail" jdbcType="VARCHAR" property="orgInfoCommitteeDetail" />
+    <result column="org_info_manage_province" jdbcType="VARCHAR" property="orgInfoManageProvince" />
+    <result column="org_info_manage_city" jdbcType="VARCHAR" property="orgInfoManageCity" />
+    <result column="org_info_manage_area" jdbcType="VARCHAR" property="orgInfoManageArea" />
+    <result column="org_info_manage_detail" jdbcType="VARCHAR" property="orgInfoManageDetail" />
+    <result column="org_info_parent_id" jdbcType="INTEGER" property="orgInfoParentId" />
+    <result column="org_info_type_id" jdbcType="INTEGER" property="orgInfoTypeId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.um.bean.OrganizationInformation">
+    <result column="org_info_describe" jdbcType="LONGVARCHAR" property="orgInfoDescribe" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    org_info_id, org_info_name, org_info_committee_province, org_info_committee_city, 
+    org_info_committee_area, org_info_committee_detail, org_info_manage_province, org_info_manage_city, 
+    org_info_manage_area, org_info_manage_detail, org_info_parent_id, org_info_type_id
+  </sql>
+  <sql id="Blob_Column_List">
+    org_info_describe
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from organization_information
+    where org_info_id = #{orgInfoId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from organization_information
+    where org_info_id = #{orgInfoId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
+    insert into organization_information (org_info_id, org_info_name, org_info_committee_province, 
+      org_info_committee_city, org_info_committee_area, 
+      org_info_committee_detail, org_info_manage_province, 
+      org_info_manage_city, org_info_manage_area, org_info_manage_detail, 
+      org_info_parent_id, org_info_type_id, org_info_describe
+      )
+    values (#{orgInfoId,jdbcType=INTEGER}, #{orgInfoName,jdbcType=VARCHAR}, #{orgInfoCommitteeProvince,jdbcType=VARCHAR}, 
+      #{orgInfoCommitteeCity,jdbcType=VARCHAR}, #{orgInfoCommitteeArea,jdbcType=VARCHAR}, 
+      #{orgInfoCommitteeDetail,jdbcType=VARCHAR}, #{orgInfoManageProvince,jdbcType=VARCHAR}, 
+      #{orgInfoManageCity,jdbcType=VARCHAR}, #{orgInfoManageArea,jdbcType=VARCHAR}, #{orgInfoManageDetail,jdbcType=VARCHAR}, 
+      #{orgInfoParentId,jdbcType=INTEGER}, #{orgInfoTypeId,jdbcType=INTEGER}, #{orgInfoDescribe,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
+    insert into organization_information
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orgInfoId != null">
+        org_info_id,
+      </if>
+      <if test="orgInfoName != null">
+        org_info_name,
+      </if>
+      <if test="orgInfoCommitteeProvince != null">
+        org_info_committee_province,
+      </if>
+      <if test="orgInfoCommitteeCity != null">
+        org_info_committee_city,
+      </if>
+      <if test="orgInfoCommitteeArea != null">
+        org_info_committee_area,
+      </if>
+      <if test="orgInfoCommitteeDetail != null">
+        org_info_committee_detail,
+      </if>
+      <if test="orgInfoManageProvince != null">
+        org_info_manage_province,
+      </if>
+      <if test="orgInfoManageCity != null">
+        org_info_manage_city,
+      </if>
+      <if test="orgInfoManageArea != null">
+        org_info_manage_area,
+      </if>
+      <if test="orgInfoManageDetail != null">
+        org_info_manage_detail,
+      </if>
+      <if test="orgInfoParentId != null">
+        org_info_parent_id,
+      </if>
+      <if test="orgInfoTypeId != null">
+        org_info_type_id,
+      </if>
+      <if test="orgInfoDescribe != null">
+        org_info_describe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orgInfoId != null">
+        #{orgInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="orgInfoName != null">
+        #{orgInfoName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeProvince != null">
+        #{orgInfoCommitteeProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeCity != null">
+        #{orgInfoCommitteeCity,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeArea != null">
+        #{orgInfoCommitteeArea,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeDetail != null">
+        #{orgInfoCommitteeDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageProvince != null">
+        #{orgInfoManageProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageCity != null">
+        #{orgInfoManageCity,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageArea != null">
+        #{orgInfoManageArea,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageDetail != null">
+        #{orgInfoManageDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoParentId != null">
+        #{orgInfoParentId,jdbcType=INTEGER},
+      </if>
+      <if test="orgInfoTypeId != null">
+        #{orgInfoTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="orgInfoDescribe != null">
+        #{orgInfoDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
+    update organization_information
+    <set>
+      <if test="orgInfoName != null">
+        org_info_name = #{orgInfoName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeProvince != null">
+        org_info_committee_province = #{orgInfoCommitteeProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeCity != null">
+        org_info_committee_city = #{orgInfoCommitteeCity,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeArea != null">
+        org_info_committee_area = #{orgInfoCommitteeArea,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoCommitteeDetail != null">
+        org_info_committee_detail = #{orgInfoCommitteeDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageProvince != null">
+        org_info_manage_province = #{orgInfoManageProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageCity != null">
+        org_info_manage_city = #{orgInfoManageCity,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageArea != null">
+        org_info_manage_area = #{orgInfoManageArea,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoManageDetail != null">
+        org_info_manage_detail = #{orgInfoManageDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="orgInfoParentId != null">
+        org_info_parent_id = #{orgInfoParentId,jdbcType=INTEGER},
+      </if>
+      <if test="orgInfoTypeId != null">
+        org_info_type_id = #{orgInfoTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="orgInfoDescribe != null">
+        org_info_describe = #{orgInfoDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where org_info_id = #{orgInfoId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
+    update organization_information
+    set org_info_name = #{orgInfoName,jdbcType=VARCHAR},
+      org_info_committee_province = #{orgInfoCommitteeProvince,jdbcType=VARCHAR},
+      org_info_committee_city = #{orgInfoCommitteeCity,jdbcType=VARCHAR},
+      org_info_committee_area = #{orgInfoCommitteeArea,jdbcType=VARCHAR},
+      org_info_committee_detail = #{orgInfoCommitteeDetail,jdbcType=VARCHAR},
+      org_info_manage_province = #{orgInfoManageProvince,jdbcType=VARCHAR},
+      org_info_manage_city = #{orgInfoManageCity,jdbcType=VARCHAR},
+      org_info_manage_area = #{orgInfoManageArea,jdbcType=VARCHAR},
+      org_info_manage_detail = #{orgInfoManageDetail,jdbcType=VARCHAR},
+      org_info_parent_id = #{orgInfoParentId,jdbcType=INTEGER},
+      org_info_type_id = #{orgInfoTypeId,jdbcType=INTEGER},
+      org_info_describe = #{orgInfoDescribe,jdbcType=LONGVARCHAR}
+    where org_info_id = #{orgInfoId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
+    update organization_information
+    set org_info_name = #{orgInfoName,jdbcType=VARCHAR},
+      org_info_committee_province = #{orgInfoCommitteeProvince,jdbcType=VARCHAR},
+      org_info_committee_city = #{orgInfoCommitteeCity,jdbcType=VARCHAR},
+      org_info_committee_area = #{orgInfoCommitteeArea,jdbcType=VARCHAR},
+      org_info_committee_detail = #{orgInfoCommitteeDetail,jdbcType=VARCHAR},
+      org_info_manage_province = #{orgInfoManageProvince,jdbcType=VARCHAR},
+      org_info_manage_city = #{orgInfoManageCity,jdbcType=VARCHAR},
+      org_info_manage_area = #{orgInfoManageArea,jdbcType=VARCHAR},
+      org_info_manage_detail = #{orgInfoManageDetail,jdbcType=VARCHAR},
+      org_info_parent_id = #{orgInfoParentId,jdbcType=INTEGER},
+      org_info_type_id = #{orgInfoTypeId,jdbcType=INTEGER}
+    where org_info_id = #{orgInfoId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryOrgInfos" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" />,<include refid="Blob_Column_List" />
+    from
+    	organization_information
+    where
+    	1 = 1
+    	<if test="orgInfoTypeId != null"> and
+        	org_info_type_id = #{orgInfoTypeId}
+        </if>
+        <if test="orgInfoId != null"> and
+        	org_info_id = #{orgInfoId}
+        </if>
+        <if test="orgInfoParentId != null"> and
+        	org_info_parent_id = #{orgInfoParentId}
+        </if>
+  </select>
+  
+  <select id="queryOrgInfosForMap" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  ot.org_type_id orgTypeid,
+	  ot.org_type_name orgTypeName,
+	  ot.org_type_describe orgTypeDescribe,
+	  oi.org_info_id orgInfoId,
+	  oi.org_info_name orgInfoName,
+	  oi.org_info_committee_province orgInfoCommitteeProvince,
+	  oi.org_info_committee_city orgInfoCommitteeCity,
+	  oi.org_info_committee_area orgInfoCommitteeArea,
+	  oi.org_info_committee_detail orgInfoCommitteeDetail,
+	  oi.org_info_manage_province orgInfoManageProvince,
+	  oi.org_info_manage_city orgInfoManageCity,
+	  oi.org_info_manage_area orgInfoManageArea,
+	  oi.org_info_manage_detail orgInfoManageDetail,
+	  oi.org_info_describe orgInfoDescribe,
+	  oi.org_info_parent_id orgInfoParentId,
+	  oi.org_info_type_id orgInfoTypeId
+	from
+	  organization_information oi 
+	  inner join organization_type ot on oi.org_info_type_id = ot.org_type_id
+    where
+    	1 = 1
+    	<if test="orgInfoTypeId != null and orgInfoTypeId != ''"> and
+        	oi.org_info_type_id = #{orgInfoTypeId}
+        </if>
+        <if test="orgInfoName != null and orgInfoName != ''"> and
+        	oi.org_info_name like CONCAT('%',#{orgInfoName},'%')
+        </if>
+        <if test="orgInfoId != null and orgInfoId != ''"> and
+        	oi.org_info_id = #{orgInfoId}
+        </if>
+        <if test="orgInfoParentId != null and orgInfoParentId != ''"> and
+        	oi.org_info_parent_id = #{orgInfoParentId}
+        </if>
+        <if test="orgInfoCommitteeProvince != null and orgInfoCommitteeProvince != ''"> and
+            oi.org_info_committee_province = #{orgInfoCommitteeProvince}
+        </if>
+        <if test="orgInfoCommitteeCity != null and orgInfoCommitteeCity != ''"> and
+            oi.org_info_committee_city = #{orgInfoCommitteeCity}
+        </if>
+        <if test="orgInfoCommitteeArea != null and orgInfoCommitteeArea != ''"> and
+            oi.org_info_committee_area = #{orgInfoCommitteeArea}
+        </if>
+  </select>
+  
+  <select id="queryOrgInfosCommitteeProvince" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation" resultMap="BaseResultMap">
+  	select
+	  distinct oi.org_info_committee_province
+	from
+	  organization_information oi
+	where
+	  oi.org_info_committee_province is not null and
+	  oi.org_info_committee_province != ''
+	  <if test="orgInfoTypeId != null and orgInfoTypeId != ''"> and
+      	  oi.org_info_type_id = #{orgInfoTypeId}
+      </if>
+	  <if test="orgInfoId != null and orgInfoId != ''"> and
+          oi.org_info_parent_id = #{orgInfoId}
+      </if>
+  </select>
+  
+  <select id="queryOrgInfosCommitteeCity" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation" resultMap="BaseResultMap">
+  	select
+	  distinct oi.org_info_committee_city
+	from
+	  organization_information oi
+	where
+	  oi.org_info_committee_city is not null and
+	  oi.org_info_committee_city != ''
+	  <if test="orgInfoCommitteeProvince != null and orgInfoCommitteeProvince != ''"> and
+          oi.org_info_committee_province = #{orgInfoCommitteeProvince}
+      </if>
+      <if test="orgInfoId != null and orgInfoId != ''"> and
+          oi.org_info_parent_id = #{orgInfoId}
+      </if>
+  </select>
+  
+  <select id="queryOrgInfosCommitteeArea" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation" resultMap="BaseResultMap">
+  	select
+	  distinct oi.org_info_committee_area
+	from
+	  organization_information oi
+	where
+	  oi.org_info_committee_area is not null and
+	  oi.org_info_committee_area != ''
+	  <if test="orgInfoCommitteeCity != null and orgInfoCommitteeCity != ''"> and
+          oi.org_info_committee_city = #{orgInfoCommitteeCity}
+      </if>
+      <if test="orgInfoId != null and orgInfoId != ''"> and
+          oi.org_info_parent_id = #{orgInfoId}
+      </if>
+  </select>
+</mapper>

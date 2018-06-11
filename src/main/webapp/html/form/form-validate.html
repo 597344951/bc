@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>表单验证</title>
+    <meta charset="UTF-8">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+    <!-- 先引入 Vue -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="./assets/js/jquery.cookie.js"></script>
+
+
+    <style>
+    </style>
+</head>
+
+<body>
+    <div id="app" class="height_full">
+        <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+            <template v-for="(cps,$index) in costPlan">
+                <el-form-item :prop="getFn($index)" label="test"  :rules="{
+                        required: true, message: 'test不能为空', trigger: 'blur'
+                      }">
+                    <el-input v-model="cps.name" @change="fnChange('name',$index)"></el-input>
+                </el-form-item>
+            </template>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+                <el-button @click="addDomain">新增域名</el-button>
+                <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</body>
+
+<script>
+    var ins = new Vue({
+        el: '#app',
+        data: () => {
+            return {
+                dynamicValidateForm: {
+                    domains: [{
+                        value: ''
+                    }],
+                    email: '',
+                    test: ''
+                },
+                costPlan: [{
+                    "name": "新人则车或",
+                    "value": 7886,
+                    "costType": "5",
+                    "$CostType": {
+                        "costType": 5,
+                        "name": "场地",
+                        "type": -1,
+                        "parent": 2
+                    }
+                }, {
+                    "name": "万他农养八",
+                    "value": 1030,
+                    "costType": "7",
+                    "$CostType": {
+                        "costType": 7,
+                        "name": "人工",
+                        "type": -1,
+                        "parent": 2
+                    }
+                }, {
+                    "name": "中元导后工",
+                    "value": 3607,
+                    "costType": "6",
+                    "$CostType": {
+                        "costType": 6,
+                        "name": "服装/道具",
+                        "type": -1,
+                        "parent": 2
+                    }
+                }, {
+                    "name": "老国省如报",
+                    "value": 6369,
+                    "costType": "7",
+                    "$CostType": {
+                        "costType": 7,
+                        "name": "人工",
+                        "type": -1,
+                        "parent": 2
+                    }
+                }, {
+                    "name": "完风委干斯",
+                    "value": 4220,
+                    "costType": "7",
+                    "$CostType": {
+                        "costType": 7,
+                        "name": "人工",
+                        "type": -1,
+                        "parent": 2
+                    }
+                }, {
+                    "name": "青起适商近",
+                    "value": 5571,
+                    "costType": "7",
+                    "$CostType": {
+                        "costType": 7,
+                        "name": "人工",
+                        "type": -1,
+                        "parent": 2
+                    }
+                }]
+            };
+        },
+        methods: {
+            fnChange(name,idx){
+                let v = this.costPlan[idx][name];
+                this.dynamicValidateForm[name+'_'+idx] = v;
+                console.log(v);
+            },
+            getName(idx){
+                return 'dynamicValidateForm.name_'+idx;
+            },
+            getFn(idx){
+                return 'name_'+ idx;
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        alert('submit!');
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            removeDomain(item) {
+                var index = this.dynamicValidateForm.domains.indexOf(item)
+                if (index !== -1) {
+                    this.dynamicValidateForm.domains.splice(index, 1)
+                }
+            },
+            addDomain() {
+                this.dynamicValidateForm.domains.push({
+                    value: '',
+                    key: Date.now()
+                });
+            }
+        }
+    });
+</script>
+
+</html>

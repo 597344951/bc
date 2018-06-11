@@ -1,0 +1,290 @@
+#calendar {
+    padding: 20;
+    height: 80%;
+}
+
+.fc-day-top {
+    padding-top: 15px;
+    padding-right: 32px;
+}
+
+.event-tooltip {
+    width: 448px;
+    border: solid 1px #ddd;
+}
+
+.event-tooltip>div {
+    /*
+    background-color: #0B8043;
+    */
+    background-color: #3a87ad;
+    padding: 10 20;
+}
+
+.event-tooltip>div>.btns {
+    text-align: right;
+}
+
+.event-tooltip>div>.title {
+    color: white;
+}
+
+.event-tooltip>div>.btns,
+.event-tooltip>div>.btns>div>span>i {
+    text-align: right;
+    color: white;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.event-tooltip>div>.btns>:nth-child(1) {
+    margin-right: 3px;
+}
+
+.event-tooltip>div>.btns>i {
+    cursor: pointer;
+}
+
+.event-tooltip>.content {
+    background-color: white;
+}
+
+.event-tooltip>.content>.item {
+    font-size: 15px;
+    color: #303133;
+    width: 100%;
+    overflow: auto;
+    margin-top: 10px;
+}
+
+.event-tooltip>.content>.item>:nth-child(1) {
+    font-size: 15px;
+    width: 25%;
+    float: left;
+}
+
+.event-tooltip>.content>.item>:nth-child(1)>i {
+    margin-right: 10px;
+}
+
+.event-tooltip>.content>.item>:nth-child(2) {
+    font-size: 15px;
+    width: 70%;
+    float: left;
+}
+
+.event-tooltip>.content>.buttons {
+    text-align: center;
+    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#tooltip-container {
+    z-index: 9;
+}
+
+.card-date {
+    border: solid 1px #ddd;
+    text-align: center;
+    color: #606266;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+}
+
+.card-date> :nth-child(1) {
+    background-color: #3a87ad;
+    padding: 5px;
+    color: white;
+    font-size: 16px;
+}
+
+.card-date> :nth-child(2) {
+    padding: 10px;
+    color: #3a87ad;
+    font-size: 60px;
+}
+
+.plane-chose {
+    margin-top: 0;
+    padding: 10px;
+}
+
+.plane-chose>.item {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+
+#newPlane {
+    padding: 10px;
+    display: flex;
+}
+
+#newPlane> :nth-child(1) {
+    min-width: 50px;
+    width: 4%;
+}
+
+#newPlane> :nth-child(2) {
+    width: 90%;
+}
+
+#newPlane> :nth-child(2)>h3 {
+    margin-top: 5px;
+    margin-bottom: 22px;
+}
+
+#newPlane>.back-btn {
+    display: flex;
+}
+
+#newPlane>.back-btn>:nth-child(2) {
+    width: 50%;
+    margin-left: 20px;
+    margin-right: 30px;
+}
+
+#newPlane>.item {
+    display: flex;
+    margin-top: 15px;
+    padding: 0 60px;
+}
+
+#newPlane>.split>:nth-child(1) {
+    width: 250px;
+}
+
+#newPlane>.split>:nth-child(2) {
+    padding: 10px;
+    margin: 0 10px;
+}
+
+#newPlane>.split>:nth-child(3) {
+    width: 250px;
+}
+
+#newPlane>.split>:nth-child(3)>button {
+    margin-top: 4px;
+    margin-left: 14px;
+}
+
+.padding-right {
+    padding-right: 10px;
+}
+
+.el-table .row-minus {
+    background: oldlace;
+}
+
+.el-table__empty-block {
+    height: auto;
+}
+.fc-event {
+    line-height: 1.7;
+}
+
+/**不可以创建活动的事件**/
+
+.event-disable {
+    background-color: #777 !important;
+    color: white;
+}
+
+/**可以创建活动**/
+
+.event-ready {
+    background-color: #3a87ad !important;
+    color: white;
+}
+
+.event-vote {
+    background-color: #ddd !important;
+    color: white;
+}
+
+/**正在进行**/
+
+.event-progress {
+    background-color: #0B8043 !important;
+    color: white;
+}
+
+/***事件优先级 图标***/
+
+.event-icon {
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position-x: 1px;
+}
+
+.event-icon>.fc-content {
+    margin-left: 25px
+}
+
+.event-icon>td {
+    padding-left: 30px;
+}
+
+/**紧急**/
+
+.emergency-level {
+    background-image: url(/assets/icons/r.png);
+}
+
+.emergency-level-label {
+    background-color: #f1524e;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: white;
+}
+
+/**高**/
+
+.high-level {
+    background-image: url(/assets/icons/e.png);
+}
+
+.high-level-label {
+    background-color: #ffb902;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: white;
+}
+
+/**普通**/
+
+.normal-level {
+    background-image: url(/assets/icons/w.png);
+}
+
+.normal-level-label {
+    background-color: #4a93ff;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: white;
+}
+
+/**低**/
+
+.low-level {
+    background-image: url(/assets/icons/q.png);
+}
+
+.low-level-label {
+    background-color: #00d354;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: white;
+}
+
+.fc-list-item:hover {
+    color: #333;
+}
+
+.el-table .row-minus {
+    background: oldlace;
+}
+
+.el-table__empty-block {
+    height: auto;
+}

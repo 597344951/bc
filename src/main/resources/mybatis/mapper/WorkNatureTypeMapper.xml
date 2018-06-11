@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.WorkNatureTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.WorkNatureType">
+    <id column="work_nature_id" jdbcType="INTEGER" property="workNatureId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="describes" jdbcType="VARCHAR" property="describes" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    work_nature_id, name, describes
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from work_nature_type
+    where work_nature_id = #{workNatureId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from work_nature_type
+    where work_nature_id = #{workNatureId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.WorkNatureType">
+    insert into work_nature_type (work_nature_id, name, describes
+      )
+    values (#{workNatureId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{describes,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.WorkNatureType">
+    insert into work_nature_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="workNatureId != null">
+        work_nature_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="describes != null">
+        describes,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="workNatureId != null">
+        #{workNatureId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        #{describes,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.WorkNatureType">
+    update work_nature_type
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where work_nature_id = #{workNatureId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.WorkNatureType">
+    update work_nature_type
+    set name = #{name,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR}
+    where work_nature_id = #{workNatureId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryWorkNatureTypes" parameterType="com.zltel.broadcast.um.bean.WorkNatureType" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" />
+    from 
+    	work_nature_type
+    where
+    	1=1
+    	<if test="name != null"> and 
+	        name = #{name}
+	    </if>
+  </select>
+</mapper>

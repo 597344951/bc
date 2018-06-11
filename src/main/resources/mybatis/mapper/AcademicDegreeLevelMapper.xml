@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.AcademicDegreeLevelMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.AcademicDegreeLevel">
+    <id column="ad_d_aid" jdbcType="INTEGER" property="adDAid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="describes" jdbcType="VARCHAR" property="describes" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ad_d_aid, name, describes
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from academic_degree_level
+    where ad_d_aid = #{adDAid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from academic_degree_level
+    where ad_d_aid = #{adDAid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.AcademicDegreeLevel">
+    insert into academic_degree_level (ad_d_aid, name, describes
+      )
+    values (#{adDAid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{describes,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.AcademicDegreeLevel">
+    insert into academic_degree_level
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="adDAid != null">
+        ad_d_aid,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="describes != null">
+        describes,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="adDAid != null">
+        #{adDAid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        #{describes,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.AcademicDegreeLevel">
+    update academic_degree_level
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ad_d_aid = #{adDAid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.AcademicDegreeLevel">
+    update academic_degree_level
+    set name = #{name,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR}
+    where ad_d_aid = #{adDAid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryAcademicDegreeLevels" parameterType="com.zltel.broadcast.um.bean.AcademicDegreeLevel" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" />
+    from 
+    	academic_degree_level
+    where
+    	1=1
+    	<if test="adDAid != null"> and 
+          ad_d_aid = #{adDAid}
+        </if>
+        <if test="name != null"> and 
+          name = #{name}
+        </if>
+  </select>
+</mapper>
