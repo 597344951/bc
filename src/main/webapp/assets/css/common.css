@@ -63,3 +63,7 @@ html,body{
 .padding-10{
     padding:10px;
 }
+
+[v-cloak] {
+    display: none !important;
+}

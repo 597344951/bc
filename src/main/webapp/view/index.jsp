@@ -13,7 +13,7 @@
 <title>XX管理系统</title>
 <%@include file="/include/head.jsp"%>
 <%@include file="/include/websocket.jsp"%>
-<link href="assets/css/index.css" rel="stylesheet">
+<link href="${urls.getForLookupPath('/assets/css/index.css')}" rel="stylesheet">
 
 
 <style type="text/css">
@@ -23,7 +23,7 @@
 </style>
 </head>
 <body>
-    <el-container class="mycontainer" id="app">
+    <el-container class="mycontainer" id="app" v-cloak>
         <el-header class="noselect" height="60px">
             <!--head-->
             <el-col class="header" :span="24">
