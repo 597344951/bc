@@ -27,3 +27,4 @@
 .vscode/
 lib/ueditor-1.1.2.jar
 broadcast*.log
+broadcast.log.*
