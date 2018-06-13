@@ -181,21 +181,15 @@
 							border
 							@selection-change="handleSelectionChange">
 						<el-table-column type="selection" width="55"></el-table-column>
-						<el-table-column
-								prop="group"
-								label="分组"
-								:filters="terminalGroup"
-								:filter-method="filterGroup"
-								filter-placement="bottom-end">
-							<template slot-scope="scope">
-								<el-tag>{{scope.row.group}}</el-tag>
-							</template>
-						</el-table-column>
 						<el-table-column prop="name" label="名称"></el-table-column>
-						<el-table-column prop="type" label="类型"></el-table-column>
-						<el-table-column prop="size" label="尺寸"></el-table-column>
-						<el-table-column prop="size" label="位置"></el-table-column>
-
+						<el-table-column prop="status" label="在线状态" :filters="terminalGroup.status" :filter-method="filter" filter="bottom-end"></el-table-column>
+						<el-table-column prop="screenType" label="类型" :filters="terminalGroup.screenType" :filter-method="filter" filter="bottom-end"></el-table-column>
+						<el-table-column prop="interaction" label="触摸类型"></el-table-column>
+						<el-table-column prop="direction" label="屏幕方向" :filters="terminalGroup.direction" :filter-method="filter" filter="bottom-end"></el-table-column>
+						<el-table-column prop="size" label="尺寸" :filters="terminalGroup.size" :filter-method="filter" filter="bottom-end"></el-table-column>
+						<el-table-column prop="resolution" label="分辨率" :filters="terminalGroup.resolution" :filter-method="filter" filter="bottom-end"></el-table-column>
+						<el-table-column prop="version" label="版本"></el-table-column>
+						<el-table-column prop="ip" label="IP"></el-table-column>
 					</el-table>
 				</div>
 				<%--审核人--%>
@@ -307,11 +301,11 @@
 				week: '',
                 templateText: '',
                 material: [],
-                terminals: getTerminals(),
-                terminalGroup: [{ text: 'one', value: 'one' }, { text: 'two', value: 'two' }, { text: 'three', value: 'three' }],
+                terminals: [],
+                terminalGroup: {},
                 selectedTerminals: [],
-				selectedExUser: [${userId}],
-				exUsers:getExUsers(),
+				selectedExUser: [],
+				exUsers:[],
 				week: [],
                 resolution: '',
                 screenType: '',
@@ -423,8 +417,9 @@
                 handleSelectionChange(selected) {
                     this.selectedTerminals = selected;
                 },
-				filterGroup(value, row) {
-                    return row.group === value;
+				filter(value, row) {
+					let tv = value.split(':')
+                    return row[tv[0]] === tv[1];
                 },
                 exUserFilterMethod(query, item) {
 			        if(!query) {
@@ -448,6 +443,13 @@
             wordCount: false,
             elementPathEnabled: false
         });
+
+		init()
+
+		function init() {
+			getTerminals()
+			getExUsers()
+		}
 
         function commit(postData) {
             $.ajax({
@@ -552,37 +554,88 @@
 		}
 
         function getTerminals() {
-            var data = [];
-            var area = ['A', 'B', 'C'];
-            var floor = [1, 2, 3, 4];
-            var type = ['横屏触摸', '竖屏触摸', '横屏非触摸', '竖屏非触摸'];
-            var size = ['800x600', '1400x900', '1080x2048', '2048x3698'];
-            var group = ['one', 'two', 'three'];
-            for(var i=0; i < 40; i++) {
-                data.push({
-					id: i,
-					name: 'T-' + area[i%3] + '-' + floor[i%4],
-					type: type[i%4],
-					size: size[i%4],
-					group: group[i%3],
-					groupId: i%3
-
-				});
+			const screenType = {
+				'1': '一体机',
+				'2': '播放盒+显示屏',
+				'3': '播放盒+投影仪'
 			}
-			return data;
+			get('/sola/terminals', reps => {
+				if(reps.status) {
+					app.terminals = []
+					app.terminalGroup = {
+						size: [],
+						direction: [],
+						screenType: [],
+						resolution: [],
+						status: []
+
+					}
+					let size, direction, type, resolution, status
+					reps.data.forEach(item => {
+						app.terminals.push({
+							id: item.PkId,
+							name: item.Name,
+							code: item.Code,
+							size: item.ScreenSize,
+							direction: item.ScreenDirection,
+							interaction: item.ScreenInteraction,
+							screenType: screenType[item.ScreenType],
+							position: item.Position,
+							resolution: item.Resolution,
+							ip: item.IP,
+							mac: item.Mac,
+							regDate: item.RegDateTime,
+							version: item.Version,
+							status: item.OnlineStatus == 1 ? '在线' : '离线'
+						})
+						size = item.ScreenSize
+						addFilterItem(app.terminalGroup.size, size, "size:" + size)
+						direction = item.ScreenDirection
+						addFilterItem(app.terminalGroup.direction, direction, "direction:" + direction)
+						type = screenType[item.ScreenType]
+						addFilterItem(app.terminalGroup.screenType, type, "screenType:" + type)
+						resolution = item.Resolution
+						addFilterItem(app.terminalGroup.resolution, resolution, "resolution:" + resolution)
+						status = item.OnlineStatus == 1 ? '在线' : '离线'
+						addFilterItem(app.terminalGroup.status, status, "status:" + status)
+					})
+					
+				} else {
+					app.terminals = []
+				}
+			})
+		}
+
+		function addFilterItem(filter, text, value) {
+			let has = false
+			for(let i=0; i<filter.length; i++) {
+				if(filter[i].text == text && filter[i].value == value) {
+					has = true
+					break
+				}
+			}
+			if(!has) {
+				filter.push({
+					text: text,
+					value: value
+				})
+			}
 		}
 
 		function getExUsers() {
-			var data = [];
-            for(var i=0; i < 20; i++) {
-                data.push({
-					key: i,
-					id: i,
-					duty: '',
-                    label: 'exUser' + i + 'xx职务'
-				});
-			}
-			return data;
+    		get('/publish/examineUsers', reps => {
+				if(reps.status) {
+					app.exUsers = []
+					reps.data.data.forEach(item => {
+						app.exUsers.push({
+							key: item.userId,
+							id: item.userId,
+							label: item.username + '('+ item.mobile +')'
+						})
+					})
+					app.selectedExUser = [${userId}]
+				}
+			})
         }
 	</script>
 </body>

@@ -28,51 +28,39 @@
 
 <body>
 	<div id="app" class="height_full">
-		</el-container>
-		<div role="table">
-			<el-row class="toolbar">
-				<el-col :span="20">
-					<div class="grid-content bg-purple">
-						<el-button type="primary" size="small" icon="el-icon-plus" @click="addT()">增加</el-button>
-						<%-- <el-button type="primary" size="small" icon="el-icon-search" @click="search()">搜索</el-button> --%>
-<el-popover placement="right" width="400" trigger="click">
-	<el-form ref="form" label-width="80px" size="mini">
-		<el-form-item label="分组名称">
-			<el-input v-model="tg.data.name" style="width: 80%;"></el-input>
-		</el-form-item>
-		<el-form-item label="终端地址">
-			<el-input v-model="tg.data.addr" style="width: 80%;"></el-input>
-		</el-form-item>
-		<el-form-item label="终端数量" v-show="tg.search">
-			<el-input v-model="tg.data.count" style="width: 80%;"></el-input>
-		</el-form-item>
-		<el-form-item label="修改日期" v-show="tg.search">
-			<el-input v-model="tg.data.date" style="width: 80%;"></el-input>
-		</el-form-item>
-		<el-form-item label="备注">
-			<el-input v-model="tg.data.ps" style="width: 80%;"></el-input>
-		</el-form-item>
-		<el-form-item size="large">
-			<el-button type="primary">确定</el-button>
-			<el-button @click="search()">更多</el-button>
-		</el-form-item>
-	</el-form>
-	<el-button type="primary" size="small" icon="el-icon-search" slot="reference" class="margin-0-10">搜索</el-button>
-</el-popover>
-						<el-button type="primary" size="small" icon="el-icon-refresh" @click="refresh()">刷新</el-button>
-					</div>
+		<div class="grid-content bg-purple toolbar">
+			<el-button type="primary" size="small" icon="el-icon-plus" @click="addT()">增加</el-button>
+			<!--  <el-button type="primary" size="small" icon="el-icon-search" @click="search()">搜索</el-button> -->
+			<el-popover placement="right" width="400" trigger="click">
+				<el-form ref="form" label-width="80px" size="small">
+					<el-form-item label="分组名称">
+						<el-input v-model="tg.data.name" style="width: 80%;"></el-input>
+					</el-form-item>
+					<el-form-item label="终端地址">
+						<el-input v-model="tg.data.addr" style="width: 80%;"></el-input>
+					</el-form-item>
+					<el-form-item label="终端数量">
+						<el-input v-model="tg.data.count" style="width: 80%;"></el-input>
+					</el-form-item>
+					<el-form-item label="修改日期">
+						<el-input v-model="tg.data.date" style="width: 80%;"></el-input>
+					</el-form-item>
+					<el-form-item label="备注">
+						<el-input v-model="tg.data.ps" style="width: 80%;"></el-input>
+					</el-form-item>
+					<el-form-item >
+						<el-button type="primary" @click="search()" size="small">确定</el-button>
+						<el-button  @click="refresh()" size="small">重置</el-button>
+					</el-form-item>
+				</el-form>
+				<el-button type="primary" size="small" icon="el-icon-search" slot="reference" class="margin-0-10">搜索</el-button>
+			</el-popover>
+			<el-button type="primary" size="small" icon="el-icon-refresh" @click="refresh()">刷新</el-button>
 		</div>
-
-
 		<!--表格主体-->
 		<el-main>
-
-
-
-
 			<template>
 				<el-table :data="pager.list">
-
 					<el-table-column prop="name" label="分组名称" width="200"></el-table-column>
 					<el-table-column prop="count" label="终端数量" width="200"></el-table-column>
 					<el-table-column prop="addr" label="终端地址" width="300"></el-table-column>
@@ -81,20 +69,18 @@
 					<el-table-column prop="oid" label="oid" width="200"></el-table-column>
 					<el-table-column label="操作" fixed="right" width="200">
 						<template slot-scope="scope">
-							<el-button SIZI="MINI" type="info" @click="updatetg(scope.row)">编辑</el-button>
-							<el-button SIZI="MINI" type="danger " @click="handleDelete(scope.row.oid) ">删除</el-button>
+							<el-button size="mini" type="info" @click="updatetg(scope.row)">编辑</el-button>
+							<el-button size="mini" type="danger " @click="handleDelete(scope.row.oid) ">删除</el-button>
 						</template>
-					</el-table-column>
 					</el-table-column>
 				</el-table>
 			</template>
 		</el-main>
 		<el-footer>
 			<el-pagination id="pagesdididi" layout="total, prev, pager, next, jumper " @current-change="pagerCurrentChange(pager.pageNum,pager.pageSize) "
-			    :current-page.sync="pager.pageNum " :page-size.sync="pager.pageSize " :total="pager.total ">
+			 :current-page.sync="pager.pageNum " :page-size.sync="pager.pageSize " :total="pager.total ">
 			</el-pagination>
 		</el-footer>
-		</el-container>
 		<el-dialog title="" :visible.sync="tg.visible" width="80%">
 			<el-form :model="tg" label-width="100px">
 				<!-- <el-form-item label="oid" v-show="tg.search">
@@ -131,11 +117,9 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-
-
 			</el-form>
 			<template>
-				<el-transfer :props="{key: 'oid', label: 'name'}" v-model="tbi.result" :data="tbi.data" v-show="tbi.visible" panelWidth="100">
+				<el-transfer :props="{key: 'oid', label: 'name'}" v-model="tbi.result" :data="tbi.data" v-show="tbi.visible" panelwidth="100">
 				</el-transfer>
 			</template>
 			<div slot="footer" class="dialog-footer">
@@ -143,13 +127,8 @@
 				<el-button @click="cancel(tg)">取 消</el-button>
 				<el-button @click="updateorinsert(tg)">确定</el-button>
 			</div>
-
 		</el-dialog>
-
 	</div>
-
-
-
 </body>
 <script>
 	var appInstince = new Vue({
@@ -303,9 +282,9 @@
 			},
 			search() {
 				var tg = this.tg;
-				tg.visible = true;
 				tg.update = false;
 				tg.search = true;
+				this.updateorinsert(tg);
 			},
 			updateorinsert(tg) {
 				var a = this;
@@ -363,7 +342,9 @@
 
 			},
 			pagerCurrentChange(pageNum, pageSize) { /* 页码改变时 */
-				this.queryGroup(pageNum, pageSize);
+				var tg = this.tg;
+				this.querySearch(tg, pageNum, pageSize);
+				// this.queryGroup(pageNum, pageSize);
 			},
 			handleDelete(oid) {
 				var a = oid;

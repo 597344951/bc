@@ -11,7 +11,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>党委管理</title>
-<%@include file="/include/head.jsp"%>
+<%@include file="/include/head_notbootstrap.jsp"%>
 <script type="text/javascript" src="/json/address-pca.json"></script>
 <style type="text/css">
 	body {
@@ -37,9 +37,11 @@
 	}
 	a:link,a:visited{
 		text-decoration:none;  /*超链接无下划线*/
+		color: red;
 	}
 	a:hover{
 		text-decoration:underline;  /*鼠标放上去有下划线*/
+		color: red;
 	}
 </style>
 </head>
@@ -167,15 +169,23 @@
 									<el-col :span="3">组织类型：{{scope.row.orgTypeName}}</el-col>
 								</el-row>
 								<el-row :gutter="20">
-									<el-col :span="3">共有成员：<a @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgPeoples(scope.row)" href="javascript:void(0)">{{scope.row.orgMemberNum}} 人</a></el-col>
-								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="3">组织负责人：</el-col>
+									<el-col :span="24">
+										管委会地址：
+										{{scope.row.orgInfoCommitteeProvince}}-
+										{{scope.row.orgInfoCommitteeCity}}-
+										{{scope.row.orgInfoCommitteeArea}}-
+										{{scope.row.orgInfoCommitteeDetail}}
+									</el-col>
 								</el-row>
 								<el-row :gutter="20" v-for="item in scope.row.orgLevel1s">
 									<el-col :span="3">{{item.orgDutyName}}：{{item.name}}</el-col>
 									<el-col :span="3">性别：{{item.sex}}</el-col>
 									<el-col :span="3">年龄：{{item.age}}</el-col>
+									<el-col :span="6">联系电话：{{item.mobilePhone}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="3">共有成员：<a @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgPeoples(scope.row)" href="javascript:void(0)">{{scope.row.orgMemberNum}} 人</a></el-col>
+									<el-col :span="3">共有下属组织：<a @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgChildrens(scope.row)" href="javascript:void(0)">{{scope.row.orgChildrensNum}} 个</a></el-col>
 								</el-row>
 							</template>
 						</el-table-column>
@@ -211,10 +221,39 @@
 
 
 
+
+		<el-dialog @close="" title="下属组织信息" :visible.sync="partyOrg_manager_showThisOrgChildrensDialog" width="82%">
+			<el-container>
+				<el-main>
+					<el-table style="text-align: center;" 
+							align="center"
+							:stripe="true"
+							class="common" border size="mini" :data="partyOrg_manager_ThisOrgInfos.childrens_pager.list" style="width: 100%">
+						<el-table-column label="组织ID" prop="orgInfoId"></el-table-column>
+						<el-table-column label="组织类型" prop="orgTypeName"></el-table-column>
+						<el-table-column label="组织名" prop="orgInfoName"></el-table-column>
+						<el-table-column label="组织管理所在省" prop="orgInfoCommitteeProvince"></el-table-column>
+						<el-table-column label="组织管理所在市" prop="orgInfoCommitteeCity"></el-table-column>
+					</el-table>
+				</el-main>
+				<el-footer>
+					<el-pagination id="partyUser_manager_agesdididi" 
+					  	layout="total, prev, pager, next, jumper" 
+		      		 	@current-change="partyOrg_manager_thisOrgChildrenCurrentChange"
+					  	:current-page.sync="partyOrg_manager_ThisOrgInfos.childrens_pager.pageNum"
+					  	:page-size.sync="partyOrg_manager_ThisOrgInfos.childrens_pager.pageSize"
+					  	:total="partyOrg_manager_ThisOrgInfos.childrens_pager.total">
+					</el-pagination>
+				</el-footer>
+			</el-container>
+		</el-dialog>
+
+
 		<el-dialog @close="" title="组织下成员信息" :visible.sync="partyOrg_manager_showThisOrgPeoplesDialog" width="82%">
 			<el-container>
 				<el-main>
 					<el-table style="text-align: center;" 
+							align="center"
 							:stripe="true"
 							class="common" border size="mini" :data="partyOrg_manager_ThisOrgInfos.peoples_pager.list" style="width: 100%">
 						<el-table-column label="姓名" prop="name"></el-table-column>
@@ -474,6 +513,7 @@
 			partyOrg_manager_updateOrgInfoDialog: false, 	/*修改组织信息*/
 			partyOrg_manager_insertOrgDutyDialog: false,	/*添加组织职责*/
 			partyOrg_manager_showThisOrgPeoplesDialog: false,	/*查看这个组织下成员信息弹窗*/
+			partyOrg_manager_showThisOrgChildrensDialog: false, 	/*下属组织信息*/
 			partyOrg_manager_orgInfoTreeOfInsert: [],	/*添加组织信息时的组织关系树*/
 			partyOrg_manager_orgInfoTreeOfInsertProps: {
 				children: 'children',
@@ -552,6 +592,12 @@
 			partyOrg_manager_ThisOrgInfos: {	/*当前组织的信息*/
 				orgInfoId: null,
 				peoples_pager: {
+					pageNum: 1,		/* 当前页 */
+			    	pageSize: 10,	/* 页面大小 */
+			    	total: 0,
+			    	list: []
+				},
+				childrens_pager: {
 					pageNum: 1,		/* 当前页 */
 			    	pageSize: 10,	/* 页面大小 */
 			    	total: 0,
@@ -943,6 +989,44 @@
         	},
         	getPath(row) {	/* 得到党员用户id并返回请求路径 */
 				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.baseUserId;
+			},
+			thisOrgInfoChildrensPagerInit() {
+        		var obj = this;
+				obj.partyOrg_manager_ThisOrgInfos.childrens_pager.pageNum = 1;
+				obj.partyOrg_manager_ThisOrgInfos.childrens_pager.pageSize = 10;
+				obj.partyOrg_manager_ThisOrgInfos.childrens_pager.total = 0;
+				obj.partyOrg_manager_ThisOrgInfos.childrens_pager.list = new Array();
+        	},
+			partyOrg_manager_setOrgInfoIdOfShowThisOrgChildrens(row) {
+        		var obj = this;
+        		obj.partyOrg_manager_ThisOrgInfos.orgInfoId = row.orgInfoId;
+        		obj.partyOrg_manager_showThisOrgChildrens();
+        	},
+			partyOrg_manager_showThisOrgChildrens() {
+				var obj = this;
+
+				var url = "/org/ifmt/queryThisOrgChildren";
+				var t = {
+					pageNum: obj.partyOrg_manager_ThisOrgInfos.childrens_pager.pageNum,
+					pageSize: obj.partyOrg_manager_ThisOrgInfos.childrens_pager.pageSize,
+					orgInfoId: obj.partyOrg_manager_ThisOrgInfos.orgInfoId
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data == undefined) {	
+							obj.thisOrgInfoChildrensPagerInit();/* 没有查询到数据时，初始化页面信息，使页面正常显示 */
+						} else {
+							obj.partyOrg_manager_ThisOrgInfos.childrens_pager = data.data;
+						}
+					}
+
+				})
+
+				obj.partyOrg_manager_showThisOrgChildrensDialog = true;
+			},
+			partyOrg_manager_thisOrgChildrenCurrentChange() {
+				var obj = this;
+        		obj.partyOrg_manager_showThisOrgChildrens();
 			}
 		}
 	});

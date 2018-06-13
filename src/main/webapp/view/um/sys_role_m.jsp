@@ -11,7 +11,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>角色权限管理</title>
-<%@include file="/include/head.jsp"%>
+<%@include file="/include/head_notbootstrap.jsp"%>
 <style type="text/css">
 	body {
 		margin: 20px;

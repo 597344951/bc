@@ -11,7 +11,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>党员信息管理</title>
-	<%@include file="/include/head.jsp"%>
+	<%@include file="/include/head_notbootstrap.jsp"%>
 	<script type="text/javascript" src="/json/address-pca.json"></script>
 	<style type="text/css">
 	body {

@@ -1,5 +1,8 @@
 package com.zltel.broadcast.incision.sola.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +19,7 @@ import java.net.URL;
  */
 public class HttpUtil {
 
+    private static final Log log = LogFactory.getLog(HttpUtil.class);
     public static String post(String url, String postData) {
         OutputStreamWriter outputStreamWriter = null;
         BufferedReader bufferedReader = null;
@@ -47,22 +51,29 @@ public class HttpUtil {
                     stringBuffer.append(line);
                 }
                 return JsonUtils.deserialization(stringBuffer.toString());
+            } else {
+                log.error("请求失败：" + code);
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                outputStreamWriter.close();
+                if(outputStreamWriter != null) {
+                    outputStreamWriter.close();
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                bufferedReader.close();
+                if(bufferedReader != null) {
+                    bufferedReader.close();
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
 }

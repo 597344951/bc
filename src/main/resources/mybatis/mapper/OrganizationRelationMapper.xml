@@ -141,7 +141,8 @@
   		  od.org_duty_name orgDutyName,
   		  pui.type partyType,
   		  pui.status partyStatus,
-  		  bui.id_photo idPhoto
+  		  bui.id_photo idPhoto,
+  		  bui.mobile_phone mobilePhone
 		from
 		  organization_relation _or
 		  inner join organization_information oi on _or.org_rlt_info_id = oi.org_info_id 

@@ -67,3 +67,9 @@ html,body{
 [v-cloak] {
     display: none !important;
 }
+
+/**dialog 定点定位**/
+.dialog-full > .el-dialog{
+    margin-top:0px !important;
+    width:100% !important;
+}

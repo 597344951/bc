@@ -2,6 +2,7 @@ package com.zltel.broadcast.publish.service.impl;
 
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.common.util.FileUtil;
+import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.dao.PublishDao;
 import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -45,11 +46,8 @@ public class MaterialServiceImpl implements MaterialService {
                 continue;
             }
             url = (String) m.get("url");
-            fileName = url.substring(url.lastIndexOf("/") + 1, url.length());
             srcFile = srcDir + url;
-            newUrl = "/" + user.getUserId() + "/" + FileUtil.getYMD() + "/" + fileName;
-            descFile = descDir + newUrl;
-            m.put("url", newUrl);
+            descFile = descDir + url;
             try {
                 FileUtil.copy(srcFile, descFile, true);
             } catch (IOException e) {
@@ -97,6 +95,8 @@ public class MaterialServiceImpl implements MaterialService {
                 material.put("url", descFileUrl);
                 material.put("description", StringUtils.isEmpty(alt) ? fileName : alt);
                 material.put("user_id", user.getUserId());
+                material.put("org_id", user.getOrgId());
+                material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
                 material.put("upload_reason", content.get("title"));
                 material.put("relate_content_id", content.get("id"));
                 material.put("add_date", addDate);

@@ -23,7 +23,6 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/publish")
-@PropertySource("classpath:upload.properties")
 public class ActivityController extends BaseController {
     @Autowired
     private HttpServletRequest request;
@@ -32,8 +31,10 @@ public class ActivityController extends BaseController {
     @Autowired
     MaterialService materialService;
 
-    @Value("${upload.file.dir}")
+    @Value("${material.file.dir}")
     private String uploadFileDir;
+    @Value("${material.temp.dir}")
+    private String uploadTempDir;
 
     @GetMapping(value = "/activity/addition/{contentId}")
     @ResponseBody
@@ -56,7 +57,7 @@ public class ActivityController extends BaseController {
         try {
             SysUser user = getSysUser();
             //同步文件
-            materialService.transferMaterial(user, (List<Map<String, Object>>) addition.get("material"), request.getSession().getServletContext().getRealPath("/"), uploadFileDir);
+            materialService.transferMaterial(user, (List<Map<String, Object>>) addition.get("material"), uploadTempDir, uploadFileDir);
             activityService.completeActivityAddition(user, addition);
             r = R.ok();
         } catch (Exception e) {

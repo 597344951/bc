@@ -12,6 +12,7 @@ import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.publish.service.PublishService;
 import com.zltel.broadcast.um.bean.SysUser;
 
+import com.zltel.broadcast.um.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -33,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping("/publish")
-@PropertySource("classpath:upload.properties")
 public class PublishController extends BaseController{
     @Autowired
     private HttpServletRequest request;
@@ -41,8 +41,14 @@ public class PublishController extends BaseController{
     private PublishService publishService;
     @Autowired
     private MaterialService materialService;
-    @Value("${upload.file.dir}")
+    @Autowired
+    private SysUserService sysUserService;
+    @Value("${material.file.dir}")
     private String uploadFileDir;
+    @Value("${material.temp.dir}")
+    private String uploadTempDir;
+    @Value("${ueditor.savepath}")
+    private String ueditorDir;
 
     @RequestMapping(value = "/new")
     public String create(Model model) {
@@ -78,9 +84,9 @@ public class PublishController extends BaseController{
         try {
             SysUser user = getSysUser();
             //同步文件
-            materialService.transferMaterial(user, (List<Map<String, Object>>) content.get("material"), request.getSession().getServletContext().getRealPath("/"), uploadFileDir);
+            materialService.transferMaterial(user, (List<Map<String, Object>>) content.get("material"), uploadTempDir, uploadFileDir);
             Map<String, Object> detail = publishService.create(user, content);
-            materialService.saveUeditorMaterial(user, detail, request.getSession().getServletContext().getRealPath("/"), uploadFileDir);
+            materialService.saveUeditorMaterial(user, detail, ueditorDir, uploadFileDir);
             r = R.ok();
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,6 +247,20 @@ public class PublishController extends BaseController{
             r = R.ok();
             PageInfo page = new PageInfo(publishService.queryPublishedContent(pageNum, pageSize));
             r.setData(page);
+        } catch (Exception e) {
+            e.printStackTrace();
+            r = R.error(e.toString());
+        }
+        return r;
+    }
+
+    @GetMapping(value = "/examineUsers")
+    @ResponseBody
+    public R examineUsers() {
+        R r;
+        try {
+            r = R.ok();
+            r.setData(sysUserService.querySysUsersNotPage(null));
         } catch (Exception e) {
             e.printStackTrace();
             r = R.error(e.toString());

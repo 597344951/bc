@@ -1,6 +1,7 @@
 package com.zltel.broadcast.um.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.zltel.broadcast.um.bean.OrganizationInformation;
 import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.service.OrganizationInformationService;
+import com.zltel.broadcast.um.util.DateUtil;
 
 @Service
 public class OrganizationInformationServiceImpl extends BaseDaoImpl<OrganizationInformation> implements OrganizationInformationService {
@@ -111,6 +113,11 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 					orgMembers = organizationRelationMapper.queryOrgRelationsNew(map);
 					oiMap.put("orgMemberNum", orgMembers.size() == 0 ? 0 : orgMembers.size());	//组织人员
 					
+					map.put("orgInfoId", oiMap.get("orgInfoId"));
+					List<Map<String, Object>> orgChildrensAll = new ArrayList<>();
+					orgChildrensAll = this.queryThisOrgChildren(map);
+					oiMap.put("orgChildrensNum", orgChildrensAll.size() == 0 ? 0 : orgChildrensAll.size());	//子组织数量
+					
 					//查询高层信息
 					map.put("orgDutyParentId", -1);
 					List<Map<String, Object>> orgLevel1s = organizationRelationMapper.queryOrgRelationsNew(map);	//高层1
@@ -121,6 +128,19 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 					if(orgLevel1s != null && orgLevel1s.size() > 0) {
 						for (Map<String, Object> orgLevel : orgLevel1s) {
 							orgDutyId.add((Integer)orgLevel.get("orgDutyId"));
+							orgLevel.put("birthDate", 
+								DateUtil.formatDate(DateUtil.YYYY_MM_DD, orgLevel.get("birthDate") == null ||
+								orgLevel.get("birthDate") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD, orgLevel.get("birthDate").toString())));
+							
+							orgLevel.put("partyType", orgLevel.get("partyType") == null || orgLevel.get("partyType") == "" ? 
+								null : (int)orgLevel.get("partyType") == 1 ? "正式党员" : "预备党员");
+							
+							orgLevel.put("partyStatus", orgLevel.get("partyStatus") == null || orgLevel.get("partyStatus") == "" ? 
+								null : (int)orgLevel.get("partyStatus") == 1 ? "正常" : "停止党籍");
+							
+							Date birthDay = DateUtil.toDate(DateUtil.YYYY_MM_DD, orgLevel.get("birthDate") == null || orgLevel.get("birthDate") == "" ?
+									null : orgLevel.get("birthDate").toString());
+							orgLevel.put("age", PartyUserInfoServiceImpl.getPartyUserAge(birthDay));
 						}
 					}
 					
@@ -140,27 +160,77 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	}
 	
 	/**
-     * 查询当前组织下的所有子组织
+	 * 查询当前组织下的所有子组织
+	 * @param organizationInformation
+	 * @return
+	 */
+	private List<Map<String, Object>> queryThisOrgChildren(Map<String, Object> organizationInformation) {
+		List<Map<String, Object>> orgChildrensAll = new ArrayList<>();	//保存子组织信息
+		List<Map<String, Object>> organizationInformations = new ArrayList<>();	//保存条件
+		organizationInformations.add(organizationInformation);
+		if (organizationInformation == null) return null;
+		this.queryOrgInfoChildrens(organizationInformations, orgChildrensAll);
+		return orgChildrensAll;
+	}
+	
+	/**
+	 * 递归查询子组织
+	 * @param organizationInformations
+	 * @param orgChildrensAll
+	 */
+	private void queryOrgInfoChildrens(List<Map<String, Object>> organizationInformations, 
+			List<Map<String, Object>> orgChildrensAll) {
+		if (organizationInformations != null && organizationInformations.size() > 0) {
+			for (Map<String, Object> organizationInformation2 : organizationInformations) {
+				Map<String, Object> organizationInformation = new HashMap<>();
+				organizationInformation.put("orgInfoParentId", organizationInformation2.get("orgInfoId"));
+				organizationInformation.remove("orgInfoId");
+				List<Map<String, Object>> ois = organizationInformationMapper.queryOrgInfosForMap(organizationInformation);
+				if (ois != null && ois.size() > 0) {
+					orgChildrensAll.addAll(ois);	//用来保存总数
+				}
+				
+				queryOrgInfoChildrens(ois, orgChildrensAll);
+			}
+		}
+	}
+	
+	private int _index = 0;
+	
+	/**
+     * 查询当前组织下的所有子组织（分页查询）
      * @param organizationInformation
      * @return
      * @throws Exception
      */
     public R queryThisOrgChildren(Map<String, Object> organizationInformation, int pageNum, int pageSize) throws Exception {
     	List<Map<String, Object>> orgChildrens = new ArrayList<>();
+    	List<Map<String, Object>> orgChildrensAll = new ArrayList<>();
     	List<Map<String, Object>> organizationInformations = new ArrayList<>();
     	organizationInformations.add(organizationInformation);
     	if (organizationInformation == null) return R.error().setMsg("查询子组织出错");
-    	this.queryOrgInfosOfMengBiForMap(organizationInformations, orgChildrens, pageNum, pageSize, 0);
-    	return R.ok().setData(orgChildrens).setMsg("查询成功");
+    	_index = 0;
+    	flag = true;
+    	this.queryOrgInfosOfMengBiForMap(organizationInformations, orgChildrens, orgChildrensAll, pageNum, pageSize);
+    	
+    	PageInfo<Map<String, Object>> orgRelationsForPageInfo = new PageInfo<>(orgChildrens);
+    	orgRelationsForPageInfo.setList(orgChildrens);
+    	orgRelationsForPageInfo.setPageNum(pageNum);
+    	orgRelationsForPageInfo.setPageSize(pageSize);
+    	orgRelationsForPageInfo.setTotal(orgChildrensAll.size());
+    	return R.ok().setData(orgRelationsForPageInfo).setMsg("查询成功");
     }
+    
+    private boolean flag = true;
     
     /**
      * 查询子组织
      * @param organizationInformations	//查询到的当前子组织
      * @param organizationInformationsOfMengBi	//所有子组织
+     * @param index 已经读取的个数
      */
     private void queryOrgInfosOfMengBiForMap(List<Map<String, Object>> organizationInformations, 
-    		List<Map<String, Object>> orgChildrens, int pageNum, int pageSize, int index) {
+    		List<Map<String, Object>> orgChildrens, List<Map<String, Object>> orgChildrensAll, int pageNum, int pageSize) {
     	if (organizationInformations != null && organizationInformations.size() > 0) {
 			for (Map<String, Object> organizationInformation2 : organizationInformations) {
 				Map<String, Object> organizationInformation = new HashMap<>();
@@ -177,26 +247,23 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 						oiMap.put("orgMemberNum", orgMembers.size());
 					}
 					
-					int start = pageNum * (pageSize - 1);
-					int end = start + pageNum - 1;
-					if (index < start && index + ois.size() > start) {
+					if (flag) {
+						int start = (pageNum - 1) * pageSize;
+						int end = start + pageSize - 1;
 						for (Map<String, Object> map : ois) {
-							
+							if (_index > end) {
+								flag = false;
+								break;
+							} else if (_index >= start) {
+								orgChildrens.add(map);
+							}
+							_index++;
 						}
-					} else if(index >= start && index + ois.size() < end) {
-						orgChildrens.addAll(ois);
-						index += ois.size();
-					} else if (index >= start && index + ois.size() > end) {
-						for (Map<String, Object> map : ois) {
-							
-						}
-					} else {
-						ois = null;
 					}
-					
+					orgChildrensAll.addAll(ois);	//用来保存总数
 				}
 				
-				queryOrgInfosOfMengBiForMap(ois, orgChildrens, pageNum, pageSize, index);
+				queryOrgInfosOfMengBiForMap(ois, orgChildrens, orgChildrensAll, pageNum, pageSize);
 			}
 		}
     }
@@ -238,6 +305,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
      */
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
+    @Deprecated
     public R queryOrgInfosToTree(OrganizationInformation organizationInformation) throws Exception {
     	if (organizationInformation == null) organizationInformation = new OrganizationInformation();
     	organizationInformation.setOrgInfoParentId(-1);	//查询最上级组织
@@ -264,6 +332,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	 * @param organizationInfo
 	 */
 	@Transactional(rollbackFor=java.lang.Exception.class)
+	@Deprecated
 	private void toTreeNode(List<TreeNode<OrganizationInformation>> orgInfoTrees) {
 		if (orgInfoTrees != null) {
 			for (TreeNode<OrganizationInformation> treeNode : orgInfoTrees) {

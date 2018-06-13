@@ -175,7 +175,7 @@
                     })
                 },
                 discard(row) {
-                    this.url = '/publish/process/offline/' + row.id;
+                    this.url = '/publish/process/discard/' + row.id;
                     get(this.url, reps => {
                         init();
                         if(reps.status) {

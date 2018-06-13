@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * SolaProgramServiceImpl class
@@ -21,17 +22,16 @@ import java.util.*;
  * @date 2018/5/17
  */
 @Service
-@PropertySource("classpath:sola.properties")
 public class SolaProgramServiceImpl implements SolaProgramService {
     private final Log log = LogFactory.getLog(SolaProgramServiceImpl.class);
 
-    @Value("${user.loginname}")
+    @Value("${sola.user.loginname}")
     private String loginname;
-    @Value("${user.password}")
+    @Value("${sola.user.password}")
     private String password;
-    @Value("${url}")
+    @Value("${sola.url}")
     private String url;
-    @Value("${user.org}")
+    @Value("${sola.user.org}")
     private int org;
     @Override
     public int addProgram(Map<String, Object> program) {
@@ -48,9 +48,11 @@ public class SolaProgramServiceImpl implements SolaProgramService {
 
     @Override
     public void publish(Map<String, Object> content) {
+        List<Map<String, Object>> terminals = (List<Map<String, Object>>) content.get("terminals");
+        String ts = terminals.stream().map(terminal -> terminal.get("terminal_id").toString()).collect(Collectors.joining(","));
         Map<String, Object> program = new HashMap<String, Object>();
         program.put("OrgId", org);
-        program.put("screenIds","2");
+        program.put("screenIds", ts);
         program.put("programIds", content.get("snapshot"));
         program.put("activeStartTime", content.get("start_date"));//开始日期
         program.put("activeEndTime", content.get("end_date"));//结束日期

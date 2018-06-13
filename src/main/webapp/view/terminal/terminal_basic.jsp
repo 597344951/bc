@@ -11,11 +11,11 @@
 			<base href="<%=basePath%>">
 			<meta charset="UTF-8">
 			<!-- 引入样式 -->
-			
-<%@include file="/include/head.jsp"%>
-<%@include file="/include/echarts.jsp"%>
-<%@include file="/include/vcharts.jsp"%>
-</head>
+		
+			<%@include file="/include/head.jsp"%>
+				<%@include file="/include/echarts.jsp"%>
+					<%@include file="/include/vcharts.jsp"%>
+		</head>
 
 <body>
 	<div id="app" class="height_full">
@@ -24,7 +24,7 @@
 				<div class="toolbar">
 					<div class="grid-content bg-purple">
 						<el-button type="primary" size="small" icon="el-icon-plus" title="增加" @click="addT()">增加</el-button>
-						<%-- <el-button type="primary" size="small" icon="el-icon-search" @click="search()">搜索</el-button> --%>
+						<!-- <el-button type="primary" size="small" icon="el-icon-search" @click="search()">搜索</el-button> -->
 							<el-popover placement="right" width="400" trigger="click">
 								<el-form ref="form" label-width="80px" size="mini">
 									<el-form-item label="终端名称">
@@ -39,9 +39,9 @@
 									<el-form-item label="屏幕方向">
 										<el-input v-model="tbi.data.rev" style="width: 80%;"></el-input>
 									</el-form-item>
-									<el-form-item size="large">
-										<el-button type="primary">确定</el-button>
-										<el-button @click="search()">更多</el-button>
+									<el-form-item >
+										  <el-button type="primary" @click="fastSearch()" size="mini">确定</el-button>
+										 <el-button @click="search()" size="mini">更多</el-button>
 									</el-form-item>
 								</el-form>
 								<el-button type="primary" size="small" icon="el-icon-search" slot="reference" class="margin-0-10">搜索</el-button>
@@ -81,8 +81,8 @@
 						<el-table-column prop="oid" label="oid" width="200"></el-table-column>
 						<el-table-column label="操作" fixed="right" width="200">
 							<template slot-scope="scope">
-								<el-button SIZI="MINI" type="info" @click="updateTbi(scope.row)">编辑</el-button>
-								<el-button SIZI="MINI" type="danger " @click="handleDelete(scope.row.oid) ">删除</el-button>
+								<el-button size="mini" type="info" @click="updateTbi(scope.row)">编辑</el-button>
+								<el-button size="mini" type="danger " @click="handleDelete(scope.row.oid) ">删除</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -94,65 +94,65 @@
 				</el-pagination>
 			</el-footer>
 		</el-container>
-		<el-dialog title="" :visible.sync="tbi.visible" width="60%">
-			<el-form :model="tbi" label-width="100px" ref>
+		<el-dialog title="" :visible.sync="tbi.visible" width="40%">
+			<el-form :model="tbi" label-width="100px" size="mini">
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
 						<el-form-item label="终端名称">
-							<el-input v-model="tbi.data.name" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.name" ></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="所属地区">
-							<el-input v-model="tbi.data.loc" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.loc" ></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
 						<el-form-item label="在线状态">
-							<el-input v-model="tbi.data.online" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.online" ></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="屏幕方向">
-							<el-input v-model="tbi.data.rev" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.rev" ></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
 						<el-form-item label="屏幕尺寸">
-							<el-input v-model="tbi.data.size" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.size" ></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="屏幕分辨率">
-							<el-input v-model="tbi.data.ratio" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.ratio"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
 						<el-form-item label="联系电话">
-							<el-input v-model="tbi.data.tel" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.tel"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="终端地址">
-							<el-input v-model="tbi.data.addr" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.addr"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
 						<el-form-item label="标识ID">
-							<el-input v-model="tbi.data.id" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.id"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="标识code">
-							<el-input v-model="tbi.data.code" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.code"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -160,12 +160,12 @@
 					<el-col :span="10">
 
 						<el-form-item label="类别id">
-							<el-input v-model="tbi.data.typeId" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.typeId"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="注册时间">
-							<el-input v-model="tbi.data.resTime" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.resTime"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -173,12 +173,12 @@
 					<el-col :span="10">
 
 						<el-form-item label="最新时间">
-							<el-input v-model="tbi.data.lastTime" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.lastTime"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="ip地址">
-							<el-input v-model="tbi.data.ip" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.ip"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -186,12 +186,12 @@
 					<el-col :span="10">
 
 						<el-form-item label="mac地址">
-							<el-input v-model="tbi.data.mac" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.mac" ></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item label="系统">
-							<el-input v-model="tbi.data.sys" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.sys"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -199,13 +199,13 @@
 					<el-col :span="10">
 
 						<el-form-item label="系统版本">
-							<el-input v-model="tbi.data.ver" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.ver"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 
 						<el-form-item label="终端类型">
-							<el-input v-model="tbi.data.typ" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.typ"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -213,20 +213,20 @@
 					<el-col :span="10">
 
 						<el-form-item label="GIS信息">
-							<el-input v-model="tbi.data.gis" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.gis"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 
 						<el-form-item label="保修信息">
-							<el-input v-model="tbi.data.warranty" style="width: 80%;"></el-input>
+							<el-input v-model="tbi.data.warranty"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="refresh()">取 消</el-button>
-				<el-button type="primary" @click="updateorinsert(tbi)">确 定</el-button>
+				<el-button @click="refresh()" size="mini">取 消</el-button>
+				<el-button type="primary" @click="updateorinsert(tbi)" size="mini">确 定</el-button>
 			</div>
 		</el-dialog>
 		<el-dialog title="统计" :visible.sync="statistics" width="80%">
@@ -284,7 +284,6 @@
 				<el-button @click="refresh()">返回</el-button>
 			</el-footer>
 		</el-dialog>
-
 	</div>
 </body>
 <script type="module">
@@ -454,7 +453,9 @@
 		},
 		methods: {
 			pagerCurrentChange(pageNum, pageSize) { /* 页码改变时 */
-				this.queryTerminals(pageNum, pageSize);
+			var tbi=this.tbi;
+				// this.queryTerminals(pageNum, pageSize);
+				this.querySearch(tbi,pageNum, pageSize);
 			},
 			initPager() {
 				this.pager.pageNum = 1;
@@ -567,6 +568,12 @@
 				tbi.visible = true;
 				tbi.update = false;
 				tbi.search = true;
+			},
+			fastSearch() {
+				var tbi = this.tbi;
+				tbi.update = false;
+				tbi.search = true;
+				this.updateorinsert(tbi);
 			},
 			updateorinsert(tbi) {
 				var a = this;

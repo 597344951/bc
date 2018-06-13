@@ -11,7 +11,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>用户管理图标总览</title>
-<%@include file="/include/head.jsp"%>
+<%@include file="/include/head_notbootstrap.jsp"%>
 <%@include file="/include/echarts.jsp"%>
 <style type="text/css">
 	#myChart{

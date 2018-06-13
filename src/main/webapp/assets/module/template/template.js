@@ -107,12 +107,7 @@ var appInstince = new Vue({
     checkTreeSelect: function () {
       var node = this.$refs.tree.getCurrentNode();
       if (!node) {
-        this.$notify({
-          title: "请先选择类型节点位置",
-          message: "请先选择要操作的位置",
-          type: "warning",
-          offset: 50
-        });
+        $message("请先选择要操作的位置","warning",this)
         return null;
       }
       return node;
@@ -177,12 +172,7 @@ var appInstince = new Vue({
       if (!node) return;
       var data = node.data;
       if (node.children && node.children.length > 0) {
-        toast(
-          "删除失败!",
-          "本节点包含子节点,如需删除请先删除子节点。",
-          "warning",
-          this
-        );
+        $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
       this.$confirm("此操作将永久该分类数据, 是否继续?", "提示", {
@@ -233,7 +223,7 @@ var appInstince = new Vue({
       var ins = this;
       var tpId = tp.tpId;
       if (!tpId) {
-        toast("删除失败", "请选择要删除的模板!", "warning", ins);
+        $message("请选择要删除的模板!", "warning", ins);
         return;
       }
       var url = "tp/template/" + tpId;
@@ -254,7 +244,7 @@ var appInstince = new Vue({
         tp.data.tpTypeId = ids[ids.length - 1];
         tp.data.content = _editor.getContent();
         if (!_editor.hasContents()) {
-          toast("校验失败", "请输入模板内容!", "warning", ins);
+          $message("请输入模板内容!", "warning", ins);
           return;
         }
         console.log(tp.data);

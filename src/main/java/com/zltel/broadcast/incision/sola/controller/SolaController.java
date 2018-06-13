@@ -1,5 +1,6 @@
 package com.zltel.broadcast.incision.sola.controller;
 
+import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.incision.sola.utils.DESUtil;
 import com.zltel.broadcast.incision.sola.utils.JsonUtils;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,19 +28,18 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping(value = "/sola")
-@PropertySource("classpath:sola.properties")
 public class SolaController {
-    @Value("${user.loginname}")
+    @Value("${sola.user.loginname}")
     private String loginname;
-    @Value("${user.password}")
+    @Value("${sola.user.password}")
     private String password;
-    @Value("${url.edit}")
+    @Value("${sola.url.edit}")
     private String editUrl;
-    @Value("${url.view}")
+    @Value("${sola.url.view}")
     private String viewUrl;
-    @Value("${url.intermediate}")
+    @Value("${sola.url.intermediate}")
     private String intermediateUrl;
-    @Value("${user.org}")
+    @Value("${sola.user.org}")
     private int org;
 
     @Autowired
@@ -54,10 +55,18 @@ public class SolaController {
         return next(id, viewUrl);
     }
 
-        @GetMapping(value = "/terminals")
+    @GetMapping(value = "/terminals")
     @ResponseBody
     public Object terminals() {
-        return solaProgramService.queryTerminal();
+        R r = new R();
+        List<Map<String, Object>> terminals = solaProgramService.queryTerminal();
+        if(terminals != null) {
+            r.setStatus(true);
+            r.setData(terminals);
+        } else {
+            r.setStatus(false);
+        }
+        return r;
     }
 
     private String next(int id, String url) throws UnsupportedEncodingException {
