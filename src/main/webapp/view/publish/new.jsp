@@ -38,6 +38,9 @@
 			margin: 5px;
 			font-size: 13px;
 		}
+		.template-preview {
+			width: 100%
+		}
 	</style>
 </head>
 <body>
@@ -234,12 +237,14 @@
 									<i class="el-icon-tickets"></i>
 									<span>{{item.label}}</span>
 								</template>
-								<el-menu-item v-for="t in item.children" :index="'' + t.tpId" @click="templateSelect(t.content)">{{t.title}}</el-menu-item>
+								<el-menu-item v-for="t in item.children" :index="'' + t.tpId" @click="templateSelect(t)">{{t.title}}</el-menu-item>
 							</el-submenu>
 						</el-submenu>
 					</el-menu>
 				</el-col>
-				<el-col :span="14"></el-col>
+				<el-col :span="14">
+					<image v-if="selectedTemplatePreview" :src="selectedTemplatePreview" class="template-preview"/>
+				</el-col>
 			</el-row>
 
 			<div slot="footer" class="dialog-footer">
@@ -290,6 +295,7 @@
                 commitCheckMsgVisible: true,
                 templates:[],
 				selectedTemplate: 0,
+				selectedTemplatePreview: '',
 				type: 4,
 				title: '',
 				startDate: '',
@@ -407,8 +413,9 @@
                 getTemplates(index, indexPath) {
 			        console.log(index, indexPath);
 				},
-                templateSelect(content) {
-			        this.selectedTemplate = content;
+                templateSelect(template) {
+			        this.selectedTemplate = template.content;
+					this.selectedTemplatePreview = template.previewPicture
 				},
 				writeTemplate() {
                     this.templateDialogVisible = false;

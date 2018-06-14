@@ -62,10 +62,10 @@
     <%--添加计划弹窗--%>
     <el-dialog title="新建报告" :visible.sync="addLectureDialogVisible" :modal="false">
         <el-form :model="newLecture" label-position="left" label-width="120px">
-            <el-form-item label="计划描述">
+            <el-form-item label="描述">
                 <el-input v-model="newLecture.desc" placeholder="报告描述"></el-input>
             </el-form-item>
-            <el-form-item label="计划类型">
+            <el-form-item label="类型">
                 <el-select v-model="newLecture.type" placeholder="报告类型">
                     <el-option label="工作计划" value="workPlan"></el-option>
                     <el-option label="工作总结" value="workSummary"></el-option>
@@ -75,6 +75,7 @@
                 <el-select v-model="newLecture.category" placeholder="工作计划类型" v-if="newLecture.type == 'workPlan'">
                     <el-option label="周度计划" value="week"></el-option>
                     <el-option label="月度计划" value="month"></el-option>
+                    <el-option label="季度计划" value="season"></el-option>
                     <el-option label="年度计划" value="year"></el-option>
                 </el-select>
                 <el-input v-model="newLecture.category" placeholder="工作内容" v-if="newLecture.type == 'workSummary'" style="width: 250px"></el-input>
@@ -82,12 +83,13 @@
             </el-form-item>
             <el-form-item label="内容模板">
                 <el-select v-model="newLecture.template" placeholder="内容模板">
+                    <el-option label="不使用模板" value="0"></el-option>
                     <el-option label="模板一" value="1"></el-option>
                     <el-option label="模板二" value="2"></el-option>
                     <el-option label="模板三" value="3"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="计划内容">
+            <el-form-item label="内容">
                 <div id="planContent"></div>
             </el-form-item>
         </el-form>

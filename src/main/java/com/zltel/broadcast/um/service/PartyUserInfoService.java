@@ -56,6 +56,16 @@ public interface PartyUserInfoService {
     public R insertPartyUserInfo(HttpServletRequest request, Map<String, Object> partyUser) throws Exception;
     
     /**
+     * 修改党员证件照
+     * @param request
+     * @param file
+     * @param partyUserId
+     * @return
+     * @throws Exception
+     */
+    public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, Map<String, Object> partyUser) throws Exception;
+    
+    /**
      * 修改党员信息
      * @param request
      * @param partyUser

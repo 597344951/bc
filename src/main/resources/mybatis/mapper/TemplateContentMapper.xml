@@ -8,12 +8,13 @@
 		<result column="uid" jdbcType="INTEGER" property="uid" />
 		<result column="title" jdbcType="VARCHAR" property="title" />
 		<result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="preview_picture" jdbcType="VARCHAR" property="previewPicture" />
 	</resultMap>
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.template.bean.TemplateContent">
 		<result column="content" jdbcType="LONGVARCHAR" property="content" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		tp_id, tp_type_id, orgid, uid, title, createtime
+		tp_id, tp_type_id, orgid, uid, title, createtime,preview_picture
 	</sql>
 	<sql id="Blob_Column_List">
 		content
@@ -32,11 +33,10 @@
 	</delete>
 	<insert id="insert" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		insert into template_content (tp_id, tp_type_id, orgid,
-		uid, title, createtime,
-		content)
+		uid, title, createtime, content,preview_picture)
 		values (#{tpId,jdbcType=INTEGER}, #{tpTypeId,jdbcType=INTEGER}, #{orgid,jdbcType=INTEGER},
 		#{uid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
-		#{content,jdbcType=LONGVARCHAR})
+		#{content,jdbcType=LONGVARCHAR},#{previewPicture,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		insert into template_content
@@ -62,6 +62,9 @@
 			<if test="content != null">
 				content,
 			</if>
+			<if test="previewPicture != null">
+				preview_picture
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="tpId != null">
@@ -84,6 +87,9 @@
 			</if>
 			<if test="content != null">
 				#{content,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="previewPicture != null">
+				#{previewPicture,jdbcType=VARCHAR}
 			</if>
 		</trim>
 	</insert>
@@ -108,6 +114,9 @@
 			<if test="content != null">
 				content = #{content,jdbcType=LONGVARCHAR},
 			</if>
+			<if test="previewPicture != null">
+				preview_picture = #{previewPicture,jdbcType=VARCHAR}
+			</if>
 		</set>
 		where tp_id = #{tpId,jdbcType=INTEGER}
 	</update>
@@ -118,7 +127,8 @@
 		uid = #{uid,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
 		createtime = #{createtime,jdbcType=TIMESTAMP},
-		content = #{content,jdbcType=LONGVARCHAR}
+		content = #{content,jdbcType=LONGVARCHAR},
+		preview_picture = #{previewPicture,jdbcType=VARCHAR}
 		where tp_id = #{tpId,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
@@ -127,7 +137,8 @@
 		orgid = #{orgid,jdbcType=INTEGER},
 		uid = #{uid,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
-		createtime = #{createtime,jdbcType=TIMESTAMP}
+		createtime = #{createtime,jdbcType=TIMESTAMP},
+		preview_picture = #{previewPicture,jdbcType=VARCHAR}
 		where tp_id = #{tpId,jdbcType=INTEGER}
 	</update>
 	<sql id="QUERY_WHERE">

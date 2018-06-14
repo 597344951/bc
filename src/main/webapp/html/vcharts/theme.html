@@ -34,49 +34,56 @@
 <body>
     <div id="app" style="padding:5px;">
         <h1>图表主题</h1>
-        <el-row>
-            <el-col :span="24" style="margin-bottom:5px;">
-                更改主题:
-                <el-button-group>
-                    <template v-for="tn in themeNames">
-                        <el-button icon="el-icon-edit" @click="chartConfig.themeName=tn">{{tn}}</el-button>
-                    </template>
-                </el-button-group>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <ve-line :theme-name="chartConfig.themeName" :title="chartData.title" :data="chartData" :toolbox="chartConfig.toolbox"></ve-line>
-            </el-col>
-            <el-col :span="12">
-                <ve-line :theme-name="chartConfig.themeName" :title="line_area_Data.title" :data="line_area_Data" :settings="line_area_Data.chartSettings"
-                    :toolbox="chartConfig.toolbox"></ve-line>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <ve-histogram :theme-name="chartConfig.themeName" :title="histogramData.title" :data="histogramData" :toolbox="chartData.toolbox"></ve-histogram>
-            </el-col>
-            <el-col :span="12">
-                <ve-histogram :theme-name="chartConfig.themeName" :title="hd2.title" :data="hd2" :settings="hd2.chartSettings" :toolbox="chartConfig.toolbox"></ve-histogram>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <ve-pie :theme-name="chartConfig.themeName" :title="pie_chart1.title" :data="pie_chart1" :toolbox="chartConfig.toolbox"></ve-pie>
-            </el-col>
-            <el-col :span="12">
-                <ve-pie :theme-name="chartConfig.themeName" :title="pie_chart2.title" :data="pie_chart2" :settings="pie_chart2.chartSettings" :toolbox="chartConfig.toolbox"></ve-pie>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <ve-pie :theme-name="chartConfig.themeName" :title="pie_chart3.title" :data="pie_chart3" :settings="pie_chart3.chartSettings" :toolbox="chartConfig.toolbox"></ve-pie>
-            </el-col>
-            <el-col :span="12">
-                <ve-ring :theme-name="chartConfig.themeName" :title="ring_chart.title" :data="ring_chart" :toolbox="chartConfig.toolbox"></ve-ring>
-            </el-col>
-        </el-row>
+        <div id="chartContainer" style="overflow-x: hidden;">
+            <el-row>
+                <el-col :span="24" style="margin-bottom:5px;">
+                    更改主题:
+                    <el-button-group>
+                        <template v-for="tn in themeNames">
+                            <el-button icon="el-icon-edit" @click="chartConfig.themeName=tn">{{tn}}</el-button>
+                        </template>
+                    </el-button-group>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <ve-line :theme-name="chartConfig.themeName" :title="chartData.title" :data="chartData" :toolbox="chartConfig.toolbox" :legend="chartConfig.legend"></ve-line>
+                </el-col>
+                <el-col :span="12">
+                    <ve-line :theme-name="chartConfig.themeName" :title="line_area_Data.title" :data="line_area_Data" :settings="line_area_Data.chartSettings"
+                        :toolbox="chartConfig.toolbox" :legend="chartConfig.legend"></ve-line>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <ve-histogram :theme-name="chartConfig.themeName" :title="histogramData.title" :data="histogramData" :toolbox="chartConfig.toolbox"
+                        :legend="chartConfig.legend"></ve-histogram>
+                </el-col>
+                <el-col :span="12">
+                    <ve-histogram :theme-name="chartConfig.themeName" :title="hd2.title" :data="hd2" :settings="hd2.chartSettings" :toolbox="chartConfig.toolbox"
+                        :legend="chartConfig.legend"></ve-histogram>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <ve-pie :theme-name="chartConfig.themeName" :title="pie_chart1.title" :data="pie_chart1" :toolbox="chartConfig.toolbox" :legend="chartConfig.legend"></ve-pie>
+                </el-col>
+                <el-col :span="12">
+                    <ve-pie :theme-name="chartConfig.themeName" :title="pie_chart2.title" :data="pie_chart2" :settings="pie_chart2.chartSettings"
+                        :toolbox="chartConfig.toolbox" :legend="chartConfig.legend"></ve-pie>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <ve-pie :theme-name="chartConfig.themeName" :title="pie_chart3.title" :data="pie_chart3" :settings="pie_chart3.chartSettings"
+                        :toolbox="chartConfig.toolbox" :legend="chartConfig.legend"></ve-pie>
+                </el-col>
+                <el-col :span="12">
+                    <ve-ring :theme-name="chartConfig.themeName" :title="ring_chart.title" :data="ring_chart" :toolbox="chartConfig.toolbox"
+                        :legend="chartConfig.legend"></ve-ring>
+                </el-col>
+            </el-row>
+        </div>
     </div>
 
 </body>

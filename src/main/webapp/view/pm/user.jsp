@@ -15,7 +15,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	<script type="text/javascript" src="/json/address-pca.json"></script>
 	<style type="text/css">
 	body {
-		margin: 20px;
+		
 	}
 	#partyUser_manager_pagesdididi {
 		text-align: center;
@@ -39,40 +39,60 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	<div id="app">
 		<el-container>
 			<el-header>
-				<el-row :gutter="20">
-					<el-col :span="3"><el-button size="mini" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">添加党员信息</el-button></el-col>
-					<el-col :span="3">
-					  	<shiro:hasPermission name="party:user:insert">  
-					  		<el-popover 
-								placement="bottom" 
-							  	width="400" 
-							  	trigger="click" >
-							  	<el-button size="mini" type="primary" slot="reference">批量导入党员</el-button>
-							  	<div>
-									<el-button type="text" @click="partyUser_manager_exportPartyUserInfosExcelExample">下载Excel模板</el-button>，按照模板填写
-							  		<el-upload
-							  			action="" 
-							 	   		:http-request="partyUser_manager_importPartyUserInfosExcel"
-							 	   		:multiple="true" 
-							 	   		:before-upload="partyUser_manager_validatePartyUserInfosExcel" >
-								      	<el-button type="text">点击上传excel文件</el-button>
-									</el-upload>
-							  	</div>
-							</el-popover>
-					  	</shiro:hasPermission>
-				  	</el-col>
+				<el-row class="toolbar" :gutter="20">
+					<el-button size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">
+						<i class="el-icon-circle-plus-outline"></i>
+						添加党员
+					</el-button>
+				  	<shiro:hasPermission name="party:user:insert">  
+				  		<el-popover class="margin-0-10"
+							placement="bottom" 
+						  	width="400" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-upload"></i>
+						  		导入党员
+						  	</el-button>
+						  	<div>
+								<el-button type="text" @click="partyUser_manager_exportPartyUserInfosExcelExample">下载Excel模板</el-button>，按照模板填写
+						  		<el-upload
+						  			action="" 
+						 	   		:http-request="partyUser_manager_importPartyUserInfosExcel"
+						 	   		:multiple="true" 
+						 	   		:before-upload="partyUser_manager_validatePartyUserInfosExcel" >
+							      	<el-button type="text">点击上传excel文件</el-button>
+								</el-upload>
+						  	</div>
+						</el-popover>
+				  	</shiro:hasPermission>
+			  		<el-popover 
+						placement="bottom" 
+					  	width="200" 
+					  	trigger="hover" >
+					  	<el-button size="small" type="primary" slot="reference">
+					  		<i class="el-icon-search"></i>
+					  		搜索党员
+					  	</el-button>
+					  	<div>
+							<el-row>
+								<el-input size="small" clearable
+									@change="partyUser_manager_queryPartyUserInfos()"
+									v-model="partyUser_manager_queryPartyUserInfosCondition.name" placeholder="请输入用户名"></el-input>
+							</el-row>
+					  	</div>
+					</el-popover>
 				</el-row>
 			</el-header>
 			<el-main>
 				<template>
-					<el-table size="mini" :data="partyUser_manager_pager.list" style="width: 100%">
+					<el-table size="small" :data="partyUser_manager_pager.list" style="width: 100%">
 						<el-table-column id="partyUserDetailed" type="expand">
 							<template slot-scope="scope">
 								<el-row :gutter="20">
 									<el-col :span="0.1"><span class="partyUserTitleFont">个人照片：</span></el-col>
 									<el-col :span="4"><img :src="getPath(scope.row)" width="100" /></el-col>
-									<el-col :span="4"><el-button @click="partyUser_manager_exportPartyUserInfo(scope.row)" type="primary">导出此党员信息</el-button></el-col>
-									<el-col :span="4"><el-button @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="primary">信息修改</el-button></el-col>
+									<el-button size="small" @click="partyUser_manager_exportPartyUserInfo(scope.row)" type="primary">导出此党员信息</el-button>
+									<el-button size="small" @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="primary">信息修改</el-button>
 								</el-row>
 								<el-row :gutter="20">
 									<el-col :span="24">用户ID：{{scope.row.id}}</el-col>
@@ -193,7 +213,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 
 		<el-dialog @close="partyUser_manager_resetJoinOrgInfoForm" title="加入组织" :visible.sync="partyUser_manager_joinOrgInfoDialog" width="50%">
-			<el-form class="partyUserForm" size="mini" :model="partyUser_manager_joinOrgInfoForm" status-icon :rules="partyUser_manager_joinOrgInfoRules" 
+			<el-form class="partyUserForm" size="small" :model="partyUser_manager_joinOrgInfoForm" status-icon :rules="partyUser_manager_joinOrgInfoRules" 
 				ref="partyUser_manager_joinOrgInfoForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="24">
@@ -223,14 +243,18 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-button @click="partyUser_manager_joinOrgInfo()" type="primary" size="small">确认加入</el-button>
+				<el-row :gutter="20">
+					<el-col :span="24">
+						<el-button @click="partyUser_manager_joinOrgInfo()" type="primary" size="small">确认加入</el-button>
+					</el-col>
+				</el-row>
 			</el-form>
 		</el-dialog>
 
 
 
-		<el-dialog title="添加党员" :visible.sync="partyUser_manager_insertPartyUserDialog" width="95%">
-			<el-form class="partyUserForm" size="mini" :model="partyUser_manager_insertPartyUserForm" status-icon :rules="partyUser_manager_insertPartyUserRules" 
+		<el-dialog title="添加党员" :fullscreen="true" :visible.sync="partyUser_manager_insertPartyUserDialog">
+			<el-form class="partyUserForm" size="small" :model="partyUser_manager_insertPartyUserForm" status-icon :rules="partyUser_manager_insertPartyUserRules" 
 				ref="partyUser_manager_insertPartyUserForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="24">
@@ -644,8 +668,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 
 				<el-form-item>
-					<el-button type="primary" @click="partyUser_manager_insertPartyUser()">添加党员</el-button>
-					<el-button @click="partyUser_manager_resetInsertPartyUserForm()">重置</el-button>
+					<el-button size="small" type="primary" @click="partyUser_manager_insertPartyUser()">添加党员</el-button>
+					<el-button size="small" @click="partyUser_manager_resetInsertPartyUserForm()">重置信息</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
@@ -655,26 +679,39 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 
 
+		<el-dialog title="修改证件照" :visible.sync="partyUser_manager_updatePartyUserIdPhotoDialog" width="30%">
+			<el-upload 
+				action="" 
+				ref="updatePartyUserIdPhoto"
+				:before-upload="partyUser_manager_validatePartyUserIdPhoto"
+				:limit="1"
+				list-type="picture-card"
+				:auto-upload="false" >
+				<div slot="tip" class="el-upload__tip">只能上传小于500kb的图片文件（jpg、jpeg或png格式）</div>
+			</el-upload>
+			<el-button size="small" type="primary" @click="partyUser_manager_updatePartyUserIdPhoto">更改照片</el-button>
+		</el-dialog>
 
-
-		<el-dialog title="修改党员信息" :visible.sync="partyUser_manager_updatePartyUserDialog" width="95%">
-			<el-form class="partyUserForm" size="mini" :model="partyUser_manager_updatePartyUserForm" status-icon :rules="partyUser_manager_updatePartyUserRules" 
+		<el-dialog title="修改党员信息" :fullscreen="true" :visible.sync="partyUser_manager_updatePartyUserDialog">
+			<el-form class="partyUserForm" size="small" :model="partyUser_manager_updatePartyUserForm" status-icon :rules="partyUser_manager_updatePartyUserRules" 
 				ref="partyUser_manager_updatePartyUserForm" label-width="100px">
-				<el-row :gutter="20">
-					<el-col :span="24">
-						<el-form-item label="个人照片" prop="idPhoto">
-							<el-upload 
-								:disabled="true"
-								action="" 
-								:http-request="partyUser_manager_savePartyUserIdPhoto"
-								:before-upload="partyUser_manager_validatePartyUserIdPhoto"
-								:limit="1" 
-								:file-list="partyUser_manager_updatePartyUserForm.idPhotoImg"
-								list-type="picture-card" >
-								<div slot="tip" class="el-upload__tip">只能上传小于500kb的图片文件（jpg、jpeg或png格式）</div>
-							</el-upload>
-						</el-form-item>
-					</el-col>
+				<el-row>
+					<!-- <el-form-item label="个人照片" prop="idPhoto">
+						<el-upload 
+							:disabled="true"
+							action="" 
+							:http-request="partyUser_manager_savePartyUserIdPhoto"
+							:before-upload="partyUser_manager_validatePartyUserIdPhoto"
+							:limit="1" 
+							:file-list="partyUser_manager_updatePartyUserForm.idPhotoImg"
+							list-type="picture-card" >
+						</el-upload>
+					</el-form-item> -->
+					<el-form-item label="个人照片（点击以修改）">
+						<a href="javascript:void(0)" @click="partyUser_manager_openUpdatePartyUserIdPhoto">
+							<img :src="getPath(partyUser_manager_updatePartyUserForm)" width="100" />
+						</a>
+					</el-form-item>
 				</el-row>
 
 				<el-row :gutter="20">
@@ -1075,7 +1112,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 
 				<el-form-item>
-					<el-button type="primary" @click="partyUser_manager_updatePartyUser()">更新党员信息党员</el-button>
+					<el-button type="primary" @click="partyUser_manager_updatePartyUser()">更新信息</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
@@ -1111,11 +1148,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_insertPartyUserDialog: false,	/* 添加党员信息窗口 */
 			partyUser_manager_updatePartyUserDialog: false,	/*修改党员信息窗口*/
 			partyUser_manager_joinOrgInfoDialog: false,		/*加入组织信息窗口*/
+			partyUser_manager_updatePartyUserIdPhotoDialog: false,	/*修改党员证件照*/
 			partyUser_manager_pager: {	/*初始化分页信息*/
 				pageNum: 1,		/* 当前页 */
 				pageSize: 10,	/* 页面大小 */
 				total: 0,
 				list: []
+			},
+			partyUser_manager_queryPartyUserInfosCondition: {
+				name: null
 			},
 			partyUser_manager_address_pca: pca,	/* 省市区三级联动数据 */
 			partyUser_manager_address_prop: {	/* 地址prop */
@@ -1130,6 +1171,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				education: null
 			},
 			partyUser_manager_updatePartyUserForm: {	 /*修改党员信息绑定 */
+				id: null,
 				name: null,
 				sex: null,
 				nativePlace: null,
@@ -1428,7 +1470,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				var url = "/party/user/queryPartyUserInfos";
 				var t = {
 					pageNum: obj.partyUser_manager_pager.pageNum,
-					pageSize: obj.partyUser_manager_pager.pageSize
+					pageSize: obj.partyUser_manager_pager.pageSize,
+					name: obj.partyUser_manager_queryPartyUserInfosCondition.name
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
@@ -1587,12 +1630,41 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
                    contentType: false, //必须
                    success: function (data) {
                 	   if (data.code == 200) {
-                		   obj.partyUser_manager_uploadPartyUserIdPhotoTempFileName = data.data;
+                		   obj.partyUser_manager_uploadPartyUserIdPhotoTempFileName = data.data;	/*获取临时文件名，方便添加党员时读取图片*/
                 	   } else if (data.code == 500) {
                 		   toast('错误',"服务器出错，停止党员注册",'error');
                 	   }
                    },
                })
+			},
+			partyUser_manager_updatePartyUserIdPhoto() {	/*修改证件照*/
+				var obj = this;
+				var fileList = obj.$refs.updatePartyUserIdPhoto.uploadFiles;
+				if (fileList.length != 1) {
+					toast('错误',"请选择图片",'error');
+				} else if (fileList.length == 1) {
+					var formData = new FormData();
+					formData.append("file", fileList[0].raw);
+					formData.append("id", obj.partyUser_manager_updatePartyUserForm.id);
+					$.ajax({
+	                   url: "/party/user/updatePartyUserIdPhoto",
+	                   data: formData,
+	                   type: "Post",
+	                   dataType: "json",
+	                   cache: false,//上传文件无需缓存
+	                   processData: false,//用于对data参数进行序列化处理 这里必须false
+	                   contentType: false, //必须
+	                   success: function (data) {
+	                	   if (data.code == 200) {
+	                		   toast('成功',data.data,'success');	/*获取临时文件名，方便添加党员时读取图片*/
+	                		   obj.partyUser_manager_updatePartyUserIdPhotoDialog = false;
+	                		   obj.$refs.updatePartyUserIdPhoto.fileList = [];
+	                	   } else if (data.code == 500) {
+	                		   toast('错误',"服务器出错，停止证件照修改",'error');
+	                	   }
+	                   },
+	               })
+				}
 			},
 			partyUser_manager_resetInsertPartyUserForm() {	/*重置添加党员信息表单*/
 				var obj = this;
@@ -1871,6 +1943,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					}
 					
 				})
+			},
+			partyUser_manager_openUpdatePartyUserIdPhoto() {
+				var obj = this;
+				obj.partyUser_manager_updatePartyUserIdPhotoDialog = true;
 			}
 		}
 	});

@@ -348,5 +348,8 @@
 	  <if test="orgInfoId != null and orgInfoId != ''"> and 
 		  oi.org_info_id = #{orgInfoId}
 	  </if>
+	  <if test="name != null and name != ''"> and 
+		  bui.name like CONCAT('%',#{name},'%')
+	  </if>
   </select>
 </mapper>

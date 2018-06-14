@@ -1,0 +1,80 @@
+<div>
+    <h1>已发布活动信息</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>活动主题</th>
+                <th>发起人</th>
+                <th>开始时间</th>
+                <th>公示状态</th>
+                <th>策划方案</th>
+                <th>费用清单</th>
+                <th>宣传方案</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>7.1建党节主题活动</td>
+                <td>develop</td>
+                <td>2018.7.1</td>
+                <td>
+                    <el-popover placement="top-start" title="公示投票结果" width="250" trigger="hover">
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" status="success"></el-progress>
+                        <ul style="margin-top:12px;">
+                            <li>赞成: 100票</li>
+                            <li>反对: 0 票</li>
+                        </ul>
+                        <el-button slot="reference" type="success" size="mini">通过</el-button>
+                    </el-popover>
+                </td>
+                <td>
+                    <el-dropdown>
+                        <span class="el-dropdown-link">
+                            已提交
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item>查看方案</el-dropdown-item>
+                            <el-dropdown-item>修改方案</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </td>
+                <td>
+                    <el-dropdown>
+                        <span class="el-dropdown-link">
+                            已提交
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item>查看方案</el-dropdown-item>
+                            <el-dropdown-item>修改方案</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </td>
+                <td>
+                    <el-popover placement="top-start" title="投屏推广" width="250" trigger="hover">
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="80" status="success"></el-progress>
+                        <p></p>
+                        <p>投屏任务已创建</p>
+                        <p>当前状态: 审核中</p>
+                        <el-button slot="reference" type="text" size="small">投屏推广</el-button>
+                    </el-popover>
+                    <el-popover placement="top-start" title="微信推广" width="250" trigger="hover">
+                        <p>微信推广任务没有创建!</p>
+                        <p>你可以 <el-button type="text" size="small">创建</el-button></p>
+                        <el-button slot="reference" type="text" size="small">微信推广</el-button>
+                    </el-popover>
+
+                </td>
+                <td>
+                    <el-button-group>
+                        <el-button type="primary" icon="el-icon-edit" size="small">签到统计</el-button>
+                        <el-button type="primary" icon="el-icon-share" size="small">活动资源</el-button>
+                        <el-button type="primary" icon="el-icon-delete" size="small">活动评价</el-button>
+                    </el-button-group>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

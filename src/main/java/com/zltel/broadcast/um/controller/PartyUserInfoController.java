@@ -105,6 +105,24 @@ public class PartyUserInfoController extends BaseController  {
 	}
 	
 	/**
+	 * 修改证件照
+	 * @param partyUser 参数
+	 * @return
+	 */
+	@RequestMapping(value="/updatePartyUserIdPhoto", method=RequestMethod.POST)
+	@LogPoint("修改证件照")
+	@RequiresPermissions(value = {"party:user:update"})
+	@ApiOperation(value = "修改证件照")
+	public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, @RequestParam Map<String, Object> partyUser) {
+		try {
+			return partyUserInfoService.updatePartyUserIdPhoto(request, file, partyUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return R.error().setMsg("修改证件照出错");
+		}
+	}
+	
+	/**
 	 * 修改党员信息
 	 * @param partyUser 参数
 	 * @return

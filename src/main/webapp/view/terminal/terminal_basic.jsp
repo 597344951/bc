@@ -241,41 +241,41 @@
 					<el-row type="flex" justify="center" v-if="onesta">
 						<el-col :span="8">
 							<h2>屏幕分辨率统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="ratiochartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="ratiochartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="8">
 							<h2>屏幕方向统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="revchartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="revchartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 					</el-row>
 					<el-row type="flex" justify="center" v-if="twosta">
 						<el-col :span="8">
 							<h2>终端在线统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="onlinechartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="onlinechartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="8">
 							<h2>终端所属地区统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="locchartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="locchartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 					</el-row>
 					<el-row v-if="threesta" type="flex" justify="center">
 						<el-col :span="8">
 							<h2>终端类型统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="typchartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="typchartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="8">
 							<h2>终端保修信息统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="warrantychartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="warrantychartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 					</el-row>
 					<el-row v-if="foursta" type="flex" justify="center">
 						<el-col :span="8">
 							<h2>软件版本统计</h2>
-							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="verchartData" :settings="chartSettings"></ve-pie>
+							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="verchartData" :settings="chartSettings" :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="16">
 							<h2>全局统计</h2>
-							<ve-bar :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="totalData" :settings="chartSettings"></ve-bar>
+							<ve-bar :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="totalData" :settings="chartSettings" :legend="chartConfig.legend"></ve-bar>
 						</el-col>
 					</el-row>
 				</template>

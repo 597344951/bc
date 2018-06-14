@@ -65,7 +65,10 @@ let EventCalendar = {
                         //console.debug(_nd);
                         callback(_nd);
                         ins.fullscreenLoading = false;
-                    }) 
+                    }).catch((xhr)=>{
+                        ins.$message({ message: xhr.statusText, type: 'error' });
+                        ins.fullscreenLoading = false;
+                    }); 
                      
                 },
                 defaultDate: new Date(),

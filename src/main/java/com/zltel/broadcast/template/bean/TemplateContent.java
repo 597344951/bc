@@ -20,6 +20,8 @@ public class TemplateContent {
     @NotBlank(message="模板内容不能为空")
     private String content;
 
+    private String previewPicture;
+    
     public Integer getTpId() {
         return tpId;
     }
@@ -74,5 +76,13 @@ public class TemplateContent {
 
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
+    }
+
+    public String getPreviewPicture() {
+        return previewPicture;
+    }
+
+    public void setPreviewPicture(String previewPicture) {
+        this.previewPicture = previewPicture;
     }
 }

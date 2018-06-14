@@ -97,7 +97,6 @@ public class MaterialServiceImpl implements MaterialService {
                 material.put("user_id", user.getUserId());
                 material.put("org_id", user.getOrgId());
                 material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
-                material.put("upload_reason", content.get("title"));
                 material.put("relate_content_id", content.get("id"));
                 material.put("add_date", addDate);
                 material.put("update_date", addDate);

@@ -7,10 +7,13 @@ import CostPlan from '/components/calendar/cost-plan.main.js';
 import PlanSuggest from '/components/calendar/plan-suggest.main.js';
 
 import EventCalendar from '/components/calendar/event-calendar.main.js';
+import PubedPlanInfo from '/components/calendar/pubed-plan-info.main.js';
+
+import CommunityInfo from '/components/loadAnimation/community-info.main.js';
 
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
-export const comps = [MessageNotice, TitleH1, AddEvent, EventToolTip, CostPlan, PlanSuggest,EventCalendar];
+export const comps = [MessageNotice, TitleH1, AddEvent, EventToolTip, CostPlan, PlanSuggest,EventCalendar,PubedPlanInfo,CommunityInfo];
 comps.map((comp) => {
     if (checkModuleName(comp))
         installComponent(Vue, comp);
@@ -79,3 +82,33 @@ export function init_components() {
     });
     return components;
 }
+//异步路由
+export function init_routes(){
+    let routes = [ { path: '/fo-o', component: { template: '<div>foo</div>' } }];
+    comps.map((comp) => {
+        let { info } = comp;
+        let o = {
+            path:'/'+info.name,
+            component:(resolve, reject) => require_comp(resolve, reject, comp)
+        }
+        routes.push(o);
+    });
+    return routes;
+}
+//同步加载路由
+export function build_routes(router){
+    comps.map((comp) => {
+        let { info } = comp;
+        var p = new Promise((resolve,reject)=>{
+            require_comp(resolve, reject, comp)
+        });
+        p.then( r=>{
+            let routes =  {
+                path:'/'+info.name,
+                component:r
+            }
+            router.addRoutes([routes])
+        });
+    });
+}
+ 

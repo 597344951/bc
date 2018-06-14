@@ -566,16 +566,19 @@ public class PublishServiceImpl implements PublishService {
                 for (int i = 0; i < exUsers.size(); i++) {
                     exUser = exUsers.get(i);
                     exUserId = (int) exUser.get("user_id");
-                    if (exUserId == user.getUserId()) {
-                        if (i == 0) {
-                            // 第一个审核人
-                            operate.put("verify", true);
-                        } else {
-                            exUser = exUsers.get(i - 1);
-                            state = (int) exUser.get("state");
-                            if (Constant.VERIFY_PASS == state) {
-                                // 前一位审核人已经通过
+                    state = (int) exUser.get("state");
+                    if(Constant.VERIFY_NOT_START == state || Constant.VERIFY_ONCE == state) {
+                        if (exUserId == user.getUserId()) {
+                            if (i == 0) {
+                                // 第一个审核人
                                 operate.put("verify", true);
+                            } else {
+                                exUser = exUsers.get(i - 1);
+                                state = (int) exUser.get("state");
+                                if (Constant.VERIFY_PASS == state) {
+                                    // 前一位审核人已经通过
+                                    operate.put("verify", true);
+                                }
                             }
                         }
                     }

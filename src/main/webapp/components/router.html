@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=b3cjGm4GiaI1GzcYKjil0fyrP7qHL9eL"></script>
+
+    <link rel="import" href="/html/include/vb.html">
+    <link rel="import" href="/html/include/fc.html">
+    <link rel="import" href="/html/include/vc.html">
+
+    <title>组件 路由展示</title>
+    <style>
+        #component-display {
+            padding: 15px 30px;
+            background-color: #f5f7fa;
+        }
+        #app {
+            margin: 10px 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-menu class="el-menu-demo" mode="horizontal">
+            <template v-for="(r,index) in routes">
+                <el-menu-item :index="''+index">
+                    <router-link :to="r.path">{{r.path}}</router-link>
+                </el-menu-item>
+            </template>
+        </el-menu>
+
+        <div id="component-display">
+            <!-- 路由出口 -->
+            <!-- 路由匹配到的组件将渲染在这里 -->
+            <router-view></router-view>
+        </div>
+
+    </div>
+</body>
+
+<script type="module">
+    import {comps,build_routes,init_routes} from '/components/main.js';
+    let routes =  init_routes();
+    const router = new VueRouter({
+        routes:routes
+    })
+    Vue.use(VueRouter);
+    window.ins = new Vue({
+        el: '#app',
+        router:router,
+		data: {
+            routes:routes
+		},
+		methods: {
+		} 
+	});
+
+</script>
+
+</html>

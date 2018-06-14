@@ -14,12 +14,17 @@ let config = {
             dataView: {
                 readOnly: false
             },
-          /**  magicType: {
-                type: ['line', 'bar']
-            },
-            restore: {},**/
+            /**  magicType: {
+                  type: ['line', 'bar']
+              },
+              restore: {},**/
             saveAsImage: {}
         }
+    },
+    legend: {
+        x: 'center', // 'center' | 'left' | {number},
+        y: 'bottom', // 'center' | 'bottom' | {number}
+        test: ''
     }
 }
 export default config;

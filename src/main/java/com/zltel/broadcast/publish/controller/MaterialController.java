@@ -44,10 +44,10 @@ public class MaterialController extends BaseController {
     private String uploadTempDir;
     @Value("${material.file.dir}")
     private String uploadFileDir;
+    @Value("${material.local.dir}")
+    private String uploadLocalDir;
     @Autowired
     private MaterialService materialService;
-    @Autowired
-    private HttpServletRequest request;
 
     @PostMapping("/uploadImage")
     @ResponseBody
@@ -193,5 +193,39 @@ public class MaterialController extends BaseController {
         r.put("name", fileName);
         r.put("type", type);
         r.put("isFile", true);
+    }
+
+    @PostMapping("/commonUpload")
+    @ResponseBody
+    public R commonUpload(@RequestParam("file") MultipartFile file) {
+        R r = new R();
+        if(!file.isEmpty()) {
+            try {
+                String fileName = file.getOriginalFilename();
+                String relateDir = "/" + getSysUser().getUserId() + "/" + FileUtil.getYMD() + "/";
+                String saveDir = uploadLocalDir + relateDir;
+                FileUtil.createDir(saveDir);
+                String saveName = UUID.get() + FileUtil.getSuffix(fileName);
+                String savePath = saveDir + saveName;
+                file.transferTo(new File(savePath));
+                String url = relateDir + saveName;
+                r.put("url", "/material/commonDownload/" + url.replaceAll("/", "_"));
+            } catch (IOException e) {
+                e.printStackTrace();
+                r.setStatus(false);
+                r.put("msg", "Upload failed.");
+            }
+        }
+        return r;
+    }
+
+    @GetMapping("/commonDownload/{path}")
+    public void commonDownload(@PathVariable("path") String path, HttpServletResponse response) {
+        try {
+            writeFile(uploadLocalDir + path.replaceAll("_", "/"), response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 }

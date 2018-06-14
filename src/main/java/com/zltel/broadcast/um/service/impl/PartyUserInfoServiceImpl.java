@@ -306,6 +306,31 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     }
     
     /**
+     * 修改党员证件照
+     */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, Map<String, Object> partyUser) throws Exception {
+    	List<Map<String, Object>> puiMaps = partyUserInfoMapper.queryPartyUserInfos(partyUser);
+    	if (puiMaps != null && puiMaps.size() == 1) {
+    		String idPhotoPath = uploadIdPhotoPath + File.separator + puiMaps.get(0).get("idCard");	//上传照片文件夹路径
+    		String idPhotoName = file.getOriginalFilename();	//上传照片文件名
+    		FileUtil.writeFile(file.getInputStream(), idPhotoPath, idPhotoName);	//保存证件照
+    		BaseUserInfo bui = new BaseUserInfo();
+    		bui.setBaseUserId(Integer.parseInt(puiMaps.get(0).get("id").toString()));
+    		bui.setIdPhoto(idPhotoPath + File.separator + idPhotoName);
+    		int updateBaseUserInfoCount = baseUserInfoMapper.updateByPrimaryKeySelective(bui);
+    		if (updateBaseUserInfoCount != 1) {	//更新失败，抛异常回滚
+        		throw new Exception();
+        	}
+    		R.ok().setData("证件照更新成功");
+    	} else {
+    		throw new Exception();
+    	}
+    	return null;
+    }
+    
+    /**
      * 修改党员信息
      * @param request
      * @param partyUser

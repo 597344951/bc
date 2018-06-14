@@ -53,6 +53,9 @@ var appInstince = new Vue({
       label: "name",
       value: "id"
     },
+    tp_empty:{
+      previewPicture:''
+    },
     tp: {
       title: "文章模板编辑",
       visible: false,
@@ -60,7 +63,8 @@ var appInstince = new Vue({
       data: {
         title: "模板标题",
         content: "模板正文",
-        tpTypeIds: [1, 3]
+        tpTypeIds: [1, 3],
+        previewPicture:''
       }
     },
     tpt: {
@@ -107,7 +111,7 @@ var appInstince = new Vue({
     checkTreeSelect: function () {
       var node = this.$refs.tree.getCurrentNode();
       if (!node) {
-        $message("请先选择要操作的位置","warning",this)
+        $message("请先选择要操作的位置", "warning", this)
         return null;
       }
       return node;
@@ -205,7 +209,7 @@ var appInstince = new Vue({
       this.tp.visible = true;
       this.tp.update = false;
       this.tp.title = "新增模板";
-      this.tp.data = {};
+      this.tp.data = {previewPicture:''};
       _editor.setContent("");
     },
     // 修改模板
@@ -268,6 +272,21 @@ var appInstince = new Vue({
           });
         }
       });
+    },
+    handleAvatarSuccess(res, file) {
+      this.tp.data.previewPicture = res.url;//URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type.startsWith('image');
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
     }
   }
 });
@@ -275,7 +294,7 @@ var appInstince = new Vue({
 
 // 编辑器
 var _editor = UE.getEditor("templateText", {
-  serverUrl: "/ueditor/controller.jsp"
+  
 });
 
 function getTpTypeIds(data, tpt_data) {

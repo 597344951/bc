@@ -3,33 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- 引入样式 -->
-    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
-    
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
-    <!-- 先引入 Vue -->
-    <!--<script src="https://unpkg.com/vue/dist/vue.js"></script>-->
-    <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=b3cjGm4GiaI1GzcYKjil0fyrP7qHL9eL"></script>
 
-    <script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.js"></script>
-    <!-- -->
-    <link href="https://cdn.bootcss.com/fullcalendar/3.9.0/fullcalendar.css" rel="stylesheet" charset="utf-8">
-    <link href="https://cdn.bootcss.com/fullcalendar/3.9.0/fullcalendar.print.css" rel="stylesheet" media="print">
-    <script src="https://cdn.bootcss.com/fullcalendar/3.9.0/fullcalendar.js" charset="utf-8"></script>
-    <script src="https://cdn.bootcss.com/fullcalendar/3.9.0/gcal.js"></script>
-    <script src="https://cdn.bootcss.com/fullcalendar/3.9.0/locale/zh-cn.js" charset="utf-8"></script>
-    <link href="/view/calendar/calendar.css" rel="stylesheet">
-
-
-    <!-- 引入组件库 -->
-    <!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
-    <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
-    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-    <script src="/assets/js/require.local.js"></script>
-
+    <link rel="import" href="/html/include/vb.html">
+    <link rel="import" href="/html/include/fc.html">
+    <link rel="import" href="/html/include/vc.html">
     
     <title>已注册组件</title>
     <style>
@@ -37,7 +16,8 @@
             padding: 15px 30px;
             background-color: #f5f7fa;
         }
-        #app{
+
+        #app {
             margin: 0 30px;
         }
     </style>
@@ -45,12 +25,13 @@
 
 <body>
     <div id="app">
-        <el-menu class="menu-fixed" default-active="1" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" @select="handleSelect">
+        <el-menu class="menu-fixed" default-active="1" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b"
+            @select="handleSelect">
             <el-menu-item index="1">
-                                                已注册组件
+                已注册组件
             </el-menu-item>
             <el-menu-item index="2">
-                                                注册组件方法
+                注册组件方法
             </el-menu-item>
         </el-menu>
         <div id="content" v-show="showIdx == 1">
@@ -64,7 +45,7 @@
                         <th>作者</th>
                         <th>描述</th>
                         <th>组件模版地址</th>
-                        <th>显示</th>
+                        <th>查看</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,7 +55,9 @@
                         <td>{{c.info.descript}}</td>
                         <td>{{c.info.template_url}}</td>
                         <td>
-                            <button @click="disComp(c)">显示</button>
+                            <el-button type="text"   @click="disComp(c)">显示</el-button>
+                            <el-button type="text"><a :href="'router.html#/'+c.info.name" target="_blank">新页面显示</a> </el-button>
+                           
                         </td>
                     </tr>
                 </tbody>
@@ -208,7 +191,7 @@ var ins = new Vue({
 
 <script type="module">
     import {comps,init_components} from '/components/main.js'; 
-    var components = init_components();
+    var components = init_components(); 
     var ins = new Vue({
 		el: '#app',
 		data: {
@@ -222,11 +205,13 @@ var ins = new Vue({
 			},
 			handleSelect() {
 				let idx = arguments[0];
-				this.showIdx = idx;
+				this.showIdx
+					 = idx;
 			}
 		},
 		components: components
 	});
+
 </script>
 
 </html>

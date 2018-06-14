@@ -15,7 +15,7 @@
 <script type="text/javascript" src="/json/address-pca.json"></script>
 <style type="text/css">
 	body {
-		margin: 20px;
+		
 	}
 	.center {
 		margin-bottom: 20px;
@@ -49,74 +49,84 @@
 	<div id="app">
 		<el-container>
 			<el-header class="common">
-				<el-row>
-					<el-col :span="5">
-				  		<shiro:hasPermission name="org:info:insert">  
-					 	    <el-button size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="partyOrg_manager_openInsertOrgInfoDialog">添加组织信息</el-button>
-					  	</shiro:hasPermission>
-				  </el-col>
-				</el-row>
-				<el-row :gutter="20">
-					<el-col :span="4">
-						<el-select size="mini" clearable 
-								@change="partyOrg_manager_queryOrgInfosForOrgType"
-								v-model="queryCondition.partyOrg_manager_orgInfoType" filterable placeholder="请选择组织类型">
-							<el-option
-								v-for="item in partyOrg_manager_orgInfoTypes"
-							    :key="item.value"
-							    :label="item.orgTypeName"
-							    :value="item.orgTypeId">
-							</el-option>
-						</el-select>
-					</el-col>
-					<el-col :span="4">
-						<el-select size="mini" clearable 
-								@change="partyOrg_manager_queryOrgInfosForProvince"
-								@clear="resetCityAndArea"
-								v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvince" filterable placeholder="请选择组织所在省份">
-							<el-option
-								v-for="addressProvince in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvinces"
-								:key="addressProvince.orgInfoCommitteeProvince"
-								:label="addressProvince.orgInfoCommitteeProvince"
-								:value="addressProvince.orgInfoCommitteeProvince">
-							</el-option>
-						</el-select>
-					</el-col>
-					<el-col :span="4">
-						<el-select size="mini" clearable 
-								@change="partyOrg_manager_queryOrgInfosForCity"
-								@clear="resetArea"
-								v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCity" filterable placeholder="请选择组织所在城市">
-							<el-option
-								v-for="addressCity in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCitys"
-								:key="addressCity.orgInfoCommitteeCity"
-								:label="addressCity.orgInfoCommitteeCity"
-								:value="addressCity.orgInfoCommitteeCity">
-							</el-option>
-						</el-select>
-					</el-col>
-					<el-col :span="4">
-						<el-select size="mini" clearable 
-								@change="partyOrg_manager_queryOrgInfosForArea"
-								v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea" filterable placeholder="请选择组织所在区域">
-							<el-option
-								v-for="addressArea in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeAreas"
-								:key="addressArea.orgInfoCommitteeArea"
-								:label="addressArea.orgInfoCommitteeArea"
-								:value="addressArea.orgInfoCommitteeArea">
-							</el-option>
-						</el-select>
-					</el-col>
-					<el-col :span="4">
-						<el-input size="mini" clearable
-							@change="partyOrg_manager_queryOrgInfosForInfoName"
-							v-model="queryCondition.partyOrg_manager_orgInfoName" placeholder="请输入组织名"></el-input>
-					</el-col>
+				<el-row class="toolbar" :gutter="20">
+			  		<shiro:hasPermission name="org:info:insert">  
+				 	    <el-button size="small" type="primary" @click="partyOrg_manager_openInsertOrgInfoDialog">
+				 	    	<i class="el-icon-circle-plus-outline"></i>
+				 	    	添加组织
+				 	    </el-button>
+				  	</shiro:hasPermission>
+					<el-popover class="margin-0-10"
+						placement="bottom" 
+					  	width="200" 
+					  	trigger="hover" >
+					  	<el-button size="small" type="primary" slot="reference">
+					  		<i class="el-icon-search"></i>
+					  		搜索组织
+					  	</el-button>
+					  	<div>
+							<el-row>
+								<el-select size="small" clearable 
+										@change="partyOrg_manager_queryOrgInfosForOrgType"
+										v-model="queryCondition.partyOrg_manager_orgInfoType" filterable placeholder="请选择组织类型">
+									<el-option
+										v-for="item in partyOrg_manager_orgInfoTypes"
+									    :key="item.value"
+									    :label="item.orgTypeName"
+									    :value="item.orgTypeId">
+									</el-option>
+								</el-select>
+							</el-row>
+							<el-row>
+								<el-select size="small" clearable 
+										@change="partyOrg_manager_queryOrgInfosForProvince"
+										@clear="resetCityAndArea"
+										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvince" filterable placeholder="请选择组织所在省份">
+									<el-option
+										v-for="addressProvince in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvinces"
+										:key="addressProvince.orgInfoCommitteeProvince"
+										:label="addressProvince.orgInfoCommitteeProvince"
+										:value="addressProvince.orgInfoCommitteeProvince">
+									</el-option>
+								</el-select>
+							</el-row>
+							<el-row>
+								<el-select size="small" clearable 
+										@change="partyOrg_manager_queryOrgInfosForCity"
+										@clear="resetArea"
+										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCity" filterable placeholder="请选择组织所在城市">
+									<el-option
+										v-for="addressCity in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCitys"
+										:key="addressCity.orgInfoCommitteeCity"
+										:label="addressCity.orgInfoCommitteeCity"
+										:value="addressCity.orgInfoCommitteeCity">
+									</el-option>
+								</el-select>
+							</el-row>
+							<el-row>
+								<el-select size="small" clearable 
+										@change="partyOrg_manager_queryOrgInfosForArea"
+										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea" filterable placeholder="请选择组织所在区域">
+									<el-option
+										v-for="addressArea in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeAreas"
+										:key="addressArea.orgInfoCommitteeArea"
+										:label="addressArea.orgInfoCommitteeArea"
+										:value="addressArea.orgInfoCommitteeArea">
+									</el-option>
+								</el-select>
+							</el-row>
+							<el-row>
+								<el-input size="small" clearable
+									@change="partyOrg_manager_queryOrgInfosForInfoName"
+									v-model="queryCondition.partyOrg_manager_orgInfoName" placeholder="请输入组织名"></el-input>
+							</el-row>
+					  	</div>
+					</el-popover>
 				</el-row>
 			</el-header>
 			<el-main>
 				<template>
-					<el-table size="mini" :data="partyOrg_manager_orgInfoPages.list" style="width: 100%">
+					<el-table size="small" :data="partyOrg_manager_orgInfoPages.list" style="width: 100%">
 						<el-table-column type="expand">
 							<template slot-scope="scope">
 								<el-row :gutter="20" v-if="scope.row.orgLevel1s.length != 0">
@@ -228,7 +238,7 @@
 					<el-table style="text-align: center;" 
 							align="center"
 							:stripe="true"
-							class="common" border size="mini" :data="partyOrg_manager_ThisOrgInfos.childrens_pager.list" style="width: 100%">
+							class="common" border size="small" :data="partyOrg_manager_ThisOrgInfos.childrens_pager.list" style="width: 100%">
 						<el-table-column label="组织ID" prop="orgInfoId"></el-table-column>
 						<el-table-column label="组织类型" prop="orgTypeName"></el-table-column>
 						<el-table-column label="组织名" prop="orgInfoName"></el-table-column>
@@ -255,7 +265,7 @@
 					<el-table style="text-align: center;" 
 							align="center"
 							:stripe="true"
-							class="common" border size="mini" :data="partyOrg_manager_ThisOrgInfos.peoples_pager.list" style="width: 100%">
+							class="common" border size="small" :data="partyOrg_manager_ThisOrgInfos.peoples_pager.list" style="width: 100%">
 						<el-table-column label="姓名" prop="name"></el-table-column>
 						<el-table-column label="性别" prop="sex"></el-table-column>
 						<el-table-column label="民族" prop="nationName"></el-table-column>
@@ -282,7 +292,7 @@
 
 
 		<el-dialog @close="partyOrg_manager_resetinsertOrgInfoDutyForm()" class="common" @close="" title="增加职责" :visible.sync="partyOrg_manager_insertOrgDutyDialog" width="70%">
-			<el-form label-width="120px" size="mini" :model="partyOrg_manager_insertOrgInfoDutyForm" status-icon :rules="partyOrg_manager_insertOrgInfoDutyRules" 
+			<el-form label-width="120px" size="small" :model="partyOrg_manager_insertOrgInfoDutyForm" status-icon :rules="partyOrg_manager_insertOrgInfoDutyRules" 
 				ref="partyOrg_manager_insertOrgInfoDutyForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="12">
@@ -317,7 +327,7 @@
 				</el-row>
 
 				<el-form-item>
-				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfoDuty">添加组织职责</el-button>
+				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfoDuty">添加职责</el-button>
 				    <el-button @click="partyOrg_manager_resetinsertOrgInfoDutyForm">重置</el-button>
 				</el-form-item>
 			</el-form>
@@ -325,7 +335,7 @@
 
 
 		<el-dialog class="common" @close="" title="修改组织信息" :visible.sync="partyOrg_manager_updateOrgInfoDialog" width="70%">
-			<el-form label-width="120px" size="mini" :model="partyOrg_manager_updateOrgInfoForm" status-icon :rules="partyOrg_manager_updateOrgInfoRules" 
+			<el-form label-width="120px" size="small" :model="partyOrg_manager_updateOrgInfoForm" status-icon :rules="partyOrg_manager_updateOrgInfoRules" 
 				ref="partyOrg_manager_updateOrgInfoForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="12">
@@ -350,7 +360,7 @@
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="8">
-						<el-form-item label="组织管委会地址" prop="orgInfoCommittee_pca">
+						<el-form-item label="组织办公地址" prop="orgInfoCommittee_pca">
 						    <el-cascader clearable clearable :props="partyOrg_manager_address_prop"
 								v-model="partyOrg_manager_updateOrgInfoForm.orgInfoCommittee_pca"
 								separator="/"
@@ -396,7 +406,7 @@
 		</el-dialog>
 
 		<el-dialog class="common" @close="" title="添加组织信息" :visible.sync="partyOrg_manager_insertOrgInfoDialog" width="70%">
-			<el-form label-width="120px" size="mini" :model="partyOrg_manager_insertOrgInfoForm" status-icon :rules="partyOrg_manager_insertOrgInfoRules" 
+			<el-form label-width="120px" size="small" :model="partyOrg_manager_insertOrgInfoForm" status-icon :rules="partyOrg_manager_insertOrgInfoRules" 
 				ref="partyOrg_manager_insertOrgInfoForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="12">
@@ -421,7 +431,7 @@
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="8">
-						<el-form-item label="组织管委会地址" prop="orgInfoCommittee_pca">
+						<el-form-item label="组织办公地址" prop="orgInfoCommittee_pca">
 						    <el-cascader clearable clearable :props="partyOrg_manager_address_prop"
 								v-model="partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca"
 								separator="/"
@@ -473,7 +483,7 @@
 					</el-col>
 				</el-row>
 				<el-form-item>
-				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfo">添加组织信息</el-button>
+				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfo">添加组织</el-button>
 				    <el-button @click="partyOrg_manager_resetinsertOrgInfoForm">重置</el-button>
 				</el-form-item>
 			</el-form>

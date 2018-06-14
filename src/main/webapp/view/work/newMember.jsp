@@ -13,6 +13,10 @@
         .el-table thead, .el-table__row {
             font-size: 14px;
         }
+
+        .el-upload-list__item {
+			height: 25px;
+		}
     </style>
 </head>
 <body>
@@ -45,11 +49,15 @@
                         <el-form-item>
                             <el-button type="primary" @click="search" icon="el-icon-search">查询</el-button>
                         </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="newMember.show = true" icon="el-icon-plus">添加</el-button>
+                        </el-form-item>
                     </el-form>
                 </el-col>
             </el-row>
             <el-table :data="members.list" border style="width: 100%">
                 <el-table-column prop="name" label="姓名"></el-table-column>
+                <el-table-column prop="birthday" label="出生日期" width="120"></el-table-column>
                 <el-table-column prop="graduationDate" label="毕业时间" width="120"></el-table-column>
                 <el-table-column prop="youthDate" label="入团时间" width="120"></el-table-column>
                 <el-table-column prop="applyDate" label="申请入党时间"></el-table-column>
@@ -194,6 +202,41 @@
             <el-button size="mini" type="primary" @click="detail.show = false">确 定</el-button>
         </span>
     </el-dialog>
+    <%-- 添加入党申请人 --%>
+    <el-dialog title="添加入党申请人" :visible.sync="newMember.show" width="550px">
+        <el-form :model="newMember" label-width="150" size="mini">
+            <el-form-item label="姓名">
+                <el-input v-model="newMember.name"></el-input>
+            </el-form-item>
+            <el-form-item label="出生日期">
+                <el-date-picker v-model="newMember.birthday" type="date" value-format="yyyy-MM-dd" placeholder="出生日期"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="毕业时间">
+                <el-date-picker v-model="newMember.graduationDate" type="date" value-format="yyyy-MM-dd" placeholder="毕业时间"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="入团时间">
+                <el-date-picker v-model="newMember.youthDate" type="date" value-format="yyyy-MM-dd" placeholder="入团时间"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="申请加入组织">
+                <el-input v-model="newMember.org"></el-input>
+            </el-form-item>
+            <el-form-item label="入党申请书">
+                <el-upload
+                    drag
+                    :limit="1"
+                    action="/material/commonUpload"
+                    multiple>
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                </el-upload>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button size="mini" @click="newMember.show = false">取 消</el-button>
+            <el-button size="mini" type="primary" @click="addNewMember">添 加</el-button>
+        </span>
+    </el-dialog>
+    
 
 </div>
 <script type="text/javascript">
@@ -208,6 +251,7 @@
                 pageNum: 1,
                 list: [{
                     name: '加特林',
+                    birthday: '2000-01-01',
                     graduationDate: '2015-07-01',
                     youthDate: '2009-07-01',
                     applyDate: '2018-07-01 10:00:00',
@@ -362,6 +406,9 @@
             },
             detail: {
                 show: false
+            },
+            newMember: {
+                show: false
             }
         },
         methods: {
@@ -445,6 +492,21 @@
                         break
                     }
                 }
+            },
+            addNewMember() {
+                this.members.list.push({
+                    name: this.newMember.name,
+                    birthday: this.newMember.birthday,
+                    graduationDate: this.newMember.graduationDate,
+                    youthDate: this.newMember.youthDate,
+                    applyDate: new Date().toLocaleString(),
+                    memberStep: 1,
+                    memberStepLabel: '优秀分子 -> 积极分子',
+                    subMemberStep: 1,
+                    subMemberStepLabel: '提交入党申请书',
+                    remark: ''
+                })
+                this.newMember.show = false
             }
         }
     })
