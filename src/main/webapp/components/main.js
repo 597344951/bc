@@ -84,7 +84,7 @@ export function init_components() {
 }
 //异步路由
 export function init_routes(){
-    let routes = [ { path: '/fo-o', component: { template: '<div>foo</div>' } }];
+    let routes = [];
     comps.map((comp) => {
         let { info } = comp;
         let o = {
