@@ -16,11 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
 import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.logger.Level;
 import com.zltel.broadcast.common.logger.LogBean;
-import com.zltel.broadcast.common.logger.LogFactory;
 import com.zltel.broadcast.common.logger.LogQueue;
 import com.zltel.broadcast.common.util.HttpContextUtils;
 import com.zltel.broadcast.common.util.IPUtils;
@@ -41,7 +39,7 @@ public class LogPointAspect {
 
     @Pointcut("@annotation(com.zltel.broadcast.common.annotation.LogPoint)")
     public void logPointCut() {
-
+        logout.debug("execute method");
     }
 
     @Around("logPointCut()")
@@ -78,9 +76,8 @@ public class LogPointAspect {
 
         // 请求的参数
         Object[] args = joinPoint.getArgs();
-        try {
-            logBean.setParams(JSON.toJSONString(args));
-        } catch (Exception e) {}
+        logBean.setParams(JSON.toJSONString(args));
+
 
         // 获取request
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();

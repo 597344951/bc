@@ -27,12 +27,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.util.StringUtil;
+import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
@@ -42,6 +45,7 @@ import com.zltel.broadcast.um.bean.EducationLevel;
 import com.zltel.broadcast.um.bean.FirstLineType;
 import com.zltel.broadcast.um.bean.JoinPartyBranchType;
 import com.zltel.broadcast.um.bean.NationType;
+import com.zltel.broadcast.um.bean.OrganizationRelation;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
 import com.zltel.broadcast.um.bean.WorkNatureType;
 import com.zltel.broadcast.um.dao.AcademicDegreeLevelMapper;
@@ -50,6 +54,7 @@ import com.zltel.broadcast.um.dao.EducationLevelMapper;
 import com.zltel.broadcast.um.dao.FirstLineTypeMapper;
 import com.zltel.broadcast.um.dao.JoinPartyBranchTypeMapper;
 import com.zltel.broadcast.um.dao.NationTypeMapper;
+import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
 import com.zltel.broadcast.um.dao.WorkNatureTypeMapper;
 import com.zltel.broadcast.um.service.ExcelForPartyUserInfoService;
@@ -59,6 +64,9 @@ import com.zltel.broadcast.um.util.RegexUtil;
 
 @Service
 public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implements ExcelForPartyUserInfoService {
+    
+    private static final Logger logout = LoggerFactory.getLogger(ExcelForPartyUserInfoServiceImpl.class);
+
 	@Autowired
 	private PartyUserInfoMapper partyUserInfoMapper;
 	@Autowired
@@ -76,6 +84,8 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	private FirstLineTypeMapper firstLineTypeMapper;
 	@Autowired
 	private JoinPartyBranchTypeMapper joinPartyBranchTypeMapper;
+	@Autowired
+	private OrganizationRelationMapper organizationRelationMapper;
 	
 	static StringBuffer validataErrorMsg = new StringBuffer(); // 保存错误信息
 
@@ -100,7 +110,8 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 		Sheet hs = wb.getSheetAt(0);	//得到第一页
 		Map<Integer, BaseUserInfo> baseUserInfoMaps = new HashMap<>();
 		Map<Integer, PartyUserInfo> partyUserInfoMaps = new HashMap<>();
-		boolean thisValidateSuccess = validateImportPartyUserInfosExcel(hs, baseUserInfoMaps, partyUserInfoMaps);	//本次验证是否通过
+		Map<Integer, OrganizationRelation> orgRelationMaps = new HashMap<>();
+		boolean thisValidateSuccess = validateImportPartyUserInfosExcel(hs, baseUserInfoMaps, partyUserInfoMaps, orgRelationMaps);	//本次验证是否通过
 		if(!thisValidateSuccess) {
 			return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt");
 		}
@@ -120,6 +131,14 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				if (partyUserInfoCount != 1) {
 					throw new Exception();
 				}
+				OrganizationRelation orgR = orgRelationMaps.get(num);
+				if (orgR != null) {
+					orgR.setOrgRltUserId(bui.getBaseUserId());
+					int orgRelationCount = organizationRelationMapper.insertSelective(orgR);
+					if (orgRelationCount != 1) {
+						throw new Exception();
+					}
+				}
 			}
 		} else {
 			return R.error().setMsg("没有要导入的用户信息");
@@ -135,7 +154,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	 * @return
 	 */
 	private boolean validateImportPartyUserInfosExcel(Sheet hs, Map<Integer, BaseUserInfo> baseUserInfoMaps, 
-			Map<Integer, PartyUserInfo> partyUserInfoMaps) throws Exception {
+			Map<Integer, PartyUserInfo> partyUserInfoMaps, Map<Integer, OrganizationRelation> orgRelationMaps) throws Exception {
 		boolean thisValidateSuccess = true;
 		for (int i = 3; ; i++) {	//从第4行开始读取
 			Row row = hs.getRow(i);
@@ -144,6 +163,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			}
 			BaseUserInfo baseUserInfo = new BaseUserInfo();
 			PartyUserInfo partyUserInfo = new PartyUserInfo();
+			OrganizationRelation orgRelation = new OrganizationRelation();
 			
 			//姓名
 			if (row.getCell(0) != null && StringUtil.isNotEmpty(row.getCell(0).getStringCellValue())) {
@@ -325,7 +345,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				adl.setName(row.getCell(13).getStringCellValue());
 				List<AcademicDegreeLevel> adls = academicDegreeLevelMapper.queryAcademicDegreeLevels(adl);
 				if(adls != null && adls.size() == 1) {
-					baseUserInfo.setEducation(adls.get(0).getAdDAid());
+					baseUserInfo.setAcademicDegree(adls.get(0).getAdDAid());
 				} else {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行学位填写错误。\r\n");
@@ -341,6 +361,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 					baseUserInfo.setHomeAddressCity(homeAddress[1]);
 					baseUserInfo.setHomeAddressArea(homeAddress[2]);
 					baseUserInfo.setHomeAddressDetail(homeAddress[3]);
+					baseUserInfo.setNativePlace(homeAddress[0] + "-" + homeAddress[1]);
 				} else {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行家庭地址填写错误。\r\n");
@@ -458,7 +479,13 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			}
 			//参加工作时长
 			if (row.getCell(27) != null) {
-				partyUserInfo.setAppointmentTimeLength((int)row.getCell(27).getNumericCellValue());
+				try {
+					partyUserInfo.setAppointmentTimeLength(Integer.parseInt(row.getCell(27).getStringCellValue()));
+				} catch (Exception e) {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行请填写正确的工作时长。\r\n");
+					logout.error(e.getMessage(),e);
+				}
 			} else {
 				partyUserInfo.setAppointmentTimeLength(null);
 			}
@@ -599,9 +626,37 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				partyUserInfo.setIntroduce(row.getCell(38).getStringCellValue());
 			}
 			
+			//组织编号
+			if (row.getCell(39) != null && row.getCell(40) != null) {
+				try {
+					orgRelation.setOrgRltInfoId(Integer.parseInt(row.getCell(39).getStringCellValue()));
+					orgRelation.setOrgRltDutyId(Integer.parseInt(row.getCell(40).getStringCellValue()));
+				} catch (Exception e) {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行请填写正确的组织编号和职责编号。\r\n");
+					logout.error(e.getMessage(),e);
+				}
+			} else {
+				if (row.getCell(39) == null && row.getCell(40) != null) {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行请填写所在组织编号。\r\n");
+				} else if (row.getCell(39) != null && row.getCell(40) == null) {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行请填写所在组织职责。\r\n");
+				}
+			}
+			
+			//组织职责编号
+			if (row.getCell(40) != null) {
+				
+			}
+			
 			baseUserInfo.setIsParty(1);
 			baseUserInfoMaps.put(i, baseUserInfo);
 			partyUserInfoMaps.put(i, partyUserInfo);
+			if (orgRelation.getOrgRltDutyId() != null && orgRelation.getOrgRltInfoId() != null) {
+				orgRelationMaps.put(i, orgRelation);
+			}
 			
 		}
 		
@@ -621,9 +676,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 		partyUserMap.put("id", partyUserInfo.getPartyUserId());
 		Map<String, Object> partyUserInfoMaps = partyUserInfoMapper.queryPartyUserInfos(partyUserMap).get(0);
 		
-		Workbook wb = null;
-		wb = this.createWorkboot(ExcelForPartyUserInfoServiceImpl.OFFICE_EXCEL_2010, 
-				this.getClass().getResourceAsStream("/exportPartyUserInfoExcel.xlsx"));
+		String fn = "/exportPartyUserInfoExcel.xlsx";
+        Workbook wb   = this.createWorkboot(ExcelForPartyUserInfoServiceImpl.OFFICE_EXCEL_2010, 
+				this.getClass().getResourceAsStream(fn));
+		if(wb == null)throw new RRException("找不到文件:"+fn);
 		Sheet hs = wb.getSheetAt(0);	//得到第一页
 		Row row1 = hs.getRow(0);
     	row1.getCell(0).setCellValue("党员信息-"+partyUserInfoMaps.get("name"));	//标题，模板有内容，用getCell

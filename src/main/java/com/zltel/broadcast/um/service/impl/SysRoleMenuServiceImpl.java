@@ -135,9 +135,9 @@ public class SysRoleMenuServiceImpl extends BaseDaoImpl<SysRoleMenu> implements 
 				if(menuId == -1) {	//传入根节点（全部权限）：-1，表示赋予全部权限
 					List<SysMenu> sysMenus = sysMenuMapper.queryForList();
 					if (sysMenus != null && sysMenus.size() > 0) {
-						menuIds.removeAll(menuIds);
+						menuIds.clear();
 						for (SysMenu sysMenu : sysMenus) {
-							menuIds.add(Integer.parseInt(String.valueOf(sysMenu.getMenuId())));
+							menuIds.add(sysMenu.getMenuId().intValue());
 						}
 					}
 					break;

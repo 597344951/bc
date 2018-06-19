@@ -1,6 +1,7 @@
 package com.zltel.common.dao;
 
 import com.github.pagehelper.PageInfo;
+import com.zltel.BroadcastApplicationTests;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +15,7 @@ import java.util.*;
 /**
  * Created by Touss on 2018/5/2.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class SimpleDaoTest {
+public class SimpleDaoTest extends BroadcastApplicationTests  {
     @Autowired
     private SimpleDao simpleDao;
     @Before
@@ -25,7 +24,7 @@ public class SimpleDaoTest {
 
     @Test
     public void get() throws Exception {
-        System.out.println(simpleDao.get("log", new HashMap<String, Object>()));
+        //System.out.println(simpleDao.get("log", new HashMap<String, Object>()));
     }
 
     @Test

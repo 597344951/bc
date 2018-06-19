@@ -12,14 +12,16 @@ import org.apache.commons.logging.Log;
 import com.zltel.broadcast.common.dao.SimpleDao;
 
 /**
- * 日志持久化Servlet
- * LogPersistenceServlet class
+ * 日志持久化Servlet LogPersistenceServlet class
  *
  * @author Touss
  * @date 2018/5/4
  */
 public class LogPersistenceServlet extends HttpServlet {
-    private Log log = org.apache.commons.logging.LogFactory.getLog(LogPersistenceServlet.class);
+
+    private static final long SLEEP_TIME = 5 * 1000;
+
+    private static final Log log = org.apache.commons.logging.LogFactory.getLog(LogPersistenceServlet.class);
 
     private SimpleDao simpleDao;
 
@@ -29,20 +31,17 @@ public class LogPersistenceServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        Thread persistenceThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LogBean log = null;
-                while(true) {
-                    log = LogQueue.pop();
-                    if(log != null) {
-                        simpleDao.add("log", log.toMap());
-                    } else {
-                        try {
-                            Thread.sleep(5 * 1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+        Thread persistenceThread = new Thread(() -> {
+            LogBean lb = null;
+            while (true) {
+                lb = LogQueue.pop();
+                if (lb != null) {
+                    simpleDao.add("log", lb.toMap());
+                } else {
+                    try {
+                        Thread.sleep(SLEEP_TIME);
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage());
                     }
                 }
             }

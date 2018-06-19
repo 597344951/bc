@@ -1,6 +1,6 @@
 package com.zltel.broadcast.um.bean;
 
-public class SysMenu implements Cloneable{
+public class SysMenu {
     private Long menuId;
 
     private Long parentId;
@@ -17,15 +17,7 @@ public class SysMenu implements Cloneable{
 
     private Integer orderNum;
 
-    /** 
-     * 
-     * @see java.lang.Object#clone() 
-     */  
-    @Override
-    public SysMenu clone() throws CloneNotSupportedException {
-         
-        return (SysMenu) super.clone();
-    }
+
 
     public Long getMenuId() {
         return menuId;

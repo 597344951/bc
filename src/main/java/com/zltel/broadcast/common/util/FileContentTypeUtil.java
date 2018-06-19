@@ -65,7 +65,6 @@ public class FileContentTypeUtil {
         map.put(".dxf", "application/x-dxf");
         map.put(".emf", "application/x-emf");
         map.put(".ent", "text/xml");
-        map.put(".eps", "application/x-ps");
         map.put(".etd", "application/x-ebx");
         map.put(".fax", "image/fax");
         map.put(".fif", "application/fractals");
@@ -95,7 +94,6 @@ public class FileContentTypeUtil {
         map.put(".m2v", "video/x-mpeg");
         map.put(".m4e", "video/mpeg4");
         map.put(".man", "application/x-troff-man");
-        map.put(".mdb", "application/msaccess");
         map.put(".mfp", "application/x-shockwave-flash");
         map.put(".mhtml", "message/rfc822");
         map.put(".mid", "audio/mid");
@@ -120,19 +118,15 @@ public class FileContentTypeUtil {
         map.put(".p7r", "application/x-pkcs7-certreqresp");
         map.put(".pc5", "application/x-pc5");
         map.put(".pcl", "application/x-pcl");
-        map.put(".pdf", "application/pdf");
         map.put(".pdx", "application/vnd.adobe.pdx");
         map.put(".pgl", "application/x-pgl");
         map.put(".pko", "application/vnd.ms-pki.pko");
         map.put(".plg", "text/html");
         map.put(".plt", "application/x-plt");
-        map.put(".png", "application/x-png");
         map.put(".ppa", "application/vnd.ms-powerpoint");
         map.put(".pps", "application/vnd.ms-powerpoint");
-        map.put(".ppt", "application/x-ppt");
         map.put(".prf", "application/pics-rules");
         map.put(".prt", "application/x-prt");
-        map.put(".ps", "application/postscript");
         map.put(".pwz", "application/vnd.ms-powerpoint");
         map.put(".ra", "audio/vnd.rn-realaudio");
         map.put(".ras", "application/x-ras");
@@ -147,7 +141,6 @@ public class FileContentTypeUtil {
         map.put(".rmx", "application/vnd.rn-realsystem-rmx");
         map.put(".rp", "image/vnd.rn-realpix");
         map.put(".rsml", "application/vnd.rn-rsml");
-        map.put(".rtf", "application/msword");
         map.put(".rv", "video/vnd.rn-realvideo");
         map.put(".sat", "application/x-sat");
         map.put(".sdw", "application/x-sdw");
@@ -162,7 +155,6 @@ public class FileContentTypeUtil {
         map.put(".sty", "application/x-sty");
         map.put(".swf", "application/x-shockwave-flash");
         map.put(".tg4", "application/x-tg4");
-        map.put(".tif", "image/tiff");
         map.put(".tiff", "image/tiff");
         map.put(".top", "drawing/x-top");
         map.put(".tsd", "text/xml");
@@ -170,8 +162,6 @@ public class FileContentTypeUtil {
         map.put(".vcf", "text/x-vcard");
         map.put(".vdx", "application/vnd.visio");
         map.put(".vpg", "application/x-vpeg005");
-        map.put(".vsd", "application/x-vsd");
-        map.put(".vst", "application/vnd.visio");
         map.put(".vsw", "application/vnd.visio");
         map.put(".vtx", "application/vnd.visio");
         map.put(".wav", "audio/wav");
@@ -193,7 +183,6 @@ public class FileContentTypeUtil {
         map.put(".xdp", "application/vnd.adobe.xdp");
         map.put(".xfd", "application/vnd.adobe.xfd");
         map.put(".xhtml", "text/html");
-        map.put(".xls", "application/x-xls");
         map.put(".xml", "text/xml");
         map.put(".xq", "text/xml");
         map.put(".xquery", "text/xml");
@@ -231,7 +220,6 @@ public class FileContentTypeUtil {
         map.put(".dll", "application/x-msdownload");
         map.put(".dot", "application/msword");
         map.put(".dtd", "text/xml");
-        map.put(".dwf", "application/x-dwf");
         map.put(".dxb", "application/x-dxb");
         map.put(".edn", "application/vnd.adobe.edn");
         map.put(".eml", "message/rfc822");
@@ -250,13 +238,11 @@ public class FileContentTypeUtil {
         map.put(".htm", "text/html");
         map.put(".htt", "text/webviewhtml");
         map.put(".icb", "application/x-icb");
-        map.put(".ico", "application/x-ico");
         map.put(".ig4", "application/x-g4");
         map.put(".iii", "application/x-iphone");
         map.put(".ins", "application/x-internet-signup");
         map.put(".IVF", "video/x-ivf");
         map.put(".jfif", "image/jpeg");
-        map.put(".jpe", "application/x-jpe");
         map.put(".jpg", "image/jpeg");
         map.put(".js", "application/x-javascript");
         map.put(".la1", "audio/x-liquid-file");
@@ -334,7 +320,6 @@ public class FileContentTypeUtil {
         map.put(".svg", "text/xml");
         map.put(".tdf", "application/x-tdf");
         map.put(".tga", "application/x-tga");
-        map.put(".tif", "application/x-tif");
         map.put(".tld", "text/xml");
         map.put(".torrent", "application/x-bittorrent");
         map.put(".txt", "text/plain");

@@ -223,7 +223,7 @@ public class OrganizationInfoServiceImpl extends BaseDaoImpl<OrganizationInfo> i
 			Map<String, Object> orMap = new HashMap<String, Object>();
 			orMap.put("orgRltInfoId", organizationInfo.getOrgInfoId());
 			List<OrganizationRelation> ors = (List<OrganizationRelation>)organizationRelationService.queryOrgRelationsNotPage(orMap).get("data");
-			if (ors != null && (ors == null ? false : ors.size() != 0)) {	//此节点有成员，禁止删除
+			if (ors != null && !ors.isEmpty()) {	//此节点有成员，禁止删除
 				return R.error().setMsg("此组织包含有成员，不能删除，请删除成员后在删除此节点。包含成员的组织ID:" + organizationInfo.getOrgInfoId());
 			}
 			List<OrganizationInfo> organizationInfos = new ArrayList<OrganizationInfo>();	//所删除节点

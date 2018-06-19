@@ -20,8 +20,8 @@ public class DruidConfiguration {
     public ServletRegistrationBean DruidStatViewServlet() {
         ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new StatViewServlet(),"/druid/*");
         //登录查看信息的账号密码.
-        servletRegistrationBean.addInitParameter("loginUsername","admin");
-        servletRegistrationBean.addInitParameter("loginPassword","123456");
+        //servletRegistrationBean.addInitParameter("loginUsername","admin");
+        //servletRegistrationBean.addInitParameter("loginPassword","123456");
         //是否能够重置数据.
         servletRegistrationBean.addInitParameter("resetEnable","false");
         return servletRegistrationBean;
@@ -33,7 +33,7 @@ public class DruidConfiguration {
         //添加过滤规则.
         filterRegistrationBean.addUrlPatterns("/*");
         //添加过滤例外.
-        filterRegistrationBean.addInitParameter("exclusions","*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
+        filterRegistrationBean.addInitParameter("exclusions","*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/swagger-ui.html#/*");
         return filterRegistrationBean;
     }
 }

@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,7 +135,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	Map<String, Object> partyIdMap = new HashMap<String, Object>();
     	partyIdMap.put("id", partyId);
     	List<Map<String, Object>> partyUserInfos = partyUserInfoMapper.queryPartyUserInfos(partyIdMap);
-    	if (partyUserInfos != null && partyUserInfos.size() > 0) {
+    	if (partyUserInfos != null && !partyUserInfos.isEmpty()) {
     		response.setHeader("Content-Type","image/jped");
         	
     		byte[] buff = new byte[1024];
@@ -145,18 +146,17 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
             } else {            	
             	bis = new FileInputStream(new File((String)partyUserInfos.get(0).get("idPhoto")));
             }
+            try {
     		int i = bis.read(buff);
     		while (i != -1) {
     			os.write(buff, 0, i);
     			os.flush();
     			i = bis.read(buff);
     		}
-    		if (bis != null) {
-    			bis.close();
-    		}
-    		if (os != null) {
-    			os.close();
-    		}
+            }finally {
+                IOUtils.closeQuietly(bis);
+                IOUtils.closeQuietly(os);
+            }
     	}
     }
     
@@ -323,11 +323,10 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     		if (updateBaseUserInfoCount != 1) {	//更新失败，抛异常回滚
         		throw new Exception();
         	}
-    		R.ok().setData("证件照更新成功");
+    		return R.ok().setMsg("证件照更新成功");
     	} else {
     		throw new Exception();
     	}
-    	return null;
     }
     
     /**

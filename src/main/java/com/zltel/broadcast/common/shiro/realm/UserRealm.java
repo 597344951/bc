@@ -28,7 +28,6 @@ import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.service.SysMenuService;
 import com.zltel.broadcast.um.service.SysUserService;
 
- 
 
 
 public class UserRealm extends AuthorizingRealm {
@@ -59,9 +58,9 @@ public class UserRealm extends AuthorizingRealm {
             permsList = this.sysUserService.queryAllPerms(userId);
         }
         // 用户权限列表
-        Set<String> permsSet = permsList.stream().filter(s -> StringUtils.isNotBlank(s))
-                .flatMap(s -> Arrays.stream(s.split(",")))// 多个权限描述字符串
-                .collect(Collectors.toSet());
+        Set<String> permsSet =
+                permsList.stream().filter(s -> StringUtils.isNotBlank(s)).flatMap(s -> Arrays.stream(s.split(",")))// 多个权限描述字符串
+                        .collect(Collectors.toSet());
 
 
         Set<String> roles = new HashSet<>(this.sysUserService.queryAllRoles(userId));
@@ -73,12 +72,11 @@ public class UserRealm extends AuthorizingRealm {
     }
 
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
-            throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         logout.info("尝试使用 用户名/密码方式登陆");
         String username = (String) token.getPrincipal();
         SysUser user = this.sysUserService.selectByUserName(username);
-        if (user == null) new UnknownAccountException();
+        if (user == null) throw new UnknownAccountException();
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user, // 用户名
                 user.getPassword(), // 密码
                 ByteSource.Util.bytes(user.getSalt()), // salt=username

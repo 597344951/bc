@@ -54,7 +54,7 @@ public class FileUtil {
     }
 
     public static String getYMD() {
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         return sdf.format(new Date());
     }
 }
