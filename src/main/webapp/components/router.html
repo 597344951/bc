@@ -25,8 +25,8 @@
     <div id="app">
         <el-menu class="el-menu-demo" mode="horizontal">
             <template v-for="(r,index) in routes">
-                <el-menu-item :index="''+index">
-                    <router-link :to="r.path">{{r.path}}</router-link>
+                <el-menu-item :index="''+index" @click="menu_click(r)">
+                    {{r.path}} <router-link :to="r.path"></router-link>
                 </el-menu-item>
             </template>
         </el-menu>
@@ -54,6 +54,9 @@
             routes:routes
 		},
 		methods: {
+            menu_click(r){
+                this.$router.push(r);
+            }
 		} 
 	});
 

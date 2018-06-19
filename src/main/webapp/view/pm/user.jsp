@@ -1489,7 +1489,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				obj.partyUser_manager_queryPartyUserInfos();
 			},
 			getPath(row) {	/* 得到党员用户id并返回请求路径 */
-				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.id;
+				/*给予一个随机数，保证每次请求的参数都不一样，防止从缓存里取值，用于证件照的更新*/
+				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.id + "&t=" + Math.random();
 			},
 			partyUser_manager_queryNationType() {	/* 查询民族信息 */
 				var obj = this;
@@ -1647,22 +1648,23 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					formData.append("file", fileList[0].raw);
 					formData.append("id", obj.partyUser_manager_updatePartyUserForm.id);
 					$.ajax({
-	                   url: "/party/user/updatePartyUserIdPhoto",
-	                   data: formData,
-	                   type: "Post",
-	                   dataType: "json",
-	                   cache: false,//上传文件无需缓存
-	                   processData: false,//用于对data参数进行序列化处理 这里必须false
-	                   contentType: false, //必须
-	                   success: function (data) {
-	                	   if (data.code == 200) {
-	                		   toast('成功',data.data,'success');	/*获取临时文件名，方便添加党员时读取图片*/
-	                		   obj.partyUser_manager_updatePartyUserIdPhotoDialog = false;
-	                		   obj.$refs.updatePartyUserIdPhoto.fileList = [];
-	                	   } else if (data.code == 500) {
-	                		   toast('错误',"服务器出错，停止证件照修改",'error');
-	                	   }
-	                   },
+	                   	url: "/party/user/updatePartyUserIdPhoto",
+	                   	data: formData,
+	                   	type: "Post",
+	                   	dataType: "json",
+	                   	cache: false,//上传文件无需缓存
+	                   	processData: false,//用于对data参数进行序列化处理 这里必须false
+	                   	contentType: false, //必须
+	                   	success: function (data) {
+	                	   	if (data.code == 200) {
+	                		   	toast('成功',data.msg,'success');	/*获取临时文件名，方便添加党员时读取图片*/
+	                		   	obj.partyUser_manager_updatePartyUserIdPhotoDialog = false;
+	                		   	obj.$refs.updatePartyUserIdPhoto.fileList = [];
+	                		   	obj.getPath(obj.partyUser_manager_updatePartyUserForm);
+	                	   	} else if (data.code == 500) {
+	                		   	toast('错误',"服务器出错，停止证件照修改",'error');
+	                	   	}
+	                   	}
 	               })
 				}
 			},

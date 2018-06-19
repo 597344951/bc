@@ -1,0 +1,24 @@
+<div>
+    <el-row>
+        <ve-histogram :title="joinTime_chart.title" height="300px" :theme-name="chartConfig.themeName" :data="joinTime_chart" :toolbox="chartConfig.toolbox"
+            :legend="chartConfig.legend"></ve-histogram>
+    </el-row>
+    <el-row style="padding:50px 0;">
+        <el-col :span="6">
+            <ve-pie height="350px" :title="age_pie_chart.title" :theme-name="chartConfig.themeName" :data="age_pie_chart" :toolbox="chartConfig.toolbox"
+                :legend="chartConfig.legend"></ve-pie>
+        </el-col>
+        <el-col :span="6">
+            <ve-pie height="350px" :title="sex_pie_chart.title" :theme-name="chartConfig.themeName" :data="sex_pie_chart" :toolbox="chartConfig.toolbox"
+                :legend="chartConfig.legend"></ve-pie>
+        </el-col>
+        <el-col :span="6">
+            <ve-pie height="350px" :title="edu_pie_chart.title" :theme-name="chartConfig.themeName" :data="edu_pie_chart" :toolbox="chartConfig.toolbox"
+                :legend="chartConfig.legend"></ve-pie>
+        </el-col>
+        <el-col :span="6">
+            <ve-pie height="350px" :title="job_pie_chart.title" :theme-name="chartConfig.themeName" :data="job_pie_chart" :toolbox="chartConfig.toolbox"
+                :legend="chartConfig.legend"></ve-pie>
+        </el-col>
+    </el-row>
+</div>

@@ -5,4 +5,5 @@
 
 <!--theme-->
 <link id="theme-css" href="/theme/color-<shiro:principal property="theme"/>.css" rel="stylesheet">
+<link href="${urls.getForLookupPath('/assets/css/element-ui-patch.css')}" rel="stylesheet">
 <link href="${urls.getForLookupPath('/assets/css/common.css')}" rel="stylesheet">

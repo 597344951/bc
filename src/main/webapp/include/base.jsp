@@ -4,7 +4,7 @@
 <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
-
+<script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
 <!--font-awsome-->
 <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <!-- js 日期处理-->

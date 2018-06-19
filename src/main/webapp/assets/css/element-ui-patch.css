@@ -1,0 +1,24 @@
+/*Vue 样式补丁,修正展示效果*/
+
+[v-cloak] {
+	display: none !important;
+}
+
+.el-main,
+.el-header {
+	padding: 0;
+}
+
+.el-dialog__body {
+	padding: 5px 5px;
+}
+
+/**dialog 没有title信息**/
+
+.no-title>.el-dialog__header {
+	padding: 0;
+}
+
+.no-title>.el-dialog__body {
+	padding: 5px 20px;
+}

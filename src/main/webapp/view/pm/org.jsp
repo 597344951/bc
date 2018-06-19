@@ -998,7 +998,7 @@
         		obj.partyOrg_manager_showThisOrgPeoples();
         	},
         	getPath(row) {	/* 得到党员用户id并返回请求路径 */
-				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.baseUserId;
+				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.baseUserId + "&t=" + Math.random();
 			},
 			thisOrgInfoChildrensPagerInit() {
         		var obj = this;

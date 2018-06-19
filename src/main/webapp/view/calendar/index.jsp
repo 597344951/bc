@@ -12,6 +12,11 @@
 <link href="${urls.getForLookupPath('/view/calendar/calendar.css')}" rel="stylesheet" charset="utf-8">
 
 <%@include file="/include/mock.jsp"%>
+<%@include file="/include/bmap.jsp"%>
+<%@include file="/include/vcharts.jsp"%>
+<style>
+
+</style>
 </head>
 
 <body>
@@ -24,6 +29,9 @@
                 <div class="card-date">
                     <div>{{nowDate}}</div>
                     <div>{{nowDay}}</div>
+                </div>
+                <div class="plane-chose">
+                    <el-button type="primary" @click="createPlanGuide">生成活动</el-button>
                 </div>
                 <div class="plane-chose">
                     <h3>展示计划类型</h3>
@@ -178,6 +186,9 @@
         <el-dialog title="费用计划编辑" :visible.sync="costPlanDataDialog.visiable">
             <cost-plan :cost-plan-data="costPlanData" :cost-type-group="costTypeGroup" @complete="costPlanDataEditComplete"></cost-plan>
         </el-dialog>
+         <el-dialog custom-class="no-title" :visible.sync="planGuide.visiable" :fullscreen="true" >
+             <load-report @save="createPlanGuidSave"></load-report>
+        </el-dialog>
         <!--dialog-->
     </div>
 </body>
@@ -185,6 +196,10 @@
     window.appInstince = new Vue({
         el: '#app',
         data: {
+            //活动生成界面
+            planGuide:{
+                visiable:false
+            },
             //事件过滤查询表单
             event_filter_form: {
                 froms:['system','user'], //显示来源
@@ -446,6 +461,12 @@
             costPlanDataEditComplete(){
                 console.log('费用编辑计划回调');
                 this.costPlanDataDialog.visiable = false;
+            },
+            createPlanGuide(){
+                this.planGuide.visiable = true;
+            },
+            createPlanGuidSave(){
+                this.planGuide.visiable = false;
             }
         },
         components: {}

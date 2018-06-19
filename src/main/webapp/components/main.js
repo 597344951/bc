@@ -10,11 +10,16 @@ import EventCalendar from '/components/calendar/event-calendar.main.js';
 import PubedPlanInfo from '/components/calendar/pubed-plan-info.main.js';
 import PubplanGuide from '/components/calendar/pubplan-guide.main.js';
 import CommunityInfo from '/components/loadAnimation/community-info.main.js';
-
+import PmInfo from '/components/loadAnimation/pm-info.main.js';
+import FestivalInfo from '/components/loadAnimation/festival-info.main.js';
+import HotNews from '/components/loadAnimation/hot-news.main.js';
+import LoadReport from '/components/loadAnimation/load-report.main.js';
 
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
-export const comps = [MessageNotice, TitleH1, AddEvent, EventToolTip, CostPlan, PlanSuggest, EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo];
+export const comps = [MessageNotice, TitleH1, AddEvent, EventToolTip, CostPlan, PlanSuggest,
+    EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport 
+];
 comps.map((comp) => {
     if (checkModuleName(comp))
         installComponent(Vue, comp);

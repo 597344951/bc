@@ -1,5 +1,5 @@
 <div style="border:solid 1px #ddd;">
-    <el-row :gutter="10">
+    <el-row :gutter="10" style="height:300px;">
         <el-col :span="4">
             <div id="allmap" ref="allmap" style="height:300px;"></div>
         </el-col>
@@ -9,39 +9,65 @@
             <p>街道成立于1954年8月，位于杭州市拱墅区中部偏北，是拱墅区委、区政府所在地。</p>
             <p>古老的京杭大运河贯穿辖区境内，整个街道分为桥东和桥西，东与北和上塘街道相邻，西与祥符街道、和睦街道相接，南连小河街道。</p>
         </el-col>
-        <el-col :span="16">
-            <el-row>
-                <el-col :span="8">
-                    <h3>社区数</h3>
-                </el-col>
-                <el-col :span="8">
-                    <h3>小区数</h3>
-                </el-col>
-                <el-col :span="8">
-                    <h3>常驻人口数</h3>
-                </el-col>
-            </el-row>
+        <el-col :span="16" style="height: 300px; overflow: auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>社区</th>
+                        <th>小区</th>
+                        <th>常驻人口数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>河东社区</td>
+                        <td>XX小区</td>
+                        <td>3441</td>
+                    </tr>
+                    <tr>
+                        <td>河东社区</td>
+                        <td>XX小区</td>
+                        <td>3441</td>
+                    </tr>
+                    <tr>
+                        <td>河东社区</td>
+                        <td>XX小区</td>
+                        <td>3441</td>
+                    </tr>
+                    <tr>
+                        <td>河东社区</td>
+                        <td>XX小区</td>
+                        <td>3441</td>
+                    </tr>
+                    <tr>
+                        <td>河东社区</td>
+                        <td>XX小区</td>
+                        <td>3441</td>
+                    </tr>
+                    <tr>
+                        <td>河东社区</td>
+                        <td>XX小区</td>
+                        <td>3441</td>
+                    </tr>
+                </tbody>
+            </table>
         </el-col>
     </el-row>
-    <el-row style="padding-bottom:10px;">
+    <el-row style="padding:50px 0;">
         <el-col :span="6">
-            <h3>年龄分布</h3>
-            <ve-pie :theme-name="chartConfig.themeName" :title="age_pie_chart.title" :data="age_pie_chart" :toolbox="chartConfig.toolbox"
+            <ve-pie height="350px" :title="age_pie_chart.title" :theme-name="chartConfig.themeName"  :data="age_pie_chart" :toolbox="chartConfig.toolbox"
                 :legend="chartConfig.legend"></ve-pie>
         </el-col>
         <el-col :span="6">
-            <h3>性别比例</h3>
-            <ve-pie :theme-name="chartConfig.themeName" :title="age_pie_chart.title" :data="age_pie_chart" :toolbox="chartConfig.toolbox"
+            <ve-pie height="350px" :title="sex_pie_chart.title" :theme-name="chartConfig.themeName"  :data="sex_pie_chart" :toolbox="chartConfig.toolbox"
                 :legend="chartConfig.legend"></ve-pie>
         </el-col>
         <el-col :span="6">
-            <h3>学历占比</h3>
-            <ve-pie :theme-name="chartConfig.themeName" :title="age_pie_chart.title" :data="age_pie_chart" :toolbox="chartConfig.toolbox"
+            <ve-pie height="350px" :title="edu_pie_chart.title" :theme-name="chartConfig.themeName"  :data="edu_pie_chart" :toolbox="chartConfig.toolbox"
                 :legend="chartConfig.legend"></ve-pie>
         </el-col>
         <el-col :span="6">
-            <h3>职业占比</h3>
-            <ve-pie :theme-name="chartConfig.themeName" :title="age_pie_chart.title" :data="age_pie_chart" :toolbox="chartConfig.toolbox"
+            <ve-pie height="350px" :title="job_pie_chart.title" :theme-name="chartConfig.themeName" :data="job_pie_chart" :toolbox="chartConfig.toolbox"
                 :legend="chartConfig.legend"></ve-pie>
         </el-col>
     </el-row>

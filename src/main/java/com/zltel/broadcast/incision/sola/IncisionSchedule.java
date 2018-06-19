@@ -28,7 +28,7 @@ public class IncisionSchedule {
     @Autowired
     private SimpleDao simpleDao;
 
-    @Scheduled(cron = "0 30 5 * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void terminalSync() {
         try {
             List<Map<String, Object>> terminals = solaProgramService.queryTerminal();

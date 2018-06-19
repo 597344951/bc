@@ -1,0 +1,20 @@
+<div v-loading.fullscreen.lock="loading.visiable" :v-loading.text="loading.text" :element-loading-text="loading.text" element-loading-spinner="el-icon-loading">
+    <el-menu class="el-menu-demo" mode="horizontal">
+        <template v-for="(r,index) in routes" v-if="r.info">
+            <el-menu-item :index="''+index" @click="changeReport(r)">
+                {{r.info.descript}}
+            </el-menu-item>
+        </template>
+    </el-menu>
+    <router-view v-show="!loading.visiable"></router-view>
+    <el-row class="margin-20">
+        <div v-if="empty_dis">
+            <p class="text-center" style="padding: 100px 50px;font-size: 30px;">活动创建数据报告</p>
+        </div>
+        <el-col :span="24">
+            <center>
+                <el-button type="primary" @click="savePlan">生成活动</el-button>
+            </center>
+        </el-col>
+    </el-row>
+</div>
