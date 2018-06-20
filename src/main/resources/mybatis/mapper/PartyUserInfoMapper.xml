@@ -327,8 +327,7 @@
 	  pui.positive_user positiveUser,
 	  pui.develop_user developUser,
 	  pui.missing_user missingUser,
-	  pui.introduce introduce,
-	  oi.org_info_name orgInfoName
+	  pui.introduce introduce
 	from
 	  base_user_info bui inner join party_user_info pui 
 	  left join nation_type nt on bui.nation = nt.nt_id 
@@ -337,8 +336,6 @@
 	  left join work_nature_type wnt on pui.work_nature = wnt.work_nature_id 
 	  left join join_party_branch_type jpbt on pui.join_party_branch_type_id = jpbt.jpbt_id 
 	  left join first_line_type flt on pui.first_line_situation = flt.flt_id 
-	  left join organization_relation _or on bui.base_user_id = _or.org_rlt_user_id
-	  left join organization_information oi on _or.org_rlt_info_id = oi.org_info_id
 	where
 	  bui.base_user_id = pui.party_user_id and
 	  bui.is_party = 1

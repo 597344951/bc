@@ -53,6 +53,24 @@ public class OrganizationRelationController extends BaseController {
 	 * @param organizationRelation 条件
 	 * @return
 	 */
+	@RequestMapping(value="/queryOrgRelationNewsNotPage", method=RequestMethod.POST)
+	@LogPoint("查询组织关系")
+	@RequiresPermissions(value = {"org:relation:query"})
+	@ApiOperation(value = "查询组织关系")
+	public R queryOrgRelationNewsNotPage(@RequestParam Map<String, Object> orgRelationConditiona) {
+		try {
+			return organizationRelationService.queryOrgRelationNewsNotPage(orgRelationConditiona);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return R.error().setMsg("查询组织关系失败");
+		}
+	}
+	
+	/**
+	 * 查询组织关系
+	 * @param organizationRelation 条件
+	 * @return
+	 */
 	@RequestMapping(value="/queryOrgRelationNews", method=RequestMethod.POST)
 	@LogPoint("查询组织关系")
 	@RequiresPermissions(value = {"org:relation:query"})

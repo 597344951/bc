@@ -34,6 +34,13 @@ public interface OrganizationRelationService {
     public R queryOrgRelationNews(Map<String, Object> orgRelationConditiona, int pageNum, int pageSize) throws Exception;
     
     /**
+     * 查询组织关系(新版)
+     * @param organizationRelation 条件
+     * @return	查询得到的组织信息
+     */
+    public R queryOrgRelationNewsNotPage(Map<String, Object> orgRelationConditiona);
+    
+    /**
      * 查询组织关系
      * @param organizationRelation 条件
      * @return	查询得到的组织信息

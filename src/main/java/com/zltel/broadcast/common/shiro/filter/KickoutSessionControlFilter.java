@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import com.zltel.broadcast.common.configuration.ResourceProviderConfig;
+import com.zltel.broadcast.common.configuration.SystemInfoConfig;
 import com.zltel.broadcast.common.util.CacheUtil;
 import com.zltel.broadcast.um.bean.SysUser;
 
@@ -66,6 +67,7 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
             throws Exception {
         //设定url加载资源对象
         request.setAttribute("urls", ResourceProviderConfig.getResourceProvider());
+        request.setAttribute("sysInfo", SystemInfoConfig.getInstince());
         
         Subject subject = getSubject(request, response);
         if (!subject.isAuthenticated() && !subject.isRemembered()) {

@@ -110,7 +110,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 					Map<String, Object> map = new HashMap<>();
 					map.put("orgRltInfoId", oiMap.get("orgInfoId"));
 					List<Map<String, Object>> orgMembers = new ArrayList<>();
-					orgMembers = organizationRelationMapper.queryOrgRelationsNew(map);
+					orgMembers = organizationRelationMapper.queryOrgRelationsNewForUserId(map);
 					oiMap.put("orgMemberNum", orgMembers.size() == 0 ? 0 : orgMembers.size());	//组织人员
 					
 					map.put("orgInfoId", oiMap.get("orgInfoId"));

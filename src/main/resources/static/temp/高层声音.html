@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>高层声音</title>
+	<title>党建百科</title>
 	<style>
 	*{
 		margin: 0;
@@ -12,103 +12,139 @@
 		width: 100%;
 		height: 100%;
 		font-size: 14px;
-		min-height: 512px;
+		min-height: 655px;
 	}
 	.main{
 		width: 40%;
-		height:48%;
+		height:45%;
 		margin-bottom: 10px;
 		overflow: hidden;
-		padding-left: 100px;
+		float: left;
+		margin-left: 20px;
+		margin-right: 40px;
 	}
-	.main1,.main3{
+	.header{
+		padding-left: 15px;
+		overflow: hidden;
+		padding-bottom: 10px;
+		padding-top: 10px;
+		border-bottom: 1px solid #ddd;
+	}
+	.header i{
+		display: inline-block;
+		width: 5px;
+		height: 20px;
+		background-color: orange;
+		float: left;
+		margin-right: 10px;
+	}
+	.header span{
+		font-size: 15px;
+		font-weight: bold;
+		color:#e40000;
 		float: left;
 	}
-	.main2,.main4{
+	.header a{
 		float: right;
-		margin-right:30px;
-	}
-	p>a{
 		text-decoration: none;
-		color: #333;
 	}
-	.image>p>a{
-		color: #306bb7;
-	}
-	p>a:hover{
-		color: red;
-		text-decoration: underline;
-	}
-	img{
-		width: 300px;
-		height: 200px;
-		margin-left: 50px;
-		margin-top: 10px;
-
-	}
-	.image p{
-		margin: 5px 0;
+	.content p{
 		text-indent: 3em;
+		margin: 10px 0;
+	}
+	.content p i{
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		display: inline-block;
+		background-color: #000;
+		margin-right: 5px;
+		vertical-align: super;
+	}
+	.content p a{
+		text-decoration: none;
+		color: #666;
+	}
+	.content p a:hover{
+		text-decoration: underline;
+		color: red;
 	}
 	.first{
 		font-size: 16px;
 		font-weight: bold;
 	}
-	p>i{
-		width: 5px;
-		height: 5px;
-		background-color: #000;
-		display: inline-block;
-		border-radius: 50%;
-		margin-right: 5px;
-	}
-	h5{
-		font-size: 18px;
-		font-weight: bold;
-		margin-bottom: 15px;
-		margin-top: 20px;
-	}
 	.second{
 		margin: 5px 0;
 		font-size: 15px;
 	}
+	.content .first>a,.content .second>a{
+		color: #306bb7;
+	}
+	.content img{
+		width: 230px;
+		height: 150px;
+		margin-left: 50px;
+		margin-top: 10px;
+	}
 	</style>
 </head>
 <body>
-	<div class="main main1">
-		<div class="image">
+	<div class="main">
+		<div class="header">
+			<i></i>
+			<span>领导讲话</span>
+			<a href="#">更多>></a>
+		</div>
+		<div class="content">
 			<img src="11.jpg" alt="">
-			<p class="first"><a href="#">习近平：抢占先机迎难而上建设世界科技强国</a></p>
-			<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p class="first"><i></i><a href="#">习近平：抢占先机迎难而上建设世界科技强国</a></p>
+			<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国	</a></p>
 			<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			
 		</div>
 	</div>
-	<div class="main main2">
-		<h5>党建要问</h5>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+	<div class="main">
+		<div class="header">
+			<i></i>
+			<span>党建要闻</span>
+			<a href="#">更多>></a>
+		</div>
+		<div class="content">
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国 </a></p>
+		</div>
 	</div>
-	<div class="main main3">
-		<h5>高层动态</h5>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+	<div class="main">
+		<div class="header">
+			<i></i>
+			<span>高层动态</span>
+			<a href="#">更多>></a>
+		</div>
+		<div class="content">
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国 </a></p>
+		</div>
 	</div>
-	<div class="main main4">
-		<h5>时政要闻</h5>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
-		<p class="second"><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
-		<p class="second"><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+	<div class="main">
+		<div class="header">
+			<i></i>
+			<span>时政要闻</span>
+			<a href="#">更多>></a>
+		</div>
+		<div class="content">
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国</a></p>
+			<p><i></i><a href="#">习近平在纪念马克思诞辰200周年大会上的讲话</a></p>
+			<p><i></i><a href="#">习近平在两院院士大会上讲话：建设世界科技强国 </a></p>
+		</div>
 	</div>
+	
 </body>
 </html>

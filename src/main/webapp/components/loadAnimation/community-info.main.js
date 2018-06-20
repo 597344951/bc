@@ -105,16 +105,27 @@ let CommunityInfo = {
     methods: {
         map() {
             let map = new BMap.Map(this.$refs.allmap); // 创建Map实例  
-            map.centerAndZoom("杭州", 13);
-            //map.centerAndZoom(new BMap.Point(116.404, 39.915), 11); // 初始化地图,设置中心点坐标和地图级别  
+            //map.centerAndZoom("杭州", 13);
+            //
+            let point = new BMap.Point(120.311233, 30.313834);
+            map.centerAndZoom(point, 11); // 初始化地图,设置中心点坐标和地图级别 
             map.addControl(new BMap.MapTypeControl({ //添加地图类型控件  
                 mapTypes: [
                     BMAP_NORMAL_MAP,
                     BMAP_HYBRID_MAP
                 ]
             }));
-            map.setCurrentCity("北京"); // 设置地图显示的城市 此项是必须设置的  
+            // map.setCurrentCity("杭州"); // 设置地图显示的城市 此项是必须设置的  
             map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放  
+            var opts = {
+                width: 200, // 信息窗口宽度
+                height: 100, // 信息窗口高度
+                title: "拱宸桥街道", // 信息窗口标题
+                enableMessage: true, //设置允许信息窗发送短息
+                message: "拱宸桥街道以境内有横跨运河的明代三孔石拱大桥而得名。"
+            }
+            var infoWindow = new BMap.InfoWindow("地址：位于杭州市拱墅区中部偏北，是拱墅区委、区政府所在地", opts); // 创建信息窗口对象 
+            map.openInfoWindow(infoWindow, point); //开启信息窗口
         }
 
     }

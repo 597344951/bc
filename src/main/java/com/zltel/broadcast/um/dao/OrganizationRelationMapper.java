@@ -54,4 +54,11 @@ public interface OrganizationRelationMapper extends BaseDao<OrganizationRelation
      * @return
      */
     public int deleteOrgRelationByUserId(Integer userId);
+    
+    /**
+     * 查询组织关系
+     * @param orgRelationConditiona 条件
+     * @return
+     */
+    public List<Map<String, Object>> queryOrgRelationsNewForUserId(Map<String, Object> orgRelationConditiona);
 }

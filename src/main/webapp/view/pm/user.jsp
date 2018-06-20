@@ -236,6 +236,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						    	show-checkbox 
 						    	:expand-on-click-node="false" 
 						    	:highlight-current="true" 
+						    	:default-checked-keys="partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo"
 						    	:data="partyUser_manager_joinOrgInfoForm.orgDutyTreesForOrgInfo" 
 						    	:props="partyUser_manager_joinOrgInfoOrgDutyTreesForOrgInfoProps" 
 						    	:check-strictly="true" >
@@ -1127,6 +1128,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_joinOrgInfoForm: {
 				orgInfoTreeOfJoinOrg: [],
 				orgDutyTreesForOrgInfo: [],
+				haveDutyForThisOrgInfo: [],	/*在这个组织中已经有的职责*/
 				orgRltInfoId: null,
 				orgRltUserId: null
 			},
@@ -1890,10 +1892,31 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			partyUser_manager_setOrgInfoIdAndQueryOrgDuty(data) {	/*设置组织id*/
 				var obj = this;
+				obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo = [];
+
 				obj.partyUser_manager_joinOrgInfoForm.orgRltInfoId = data.data.orgInfoId;
-				
-				var url = "/org/duty/queryOrgDutyTreeForOrgInfo";
+
+				var url = "/org/relation/queryOrgRelationNewsNotPage";
 				var t = {
+					orgRltInfoId: obj.partyUser_manager_joinOrgInfoForm.orgRltInfoId,
+					orgRltUserId: obj.partyUser_manager_joinOrgInfoForm.orgRltUserId
+				}
+				$.post(url, t, function(datas, status){	/*查询该用户在次组织已有的职责*/
+					if (datas.code == 200) {
+						if (datas.data != undefined) {
+							for (var i = 0; i < datas.data.length; i++) {
+								obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo.push(datas.data[i].orgDutyId);
+							}
+						} else {
+							obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo = [];
+						}
+					}
+					
+				})
+
+				
+				url = "/org/duty/queryOrgDutyTreeForOrgInfo";
+				t = {
 					orgDutyOrgInfoId: obj.partyUser_manager_joinOrgInfoForm.orgRltInfoId
 				}
 				$.post(url, t, function(datas, status){
@@ -1914,6 +1937,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					for (var i = 0; i < menuTrees.length; i++) {
 						var menuTree = menuTrees[i];
 						menuTree.id = menuTree.data.orgDutyId;
+						if (obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo != null && 
+							obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo.length != 0) {
+							for (var j = 0; j < obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo.length; j++) {
+								if(menuTree.id == obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo[j]) {
+									//menuTree.disabled = true;
+								}
+							}
+						}
+						
 						obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTree.children);
 					}
 				}

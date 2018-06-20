@@ -103,7 +103,7 @@
 <body>
 <div class="main">
 	<div class="error"><h3>${error}</h3></div>
-	<h1>智慧园区管理系统</h1>
+	<h1>${sysInfo.appname}</h1>
 	<form action="login" method="post">
 		<div class="name">
 			<i class="icon1"></i>

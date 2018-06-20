@@ -161,6 +161,12 @@
 	      <if test="orgDutyParentId != null and orgDutyParentId != ''"> and 
 	        od.org_duty_parent_id = #{orgDutyParentId}
 	      </if>
+	      <if test="orgRltUserId != null and orgRltUserId != ''"> and 
+	        _or.org_rlt_user_id = #{orgRltUserId}
+	      </if>
+	      <if test="orgRltId != null and orgRltId != ''"> and 
+	        _or.org_rlt_id = #{orgRltId}
+	      </if>
 	</select>
 	
 	<delete id="deleteOrgRelationByOrgInfoId" parameterType="java.lang.Integer">
@@ -177,4 +183,16 @@
 	    delete from organization_relation
 	    where org_rlt_user_id = #{orgRltUserId,jdbcType=INTEGER}
 	</delete>
+	
+	<select id="queryOrgRelationsNewForUserId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select
+		  distinct _or.org_rlt_user_id orgRltUserId
+		from
+		  organization_relation _or
+		where
+		  1 = 1
+		  <if test="orgRltInfoId != null and orgRltInfoId != ''"> and 
+	        _or.org_rlt_info_id = #{orgRltInfoId}
+	      </if>
+	</select>
 </mapper>

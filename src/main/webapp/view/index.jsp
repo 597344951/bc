@@ -10,7 +10,7 @@
 <base href="<%=basePath%>">
 <meta charset="UTF-8">
 
-<title>XX管理系统</title>
+<title>${sysInfo.appname}</title>
 <%@include file="/include/head.jsp"%>
 <%@include file="/include/websocket.jsp"%>
 <link href="${urls.getForLookupPath('/assets/css/index.css')}" rel="stylesheet">
@@ -123,7 +123,7 @@
         data: {
             app: {
                 sysIcon: 'glyphicon glyphicon-send',
-                sysName: '智慧园区管理系统',
+                sysName: '${sysInfo.appname}',
                 userId:'<shiro:principal property="userId"/>',
                 sysUserName: '<shiro:principal property="username"/>',
                 sysUserAvatar: './assets/avatars/develop.gif',

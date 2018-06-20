@@ -24,7 +24,7 @@ public class FileContentTypeUtil {
     public static final String getContentType(String fn) {
         String fe = fn;
         if (fn.contains(".")) {
-            fe = fn.substring(fn.lastIndexOf("."));
+            fe = fn.substring(fn.lastIndexOf('.'));
         }
         String ret = map.get(fe);
         return ret == null ? map.get("*") : ret;

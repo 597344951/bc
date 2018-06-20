@@ -1,0 +1,82 @@
+{"properties": [
+  {
+    "name": "shiro.config.hashalgorithmname",
+    "type": "java.lang.String",
+    "description": "Shiro 框架密码加密算法"
+  },
+  {
+    "name": "shiro.config.hashiterations",
+    "type": "java.lang.Integer",
+    "description": "Shiro 框架密码加密次数"
+  },
+  {
+    "name": "my.config.name",
+    "type": "java.lang.String",
+    "description": "测试注入配置文件"
+  },
+  {
+    "name": "zltel.appname",
+    "type": "java.lang.String",
+    "description": "平台应用名称"
+  },
+  {
+    "name": "zltel.version",
+    "type": "java.lang.String",
+    "description": "平台版本号"
+  },
+  {
+    "name": "ueditor.savepath",
+    "type": "java.lang.String",
+    "description": "Ueditor 编辑器上传的图片保存位置"
+  },
+  {
+    "name": "material.file.dir",
+    "type": "java.lang.String",
+    "description": "A description for 'material.file.dir'"
+  },
+  {
+    "name": "material.temp.dir",
+    "type": "java.lang.String",
+    "description": "素材上传临时目录"
+  },
+  {
+    "name": "material.local.dir",
+    "type": "java.lang.String",
+    "description": "A description for 'material.local.dir'"
+  },
+  {
+    "name": "sola.user.loginname",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.user.loginname'"
+  },
+  {
+    "name": "sola.user.password",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.user.password'"
+  },
+  {
+    "name": "sola.user.org",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.user.org'"
+  },
+  {
+    "name": "sola.url.intermediate",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.url.intermediate'"
+  },
+  {
+    "name": "sola.url.edit",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.url.edit'"
+  },
+  {
+    "name": "sola.url.view",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.url.view'"
+  },
+  {
+    "name": "sola.url",
+    "type": "java.lang.String",
+    "description": "A description for 'sola.url'"
+  }
+]}

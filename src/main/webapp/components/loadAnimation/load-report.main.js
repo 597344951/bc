@@ -79,7 +79,7 @@ let LoadReport = {
             setTimeout(() => {
                 ins.idx++;
                 ins.nextStep();
-            }, step.t * 0);
+            }, step.t);
         },
         savePlan() {
             this.$emit('save')

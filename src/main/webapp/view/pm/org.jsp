@@ -270,7 +270,11 @@
 						<el-table-column label="性别" prop="sex"></el-table-column>
 						<el-table-column label="民族" prop="nationName"></el-table-column>
 						<el-table-column label="生日" prop="birthDate"></el-table-column>
-						<el-table-column label="年龄" prop="age"></el-table-column>
+						<el-table-column label="年龄">
+							<template slot-scope="scope">
+								<span>{{scope.row.age}} 岁</span>
+							</template>
+						</el-table-column>
 						<el-table-column label="学历" prop="educationName"></el-table-column>
 						<el-table-column label="学位" prop="academicDegreeName"></el-table-column>
 						<el-table-column label="党员类型" prop="partyType"></el-table-column>

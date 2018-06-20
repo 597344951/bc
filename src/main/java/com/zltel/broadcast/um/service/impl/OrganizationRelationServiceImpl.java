@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,27 +56,63 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
      * @param organizationRelation 条件
      * @return	查询得到的组织信息
      */
+    public R queryOrgRelationNewsNotPage(Map<String, Object> orgRelationConditiona) {
+    	List<Map<String, Object>> organizationRelations = organizationRelationMapper.queryOrgRelationsNew(orgRelationConditiona);	//开始查询，没有条件则查询所有组织关系
+    	if (organizationRelations != null && organizationRelations.size() > 0) {
+    		return R.ok().setData(organizationRelations).setMsg("查询组织关系成功");
+		} else {
+			return R.ok().setMsg("没有查询到组织关系");
+		}
+    }
+	
+	/**
+     * 查询组织关系(新版)
+     * 同一个用户在一个组织中可能会有多个角色，这样组织关系的条数就会比用户多，所以不能用组织关系的条数
+     * 来充当用户数量，要先合并在查询
+     * @param organizationRelation 条件
+     * @return	查询得到的组织信息
+     */
     public R queryOrgRelationNews(Map<String, Object> orgRelationConditiona, int pageNum, int pageSize) throws Exception {
     	PageHelper.startPage(pageNum, pageSize);
-		List<Map<String, Object>> organizationRelations = organizationRelationMapper.queryOrgRelationsNew(orgRelationConditiona);	//开始查询，没有条件则查询所有组织关系
+    	//查询组织下的用户关系信息
+		List<Map<String, Object>> organizationRelations = organizationRelationMapper.queryOrgRelationsNewForUserId(orgRelationConditiona);	//开始查询，没有条件则查询所有组织关系
 		PageInfo<Map<String, Object>> orgRelationsForPageInfo = new PageInfo<>(organizationRelations);
 		if (orgRelationsForPageInfo != null && orgRelationsForPageInfo.getList() != null && orgRelationsForPageInfo.getList().size() > 0) {	//是否查询到数据
-			for (Map<String, Object> organizationRelationMap : organizationRelations) {
-				organizationRelationMap.put("birthDate", 
-					DateUtil.formatDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate") == null ||
-					organizationRelationMap.get("birthDate") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate").toString())));
-				
-				organizationRelationMap.put("partyType", organizationRelationMap.get("partyType") == null || organizationRelationMap.get("partyType") == "" ? 
-					null : (int)organizationRelationMap.get("partyType") == 1 ? "正式党员" : "预备党员");
-				
-				organizationRelationMap.put("partyStatus", organizationRelationMap.get("partyStatus") == null || organizationRelationMap.get("partyStatus") == "" ? 
-					null : (int)organizationRelationMap.get("partyStatus") == 1 ? "正常" : "停止党籍");
-				
-				Date birthDay = DateUtil.toDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate") == null || organizationRelationMap.get("birthDate") == "" ?
-						null : organizationRelationMap.get("birthDate").toString());
-				organizationRelationMap.put("age", PartyUserInfoServiceImpl.getPartyUserAge(birthDay));
+			List<Map<String, Object>> orgLetions = new ArrayList<>();
+			for (Map<String, Object> or : organizationRelations) {
+				Map<String, Object> conditionMap = new HashMap<>();
+				conditionMap.put("orgRltUserId", or.get("orgRltUserId"));
+				//该用户在此组织的全部职责，可能>1条
+				List<Map<String, Object>> orgletionMaps = organizationRelationMapper.queryOrgRelationsNew(conditionMap);
+				Map<String, Object> orgLetion = new HashMap<>();
+				int count = 0;
+				if (orgletionMaps != null && orgletionMaps.size() > 0) {
+					for (Map<String, Object> organizationRelationMap : orgletionMaps) {
+						if (count == 0) {
+							orgLetion = organizationRelationMap;
+						} else {
+							orgLetion.put("orgDutyName", orgLetion.get("orgDutyName") + "、" + organizationRelationMap.get("orgDutyName"));
+						}
+						organizationRelationMap.put("birthDate", 
+							DateUtil.formatDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate") == null ||
+							organizationRelationMap.get("birthDate") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate").toString())));
+						
+						organizationRelationMap.put("partyType", organizationRelationMap.get("partyType") == null || organizationRelationMap.get("partyType") == "" ? 
+							null : (int)organizationRelationMap.get("partyType") == 1 ? "正式党员" : "预备党员");
+						
+						organizationRelationMap.put("partyStatus", organizationRelationMap.get("partyStatus") == null || organizationRelationMap.get("partyStatus") == "" ? 
+							null : (int)organizationRelationMap.get("partyStatus") == 1 ? "正常" : "停止党籍");
+						
+						Date birthDay = DateUtil.toDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate") == null || organizationRelationMap.get("birthDate") == "" ?
+								null : organizationRelationMap.get("birthDate").toString());
+						organizationRelationMap.put("age", PartyUserInfoServiceImpl.getPartyUserAge(birthDay));
+						count++;
+					}
+				}
+				orgLetions.add(orgLetion);
 			}
-			
+			orgRelationsForPageInfo.getList().clear();	//清空原数据
+			orgRelationsForPageInfo.getList().addAll(orgLetions);
 			return R.ok().setData(orgRelationsForPageInfo).setMsg("查询组织关系成功");
 		} else {
 			return R.ok().setMsg("没有查询到组织关系");
@@ -209,6 +246,7 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
     @Transactional(rollbackFor=java.lang.Exception.class)
     public R insertOrgRelation(OrganizationRelation organizationRelation, List<Integer> orgRltDutys) throws Exception {
 		if (organizationRelation != null) {
+			organizationRelationMapper.deleteOrgRelationByUserId(organizationRelation.getOrgRltUserId());
 			int count = 0;
 			for (Integer orgDuty : orgRltDutys) {
 				organizationRelation.setOrgRltId(null);	//自增，不需要设置值

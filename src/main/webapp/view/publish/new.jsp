@@ -8,11 +8,16 @@
 	<%@include file="/include/element-ui.jsp" %>
 	<%@include file="/include/ueditor.jsp" %>
 	<style>
+		body {
+			width: 98%;
+			margin: 20px auto;
+		}
 		.el-table thead,.el-table__row {
 			font-size: 14px;
 		}
 		.el-row {
-			margin-top: 5px;
+			margin: 5px auto;
+			width: 95%;
 		}
 		.el-transfer {
 			width: 80%;
@@ -59,11 +64,11 @@
 					<h3>内容/活动简单编辑</h3>
 					<el-row :gutter="20">
 						<el-col :span="4"><h4>主题 [<el-button type="text" @click="additionDialogVisible = true">补充</el-button>]</h4></el-col>
-						<el-col :span="20"><el-input v-model="title" placeholder="发布内容主题"></el-input></el-col>
+						<el-col :span="19"><el-input v-model="title" placeholder="发布内容主题"></el-input></el-col>
 					</el-row>
 					<el-row :gutter="20">
 						<el-col :span="4"><h4>播放周期</h4></el-col>
-						<el-col :span="20">
+						<el-col :span="19">
 							<el-date-picker style="width: 18%;" v-model="startDate" type="date" placeholder="开始日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
 							<el-date-picker style="width: 18%;" v-model="endDate" type="date" placeholder="结束日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
 							：
@@ -96,7 +101,7 @@
 					</el-row>
 					<el-row :gutter="20">
 						<el-col :span="4"><h4>播放设置</h4></el-col>
-						<el-col :span="20">
+						<el-col :span="19">
 							<el-select
 									style="width: 18%;"
 									v-model="resolution"
@@ -122,14 +127,14 @@
 						<el-col :span="4">
 							<h4>内容 [<el-button type="text" @click="showTemplates">选取模板</el-button>]</h4>
 						</el-col>
-						<el-col :span="20">
+						<el-col :span="19">
 							<div><script id="templateText" name="templateText" style="height:500px;" type="text/plain"></script></div>
 						</el-col>
 					</el-row>
 					<%--图片--%>
 					<el-row :gutter="20">
 						<el-col :span="4"><h5>素材提交（图片）</h5></el-col>
-						<el-col :span="20">
+						<el-col :span="19">
 							<el-upload
 									action="/material/uploadImage"
 									accept="image/*"
@@ -144,7 +149,7 @@
 					<%--视频--%>
 					<el-row :gutter="20">
 						<el-col :span="4"><h5>素材提交（视频）</h5></el-col>
-						<el-col :span="20">
+						<el-col :span="19">
 							<el-upload
 									action="/material/uploadVideo"
 									accept="video/*"
@@ -159,7 +164,7 @@
 					<%--音频--%>
 					<el-row :gutter="20">
 						<el-col :span="4"><h5>素材提交（音频）</h5></el-col>
-						<el-col :span="20">
+						<el-col :span="19">
 							<el-upload
 									action="/material/uploadAudio"
 									accept="audio/*"

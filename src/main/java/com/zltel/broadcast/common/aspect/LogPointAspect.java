@@ -1,9 +1,12 @@
 package com.zltel.broadcast.common.aspect;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Date;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,6 +17,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.zltel.broadcast.common.annotation.LogPoint;
@@ -50,7 +54,11 @@ public class LogPointAspect {
         // 执行时长(毫秒)
         long time = System.currentTimeMillis() - beginTime;
         // 保存日志
-        saveSysLog(point, time);
+        try {
+            saveSysLog(point, time);
+        } catch (Exception e) {
+            logout.error("记录日志出错!", e);
+        }
         return result;
     }
 
@@ -76,7 +84,7 @@ public class LogPointAspect {
 
         // 请求的参数
         Object[] args = joinPoint.getArgs();
-        logBean.setParams(JSON.toJSONString(args));
+        logBean.setParams(JSON.toJSONString(filterArgs(args)));
 
 
         // 获取request
@@ -91,5 +99,28 @@ public class LogPointAspect {
 
         logBean.setDate(new Date());
         LogQueue.add(logBean);
+    }
+
+    /**
+     * 过滤参数<br>
+     * <ul>
+     * <li>HttpServlet</li>
+     * <li>HttpServletRequest</li>
+     * <li>HttpServletResponse</li>
+     * <li>ModelAndView</li>
+     * </ul>
+     * 
+     * @param args
+     * @return
+     */
+    public Object[] filterArgs(Object[] args) {
+        // 过滤 request, response 之类的参数
+        return Arrays.stream(args).filter(arg -> {
+            if (arg instanceof HttpServlet) return false;
+            if (arg instanceof HttpServletRequest) return false;
+            if (arg instanceof HttpServletResponse) return false;
+            if (arg instanceof ModelAndView) return false;
+            return true;
+        }).toArray();
     }
 }
