@@ -12,7 +12,7 @@ public class TemplateContentTest {
 
     @Test
     public void testWhereTemplateContent() throws Exception {
-        StringBuffer sb = MyBatisScriptCreateUtil.createWhereScript(TemplateContent.class);
+        StringBuilder sb = MyBatisScriptCreateUtil.createWhereScript(TemplateContent.class);
         logout.info(TemplateType.class.getName() +" _> WHERE: \n"+sb.toString());
     }
 }

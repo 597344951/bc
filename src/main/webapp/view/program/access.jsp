@@ -11,7 +11,8 @@
 			font-size: 14px;
 		}
 		.el-row {
-			margin-bottom: 10px;
+			margin: 10px auto;
+			width: 95%;
 		}
 	</style>
 </head>
@@ -56,7 +57,7 @@
 		</el-container>
 
 		<%--接入新节目--%>
-		<el-dialog title="添加播放计划" :visible="newProgram.show">
+		<el-dialog title="添加新节目" :visible="newProgram.show" :show-close="false">
 			<el-form :model="newProgram" label-width="120px">
 				<el-form-item label="节目名称">
 					<el-input v-model="newProgram.name" placeholder="请输入节目名称"></el-input>
@@ -105,6 +106,10 @@
 				<el-button size="mini" type="primary" @click="check(true)">通 过</el-button>
 			</span>
 		</el-dialog>
+
+		<el-dialog title="节目接入" :visible="commitMessage.show" :show-close="false" width="300px">
+			<p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
+		</el-dialog>
 	</div>
 	<script>
 		const app = new Vue({
@@ -124,7 +129,11 @@
                   	show: false,
 					url: ''
 				},
-				checkRow: {}
+				checkRow: {},
+				commitMessage: {
+                    show: false,
+                    message: []
+                }
 
 			},
             methods: {
@@ -141,11 +150,14 @@
 				},
 				check(isPass) {
 					if(isPass) {
-					    this.checkRow.checked = '通过审核'
-                        this.$message({
-                            message: '通过审核，节目已更新到节目库',
-                            type: 'success'
-                        })
+						this.checkRow.checked = '通过审核'
+						commitMessage(()=> {
+							app.$message({
+								message: '通过审核，节目已更新到节目库',
+								type: 'success'
+							})
+						})
+                       
 					} else {
                         this.checkRow.checked = '未通过审核'
 					}
@@ -188,7 +200,32 @@
 				    app.$message('没有数据...')
 				}
 			});
-        }
+		}
+		
+		const commitMessage = (callback) => {
+			app.commitMessage.show = true
+			message = [
+						'提取节目文件MD5...',
+						'提取完成',
+						'保存节目数据...',
+						'保存完成'
+					]
+			let index = 1;
+			app.commitMessage.message = []
+			app.commitMessage.message.push(message[0])
+			let iterval = setInterval(() => {
+				app.commitMessage.message.push(message[index])
+				index ++
+				if(index == message.length) {
+					app.commitMessage.show = false
+                    clearInterval(iterval)
+                    if(callback) {
+                        callback()
+                    }
+					
+				}
+			}, 2*1000);
+		}
 
         const get = (url, callback) => {
             $.ajax({

@@ -1,6 +1,7 @@
 package com.zltel.broadcast.publish.service;
 
 import com.zltel.broadcast.um.bean.SysUser;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -177,4 +178,11 @@ public interface PublishService {
      * @return
      */
     public Map<String, Object> getShowProcessState(int contentTypeId, int contentId);
+
+    /**
+     * 预发布到终端
+     * @param contendId
+     * @return
+     */
+    public List<Map<String, Object>> queryPublishTerminal(int contentId);
 }

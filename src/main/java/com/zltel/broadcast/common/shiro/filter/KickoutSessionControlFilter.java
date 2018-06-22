@@ -16,7 +16,6 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import com.zltel.broadcast.common.configuration.ResourceProviderConfig;
 import com.zltel.broadcast.common.configuration.SystemInfoConfig;

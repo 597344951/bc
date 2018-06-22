@@ -13,6 +13,8 @@
 <title>党委管理</title>
 <%@include file="/include/head_notbootstrap.jsp"%>
 <script type="text/javascript" src="/json/address-pca.json"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&key=b8db1a2a77d2226ba663235353e3546b&plugin=AMap.Geocoder"></script> 
+<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
 <style type="text/css">
 	body {
 		
@@ -42,6 +44,12 @@
 	a:hover{
 		text-decoration:underline;  /*鼠标放上去有下划线*/
 		color: red;
+	}
+	div[id*="container"] {
+		width: 35%; 
+		height: 230px;
+		margin: 10px 0;
+		border: 1px solid black;
 	}
 </style>
 </head>
@@ -126,7 +134,7 @@
 			</el-header>
 			<el-main>
 				<template>
-					<el-table size="small" :data="partyOrg_manager_orgInfoPages.list" style="width: 100%">
+					<el-table @expand-change="setMap" size="small" :data="partyOrg_manager_orgInfoPages.list" style="width: 100%">
 						<el-table-column type="expand">
 							<template slot-scope="scope">
 								<el-row :gutter="20" v-if="scope.row.orgLevel1s.length != 0">
@@ -187,6 +195,7 @@
 										{{scope.row.orgInfoCommitteeDetail}}
 									</el-col>
 								</el-row>
+								<div :id="'container'+scope.row.orgInfoId"></div>
 								<el-row :gutter="20" v-for="item in scope.row.orgLevel1s">
 									<el-col :span="3">{{item.orgDutyName}}：{{item.name}}</el-col>
 									<el-col :span="3">性别：{{item.sex}}</el-col>
@@ -263,6 +272,7 @@
 			<el-container>
 				<el-main>
 					<el-table style="text-align: center;" 
+							size="mini"
 							align="center"
 							:stripe="true"
 							class="common" border size="small" :data="partyOrg_manager_ThisOrgInfos.peoples_pager.list" style="width: 100%">
@@ -280,6 +290,11 @@
 						<el-table-column label="党员类型" prop="partyType"></el-table-column>
 						<el-table-column label="党员状态" prop="partyStatus"></el-table-column>
 						<el-table-column label="职责" prop="orgDutyName"></el-table-column>
+						<el-table-column label="操作">
+							<template slot-scope="scope">
+								<el-button @click="partyOrg_manager_openChangeUserDutyThisOrgDialog(scope.row)" type="text" size="mini">岗位管理</el-button>
+							</template>
+						</el-table-column>
 					</el-table>
 				</el-main>
 				<el-footer>
@@ -292,6 +307,28 @@
 					</el-pagination>
 				</el-footer>
 			</el-container>
+		</el-dialog>
+
+		<el-dialog @close="" title="职责变更/离开组织" :visible.sync="partyOrg_manager_changeUserDutyThisOrgDialog">
+			<el-row :gutter="20">
+				<el-col :span="24">
+				    <el-tree :default-expand-all="true" 
+				    	node-key="id" 
+				    	ref="partyOrg_manager_changeUserDutyThisOrgTree"
+				    	show-checkbox 
+				    	:expand-on-click-node="false" 
+				    	:highlight-current="true" 
+				    	:default-checked-keys="partyOrg_manager_changeUserDutyThisOrg.haveDuty"
+				    	:data="partyOrg_manager_changeUserDutyThisOrg.allDutyThisOrg" 
+				    	:props="partyOrg_manager_changeUserDutyThisOrg.allDutyThisOrgProps" 
+				    	:check-strictly="true" >
+				  	</el-tree>
+				</el-col>
+			</el-row>
+			<el-row :gutter="20" class="toolbar">
+				<el-button @click="partyOrg_manager_updateChangeUserDutyThisOrg" type="primary" size="small">确认变更</el-button>
+				<el-button @click="partyOrg_manager_deleteChangeUserDutyThisOrg" type="danger" size="small">离开组织</el-button>
+			</el-row>
 		</el-dialog>
 
 
@@ -505,6 +542,18 @@
 				label: "name",
 				children: "children"
 			},
+			partyOrg_manager_changeUserDutyThisOrg: {
+				orgInfoId: null,
+				orgUserId: null,
+				haveDuty: [],
+				allDutyThisOrg: [],
+				allDutyThisOrgProps: {
+					children: 'children',
+		            label: function(_data, node){
+		            	return _data.data.orgDutyName;
+		            }
+				}
+			},
 			partyOrg_manager_orgInfoPages: {
 				pageNum: 1,		/* 当前页 */
 				pageSize: 10,	/* 页面大小 */
@@ -528,6 +577,7 @@
 			partyOrg_manager_insertOrgDutyDialog: false,	/*添加组织职责*/
 			partyOrg_manager_showThisOrgPeoplesDialog: false,	/*查看这个组织下成员信息弹窗*/
 			partyOrg_manager_showThisOrgChildrensDialog: false, 	/*下属组织信息*/
+			partyOrg_manager_changeUserDutyThisOrgDialog: false,	/*变更用户职责弹窗*/
 			partyOrg_manager_orgInfoTreeOfInsert: [],	/*添加组织信息时的组织关系树*/
 			partyOrg_manager_orgInfoTreeOfInsertProps: {
 				children: 'children',
@@ -628,6 +678,56 @@
 			this.partyOrg_manager_getOrgInfoTypes();
 		},
 		methods: {
+			setMap(row, expandedRows) {
+				var obj = this;
+				setTimeout(()=>{
+					obj.initAmap("container"+row.orgInfoId, row.orgInfoCommitteeProvince+row.orgInfoCommitteeCity+row.orgInfoCommitteeArea+row.orgInfoCommitteeDetail);
+				},200)
+				
+			},
+			initAmap(idName, address) {
+				var obj = this;
+				var map = new AMap.Map(idName, {
+				    pitch:30,
+				    viewMode:'3D',//开启3D视图,默认为关闭
+				    resizeEnable: true
+			    })
+				var geocoder = new AMap.Geocoder({
+		            radius: 1000 //范围，默认：500
+		        });
+		        //地理编码,返回地理编码结果
+		        geocoder.getLocation(address, function(status, result) {
+		            if (status === 'complete' && result.info === 'OK') {
+		                obj.geocoder_CallBack(result, map);
+		            }
+		        });
+			},
+			//地理编码返回结果展示
+		    geocoder_CallBack(data, map) {
+		    	var obj = this;
+		        //地理编码结果数组
+		        var geocode = data.geocodes;
+		        for (var i = 0; i < geocode.length; i++) {
+		            obj.addMarker(i, geocode[i], map);
+		        }
+		        map.setFitView();	/*缩放自适应*/
+		    },
+			addMarker(i, d, map) {
+				var obj = this;
+		        var marker = new AMap.Marker({
+		            map: map,
+		            position: [ d.location.getLng(),  d.location.getLat()]
+		        });
+		        var infoWindow = new AMap.InfoWindow({
+		            content: d.formattedAddress,
+		            offset: {x: 0, y: -30}
+		        });
+		        marker.on("mouseover", function(e) {
+		            infoWindow.open(map, marker.getPosition());
+		        });
+		    },
+		    
+
 			getScreenHeightForPageSize() {	/*根据屏幕分辨率个性化每页数据记录数*/
 				var obj = this;
 				var height = window.screen.height;
@@ -1041,6 +1141,101 @@
 			partyOrg_manager_thisOrgChildrenCurrentChange() {
 				var obj = this;
         		obj.partyOrg_manager_showThisOrgChildrens();
+			},
+			partyOrg_manager_openChangeUserDutyThisOrgDialog(row) {
+				var obj = this;
+
+				obj.partyOrg_manager_changeUserDutyThisOrg.orgUserId = row.baseUserId;
+				obj.partyOrg_manager_changeUserDutyThisOrg.orgInfoId = obj.partyOrg_manager_ThisOrgInfos.orgInfoId;
+				obj.partyOrg_manager_changeUserDutyThisOrg.haveDuty = [];
+
+				var url = "/org/relation/queryOrgRelationNewsNotPage";
+				var t = {
+					orgRltInfoId: obj.partyOrg_manager_changeUserDutyThisOrg.orgInfoId,
+					orgRltUserId: obj.partyOrg_manager_changeUserDutyThisOrg.orgUserId
+				}
+				$.post(url, t, function(datas, status){	/*查询该用户在次组织已有的职责*/
+					if (datas.code == 200) {
+						if (datas.data != undefined) {
+							for (var i = 0; i < datas.data.length; i++) {
+								obj.partyOrg_manager_changeUserDutyThisOrg.haveDuty.push(datas.data[i].orgDutyId);
+							}
+						} else {
+							obj.partyOrg_manager_changeUserDutyThisOrg.haveDuty = [];
+						}
+					}
+					
+				})
+
+				
+				url = "/org/duty/queryOrgDutyTreeForOrgInfo";
+				t = {
+					orgDutyOrgInfoId: obj.partyOrg_manager_changeUserDutyThisOrg.orgInfoId
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						if (datas.data != undefined) {
+							obj.partyOrg_manager_changeUserDutyThisOrg.allDutyThisOrg = datas.data;
+							obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(obj.partyOrg_manager_changeUserDutyThisOrg.allDutyThisOrg);
+						} else {
+							obj.partyOrg_manager_changeUserDutyThisOrg.allDutyThisOrg = [];
+						}
+					}
+					
+				})
+
+
+				obj.partyOrg_manager_changeUserDutyThisOrgDialog = true;
+			},
+			forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTrees){	/* 向树里添加id属性，方便设置node-key */
+				var obj = this;
+				if(menuTrees != null) {
+					for (var i = 0; i < menuTrees.length; i++) {
+						var menuTree = menuTrees[i];
+						menuTree.id = menuTree.data.orgDutyId;
+						obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTree.children);
+					}
+				}
+			},
+			partyOrg_manager_updateChangeUserDutyThisOrg() {
+				var obj = this;					
+				var url = "/org/relation/insertOrgRelation";
+				
+				var checkedKeys = [];
+				checkedKeys = obj.$refs.partyOrg_manager_changeUserDutyThisOrgTree.getCheckedKeys(false);
+				var t = {
+					orgRltUserId: obj.partyOrg_manager_changeUserDutyThisOrg.orgUserId,
+					orgRltInfoId: obj.partyOrg_manager_changeUserDutyThisOrg.orgInfoId,
+					orgRltDutys: checkedKeys
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						toast('成功',datas.msg,'success');
+						obj.partyOrg_manager_changeUserDutyThisOrgDialog = false;
+						obj.partyOrg_manager_showThisOrgPeoples();
+					}
+					
+				})
+			},
+			partyOrg_manager_deleteChangeUserDutyThisOrg() {
+				var obj = this;
+				obj.$confirm(
+					'离开此组织, 是否继续?', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+		        	obj.$refs.partyOrg_manager_changeUserDutyThisOrgTree.setCheckedKeys([], false);
+	        		obj.partyOrg_manager_updateChangeUserDutyThisOrg();
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消操作'
+			        });  
+		        });
 			}
 		}
 	});

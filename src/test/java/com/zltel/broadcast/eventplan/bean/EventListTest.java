@@ -12,7 +12,7 @@ public class EventListTest extends BaseTests {
 
     @Test
     public void testSetTitle() throws Exception {
-        StringBuffer sb = MyBatisScriptMain.createCRUDScript(EventList.class);
+        StringBuilder sb = MyBatisScriptMain.createCRUDScript(EventList.class);
         logout.info(sb.toString());
     }
 }

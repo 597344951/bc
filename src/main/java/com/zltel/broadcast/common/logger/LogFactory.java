@@ -1,7 +1,5 @@
 package com.zltel.broadcast.common.logger;
 
-import java.lang.management.ManagementFactory;
-
 /**
  * LogFactory class
  *
@@ -9,17 +7,14 @@ import java.lang.management.ManagementFactory;
  * @date 2018/5/4
  */
 public class LogFactory {
-    private static String pid;
+    private LogFactory() {}
 
-    static {
-        pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-    }
 
     public static Logger getLog(Class<?> clazz, String username, String feature) {
-        return new Logger(clazz, pid, username, feature);
+        return new Logger(clazz, username, feature);
     }
 
     public static Logger getLog(Class<?> clazz, String feature) {
-        return new Logger(clazz, pid, "anonymous", feature);
+        return new Logger(clazz, "anonymous", feature);
     }
 }

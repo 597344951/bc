@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=b3cjGm4GiaI1GzcYKjil0fyrP7qHL9eL"></script>
+
+    <link rel="import" href="/html/include/vb.html">
+    <link rel="import" href="/html/include/fc.html">
+    <link rel="import" href="/html/include/vc.html">
+    <link rel="import" href="/html/include/db.html">
+
+    <title>终端管理界面</title>
+    <style>
+        #terminalDisplay {
+            padding: 10px;
+        }
+
+        .termialDis {
+            padding: 0px;
+            width: 250px;
+            margin: 5px;
+            text-align: center;
+            float: left;
+        }
+
+        .termialDis>div>.screenshoot {
+            height: 150px;
+            background: url(/assets/img/no-program.png) center center no-repeat #fff;
+        }
+
+        .offline>div>.screenshoot {
+            height: 150px;
+            background: url(/assets/img/offline.png) center center no-repeat #fff;
+        }
+
+        .termialDis>div>div>.image {
+            display: block;
+            max-height: 150px;
+            width: 100%;
+            text-align: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .termialDis>div>div>.ratio {
+            position: relative;
+            top: 10px;
+            top: -20px;
+            background-color: #ddd;
+            background: linear-gradient(white, #ccc);
+        }
+
+        .termialDis>div>.control {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .termialDis>div>.deviceInfo {
+            text-align: left;
+            padding: 10px;
+        }
+
+        .termialDis>div>.deviceInfo>.name {
+            font-weight: bolder;
+        }
+
+        .termialDis>div>.deviceInfo>.size {
+            float: right;
+        }
+
+        .termialDis>div>.control>.bottom {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .offline {
+            background-color: #c0c4cc;
+        }
+
+        .t-title {
+            cursor: auto !important;
+            opacity: 1 !important;
+        }
+
+        .online-icon {
+            background: green;
+        }
+
+        .offline-icon {
+            background: #ddd
+        }
+
+        .pagebar {
+            margin-top: 15px;
+        }
+
+        .command-list {
+            overflow: auto;
+            margin-bottom: 100px;
+        }
+
+        .command-list>.action {
+            display: inline-block;
+            position: relative;
+            margin: 6px 6px 3px;
+            width: 90px;
+            height: 90px;
+            border-radius: 5px;
+            color: #999;
+            text-align: center;
+            cursor: pointer;
+            float: left;
+            border: solid 1px #ddd;
+            text-decoration: none;
+            background-color: #eee;
+        }
+
+        .command-list>.action>i {
+            font-size: 55px;
+            color: orange;
+            margin-top: 5px;
+        }
+
+        .command-list>.active {
+            background-color: #337ab7;
+            color: white;
+        }
+
+        .command-list>.active>i {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="toolbar">
+            <el-row>
+                <el-col :span="24">
+                    <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
+                        <el-menu-item index="-1" class="t-title" disabled>终端情况: </el-menu-item>
+                        <el-menu-item index="1">
+                            <i class="el-icon-check online-icon"></i>正常 (10)</el-menu-item>
+                        <el-menu-item index="2">
+                            <i class="el-icon-close offline-icon"></i> 终端不在线 (0)</el-menu-item>
+                        <el-menu-item index="-3" class="t-title" disabled>
+                            <el-button-group>
+                                <el-button size="small" icon="el-icon-menu"></el-button>
+                                <el-button size="small" icon="el-icon-tickets"></el-button>
+                            </el-button-group>
+                        </el-menu-item>
+                        <el-menu-item index="-2" :style="{'float':'right'}" class="t-title" disabled>
+                            <el-pagination class="pagebar" :current-page="1" :page-sizes="[10, 20, 30]" :page-size="10" layout="total, sizes, prev, pager, next, jumper"
+                                :total="20">
+                            </el-pagination>
+                        </el-menu-item>
+                    </el-menu>
+                </el-col>
+            </el-row>
+        </div>
+        <div id="terminalDisplay">
+            <template v-for="t in terminals">
+                <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
+                    <div class="deviceInfo">
+                        <span class="name">{{t.name}}</span>
+                        <span class="size">{{t.size}}</span>
+                    </div>
+                    <div class="screenshoot">
+                        <img src="/assets/img/program-test.jpg" class="image">
+                        <div class="ratio">{{t.ratio}}</div>
+                    </div>
+                    <div class="control" style="">
+                        <table>
+                            <tr>
+                                <td>当前节目</td>
+                                <td>：暂无节目</td>
+                            </tr>
+                            <tr>
+                                <td>IP</td>
+                                <td>：{{t.ip}}</td>
+                            </tr>
+                            <tr>
+                                <td>版本</td>
+                                <td>：{{t.ver}}</td>
+                            </tr>
+                        </table>
+                        <div class="bottom clearfix">
+                            <el-button type="button" size="mini" class="button" @click="openTerminalController(t)">控制</el-button>
+                            <el-button type="button" size="mini" class="button" @click="openTerminalProgram(t)">节目</el-button>
+                            <el-button type="button" size="mini" class="button" @click="openTerminalLog(t)">日志</el-button>
+                        </div>
+                    </div>
+                </el-card>
+            </template>
+        </div>
+        <!--dialog-->
+        <el-dialog :title="tcw.title" :visible.sync="tcw.visiable" width="50%" height="300">
+            <div class="command-list">
+                <template v-for="control in controlList">
+                    <a class="action" :class="control.checked ? 'active':''" id="start" @click="SendCommand(control)">
+                        <i :class="control.icon" aria-hidden="true"></i>
+                        <div class="start">{{control.label}}</div>
+                    </a>
+                </template>
+            </div>
+        </el-dialog>
+        <el-dialog :title="tlw.title" :visible.sync="tlw.visiable" :fullscreen="true">
+            <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
+                <el-menu-item index="1"> 操作日志 </el-menu-item>
+                <el-menu-item index="2"> 系统日志 </el-menu-item>
+                <el-menu-item index="3"> 心跳日志 </el-menu-item>
+                <el-menu-item index="4"> 播放器日志 </el-menu-item>
+            </el-menu>
+            <el-container>
+                <el-main>
+                    <template>
+                        <el-table :data="logs" style="width: 100%">
+                            <el-table-column type="expand">
+                                <template slot-scope="props">
+                                    <pre class="brush: js">{{ props.row.params }}</pre>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="id" prop="logId" width="100">
+                            </el-table-column>
+                            <el-table-column label="操作用户" prop="username" width="155">
+                            </el-table-column>
+                            <el-table-column label="操作信息描述" prop="operation" >
+                            </el-table-column>
+                            <el-table-column label="ip" prop="ip" width="155">
+                            </el-table-column>
+                            <el-table-column label="等级" width="100">
+                                <template slot-scope="scope">
+                                    <div slot="reference" class="name-wrapper">
+                                        <el-tag :type="level_dis(scope.row)" size="medium">{{ scope.row.level }}</el-tag>
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="时间" width="180">
+                                <template slot-scope="scope">
+                                    <div slot="reference" class="name-wrapper">
+                                        {{ scope.row.date | datetime }}
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            
+                        </el-table>
+                    </template>
+
+                </el-main>
+            </el-container>
+        </el-dialog>
+        <!--dialog-->
+    </div>
+</body>
+
+<script>
+    window.ins = new Vue({
+        el: '#app',
+        data: {
+            terminals: [],
+            logs: [],
+            tcw: {
+                title: '终端控制指令下发',
+                visiable: false,
+                terminal: null
+            },
+            tlw: {
+                title: '日志信息',
+                visiable: false,
+                terminal: null
+            },
+            controlList: [{
+                type: 'play',
+                label: '开始播放',
+                opt: '1',
+                icon: 'fa fa-play-circle',
+                checked: false
+            }, {
+                type: 'play',
+                label: '停止播放',
+                opt: '0',
+                icon: 'fa fa-stop-circle-o',
+                checked: false
+            }, {
+                type: 'volume',
+                label: '音量+',
+                opt: '1',
+                icon: 'fa fa-volume-up',
+                checked: false
+            }, {
+                type: 'volume',
+                label: '音量-',
+                opt: '0',
+                icon: 'fa fa-volume-down',
+                checked: false
+            }, {
+                type: 'volume',
+                label: '静音',
+                opt: '2',
+                icon: 'fa fa-volume-off',
+                checked: false
+            }, {
+                type: 'volume',
+                label: '取消静音',
+                opt: '3',
+                icon: 'fa fa-volume-up',
+                checked: false
+            }, {
+                type: 'screenshot',
+                label: '截屏',
+                opt: '600|600',
+                icon: 'fa fa-scissors',
+                checked: false
+            }, {
+                type: 'ocscreen',
+                label: '打开播放器',
+                opt: '1',
+                icon: 'fa fa-power-off',
+                checked: false
+            }, {
+                type: 'ocscreen',
+                label: '关闭播放器',
+                opt: '0',
+                icon: 'fa fa-times-circle',
+                checked: false
+            }, {
+                type: 'wakelock',
+                label: '打开显示屏',
+                opt: '1',
+                icon: 'fa fa-television',
+                checked: false
+            }, {
+                type: 'wakelock',
+                label: '关闭显示屏',
+                opt: '0',
+                icon: 'fa fa-window-close',
+                checked: false
+            }, {
+                type: 'cleardata',
+                label: '清空数据',
+                opt: '1',
+                icon: 'fa fa-trash-o',
+                checked: false
+            }, {
+                type: 'refresh',
+                label: '刷新页面',
+                opt: '1',
+                icon: 'fa fa-refresh',
+                checked: false
+            }, {
+                type: 'version',
+                label: '显示版本',
+                opt: '1',
+                icon: 'fa fa-info-circle',
+                checked: false
+            }, {
+                type: 'version',
+                label: '关闭版本显示',
+                opt: '0',
+                icon: 'fa fa-times',
+                checked: false
+            }, {
+                type: 'upgrade',
+                label: '升级',
+                opt: '0',
+                icon: 'fa fa-cloud-upload',
+                checked: false
+            }, {
+                type: 'shutdown',
+                label: '关机',
+                opt: '1',
+                icon: 'fa fa-toggle-off',
+                checked: false
+            }, {
+                type: 'reboot',
+                label: '重启',
+                opt: '1',
+                icon: 'fa fa-repeat',
+                checked: false
+            }]
+
+        },
+        mounted() {
+            this.loadTeminalInfo();
+            this.loadTerminalLogs();
+        },
+        methods: {
+            loadTeminalInfo() {
+                let me = this;
+                ajax_promise('/terminal/list', 'get').then((result) => {
+                    me.terminals = result.data;
+                });
+            },
+            loadTerminalLogs() {
+                let me = this;
+                ajax_promise('/terminal/logs', 'post').then(result => {
+                    me.logs = result.data;
+                })
+            },
+            openTerminalController(tm_info) {
+                this.tcw.terminal = tm_info;
+                this.tcw.visiable = true;
+                this.tcw.title = tm_info.name + ' 控制指令';
+            },
+            openTerminalProgram(tm_info) {
+
+            },
+            openTerminalLog(tm_info) {
+                this.tlw.terminal = tm_info;
+                this.tlw.visiable = true;
+                this.tlw.title = tm_info.name + ' 日志信息';
+            },
+            SendCommand(control) {
+                this.controlList.map((c) => {
+                    c.checked = false;
+                });
+                control.checked = true;
+                this.$message({
+                    message: '已送指令: ' + control.label,
+                    type: 'success'
+                });
+            },
+            level_dis(target) {
+                if (target.level == 'DEBUG') return '';
+                if (target.level == 'INFO') return 'info';
+                if (target.level == 'WARN') return 'warning';
+                if (target.level == 'ERROR') return 'danger';
+                if (target.level == 'FATAL') return 'danger';
+                return '';
+            }
+
+        }
+    });
+</script>
+
+</html>

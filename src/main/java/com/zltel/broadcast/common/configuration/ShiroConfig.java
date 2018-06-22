@@ -35,12 +35,14 @@ import com.zltel.broadcast.common.util.PasswordHelper;
 @Configuration
 @ConfigurationProperties(prefix = "shiro.config")
 public class ShiroConfig {
-
     public static final Logger log = LoggerFactory.getLogger(ShiroConfig.class);
     /** hash算法 **/
     private static String hashalgorithmname = "md5";
     /** hash计算次数 **/
     private static int hashiterations = 2;
+    
+    private static final int SESSION_VALIDATION_INTERVAL = 30 * 60000;
+    private static final int GLOBAL_SESSION_TIMEOUT = 30 * 60 * 1000;
 
     /** 测试名称 **/
     private static String name = "test";
@@ -50,16 +52,16 @@ public class ShiroConfig {
         return name;
     }
 
-    public static void setName(String _name) {
-        name = _name;
+    public static void setName(String nm) {
+        name = nm;
     }
 
     public static String getHashalgorithmname() {
         return hashalgorithmname;
     }
 
-    public static void setHashalgorithmname(String _hashalgorithmname) {
-        hashalgorithmname = _hashalgorithmname;
+    public static void setHashalgorithmname(String hnm) {
+        hashalgorithmname = hnm;
         PasswordHelper.setAlgorithmName(hashalgorithmname);
     }
 
@@ -67,8 +69,8 @@ public class ShiroConfig {
         return hashiterations;
     }
 
-    public static void setHashiterations(int _hashiterations) {
-        hashiterations = _hashiterations;
+    public static void setHashiterations(int hi) {
+        hashiterations = hi;
         PasswordHelper.setHashIterations(hashiterations);
     }
     // ----------------setter----------------
@@ -77,9 +79,7 @@ public class ShiroConfig {
     /** 会话ID生成器 **/
     @Bean
     public SessionIdGenerator sessionIdGenerator() {
-        JavaUuidSessionIdGenerator gen = new JavaUuidSessionIdGenerator();
-
-        return gen;
+        return new JavaUuidSessionIdGenerator();
     }
 
 
@@ -96,8 +96,6 @@ public class ShiroConfig {
     /** 会话DAO **/
     @Bean
     public SessionDAO sessionDAO(SessionIdGenerator sessionIdGenerator) {
-        // EnterpriseCacheSessionDAO dao = new EnterpriseCacheSessionDAO();
-        // dao.setActiveSessionsCacheName("shiro-activeSessionCache");
 
         RedisSessionDao dao = new RedisSessionDao();
         dao.setSessionIdGenerator(sessionIdGenerator);
@@ -142,7 +140,6 @@ public class ShiroConfig {
     public CacheManager cacheManager() {
         EhCacheManager cache = new EhCacheManager();
         cache.setCacheManagerConfigFile("classpath:ehcache.xml");
-        // return new MemoryConstrainedCacheManager();
         return cache;
     }
 
@@ -214,9 +211,9 @@ public class ShiroConfig {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
 
         // 设置session过期时间，默认为30分钟
-        sessionManager.setGlobalSessionTimeout(30 * 60 * 1000);
+        sessionManager.setGlobalSessionTimeout(GLOBAL_SESSION_TIMEOUT);
         sessionManager.setSessionValidationSchedulerEnabled(true);
-        sessionManager.setSessionValidationInterval(30 * 60000); // 清理回话频率,默认按小时
+        sessionManager.setSessionValidationInterval(SESSION_VALIDATION_INTERVAL); // 清理回话频率,默认按小时
 
         // 将session信息写入url中. 可以预防浏览器cookie禁用的情况
         sessionManager.setSessionIdUrlRewritingEnabled(true);

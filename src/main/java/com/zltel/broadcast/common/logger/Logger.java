@@ -1,7 +1,5 @@
 package com.zltel.broadcast.common.logger;
 
-import org.apache.commons.logging.*;
-
 import java.util.Date;
 
 
@@ -16,14 +14,12 @@ import java.util.Date;
 public class Logger {
 
 
-    private Class clazz;
-    private String pid;
+    private Class<?> clazz;
     private String username;
     private String feature;
 
-    public Logger(Class clazz, String pid, String username, String feature) {
+    public Logger(Class<?> clazz,  String username, String feature) {
         this.clazz = clazz;
-        this.pid = pid;
         this.username = username;
         this.feature = feature;
     }

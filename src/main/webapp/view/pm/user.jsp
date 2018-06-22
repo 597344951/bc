@@ -62,6 +62,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						 	   		:before-upload="partyUser_manager_validatePartyUserInfosExcel" >
 							      	<el-button type="text">点击上传excel文件</el-button>
 								</el-upload>
+								<el-button type="text" @click="partyUser_manager_showImportPartyUserExcelErrorMsgDialog">显示导入错误信息</el-button>
 						  	</div>
 						</el-popover>
 				  	</shiro:hasPermission>
@@ -211,6 +212,22 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 
 
+
+		<el-dialog title="导入党员错误信息" :visible.sync="partyUser_manager_importPartyUserExcelErrorMsgDialog" width="50%">
+			<span style="margin: 0 15px">
+				可以在
+				<span style="color: blue"> 导入党员->显示导入错误信息 </span>
+				再次打开
+			</span>
+			<div style="margin: 0 15px">
+				<el-input 
+				  	type="textarea"
+				 	:autosize="{ minRows: 10, maxRows: 15}"
+				 	placeholder="导入党员信息失败时，对表格校验的错误信息将显示在这里"
+					v-model="partyUser_manager_importPartyUserExcelErrorMsg">
+				</el-input>
+			</div>
+		</el-dialog>
 
 		<el-dialog @close="partyUser_manager_resetJoinOrgInfoForm" title="加入组织" :visible.sync="partyUser_manager_joinOrgInfoDialog" width="50%">
 			<el-form class="partyUserForm" size="small" :model="partyUser_manager_joinOrgInfoForm" status-icon :rules="partyUser_manager_joinOrgInfoRules" 
@@ -1125,6 +1142,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			partyUser_manager_importPartyUserExcelErrorMsg: null,	/*导入党员校验错误信息*/
 			partyUser_manager_joinOrgInfoForm: {
 				orgInfoTreeOfJoinOrg: [],
 				orgDutyTreesForOrgInfo: [],
@@ -1151,6 +1169,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_updatePartyUserDialog: false,	/*修改党员信息窗口*/
 			partyUser_manager_joinOrgInfoDialog: false,		/*加入组织信息窗口*/
 			partyUser_manager_updatePartyUserIdPhotoDialog: false,	/*修改党员证件照*/
+			partyUser_manager_importPartyUserExcelErrorMsgDialog: false,	/*导入党员显示错误校验信息*/
 			partyUser_manager_pager: {	/*初始化分页信息*/
 				pageNum: 1,		/* 当前页 */
 				pageSize: 10,	/* 页面大小 */
@@ -1857,10 +1876,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
                    success: function (data) {
                 	   if (data.code == 200) {
                 		   toast('导入成功',data.msg,'success');
+                		   obj.partyUser_manager_importPartyUserExcelErrorMsg = null;
                 		   obj.partyUser_manager_queryPartyUserInfos();
                 	   } else if (data.code == 500) {
                 		   toast('导入失败',data.msg,'error');
-                		   window.location = "/party/user/excel/downloadValidataMsg";
+                		   obj.partyUser_manager_importPartyUserExcelErrorMsg = data.data;
+                		   //window.location = "/party/user/excel/downloadValidataMsg";	/*导入失败下载错误信息*/
+                		   obj.partyUser_manager_importPartyUserExcelErrorMsgDialog = true;
                 	   }
                    },
                })
@@ -1941,7 +1963,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo.length != 0) {
 							for (var j = 0; j < obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo.length; j++) {
 								if(menuTree.id == obj.partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo[j]) {
-									//menuTree.disabled = true;
+									menuTree.disabled = true;
 								}
 							}
 						}
@@ -1981,6 +2003,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_openUpdatePartyUserIdPhoto() {
 				var obj = this;
 				obj.partyUser_manager_updatePartyUserIdPhotoDialog = true;
+			},
+			partyUser_manager_showImportPartyUserExcelErrorMsgDialog() {
+				var obj = this;
+				obj.partyUser_manager_importPartyUserExcelErrorMsgDialog = true;
 			}
 		}
 	});

@@ -13,7 +13,8 @@
         }
 
         .el-row {
-            margin-bottom: 15px;
+            margin: 5px auto;
+			width: 95%;
         }
 
         #lecture {

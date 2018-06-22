@@ -10,9 +10,6 @@ import com.zltel.BaseTests;
 @Generated(value = "org.junit-tools-1.0.6")
 public class MyBatisScriptCreateUtilTest extends BaseTests{
 
-    private MyBatisScriptCreateUtil createTestSubject() {
-        return new MyBatisScriptCreateUtil();
-    }
 
     @Test
     public void testToDataBaseName() throws Exception {

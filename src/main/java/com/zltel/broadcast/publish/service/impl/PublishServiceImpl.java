@@ -18,6 +18,7 @@ import com.zltel.broadcast.um.bean.SysUser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -33,7 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class PublishServiceImpl implements PublishService {
     private static final Log log = LogFactory.getLog(PublishServiceImpl.class);
 
-    private String host = "http://192.168.1.129:8080";
+    @Value("${zltel.host}")
+    private String host;
 
     @Autowired
     private SimpleDao simpleDao;
@@ -676,5 +678,10 @@ public class PublishServiceImpl implements PublishService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public int offline() {
         return publishDao.offline();
+    }
+
+    @Override
+    public List<Map<String, Object>> queryPublishTerminal(int contentId) {
+        return publishDao.queryPublishTerminal(contentId);
     }
 }

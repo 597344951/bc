@@ -186,7 +186,7 @@ public class LogBean {
  
 
     public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("level", level);
         map.put("method", method);
         map.put("date", date);

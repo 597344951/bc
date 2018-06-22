@@ -248,16 +248,21 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 		if (organizationRelation != null) {
 			organizationRelationMapper.deleteOrgRelationByUserId(organizationRelation.getOrgRltUserId());
 			int count = 0;
-			for (Integer orgDuty : orgRltDutys) {
-				organizationRelation.setOrgRltId(null);	//自增，不需要设置值
-				organizationRelation.setOrgRltDutyId(orgDuty);
-				count += this.insertSelective(organizationRelation);	//开始添加组织关系
+			if (orgRltDutys != null && orgRltDutys.size() > 0) {
+				for (Integer orgDuty : orgRltDutys) {
+					organizationRelation.setOrgRltId(null);	//自增，不需要设置值
+					organizationRelation.setOrgRltDutyId(orgDuty);
+					count += this.insertSelective(organizationRelation);	//开始添加组织关系
+				}
+				if (count == orgRltDutys.size()) {	//受影响的行数，判断是否修改成功
+					return R.ok().setMsg("组织关系添加成功。");
+				} else {	//没有受影响行数表示添加失败
+					throw new Exception();
+				}
+			} else {
+				return R.ok().setMsg("成功移除组织");
 			}
-			if (count == orgRltDutys.size()) {	//受影响的行数，判断是否修改成功
-				return R.ok().setMsg("组织关系添加成功。");
-			} else {	//没有受影响行数表示添加失败
-				throw new Exception();
-			}
+			
 			
 		} else {	//添加一定需要一个组织关系
 			throw new Exception();

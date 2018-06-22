@@ -10,6 +10,8 @@ import java.util.Map;
  *
  */
 public class FileContentTypeUtil {
+    private FileContentTypeUtil() {}
+
     private static final Map<String, String> map = new HashMap<>();
     static {
         init();

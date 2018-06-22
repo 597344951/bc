@@ -1,0 +1,1 @@
+mvn install -T 1C -Dmaven.test.skip=true  -Dmaven.compile.fork=true  

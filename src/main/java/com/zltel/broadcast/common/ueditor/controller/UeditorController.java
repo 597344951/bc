@@ -29,11 +29,16 @@ public class UeditorController {
     public void downloadFileAction(@PathVariable("fileType") String filetype, @PathVariable("dir") String dir,
             @PathVariable("filename") String filename, HttpServletRequest request, HttpServletResponse response) {
         String basePath = UeditorConfig.getInstince().getSavepath();
-        
-        String fn = basePath + "ueditor\\upload\\" + filetype + "\\" + dir + "\\" + filename;
+
+        // 路径格式: /ueditor/upload/filetype/dir/filename
+        StringBuilder sb = new StringBuilder(basePath);
+        sb.append("ueditor").append(File.separatorChar).append("upload").append(File.separatorChar).append(filetype)
+                .append(File.separatorChar).append(dir).append(File.separatorChar).append(filename);
+        String fn = sb.toString();
         File file = new File(fn);
         try {
             if (!file.exists()) {
+                logout.error("找不到资源:{}", fn);
                 response.sendError(404, "找不到资源");
                 return;
             }

@@ -11,7 +11,8 @@
 			font-size: 14px;
 		}
 		.el-row {
-			margin-bottom: 15px;
+			margin: 5px auto;
+			width: 95%;
 		}
 		.el-upload-list__item {
 			height: 25px;

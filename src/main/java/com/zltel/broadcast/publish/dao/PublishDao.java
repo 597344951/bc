@@ -63,4 +63,11 @@ public interface PublishDao {
      * @return
      */
     public int offline();
+
+    /**
+     * 预发布到终端
+     * @param contendId
+     * @return
+     */
+    public List<Map<String, Object>> queryPublishTerminal(@Param("contentId") int contendId);
 }

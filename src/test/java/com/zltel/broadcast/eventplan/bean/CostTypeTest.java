@@ -15,7 +15,7 @@ public class CostTypeTest extends BaseTests {
 
     @Test
     public void test () throws Exception {
-        StringBuffer sb = MyBatisScriptMain.createCRUDScript(CostType.class);
+        StringBuilder sb = MyBatisScriptMain.createCRUDScript(CostType.class);
         logout.info(sb.toString());
     }
 }

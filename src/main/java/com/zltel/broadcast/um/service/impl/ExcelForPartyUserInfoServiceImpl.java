@@ -86,8 +86,6 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	private JoinPartyBranchTypeMapper joinPartyBranchTypeMapper;
 	@Autowired
 	private OrganizationRelationMapper organizationRelationMapper;
-	
-	static StringBuffer validataErrorMsg = new StringBuffer(); // 保存错误信息
 
 	private final static String OFFICE_EXCEL_2003 = "XLS";
 	private final static String OFFICE_EXCEL_2010 = "XLSX";
@@ -111,9 +109,11 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 		Map<Integer, BaseUserInfo> baseUserInfoMaps = new HashMap<>();
 		Map<Integer, PartyUserInfo> partyUserInfoMaps = new HashMap<>();
 		Map<Integer, OrganizationRelation> orgRelationMaps = new HashMap<>();
-		boolean thisValidateSuccess = validateImportPartyUserInfosExcel(hs, baseUserInfoMaps, partyUserInfoMaps, orgRelationMaps);	//本次验证是否通过
+		StringBuffer validataErrorMsg = new StringBuffer();	//保存错误信息
+		boolean thisValidateSuccess = validateImportPartyUserInfosExcel(hs, baseUserInfoMaps
+				, partyUserInfoMaps, orgRelationMaps, validataErrorMsg);	//本次验证是否通过
 		if(!thisValidateSuccess) {
-			return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt");
+			return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt").setData(validataErrorMsg);
 		}
 		
 		//开始添加
@@ -154,7 +154,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	 * @return
 	 */
 	private boolean validateImportPartyUserInfosExcel(Sheet hs, Map<Integer, BaseUserInfo> baseUserInfoMaps, 
-			Map<Integer, PartyUserInfo> partyUserInfoMaps, Map<Integer, OrganizationRelation> orgRelationMaps) throws Exception {
+			Map<Integer, PartyUserInfo> partyUserInfoMaps, Map<Integer, OrganizationRelation> orgRelationMaps, StringBuffer validataErrorMsg) throws Exception {
 		boolean thisValidateSuccess = true;
 		for (int i = 3; ; i++) {	//从第4行开始读取
 			Row row = hs.getRow(i);
@@ -840,7 +840,9 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	 */
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
+	@Deprecated
     public R downloadValidataMsg(HttpServletResponse response) throws Exception {
+		StringBuffer validataErrorMsg = new StringBuffer();
 		if (StringUtil.isNotEmpty(validataErrorMsg.toString())) {
 			this.downloadFile(response, new ByteArrayInputStream(validataErrorMsg.toString().getBytes()), "导入错误信息.txt"); //下载错误提示信息
 			validataErrorMsg = new StringBuffer();

@@ -33,7 +33,7 @@ public interface SolaProgramService {
     public void cancelProgram(String pids, String tids);
 
     /**
-     * 注册终端
+     * 终端
      * @return
      */
     public List<Map<String, Object>> queryTerminal();
@@ -57,6 +57,13 @@ public interface SolaProgramService {
      * @return
      */
     public List<Map<String, Object>> queryTerminalExecuteLog(int tid);
+
+    /**
+     * 获取终端节目
+     * @param tid
+     * @return
+     */
+    public List<Map<String, Object>> queryTerminalProgram(int tid);
 
     /**
      * 终端操作

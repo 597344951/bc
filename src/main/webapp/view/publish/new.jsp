@@ -38,13 +38,47 @@
 			margin: 5px;
 			font-size: 14px;
 		}
-
 		h5 {
 			margin: 5px;
 			font-size: 13px;
 		}
 		.template-preview {
 			width: 100%
+		}
+		.image-box {
+            width: 200px;
+            height: 250px;
+            border-radius: 5px;
+            padding: 4px;
+            margin: 10px;
+            background-color: ghostwhite;
+            float: left;
+			position: relative;
+        }
+        .image {
+            width: 100%;
+            height: 175px;
+			background: white;
+        }
+        .bottom {
+            padding: 5px 0px;
+        }
+        .bottom p {
+            margin: 0px;
+			font-size: 13px;
+			font-weight: bold;
+        }
+		.el-radio {
+			position: absolute;
+    		right: 10px;
+    		top: 10px;
+		}
+		.el-radio__label {
+			display: none;
+		}
+		.el-radio__inner {
+			height: 20px;
+			width: 20px;
 		}
 	</style>
 </head>
@@ -53,14 +87,53 @@
 		<el-container>
 			<el-header>
 				<el-steps :active="step" finish-status="success">
+					<el-step title="选择模板"></el-step>
 					<el-step title="编辑内容"></el-step>
 					<el-step title="选择发布终端"></el-step>
 					<el-step title="编辑审核人"></el-step>
-					<el-step title="发布完成"></el-step>
+					<el-step title="创建成功"></el-step>
 				</el-steps>
 			</el-header>
-			<el-main>
+			<el-main v-loading="loading">
 				<div v-show="step==0">
+					<h3>选择模板</h3>
+					<el-row :gutter="20">
+						<el-col :span="3">
+							<el-select
+									size="medium"
+									v-model="screenDirection"
+									placeholder="节目类型">
+								<el-option label="横屏" value="横屏"></el-option>
+								<el-option label="竖屏" value="竖屏"></el-option>
+							</el-select>
+						</el-col>
+						<el-col :span="4">
+							<el-input size="medium" v-model="keyword" placeholder="输入关键字"></el-input>
+						</el-col>
+						<el-col :span="2">
+							<el-button size="medium" type="primary" icon="el-icon-search" @click="filterTemplate"></el-button>
+						</el-col>
+					</el-row>
+					<el-row :gutter="20">
+						<div class="image-box">
+							<el-radio v-model="selectedTemplateId" label="0"></el-radio>
+							<div class="image"></div>
+							<div class="bottom">
+								<p>空白模板</p>
+							</div>
+						</div>
+
+						<div class="image-box" v-for="t in showTemplateArr">
+							<el-radio v-model="selectedTemplateId" :label="t.tpId"></el-radio>
+							<img :src="t.previewPicture" class="image">
+							<div class="bottom">
+								<p>{{t.desc}}</p>
+							</div>
+						</div>
+					</el-row>
+				</div>
+				<%-- 内容编辑 --%>
+				<div v-show="step==1">
 					<h3>内容/活动简单编辑</h3>
 					<el-row :gutter="20">
 						<el-col :span="4"><h4>主题 [<el-button type="text" @click="additionDialogVisible = true">补充</el-button>]</h4></el-col>
@@ -99,7 +172,7 @@
 							</el-time-picker>
 						</el-col>
 					</el-row>
-					<el-row :gutter="20">
+					<%-- <el-row :gutter="20">
 						<el-col :span="4"><h4>播放设置</h4></el-col>
 						<el-col :span="19">
 							<el-select
@@ -122,7 +195,7 @@
 							：
 							<el-input style="width: 18%;" v-model="playLength" placeholder="播放时长（秒）"></el-input>
 						</el-col>
-					</el-row>
+					</el-row> --%>
 					<el-row :gutter="20">
 						<el-col :span="4">
 							<h4>内容 [<el-button type="text" @click="showTemplates">选取模板</el-button>]</h4>
@@ -178,7 +251,7 @@
 					</el-row>
 				</div>
 				<%--选择终端--%>
-				<div v-show="step==1">
+				<div v-show="step==2">
 					<h3>选择发布终端</h3>
 					<el-table
 							ref="multipleTable"
@@ -201,7 +274,7 @@
 					</el-table>
 				</div>
 				<%--审核人--%>
-				<div v-show="step==2">
+				<div v-show="step==3">
 					<h3>编辑审核人（审核顺序为添加顺序）</h3>
 					<div style="text-align: center">
 						<el-transfer
@@ -215,16 +288,17 @@
 						</el-transfer>
 					</div>
 				</div>
-				<div v-show="step > 2">
+				<%-- 完成 --%>
+				<div v-show="step > 3">
 					<el-card class="box-card" shadow="never">
 						内容编辑完成.[<a :href="viewProcess">点击跳转查看进度...</a>]
 					</el-card>
 				</div>
 			</el-main>
 			<el-footer style="text-align:right;margin-right:50px;" >
-				<el-button type="primary" @click="preStep" v-show="step > 0 && step <= 2">上一步</el-button>
-				<el-button type="primary" @click="nextStep" v-show="step < 2">下一步</el-button>
-				<el-button type="primary" @click="commit" v-show="step == 2">提交</el-button>
+				<el-button type="primary" @click="preStep" v-show="step > 0 && step <= 3">上一步</el-button>
+				<el-button type="primary" @click="nextStep" v-show="step < 3">下一步</el-button>
+				<el-button type="primary" @click="commit" v-show="step == 3">提交</el-button>
 			</el-footer>
 		</el-container>
 		<%--模板--%>
@@ -286,6 +360,10 @@
 				<el-button size="mini" type="primary" @click="addAddition()">添 加</el-button>
 			</div>
 		</el-dialog>
+
+		<el-dialog title="素材验证" :visible="commitMessage.show" :show-close="false" width="300px">
+			<p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
+		</el-dialog>
 	</div>
 
 
@@ -293,22 +371,28 @@
 		const app = new Vue({
 			el: '#app',
 			data: {
+				loading: true,
 			    step: 0,
                 viewProcess: '#',
                 templateDialogVisible: false,
                 additionDialogVisible: false,
                 commitCheckMsgVisible: true,
                 templates:[],
-				selectedTemplate: 0,
+				templateArr: [],
+				showTemplateArr: [],
+				keyword: '',
+				selectedTemplateId: '0',
+				selectedTemplate: {},
 				selectedTemplatePreview: '',
 				type: 4,
 				title: '',
 				startDate: '',
 				endDate:'',
 				time: '',
-				screenType: '',
-				playLength: '',
-				resolution: '',
+				screenType: '0',
+				screenDirection: '竖屏',
+				playLength: 100,
+				resolution: 1920x1080,
 				week: '',
                 templateText: '',
                 material: [],
@@ -317,16 +401,25 @@
                 selectedTerminals: [],
 				selectedExUser: [],
 				exUsers:[],
-				week: [],
-                resolution: '',
-                screenType: '',
-                playLength: '',
                 addition: {
                     participantType: 'all'
+				},
+				commitMessage: {
+					show: false,
+					message: [],
 				}
 			},
             methods: {
 			    nextStep() {
+					if(this.step == 0) {
+						for(var i in this.templateArr) {
+							if(this.selectedTemplateId == this.templateArr[i].tpId) {
+								this.selectedTemplate = this.templateArr[i].content
+								ue.setContent(this.selectedTemplate)
+								break
+							}
+						}
+					}
 					if(commitCheck()) {
                         this.step ++;
 					}
@@ -398,22 +491,9 @@
                         this.templateDialogVisible = true;
 			            return;
 					}
-			        get("/tpt/listTypeTree", reps => {
-			            if(reps.status) {
-                            app.templates = reps.data;
-                            for(var i in app.templates) {
-                                for(var j in app.templates[i].children) {
-                                    getTemplateContent(app.templates[i].children[j]);
-								}
-							}
-							setTimeout(() => {
-                                this.templateDialogVisible = true;
-							}, 1000);
-
-						} else {
-                            app.$message('没有找到已定义模板 !');
-						}
-					});
+					loadTemplate(() => {
+						this.templateDialogVisible = true;
+					})
 				},
                 getTemplates(index, indexPath) {
 			        console.log(index, indexPath);
@@ -444,8 +524,15 @@
                 addAddition() {
 			        this.type = 3;
                     this.additionDialogVisible = false;
+				},
+				filterTemplate() {
+					this.showTemplateArr = []
+					this.templateArr.forEach(item => {
+						if(!this.keyword || item.desc.indexOf(this.keyword) >= 0) {
+							this.showTemplateArr.push(item)
+						}
+					})
 				}
-
 			}
 		});
 		//编辑器
@@ -461,6 +548,9 @@
 		function init() {
 			getTerminals()
 			getExUsers()
+			loadTemplate(()=>{
+				app.loading = false
+			})
 		}
 
         function commit(postData) {
@@ -472,8 +562,12 @@
                 data: JSON.stringify(postData),
                 success: function(reps){
                     if(reps.status) {
-                        app.step += 2;
-                        app.viewProcess = '/publish/process';
+                        //app.step += 2;
+						//app.viewProcess = '/publish/process';
+						commitMessage(() => {
+							app.step += 2;
+							app.viewProcess = '/publish/process';
+						})
                     } else {
                         app.$notify({
                             title: 'ERROR',
@@ -494,7 +588,7 @@
 
         function commitCheck() {
             var msgs = [];
-            if(app.step == 0) {
+            if(app.step == 1) {
                 if(!app.title) {
                     msgs.push('* 请填写主题.');
                 }
@@ -504,7 +598,7 @@
                 if(!ue.getContent()) {
                     msgs.push('* 请选择模板或填写自定义内容.');
                 }
-				if(!app.screenType) {
+				/* if(!app.screenType) {
 					msgs.push('* 请选择终端屏幕类型.');
 				}
 				if(!app.playLength) {
@@ -512,12 +606,12 @@
 				}
 				if(!app.resolution) {
 					msgs.push('* 请选择分辨率.');
-				}
-            } else if(app.step == 1) {
+				} */
+            } else if(app.step == 2) {
                 if(app.selectedTerminals.length <= 0) {
                     msgs.push('* 请选择要发布内容的终端.');
 				}
-			} else if(app.step == 2) {
+			} else if(app.step == 3) {
                 if(app.selectedExUser.length <= 0) {
                     msgs.push('* 请选择内容审核人.');
                 }
@@ -543,10 +637,38 @@
             });
         }
 
-        function getTemplateContent(type) {
+
+		function loadTemplate(callback) {
+			get("/tpt/listTypeTree", reps => {
+				if(reps.status) {
+					app.templates = reps.data;
+					for(var i in app.templates) {
+						for(var j in app.templates[i].children) {
+							getTemplateContent(app.templates[i].name + ' > ' +app.templates[i].children[j].name, app.templates[i].children[j]);
+						}
+					}
+					setTimeout(() => {
+						if(callback) {
+							callback()
+						}
+					}, 1000);
+
+				} else {
+					app.$message('没有找到已定义模板 !');
+				}
+			});
+		}
+
+        function getTemplateContent(desc, type) {
             get('/tp/listByType?tpTypeId=' + type.id, reps => {
                 if(reps.status) {
                     type.children = reps.data;
+					reps.data.forEach((item => {
+						item.desc = desc + " > " + item.title
+						app.templateArr.push(item)
+						app.showTemplateArr.push(item)
+					}))
+					
                 }
             })
         }
@@ -584,6 +706,9 @@
 					}
 					let size, direction, type, resolution, status
 					reps.data.forEach(item => {
+						if(item.OnlineStatus != 1 || item.ScreenDirection != app.screenDirection) {
+							return;
+						}
 						app.terminals.push({
 							id: item.PkId,
 							name: item.Name,
@@ -648,7 +773,34 @@
 					app.selectedExUser = [${userId}]
 				}
 			})
-        }
+		}
+		
+		function commitMessage(callback) {
+			app.commitMessage.show = true
+			message = [
+						'敏感词检测...',
+						'完成, 未发现敏感词',
+						'提取素材文件MD5...',
+						'素材文件MD5提取完成',
+						'正在提交...',
+						'提交完成.'
+					]
+			let index = 1;
+			app.commitMessage.message = []
+			app.commitMessage.message.push(message[0])
+			let iterval = setInterval(() => {
+				app.commitMessage.message.push(message[index])
+				index ++
+				if(index == message.length) {
+					app.commitMessage.show = false
+					clearInterval(iterval)
+					if(callback) {
+						callback()
+					}
+					
+				}
+			}, 2*1000);
+		}
 	</script>
 </body>
 </html>

@@ -43,7 +43,7 @@ public class OrganizationRelationController extends BaseController {
 		try {
 			return organizationRelationService.queryOrgRelations(orgRelationConditiona, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error("查询组织关系失败",e);
 			return R.error().setMsg("查询组织关系失败");
 		}
 	}
@@ -61,7 +61,7 @@ public class OrganizationRelationController extends BaseController {
 		try {
 			return organizationRelationService.queryOrgRelationNewsNotPage(orgRelationConditiona);
 		} catch (Exception e) {
-			e.printStackTrace();
+		    logout.error("查询组织关系失败",e);
 			return R.error().setMsg("查询组织关系失败");
 		}
 	}
@@ -79,7 +79,7 @@ public class OrganizationRelationController extends BaseController {
 		try {
 			return organizationRelationService.queryOrgRelationNews(orgRelationConditiona, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+		    logout.error("查询组织关系失败",e);
 			return R.error().setMsg("查询组织关系失败");
 		}
 	}
@@ -97,7 +97,7 @@ public class OrganizationRelationController extends BaseController {
 		try {
 			return organizationRelationService.queryOrgRelationsNotPage(organizationRelation);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error("查询组织关系失败",e);
 			return R.error().setMsg("查询组织关系失败");
 		}
 	}
@@ -116,7 +116,7 @@ public class OrganizationRelationController extends BaseController {
 		try {
 			return organizationRelationService.deleteOrgRelation(organizationRelation);	//开始删除组织关系
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error("组织关系删除失败",e);
 			return R.error().setMsg("组织关系删除失败。");
 		}
 	}
@@ -136,8 +136,8 @@ public class OrganizationRelationController extends BaseController {
 		try {
 			return organizationRelationService.insertOrgRelation(organizationRelation, orgRltDutys);	//开始添加组织关系
 		} catch (Exception e) {
-			e.printStackTrace();
-			return R.error().setMsg("组织关系添加失败。");
+		    logout.error("组织关系添加失败",e);
+			return R.error().setMsg("组织关系添加失败");
 		}
 	}
 }

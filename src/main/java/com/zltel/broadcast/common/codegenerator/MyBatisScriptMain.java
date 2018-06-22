@@ -3,14 +3,15 @@ package com.zltel.broadcast.common.codegenerator;
  * @junit {@link MyBatisScriptMainTest}
  */
 public class MyBatisScriptMain {
+    private MyBatisScriptMain() {}
 	/**
 	 * 生成 CRUD 脚本 配置
 	 * 
 	 * @param c
 	 * @return
 	 */
-	public static final <T> StringBuffer createCRUDScript(Class<T> c) {
-		StringBuffer sb = new StringBuffer();
+	public static final <T> StringBuilder createCRUDScript(Class<T> c) {
+		StringBuilder sb = new StringBuilder();
 		sb.append("");
 		sb.append(createMsg("保存 " + c.getSimpleName())).append("\n");
 		sb.append(MyBatisScriptCreateUtil.createInsertScript(c)).append("\n");
@@ -33,13 +34,13 @@ public class MyBatisScriptMain {
 	 * @param c
 	 * @return
 	 */
-	public static final <T> StringBuffer createInterface(Class<T> c) {
-		StringBuffer sb = new StringBuffer();
+	public static final <T> StringBuilder createInterface(Class<T> c) {
+		StringBuilder sb = new StringBuilder();
 		sb.append(MyBatisScriptCreateUtil.createInterface(c)).append("\n");
 		return sb;
 	}
 
-	public static final <T> StringBuffer createInterfaceImpl(Class<T> c) {
+	public static final <T> StringBuilder createInterfaceImpl(Class<T> c) {
 		return MyBatisScriptCreateUtil.createInterfaceImpl(c);
 	}
 

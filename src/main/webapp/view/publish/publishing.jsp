@@ -29,6 +29,8 @@
 					<el-table-column label="操作">
 						<template slot-scope="scope">
 							<%--<el-button type="text" size="small">查看终端</el-button>--%>
+							<el-button type="text" size="small" @click="view(scope.row)">节目预览</el-button>
+							<el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
 							<el-button type="text" size="small" @click="offline(scope.row)">从播放列表移除</el-button>
 						</template>
 					</el-table-column>
@@ -46,6 +48,18 @@
 				</el-pagination>
 			</el-footer>
 		</el-container>
+
+		<el-dialog title="终端列表" :visible.sync="publishTerminal.show" width="80%">
+            <el-table :data="publishTerminal.list" border>
+                <el-table-column prop="name" label="名称"></el-table-column>
+                <el-table-column prop="rev" label="横屏/竖屏"></el-table-column>
+                <el-table-column prop="typ" label="触摸类型"></el-table-column>
+                <el-table-column prop="size" label="尺寸"></el-table-column>
+                <el-table-column prop="ratio" label="分辨率"></el-table-column>
+                <el-table-column prop="ip" label="IP"></el-table-column>
+                <el-table-column prop="loc" label="位置"></el-table-column>
+            </el-table>
+        </el-dialog>
 	</div>
 	<script>
 		var app = new Vue({
@@ -53,7 +67,11 @@
 			data: {
                 pageSizes: [10, 20, 50, 100],
 			    pageSize: 10,
-				publishingContent:{}
+				publishingContent:{},
+                publishTerminal: {
+                    show: false,
+                    list: []
+                }
 			},
             methods: {
                 handleSizeChange(pageSize) {
@@ -73,7 +91,21 @@
                             }
                         })
                     }).catch(()=>{});
-				}
+				},
+				view(row) {
+					if(!row.snapshot) {
+                        this.$message("预览失败...");
+                        return;
+                    }
+                    window.open ('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+				},
+				viewTerminal(row) {
+                    let url = '/publish/publishTerminal/' + row.content_id
+                    get(url, reps => {
+                        this.publishTerminal.list = reps.data
+                        this.publishTerminal.show = true
+                    })
+                }
 			}
 		});
 		load(1, app.pageSize);

@@ -31,11 +31,12 @@
                                 <el-tag>{{scope.row.state}}</el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column label="查看">
+                        <el-table-column label="查看" width="200">
                             <template slot-scope="scope">
                                 <el-button type="text" size="small" v-if="scope.row.operate.process" @click="getProcessState(scope.row)">进度</el-button>
                                 <el-button type="text" size="small" v-if="scope.row.operate.template" @click="viewTemplate(scope.row)">模板</el-button>
                                 <el-button type="text" size="small" v-if="scope.row.operate.snapshot" @click="view(scope.row)">预览</el-button>
+                                <el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
                             </template>
                         </el-table-column>
                         <el-table-column prop="operate" label="操作" width="200">
@@ -63,8 +64,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog
-                title="填写理由/修改建议" :visible.sync="isVerify" width="30%">
+        <el-dialog title="填写理由/修改建议" :visible.sync="isVerify" width="30%">
             <el-input v-model="opinion" placeholder="不通过理由/修改意见" type="textarea" :rows="4"></el-input>
             <span slot="footer" class="dialog-footer">
                 <el-button size="mini" @click="isVerify = false">取 消</el-button>
@@ -72,8 +72,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog
-                title="详细进度" :visible.sync="processState.visible" width="60%">
+        <el-dialog title="详细进度" :visible.sync="processState.visible" width="60%">
             <el-steps :space="200" :active="processState.active" finish-status="success">
                 <el-step v-for="step in processState.steps" :title="step.title"></el-step>
             </el-steps>
@@ -85,6 +84,23 @@
                 <el-button size="mini" type="primary" @click="processState.visible = false">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog title="终端列表" :visible.sync="publishTerminal.show" width="80%">
+            <el-table :data="publishTerminal.list" border>
+                <el-table-column prop="name" label="名称"></el-table-column>
+                <el-table-column prop="rev" label="横屏/竖屏"></el-table-column>
+                <el-table-column prop="typ" label="触摸类型"></el-table-column>
+                <el-table-column prop="size" label="尺寸"></el-table-column>
+                <el-table-column prop="ratio" label="分辨率"></el-table-column>
+                <el-table-column prop="ip" label="IP"></el-table-column>
+                <el-table-column prop="loc" label="位置"></el-table-column>
+            </el-table>
+        </el-dialog>
+
+
+        <el-dialog title="素材验证" :visible="commitMessage.show" :show-close="false" width="300px">
+			<p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
+		</el-dialog>
     </div>
 
     <script>
@@ -103,6 +119,14 @@
                     active: 0,
                     steps:[],
                     detail: []
+                },
+                publishTerminal: {
+                    show: false,
+                    list: []
+                },
+                commitMessage: {
+                    show: false,
+                    message: []
                 }
             },
             methods: {
@@ -169,6 +193,7 @@
                         if(reps.status) {
                             init();
                             app.$message('发布成功 !');
+                            commitMessage()
                         } else {
                             app.$message('发布失败 !');
                         }
@@ -222,6 +247,13 @@
                         return;
                     }
                     window.open ('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+                },
+                viewTerminal(row) {
+                    let url = '/publish/publishTerminal/' + row.id
+                    get(url, reps => {
+                        this.publishTerminal.list = reps.data
+                        this.publishTerminal.show = true
+                    })
                 }
             }
         });
@@ -259,6 +291,33 @@
                 }
             });
         }
+
+        function commitMessage(callback) {
+			app.commitMessage.show = true
+			message = [
+						'敏感词检测...',
+						'完成, 未发现敏感词',
+						'校验素材文件MD5...',
+						'完成, 未发现异常素材',
+						'正在发布...',
+						'发布完成.'
+					]
+			let index = 1;
+			app.commitMessage.message = []
+			app.commitMessage.message.push(message[0])
+			let iterval = setInterval(() => {
+				app.commitMessage.message.push(message[index])
+				index ++
+				if(index == message.length) {
+					app.commitMessage.show = false
+                    clearInterval(iterval)
+                    if(callback) {
+                        callback()
+                    }
+					
+				}
+			}, 2*1000);
+		}
 
         function get(url, callback) {
             $.ajax({

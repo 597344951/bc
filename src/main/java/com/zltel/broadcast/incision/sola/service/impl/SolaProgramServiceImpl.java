@@ -107,6 +107,19 @@ public class SolaProgramServiceImpl implements SolaProgramService {
     }
 
     @Override
+    public List<Map<String, Object>> queryTerminalProgram(int tid) {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("OrgId", org);
+        param.put("screenId", tid);
+        String msg = execute(param, "GetScreenProgramList");
+        if(msg.contains("-1:发生错误") || msg.contains("-2:你没有权限访问") || msg.contains("0:执行失败")) {
+            log.error("拉取终端操作日志失败：" + msg);
+            return null;
+        }
+        return (List<Map<String, Object>>) JSON.parse(msg);
+    }
+
+    @Override
     public List<Map<String, Object>> queryOrg() {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("pageIndex", 1);

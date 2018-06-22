@@ -20,8 +20,8 @@ public class LogConfiguration {
     @Autowired
     SimpleDao simpleDao;
     @Bean
-    public ServletRegistrationBean logPersistenceServlet() {
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new LogPersistenceServlet(simpleDao),"/loghandle/*");
+    public ServletRegistrationBean<LogPersistenceServlet> logPersistenceServlet() {
+        ServletRegistrationBean<LogPersistenceServlet> servletRegistrationBean = new ServletRegistrationBean<>(new LogPersistenceServlet(simpleDao),"/loghandle/*");
 
         //系统启动时同时初始化该servlet
         servletRegistrationBean.setLoadOnStartup(0);

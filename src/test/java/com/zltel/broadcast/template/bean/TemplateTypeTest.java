@@ -15,7 +15,7 @@ public class TemplateTypeTest {
     /**生成TemplateType查询Where 代码**/
     @Test
     public void testWhereCode() throws Exception {
-        StringBuffer sb = MyBatisScriptCreateUtil.createWhereScript(TemplateType.class);
+        StringBuilder sb = MyBatisScriptCreateUtil.createWhereScript(TemplateType.class);
         logout.info(TemplateType.class.getName() +" _> WHERE: \n"+sb.toString());
     }
 }

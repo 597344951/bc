@@ -11,37 +11,42 @@ import java.util.Set;
  * @junit {@link MyBatisScriptCreateUtilTest}
  */
 public class MyBatisScriptCreateUtil {
-    private static final String script_select_start =
+    private static final String THIS_GET_DAO = "   this.getDao().";
+
+    private MyBatisScriptCreateUtil() {}
+
+    private static final String PUBLIC_VOID = "public void ";
+    private static final String CLASSNAME_REPLACE = "#CLASSNAME#";
+    private static final String FIELD_REPLACE = "#FIELD#";
+
+    private static final String SCRIPT_SELECT_START =
             "<select id=\"#ID#\" resultType=\"#CLASSNAME#\" parameterType=\"#CLASSNAME#\">";
-    private static final String script_select_end = "</select>";
+    private static final String SCRIPT_SELECT_END = "</select>";
 
-    private static final String script_update_start =
-            "<update id=\"#ID#\"   parameterType=\"#CLASSNAME#\">";
-    private static final String script_update_end = "</update>";
+    private static final String SCRIPT_UPDATE_START = "<update id=\"#ID#\"   parameterType=\"#CLASSNAME#\">";
+    private static final String SCRIPT_UPDATE_END = "</update>";
 
-    private static final String script_delete_start =
-            "<delete id=\"#ID#\"   parameterType=\"#CLASSNAME#\">";
-    private static final String script_delete_end = "</delete>";
+    private static final String SCRIPT_DELETE_START = "<delete id=\"#ID#\"   parameterType=\"#CLASSNAME#\">";
+    private static final String SCRIPT_DELETE_END = "</delete>";
 
-    private static final String script_insert_start =
-            "<insert id=\"#ID#\"   parameterType=\"#CLASSNAME#\">";
-    private static final String script_insert_end = "</insert>";
+    private static final String SCRIPT_INSERT_START = "<insert id=\"#ID#\"   parameterType=\"#CLASSNAME#\">";
+    private static final String SCRIPT_INSERT_END = "</insert>";
 
-    private static final String select_temple = "select * from #TABLE# ";
-    private static final String update_temple = "update #TABLE# ";
-    private static final String delete_temple = "delete from #TABLE# ";
-    private static final String insert_temple = "insert into #TABLE# ";
+    private static final String SELECT_TEMPLE = "select * from #TABLE# ";
+    private static final String UPDATE_TEMPLE = "update #TABLE# ";
+    private static final String DELETE_TEMPLE = "delete from #TABLE# ";
+    private static final String INSERT_TEMPLE = "insert into #TABLE# ";
 
-    private static final String where_start = "<where>";
-    private static final String where_end = " </where>";
+    private static final String WHERE_START = "<where>";
+    private static final String WHERE_END = " </where>";
 
-    private static final String if_test_start = "<if test=\"#FIELD# != null\">";
-    private static final String if_test_end = "</if>";
+    private static final String IF_TEST_START = "<if test=\"#FIELD# != null\">";
+    private static final String IF_TEST_END = "</if>";
 
-    private static final String id_list = "list";
-    private static final String id_insert = "save";
-    private static final String id_update = "update";
-    private static final String id_delete = "delete";
+    private static final String ID_LIST = "list";
+    private static final String ID_INSERT = "save";
+    private static final String ID_UPDATE = "update";
+    private static final String ID_DELETE = "delete";
 
     /**
      * 返回 Where 脚本
@@ -49,35 +54,35 @@ public class MyBatisScriptCreateUtil {
      * @param c
      * @return
      */
-    public static <T> StringBuffer createWhereScript(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
+    public static <T> StringBuilder createWhereScript(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
         sb.append("<sql id=\"" + getWhereId(c.getSimpleName()) + "\">").append("\n");
-        sb.append(" ").append(where_start).append("\n");
-        Set<String> fs = _fields(c);
+        sb.append(" ").append(WHERE_START).append("\n");
+        Set<String> fs = readFieldNames(c);
         for (String k : fs) {
             // if
-            sb.append("  ").append(if_test_start.replaceAll("#FIELD#", k)).append("\n");
+            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, k)).append("\n");
             sb.append("    AND ").append(toDataBaseName(k)).append("=#{").append(k).append("} \n");
-            sb.append("  ").append(if_test_end).append("\n");
+            sb.append("  ").append(IF_TEST_END).append("\n");
         }
-        sb.append("").append(where_end).append("\n");
+        sb.append("").append(WHERE_END).append("\n");
         sb.append("</sql>").append("\n");
         return sb;
     }
 
     /** 生成 WHERE 参数条件 **/
-    public static <T> StringBuffer createWhereParamsScript(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
+    public static <T> StringBuilder createWhereParamsScript(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
         sb.append("<sql id=\"" + getWhereId(c.getSimpleName()) + "\">").append("\n");
-        sb.append(" ").append(where_start).append("\n");
-        Set<String> fs = _fields(c);
+        sb.append(" ").append(WHERE_START).append("\n");
+        Set<String> fs = readFieldNames(c);
         for (String k : fs) {
             // if
-            sb.append("  ").append(if_test_start.replaceAll("#FIELD#", k)).append("\n");
+            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, k)).append("\n");
             sb.append("    AND ").append(toDataBaseName(k)).append("=#{").append(k).append("} \n");
-            sb.append("  ").append(if_test_end).append("\n");
+            sb.append("  ").append(IF_TEST_END).append("\n");
         }
-        sb.append("").append(where_end).append("\n");
+        sb.append("").append(WHERE_END).append("\n");
         sb.append("</sql>").append("\n");
         return sb;
     }
@@ -103,16 +108,16 @@ public class MyBatisScriptCreateUtil {
      * @param t
      * @return
      */
-    public static <T> StringBuffer createSelectScript(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
-        String s1 = script_select_start.replaceAll("#CLASSNAME#", c.getName()).replaceAll("#ID#",
-                id_list + c.getSimpleName());
+    public static <T> StringBuilder createSelectScript(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
+        String s1 = SCRIPT_SELECT_START.replaceAll(CLASSNAME_REPLACE, c.getName()).replaceAll("#ID#",
+                ID_LIST + c.getSimpleName());
         sb.append(s1).append("\n");
         // select * from table
-        sb.append(replaceTableName(select_temple, c.getSimpleName())).append("\n");
+        sb.append(replaceTableName(SELECT_TEMPLE, c.getSimpleName())).append("\n");
         // where
         sb.append("<include refid=\"" + getWhereId(c.getSimpleName()) + "\" />").append("\n");
-        sb.append(script_select_end).append("\n");
+        sb.append(SCRIPT_SELECT_END).append("\n");
         return sb;
     }
 
@@ -122,53 +127,53 @@ public class MyBatisScriptCreateUtil {
      * @param t
      * @return
      */
-    public static <T> StringBuffer createUpdateScript(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
-        String s1 = script_update_start.replaceAll("#CLASSNAME#", c.getSimpleName())
-                .replaceAll("#ID#", id_update + c.getSimpleName());
+    public static <T> StringBuilder createUpdateScript(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
+        String s1 = SCRIPT_UPDATE_START.replaceAll(CLASSNAME_REPLACE, c.getSimpleName()).replaceAll("#ID#",
+                ID_UPDATE + c.getSimpleName());
         sb.append(s1).append("\n");
-        sb.append(replaceTableName(update_temple, c.getSimpleName())).append("\n");
+        sb.append(replaceTableName(UPDATE_TEMPLE, c.getSimpleName())).append("\n");
 
-        Set<String> fs = _fields(c);
+        Set<String> fs = readFieldNames(c);
         sb.append(" <set>\n");
         for (String k : fs) {
             // if
-            sb.append("  ").append(if_test_start.replaceAll("#FIELD#", k)).append("\n");
-            sb.append("     ").append(toDataBaseName(k)).append("=#{").append(k).append("},\n");
-            sb.append("  ").append(if_test_end).append("\n");
+            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, k)).append("\n");
+            sb.append("  ").append(toDataBaseName(k)).append("=#{").append(k).append("},\n");
+            sb.append("  ").append(IF_TEST_END).append("\n");
         }
         sb.append(" </set>\n");
         sb.append("where 1!=1 \n");
-        sb.append(script_update_end).append("\n");
+        sb.append(SCRIPT_UPDATE_END).append("\n");
         return sb;
     }
 
-    public static <T> StringBuffer createDeleteScript(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
-        String s1 = script_delete_start.replaceAll("#CLASSNAME#", c.getSimpleName())
-                .replaceAll("#ID#", id_delete + c.getSimpleName());
+    public static <T> StringBuilder createDeleteScript(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
+        String s1 = SCRIPT_DELETE_START.replaceAll(CLASSNAME_REPLACE, c.getSimpleName()).replaceAll("#ID#",
+                ID_DELETE + c.getSimpleName());
         sb.append(s1).append("\n");
-        sb.append(replaceTableName(delete_temple, c.getSimpleName())).append("\n");
+        sb.append(replaceTableName(DELETE_TEMPLE, c.getSimpleName())).append("\n");
         sb.append("<include refid=\"" + getWhereId(c.getSimpleName()) + "\" />").append("\n");
-        sb.append(script_delete_end).append("\n");
+        sb.append(SCRIPT_DELETE_END).append("\n");
         return sb;
     }
 
-    public static <T> StringBuffer createInsertScript(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
-        String s1 = script_insert_start.replaceAll("#CLASSNAME#", c.getSimpleName())
-                .replaceAll("#ID#", id_insert + c.getSimpleName());
+    public static <T> StringBuilder createInsertScript(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
+        String s1 = SCRIPT_INSERT_START.replaceAll(CLASSNAME_REPLACE, c.getSimpleName()).replaceAll("#ID#",
+                ID_INSERT + c.getSimpleName());
         sb.append(s1).append("\n");
-        sb.append(replaceTableName(insert_temple, c.getSimpleName())).append("\n");
-        Set<String> fs = _fields(c);
+        sb.append(replaceTableName(INSERT_TEMPLE, c.getSimpleName())).append("\n");
+        Set<String> fs = readFieldNames(c);
         sb.append("(").append("\n");
         // 去掉最后一个 ,
         sb.append("<trim suffixOverrides=\",\"> ").append("\n");
         for (String k : fs) {
             // if
-            sb.append("  ").append(if_test_start.replaceAll("#FIELD#", k)).append("\n");
+            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, k)).append("\n");
             sb.append("     ").append(toDataBaseName(k)).append(",\n");
-            sb.append("  ").append(if_test_end).append("\n");
+            sb.append("  ").append(IF_TEST_END).append("\n");
         }
         sb.append("</trim>").append("\n");
         sb.append(")").append("\n");
@@ -177,14 +182,14 @@ public class MyBatisScriptCreateUtil {
         sb.append("<trim suffixOverrides=\",\"> ").append("\n");
         for (String k : fs) {
             // if
-            sb.append("  ").append(if_test_start.replaceAll("#FIELD#", k)).append("\n");
+            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, k)).append("\n");
             sb.append("     ").append("#{").append(k).append("},\n");
-            sb.append("  ").append(if_test_end).append("\n");
+            sb.append("  ").append(IF_TEST_END).append("\n");
         }
         sb.append("</trim>").append("\n");
 
         sb.append(")").append("\n");
-        sb.append(script_insert_end).append("\n");
+        sb.append(SCRIPT_INSERT_END).append("\n");
         return sb;
     }
 
@@ -195,17 +200,14 @@ public class MyBatisScriptCreateUtil {
      * @param c
      * @return
      */
-    public static <T> StringBuffer createInterface(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
+    public static <T> StringBuilder createInterface(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
         String sn = c.getSimpleName();
-        sb.append("public List<" + sn + "> ").append(id_list + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
-        sb.append("public void ").append(id_insert + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
-        sb.append("public void ").append(id_update + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
-        sb.append("public void ").append(id_delete + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
+        sb.append("public List<" + sn + "> ").append(ID_LIST + sn).append("(" + sn + " " + sn.toLowerCase() + ");")
+                .append("\n");
+        sb.append(PUBLIC_VOID).append(ID_INSERT + sn).append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
+        sb.append(PUBLIC_VOID).append(ID_UPDATE + sn).append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
+        sb.append(PUBLIC_VOID).append(ID_DELETE + sn).append("(" + sn + " " + sn.toLowerCase() + ");").append("\n");
         return sb;
     }
 
@@ -215,30 +217,26 @@ public class MyBatisScriptCreateUtil {
      * @param c
      * @return
      */
-    public static <T> StringBuffer createInterfaceImpl(Class<T> c) {
-        StringBuffer sb = new StringBuffer();
+    public static <T> StringBuilder createInterfaceImpl(Class<T> c) {
+        StringBuilder sb = new StringBuilder();
         String sn = c.getSimpleName();
-        String mn = id_list + sn;
+        String mn = ID_LIST + sn;
         String param = sn.toLowerCase();
         sb.append("/* getDao() Method need*/").append("\n\n");
-        sb.append("public List<" + sn + "> ").append(mn)
-                .append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
+        sb.append("public List<" + sn + "> ").append(mn).append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
         sb.append("   return this.getDao().").append(mn).append("(" + param + ")").append(";\n");
         sb.append("}").append("\n");
-        mn = id_insert + sn;
-        sb.append("public void ").append(id_insert + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
-        sb.append("   this.getDao().").append(mn).append("(" + param + ")").append(";\n");
+        mn = ID_INSERT + sn;
+        sb.append(PUBLIC_VOID).append(ID_INSERT + sn).append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
+        sb.append(THIS_GET_DAO).append(mn).append("(" + param + ")").append(";\n");
         sb.append("}").append("\n");
-        mn = id_update + sn;
-        sb.append("public void ").append(id_update + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
-        sb.append("   this.getDao().").append(mn).append("(" + param + ")").append(";\n");
+        mn = ID_UPDATE + sn;
+        sb.append(PUBLIC_VOID).append(ID_UPDATE + sn).append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
+        sb.append(THIS_GET_DAO).append(mn).append("(" + param + ")").append(";\n");
         sb.append("}").append("\n");
-        mn = id_delete + sn;
-        sb.append("public void ").append(id_delete + sn)
-                .append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
-        sb.append("   this.getDao().").append(mn).append("(" + param + ")").append(";\n");
+        mn = ID_DELETE + sn;
+        sb.append(PUBLIC_VOID).append(ID_DELETE + sn).append("(" + sn + " " + sn.toLowerCase() + "){").append("\n");
+        sb.append(THIS_GET_DAO).append(mn).append("(" + param + ")").append(";\n");
         sb.append("}").append("\n");
         return sb;
     }
@@ -249,13 +247,13 @@ public class MyBatisScriptCreateUtil {
      * @param c
      * @return
      */
-    public static <T> Set<String> _fields(Class<T> c) {
+    public static <T> Set<String> readFieldNames(Class<T> c) {
         Set<String> fields = new HashSet<>();
         if (c == Object.class) {
-            return null;
+            return fields;
         }
         // 处理父类
-        Set<String> rs = _fields(c.getSuperclass());
+        Set<String> rs = readFieldNames(c.getSuperclass());
         if (rs != null) {
             fields.addAll(rs);
         }
@@ -273,13 +271,11 @@ public class MyBatisScriptCreateUtil {
      * @junit {@link MyBatisScriptCreateUtilTest#testToDataBaseName()}
      */
     public static String toDataBaseName(String fn) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean f = true;
         for (char c : fn.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                if (!f) {
-                    sb.append("_");
-                }
+            if (Character.isUpperCase(c) && !f) {
+                sb.append("_");
             }
             sb.append(Character.toLowerCase(c));
             f = false;

@@ -2,7 +2,6 @@ package com.zltel.broadcast.common.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -13,12 +12,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SpringContextUtils implements ApplicationContextAware {
-    /**日志输出对象**/
+    /** 日志输出对象 **/
     public static final Logger logger = LoggerFactory.getLogger(SpringContextUtils.class);
-    public static ApplicationContext applicationContext;
+    private static ApplicationContext applicationContext;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext)  {
         logger.info("Spring 容器加载成功-----------------");
         SpringContextUtils.applicationContext = applicationContext;
     }
@@ -32,7 +31,7 @@ public class SpringContextUtils implements ApplicationContextAware {
      * @return 实例对象
      */
     public static <T> T getBean(Class<T> requiredType) {
-        return (T) applicationContext.getBean(requiredType);
+        return applicationContext.getBean(requiredType);
     }
 
 
@@ -55,7 +54,7 @@ public class SpringContextUtils implements ApplicationContextAware {
      * @return 实例对象
      */
     public static <T> T getBean(Class<T> requiredType, Object... args) {
-        return (T) applicationContext.getBean(requiredType, args);
+        return applicationContext.getBean(requiredType, args);
     }
 
     /**
@@ -66,7 +65,7 @@ public class SpringContextUtils implements ApplicationContextAware {
      * @return 实例对象
      */
     public static <T> T getBean(String beanId, Class<T> requiredType) {
-        return (T) applicationContext.getBean(beanId, requiredType);
+        return applicationContext.getBean(beanId, requiredType);
     }
 
     /**

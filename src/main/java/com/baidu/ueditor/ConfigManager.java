@@ -1,9 +1,6 @@
 package com.baidu.ueditor;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,36 +23,22 @@ import com.baidu.ueditor.define.ActionMap;
 public final class ConfigManager {
 
     private final String rootPath;
-    private final String originalPath;
-    private final String contextPath;
-    private static final String configFileName = "config.json";
-    private String parentPath = null;
     private JSONObject jsonConfig = null;
     // 涂鸦上传filename定义
-    private final static String SCRAWL_FILE_NAME = "scrawl";
+    private static final String SCRAWL_FILE_NAME = "scrawl";
     // 远程图片抓取filename定义
-    private final static String REMOTE_FILE_NAME = "remote";
+    private static final String REMOTE_FILE_NAME = "remote";
 
     private static final String CONFIG_PATH = "ueditor/config.json";
 
     /*
      * 通过一个给定的路径构建一个配置管理器， 该管理器要求地址路径所在目录下必须存在config.properties文件
      */
-    private ConfigManager(String rootPath, String contextPath, String uri) throws FileNotFoundException, IOException {
-
-        rootPath = rootPath.replace("\\", "/");
-
-        this.rootPath = rootPath;
-        this.contextPath = contextPath;
-
-        if (contextPath.length() > 0) {
-            this.originalPath = this.rootPath + uri.substring(contextPath.length());
-        } else {
-            this.originalPath = this.rootPath + uri;
-        }
-
+    private ConfigManager(String... rps) throws IOException {
+        String rp = rps[0];
+        rp = rp.replace("\\", "/");
+        this.rootPath = rp;
         this.initEnv();
-
     }
 
     /**
@@ -66,10 +49,10 @@ public final class ConfigManager {
      * @param uri 当前访问的uri
      * @return 配置管理器实例或者null
      */
-    public static ConfigManager getInstance(String rootPath, String contextPath, String uri) {
+    public static ConfigManager getInstance(String arg1,String arg2,String arg3) {
 
         try {
-            return new ConfigManager(rootPath, contextPath, uri);
+            return new ConfigManager(arg1);
         } catch (Exception e) {
             return null;
         }
@@ -89,63 +72,66 @@ public final class ConfigManager {
 
     public Map<String, Object> getConfig(int type) throws JSONException {
 
-        Map<String, Object> conf = new HashMap<String, Object>();
+        Map<String, Object> conf = new HashMap<>();
         String savePath = null;
 
+        String isBase64 = "isBase64";
+        String maxSize = "maxSize";
+        String allowFiles = "allowFiles";
+        String fieldName = "fieldName";
         switch (type) {
-
             case ActionMap.UPLOAD_FILE:
-                conf.put("isBase64", "false");
-                conf.put("maxSize", this.jsonConfig.getLong("fileMaxSize"));
-                conf.put("allowFiles", this.getArray("fileAllowFiles"));
-                conf.put("fieldName", this.jsonConfig.getString("fileFieldName"));
+                conf.put(isBase64, "false");
+                conf.put(maxSize, this.jsonConfig.getLong("fileMaxSize"));
+                conf.put(allowFiles, this.getArray("fileAllowFiles"));
+                conf.put(fieldName, this.jsonConfig.getString("fileFieldName"));
                 savePath = this.jsonConfig.getString("filePathFormat");
                 break;
 
             case ActionMap.UPLOAD_IMAGE:
-                conf.put("isBase64", "false");
-                conf.put("maxSize", this.jsonConfig.getLong("imageMaxSize"));
-                conf.put("allowFiles", this.getArray("imageAllowFiles"));
-                conf.put("fieldName", this.jsonConfig.getString("imageFieldName"));
+                conf.put(isBase64, "false");
+                conf.put(maxSize, this.jsonConfig.getLong("imageMaxSize"));
+                conf.put(allowFiles, this.getArray("imageAllowFiles"));
+                conf.put(fieldName, this.jsonConfig.getString("imageFieldName"));
                 savePath = this.jsonConfig.getString("imagePathFormat");
                 break;
 
             case ActionMap.UPLOAD_VIDEO:
-                conf.put("maxSize", this.jsonConfig.getLong("videoMaxSize"));
-                conf.put("allowFiles", this.getArray("videoAllowFiles"));
-                conf.put("fieldName", this.jsonConfig.getString("videoFieldName"));
+                conf.put(maxSize, this.jsonConfig.getLong("videoMaxSize"));
+                conf.put(allowFiles, this.getArray("videoAllowFiles"));
+                conf.put(fieldName, this.jsonConfig.getString("videoFieldName"));
                 savePath = this.jsonConfig.getString("videoPathFormat");
                 break;
 
             case ActionMap.UPLOAD_SCRAWL:
                 conf.put("filename", ConfigManager.SCRAWL_FILE_NAME);
-                conf.put("maxSize", this.jsonConfig.getLong("scrawlMaxSize"));
-                conf.put("fieldName", this.jsonConfig.getString("scrawlFieldName"));
-                conf.put("isBase64", "true");
+                conf.put(maxSize, this.jsonConfig.getLong("scrawlMaxSize"));
+                conf.put(fieldName, this.jsonConfig.getString("scrawlFieldName"));
+                conf.put(isBase64, "true");
                 savePath = this.jsonConfig.getString("scrawlPathFormat");
                 break;
 
             case ActionMap.CATCH_IMAGE:
                 conf.put("filename", ConfigManager.REMOTE_FILE_NAME);
                 conf.put("filter", this.getArray("catcherLocalDomain"));
-                conf.put("maxSize", this.jsonConfig.getLong("catcherMaxSize"));
-                conf.put("allowFiles", this.getArray("catcherAllowFiles"));
-                conf.put("fieldName", this.jsonConfig.getString("catcherFieldName") + "[]");
+                conf.put(maxSize, this.jsonConfig.getLong("catcherMaxSize"));
+                conf.put(allowFiles, this.getArray("catcherAllowFiles"));
+                conf.put(fieldName, this.jsonConfig.getString("catcherFieldName") + "[]");
                 savePath = this.jsonConfig.getString("catcherPathFormat");
                 break;
 
             case ActionMap.LIST_IMAGE:
-                conf.put("allowFiles", this.getArray("imageManagerAllowFiles"));
+                conf.put(allowFiles, this.getArray("imageManagerAllowFiles"));
                 conf.put("dir", this.jsonConfig.getString("imageManagerListPath"));
                 conf.put("count", this.jsonConfig.getInt("imageManagerListSize"));
                 break;
 
             case ActionMap.LIST_FILE:
-                conf.put("allowFiles", this.getArray("fileManagerAllowFiles"));
+                conf.put(allowFiles, this.getArray("fileManagerAllowFiles"));
                 conf.put("dir", this.jsonConfig.getString("fileManagerListPath"));
                 conf.put("count", this.jsonConfig.getInt("fileManagerListSize"));
                 break;
-
+            default:
         }
 
         conf.put("savePath", savePath);
@@ -155,32 +141,16 @@ public final class ConfigManager {
 
     }
 
-    private void initEnv() throws FileNotFoundException, IOException {
-        /*
-        File file = new File(this.originalPath);
-
-        if (!file.isAbsolute()) {
-            file = new File(file.getAbsolutePath());
-        }
-
-        this.parentPath = file.getParent();
-
-        String configContent = this.readFile(this.getConfigPath());
-        */
+    private void initEnv() throws IOException {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(CONFIG_PATH);
         String configContent = this.readFile(in);
 
         try {
-            JSONObject jsonConfig = new JSONObject(configContent);
-            this.jsonConfig = jsonConfig;
+            this.jsonConfig = new JSONObject(configContent);
         } catch (Exception e) {
             this.jsonConfig = null;
         }
 
-    }
-
-    private String getConfigPath() {
-        return this.parentPath + File.separator + ConfigManager.configFileName;
     }
 
     private String[] getArray(String key) throws JSONException {

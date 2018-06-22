@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 import org.junit.Test;
 
 import com.zltel.BroadcastApplicationTests;
-import com.zltel.broadcast.common.configuration.TestConfig;
 
 @Generated(value = "org.junit-tools-1.0.6")
 public class UeditorConfigTest extends BroadcastApplicationTests {
@@ -22,6 +21,5 @@ public class UeditorConfigTest extends BroadcastApplicationTests {
         // default test
         result = instince.getSavepath();
         logout.info("savePath: {}",result);
-        logout.info(TestConfig.getName());
     }
 }

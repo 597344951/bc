@@ -3,18 +3,20 @@ package com.zltel.broadcast.common.util;
 import org.apache.shiro.crypto.hash.SimpleHash;
 
 public class PasswordHelper {
+    private PasswordHelper() {}
+
     private static String algorithmName = "md5";
     private static int hashIterations = 2;
-    
-    public static String encryptPassword(String psin,  String salt) {
+
+    public static String encryptPassword(String psin, String salt) {
         SimpleHash hash = new SimpleHash(algorithmName, psin, salt, hashIterations);
-        String encodedPassword = hash.toHex();
-        return encodedPassword;
+        return hash.toHex();
     }
-    
+
 
     /**
-     * 获取algorithmName  
+     * 获取algorithmName
+     * 
      * @return the algorithmName
      */
     public static String getAlgorithmName() {
@@ -22,7 +24,8 @@ public class PasswordHelper {
     }
 
     /**
-     * 设置algorithmName  
+     * 设置algorithmName
+     * 
      * @param algorithmName the algorithmName to set
      */
     public static void setAlgorithmName(String algorithmName) {
@@ -30,7 +33,8 @@ public class PasswordHelper {
     }
 
     /**
-     * 获取hashIterations  
+     * 获取hashIterations
+     * 
      * @return the hashIterations
      */
     public static int getHashIterations() {
@@ -38,11 +42,12 @@ public class PasswordHelper {
     }
 
     /**
-     * 设置hashIterations  
+     * 设置hashIterations
+     * 
      * @param hashIterations the hashIterations to set
      */
     public static void setHashIterations(int hashIterations) {
         PasswordHelper.hashIterations = hashIterations;
     }
-    
+
 }

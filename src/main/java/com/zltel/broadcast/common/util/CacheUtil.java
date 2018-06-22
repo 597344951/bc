@@ -13,9 +13,9 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.stereotype.Component;
- 
 
-/**
+
+/** 
  * 缓存控制器
  */
 @Component
@@ -27,15 +27,15 @@ public class CacheUtil {
     /** 权限信息 缓存 **/
     public static final String AUTHORIZATION_CACHE = "authorizationCache";
     /** token 授权信息缓存 **/
-    public static final String authenticationCache_token = "authenticationCache_token";
+    public static final String AUTHENTICATIONCACHE_TOKEN = "authenticationCache_token";
     /** 用户名/密码 授权信息缓存 **/
-    public static final String authenticationCache_up = "authenticationCache_up";
+    public static final String AUTHENTICATIONCACHE_UP = "authenticationCache_up";
 
     private static CacheManager cacheManager;
 
     @Resource
-    public void setCache(CacheManager _cm) {
-        cacheManager = _cm;
+    public void setCache(CacheManager cm) {
+        CacheUtil.cacheManager = cm;
     }
 
     /** 获取密码重试缓存 **/
@@ -55,12 +55,12 @@ public class CacheUtil {
 
     /** 获取用户名/密码 登陆缓存 **/
     public static Cache<Object, AuthenticationInfo> getUpAuthenticationCache() {
-        return cacheManager.getCache(CacheUtil.authenticationCache_up);
+        return cacheManager.getCache(CacheUtil.AUTHENTICATIONCACHE_UP);
     }
 
     /** 获取 token 登陆缓存 **/
     public static Cache<Object, AuthenticationInfo> getTokenAuthenticationCache() {
-        return cacheManager.getCache(CacheUtil.authenticationCache_token);
+        return cacheManager.getCache(CacheUtil.AUTHENTICATIONCACHE_TOKEN);
     }
 
     /** 清除 登陆凭据缓存 **/
@@ -71,20 +71,15 @@ public class CacheUtil {
 
     /** 清楚 权限数据缓存 **/
     public static void clearAuthorizationCache(String un) {
-        getAuthorizationCache().keys().stream().filter(a -> {
-            return ((PrincipalCollection) a).getPrimaryPrincipal().equals(un);
-        }).forEach(k -> {
-            getAuthorizationCache().remove(k);
-        });
+        getAuthorizationCache().keys().stream().filter(a -> ((PrincipalCollection) a).getPrimaryPrincipal().equals(un))
+                .forEach(k -> getAuthorizationCache().remove(k));
     }
 
     /**
      * 清除 登出session 计数
      */
     public static void clearLogCountCache(Session session) {
-        getKickOutCache().values().forEach(l -> {
-            l.remove(session.getId());
-        });
+        getKickOutCache().values().forEach(l -> l.remove(session.getId()));
     }
 
     /**

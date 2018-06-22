@@ -19,6 +19,11 @@ import com.zltel.broadcast.common.dao.SimpleDao;
  */
 public class LogPersistenceServlet extends HttpServlet {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private static final long SLEEP_TIME = 5 * 1000;
 
     private static final Log log = org.apache.commons.logging.LogFactory.getLog(LogPersistenceServlet.class);

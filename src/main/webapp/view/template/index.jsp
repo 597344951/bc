@@ -83,9 +83,10 @@
     }
 
     .image {
-        width: 100%;
+        width: auto;
         display: block;
-        max-height: 210px;
+        max-height: 200px;
+        margin: 0 auto;
     }
 
     .clearfix:before,

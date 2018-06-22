@@ -11,9 +11,12 @@
 			font-size: 14px;
 		}
 		.el-row {
-			margin-bottom: 10px;
+			margin: 10px auto;
+			width: 95%;
 		}
-
+		.el-dialog__body {
+			padding: 10px 25px;
+		}
 		.input-item {
 			width: 250px;
 		}
@@ -48,6 +51,7 @@
 					<el-table-column prop="playType" label="内容播放顺序"></el-table-column>
 					<el-table-column label="操作">
 						<template slot-scope="scope">
+							<el-button type="text" size="small">移除</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -66,7 +70,7 @@
 		</el-container>
 
 		<%--添加计划弹窗--%>
-		<el-dialog title="添加播放计划" :visible="addPlanDialogVisible">
+		<el-dialog title="添加播放计划" :visible="addPlanDialogVisible" :show-close="false">
 			<el-form :model="newPlan" label-position="left" label-width="120px">
 				<el-form-item label="计划名称">
 					<el-input v-model="newPlan.name" class="input-item"></el-input>
@@ -133,9 +137,13 @@
 			</el-form>
 
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="addPlanDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="addPlan()">添 加</el-button>
+				<el-button size="mini" @click="addPlanDialogVisible = false">取 消</el-button>
+				<el-button size="mini" type="primary" @click="addPlan()">添 加</el-button>
 			</div>
+		</el-dialog>
+
+		<el-dialog title="验证节目内容" :visible="commitMessage.show" :show-close="false" width="300px">
+			<p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
 		</el-dialog>
 	</div>
 	<script>
@@ -178,6 +186,10 @@
 				newPlan: {
                     program: []
 				},
+				commitMessage: {
+                    show: false,
+                    message: []
+                },
 				count: 0
 			},
             methods: {
@@ -231,11 +243,37 @@
 
 					})
 					this.plan.total ++;
-                    this.addPlanDialogVisible = false
+					this.addPlanDialogVisible = false
+					commitMessage()
 				}
 			}
 		});
 		//load(1, app.pageSize);
+
+		const commitMessage = (callback) => {
+			app.commitMessage.show = true
+			message = [
+						'校验节目MD5...',
+						'完成, 未发现异常',
+						'添加计划...',
+						'添加完成'
+					]
+			let index = 1;
+			app.commitMessage.message = []
+			app.commitMessage.message.push(message[0])
+			let iterval = setInterval(() => {
+				app.commitMessage.message.push(message[index])
+				index ++
+				if(index == message.length) {
+					app.commitMessage.show = false
+                    clearInterval(iterval)
+                    if(callback) {
+                        callback()
+                    }
+					
+				}
+			}, 2*1000);
+		}
 
 		function planString(plan) {
 			if('timing' == plan.type) {

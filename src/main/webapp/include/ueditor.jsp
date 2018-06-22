@@ -2,5 +2,5 @@
 
 <%--ueditor--%>
 <script type="text/javascript" charset="utf-8" src="${urls.getForLookupPath('/ueditor/ueditor.config.js')}"></script>
-<script type="text/javascript" charset="utf-8" src="${urls.getForLookupPath('/ueditor/ueditor.all.min.js')}"> </script>
+<script type="text/javascript" charset="utf-8" src="${urls.getForLookupPath('/ueditor/ueditor.all.js')}"> </script>
 <script type="text/javascript" charset="utf-8" src="${urls.getForLookupPath('/ueditor/lang/zh-cn/zh-cn.js')}"></script>

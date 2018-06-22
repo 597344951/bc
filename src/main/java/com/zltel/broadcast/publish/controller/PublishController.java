@@ -267,4 +267,18 @@ public class PublishController extends BaseController{
         }
         return r;
     }
+
+    @GetMapping(value = "/publishTerminal/{contentId}")
+    @ResponseBody
+    public R publishTerminal(@PathVariable("contentId") int contentId) {
+        R r;
+        try {
+            r = R.ok();
+            r.setData(publishService.queryPublishTerminal(contentId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            r = R.error(e.toString());
+        }
+        return r;
+    }
 }
