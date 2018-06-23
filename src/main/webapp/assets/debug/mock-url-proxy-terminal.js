@@ -45,7 +45,8 @@ var datas = [{
     "gis": null,
     "warranty": "一年",
     "loc": "园区"
-  },
+  }
+  ,
   {
     "oid": 291,
     "name": "WIN-OUNLE84KUAN",
@@ -9752,6 +9753,7 @@ var datas = [{
     "warranty": "一年",
     "loc": "园区"
   }
+ /* */
 ]
 let logs = [{
   "logId": 13061,

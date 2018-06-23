@@ -86,10 +86,12 @@
 
         .online-icon {
             background: green;
+            color: green !important;
         }
 
         .offline-icon {
-            background: #ddd
+            background: #ddd;
+            color: #ddd !important;
         }
 
         .pagebar {
@@ -131,6 +133,26 @@
         .command-list>.active>i {
             color: white;
         }
+
+        .screenshoot-h {
+            width: 250px;
+        }
+
+        .screenshoot-h>.image {
+            width: 100%;
+        }
+
+        .disInfo>tbody>tr>td {
+            padding: 0 5px;
+        }
+
+        .bottom-h>button {
+            margin-top: 10px;
+        }
+
+        .el-dialog__body {
+            overflow: auto;
+        }
     </style>
 </head>
 
@@ -147,8 +169,8 @@
                             <i class="el-icon-close offline-icon"></i> 终端不在线 (0)</el-menu-item>
                         <el-menu-item index="-3" class="t-title" disabled>
                             <el-button-group>
-                                <el-button size="small" icon="el-icon-menu"></el-button>
-                                <el-button size="small" icon="el-icon-tickets"></el-button>
+                                <el-button size="small" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
+                                <el-button size="small" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                             </el-button-group>
                         </el-menu-item>
                         <el-menu-item index="-2" :style="{'float':'right'}" class="t-title" disabled>
@@ -161,39 +183,156 @@
             </el-row>
         </div>
         <div id="terminalDisplay">
-            <template v-for="t in terminals">
-                <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
-                    <div class="deviceInfo">
-                        <span class="name">{{t.name}}</span>
-                        <span class="size">{{t.size}}</span>
-                    </div>
-                    <div class="screenshoot">
-                        <img src="/assets/img/program-test.jpg" class="image">
-                        <div class="ratio">{{t.ratio}}</div>
-                    </div>
-                    <div class="control" style="">
-                        <table>
-                            <tr>
-                                <td>当前节目</td>
-                                <td>：暂无节目</td>
+            <div v-if="dis_h_v">
+                <table class="table table-board">
+                    <thead>
+                        <th>屏幕截图</th>
+                        <th>硬件信息</th>
+                        <th>软件信息</th>
+                        <th>地理位置信息</th>
+                        <th>控制</th>
+                    </thead>
+                    <tbody>
+                        <template v-for="t in terminals">
+                            <tr :class="t.online=='1' ? 'online':'offline'">
+                                <td>
+                                    <div class="screenshoot-h">
+                                        <img src="/assets/img/program-test.jpg" class="image">
+                                    </div>
+                                </td>
+                                <td>
+                                    <table class="disInfo">
+                                        <tr>
+                                            <td>设备名 </td>
+                                            <td>：{{t.name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>屏幕尺寸 </td>
+                                            <td>：{{t.size}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>分辨率 </td>
+                                            <td>：{{t.ratio}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>屏幕类型</td>
+                                            <td>：{{t.rev}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>触摸屏 </td>
+                                            <td>：{{t.typ}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>是否在线 </td>
+                                            <td>：{{t.online == '1' ? '是':'否'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>最后心跳时间</td>
+                                            <td>：{{t.last_time}}</td>
+                                        </tr>
+
+                                    </table>
+                                </td>
+                                <td>
+                                    <table class="disInfo">
+                                        <tr>
+                                            <td>当前节目</td>
+                                            <td>：暂无节目</td>
+                                        </tr>
+                                        <tr>
+                                            <td>操作系统</td>
+                                            <td>：{{t.sys}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>IP</td>
+                                            <td>：{{t.ip}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MAC</td>
+                                            <td>：{{t.mac}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>版本</td>
+                                            <td>：{{t.ver}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table class="disInfo">
+                                        <tr>
+                                            <td>位置</td>
+                                            <td>：{{t.addr}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gis</td>
+                                            <td>：{{t.gis}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>保修状态</td>
+                                            <td>：
+                                                <el-tag type="success" size="small">{{t.warranty}} 未过保</el-tag>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>loc</td>
+                                            <td>：{{t.loc}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>联系电话</td>
+                                            <td>：{{t.tel}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <div class="bottom-h">
+                                        <el-button type="button" size="mini" class="button" @click="openTerminalController(t)">控制</el-button>
+                                        <br/>
+                                        <el-button type="button" size="mini" class="button" @click="openTerminalProgram(t)">节目</el-button>
+                                        <br/>
+                                        <el-button type="button" size="mini" class="button" @click="openTerminalLog(t)">日志</el-button>
+                                        <br/>
+                                    </div>
+                                </td>
                             </tr>
-                            <tr>
-                                <td>IP</td>
-                                <td>：{{t.ip}}</td>
-                            </tr>
-                            <tr>
-                                <td>版本</td>
-                                <td>：{{t.ver}}</td>
-                            </tr>
-                        </table>
-                        <div class="bottom clearfix">
-                            <el-button type="button" size="mini" class="button" @click="openTerminalController(t)">控制</el-button>
-                            <el-button type="button" size="mini" class="button" @click="openTerminalProgram(t)">节目</el-button>
-                            <el-button type="button" size="mini" class="button" @click="openTerminalLog(t)">日志</el-button>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div v-if="!dis_h_v">
+                <template v-for="t in terminals">
+                    <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
+                        <div class="deviceInfo">
+                            <span class="name">{{t.name}}</span>
+                            <span class="size">{{t.size}}</span>
                         </div>
-                    </div>
-                </el-card>
-            </template>
+                        <div class="screenshoot">
+                            <img src="/assets/img/program-test.jpg" class="image">
+                            <div class="ratio">{{t.ratio}}</div>
+                        </div>
+                        <div class="control" style="">
+                            <table class="disInfo">
+                                <tr>
+                                    <td>当前节目</td>
+                                    <td>：暂无节目</td>
+                                </tr>
+                                <tr>
+                                    <td>IP</td>
+                                    <td>：{{t.ip}}</td>
+                                </tr>
+                                <tr>
+                                    <td>版本</td>
+                                    <td>：{{t.ver}}</td>
+                                </tr>
+                            </table>
+                            <div class="bottom clearfix">
+                                <el-button type="button" size="mini" class="button" @click="openTerminalController(t)">控制</el-button>
+                                <el-button type="button" size="mini" class="button" @click="openTerminalProgram(t)">节目</el-button>
+                                <el-button type="button" size="mini" class="button" @click="openTerminalLog(t)">日志</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </template>
+            </div>
         </div>
         <!--dialog-->
         <el-dialog :title="tcw.title" :visible.sync="tcw.visiable" width="50%" height="300">
@@ -206,7 +345,7 @@
                 </template>
             </div>
         </el-dialog>
-        <el-dialog :title="tlw.title" :visible.sync="tlw.visiable" :fullscreen="true">
+        <el-dialog :title="tlw.title" :visible.sync="tlw.visiable" :fullscreen="false" width="70%">
             <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
                 <el-menu-item index="1"> 操作日志 </el-menu-item>
                 <el-menu-item index="2"> 系统日志 </el-menu-item>
@@ -224,9 +363,14 @@
                             </el-table-column>
                             <el-table-column label="id" prop="logId" width="100">
                             </el-table-column>
-                            <el-table-column label="操作用户" prop="username" width="155">
+                            <el-table-column label="时间" width="180">
+                                <template slot-scope="scope">
+                                    <div slot="reference" class="name-wrapper">
+                                        {{ scope.row.date | datetime }}
+                                    </div>
+                                </template>
                             </el-table-column>
-                            <el-table-column label="操作信息描述" prop="operation" >
+                            <el-table-column label="操作用户" prop="username" width="155">
                             </el-table-column>
                             <el-table-column label="ip" prop="ip" width="155">
                             </el-table-column>
@@ -237,19 +381,172 @@
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="时间" width="180">
-                                <template slot-scope="scope">
-                                    <div slot="reference" class="name-wrapper">
-                                        {{ scope.row.date | datetime }}
-                                    </div>
-                                </template>
+                            <el-table-column label="操作信息描述" prop="operation">
                             </el-table-column>
-                            
                         </el-table>
                     </template>
-
                 </el-main>
             </el-container>
+        </el-dialog>
+        <el-dialog :title="pgw.title" :visible.sync="pgw.visiable" :fullscreen="false" width="70%">
+            <div slot="title">
+               <span class="el-dialog__title"> {{pgw.title}}</span>
+                <el-button-group style="margin-left:30px;">
+                    <el-button size="small" icon="el-icon-menu" @click="prg_dis_h_v=false"></el-button>
+                    <el-button size="small" icon="el-icon-tickets" @click="prg_dis_h_v=true"></el-button>
+                </el-button-group>
+            </div>
+
+            <div v-if="prg_dis_h_v">
+                <table class="table table-board">
+                    <thead>
+                        <th>屏幕截图</th>
+                        <th>硬件信息</th>
+                        <th>软件信息</th>
+                        <th>地理位置信息</th>
+                        <th>控制</th>
+                    </thead>
+                    <tbody>
+                        <template v-for="t in terminals">
+                            <tr :class="t.online=='1' ? 'online':'offline'">
+                                <td>
+                                    <div class="screenshoot-h">
+                                        <img src="/assets/img/program-test.jpg" class="image">
+                                    </div>
+                                </td>
+                                <td>
+                                    <table class="disInfo">
+                                        <tr>
+                                            <td>设备名 </td>
+                                            <td>：{{t.name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>屏幕尺寸 </td>
+                                            <td>：{{t.size}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>分辨率 </td>
+                                            <td>：{{t.ratio}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>屏幕类型</td>
+                                            <td>：{{t.rev}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>触摸屏 </td>
+                                            <td>：{{t.typ}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>是否在线 </td>
+                                            <td>：{{t.online == '1' ? '是':'否'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>最后心跳时间</td>
+                                            <td>：{{t.last_time}}</td>
+                                        </tr>
+
+                                    </table>
+                                </td>
+                                <td>
+                                    <table class="disInfo">
+                                        <tr>
+                                            <td>当前节目</td>
+                                            <td>：暂无节目</td>
+                                        </tr>
+                                        <tr>
+                                            <td>操作系统</td>
+                                            <td>：{{t.sys}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>IP</td>
+                                            <td>：{{t.ip}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MAC</td>
+                                            <td>：{{t.mac}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>版本</td>
+                                            <td>：{{t.ver}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table class="disInfo">
+                                        <tr>
+                                            <td>位置</td>
+                                            <td>：{{t.addr}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gis</td>
+                                            <td>：{{t.gis}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>保修状态</td>
+                                            <td>：
+                                                <el-tag type="success" size="small">{{t.warranty}} 未过保</el-tag>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>loc</td>
+                                            <td>：{{t.loc}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>联系电话</td>
+                                            <td>：{{t.tel}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <div class="bottom-h">
+                                        <el-button type="button" size="mini" class="button" @click="openTerminalController(t)">插播</el-button>
+                                        <br/>
+                                        <el-button type="button" size="mini" class="button" @click="openTerminalProgram(t)">暂停</el-button>
+                                        <br/>
+                                        <el-button type="danger" size="mini" class="button" @click="openTerminalLog(t)">删除</el-button>
+                                        <br/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div v-if="!prg_dis_h_v">
+                <template v-for="t in terminals">
+                    <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
+                        <div class="deviceInfo">
+                            <span class="name">{{t.name}}</span>
+                            <span class="size">{{t.size}}</span>
+                        </div>
+                        <div class="screenshoot">
+                            <img src="/assets/img/program-test.jpg" class="image">
+                            <div class="ratio">{{t.ratio}}</div>
+                        </div>
+                        <div class="control" style="">
+                            <table class="disInfo">
+                                <tr>
+                                    <td>当前节目</td>
+                                    <td>：暂无节目</td>
+                                </tr>
+                                <tr>
+                                    <td>IP</td>
+                                    <td>：{{t.ip}}</td>
+                                </tr>
+                                <tr>
+                                    <td>版本</td>
+                                    <td>：{{t.ver}}</td>
+                                </tr>
+                            </table>
+                            <div class="bottom clearfix">
+                                <el-button type="button" size="mini" class="button" @click="openTerminalController(t)">插播</el-button>
+                                <el-button type="button" size="mini" class="button" @click="openTerminalProgram(t)">暂停</el-button>
+                                <el-button type="danger" size="mini" class="button" @click="openTerminalLog(t)">删除</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </template>
+            </div>
         </el-dialog>
         <!--dialog-->
     </div>
@@ -259,8 +556,15 @@
     window.ins = new Vue({
         el: '#app',
         data: {
+            prg_dis_h_v: false,
+            dis_h_v: false,
             terminals: [],
             logs: [],
+            pgw: {
+                title: '',
+                visiable: false,
+                terminal: null
+            },
             tcw: {
                 title: '终端控制指令下发',
                 visiable: false,
@@ -405,7 +709,9 @@
                 this.tcw.title = tm_info.name + ' 控制指令';
             },
             openTerminalProgram(tm_info) {
-
+                this.pgw.visiable = true;
+                this.pgw.title = tm_info.name + ' 节目列表';
+                this.tlw.terminal = tm_info;
             },
             openTerminalLog(tm_info) {
                 this.tlw.terminal = tm_info;
