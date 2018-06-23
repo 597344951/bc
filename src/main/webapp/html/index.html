@@ -17,6 +17,7 @@
     <!-- 引入组件库 -->
     <!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
     <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+    <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
 
     <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
@@ -30,7 +31,7 @@
 </head>
 
 <body>
-    <div class="height_full" id="app">
+    <div class="height_full" id="appdiv">
         <el-container class="height_full">
             <el-header class="noselect" height="60px">
                 <!--head-->
@@ -106,7 +107,7 @@
 
 <script type="module">
     var ins = new Vue({
-        el: '#app',
+        el: '#appdiv',
         data: {
             messages: [{
                 mid: 1,
@@ -168,6 +169,17 @@
                     icon: 'el-icon-info',
                     url: '/html/vcharts/theme.html'
                 }]
+            },{
+                index: '3',
+                title: '终端管理',
+                url: '',
+                icon: 'el-icon-search',
+                children: [{
+                    index: '3-0',
+                    title: '终端控制',
+                    icon: 'el-icon-search',
+                    url: '/html/terminal/terminal_manage.html'
+                } ]
             }, {
                 index: '2',
                 title: '搜索网址',

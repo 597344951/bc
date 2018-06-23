@@ -704,6 +704,9 @@
                 })
             },
             openTerminalController(tm_info) {
+                this.controlList.map((c) => {
+                    c.checked = false;
+                });
                 this.tcw.terminal = tm_info;
                 this.tcw.visiable = true;
                 this.tcw.title = tm_info.name + ' 控制指令';
