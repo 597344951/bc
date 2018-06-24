@@ -191,7 +191,7 @@
         </div>
         <div id="terminalDisplay">
             <div v-if="dis_h_v">
-                <table class="table table-board">
+                <table class="table   table-hover">
                     <thead>
                         <th>屏幕截图</th>
                         <th>硬件信息</th>
@@ -231,11 +231,11 @@
                                         </tr>
                                         <tr>
                                             <td>是否在线 </td>
-                                            <td>：{{t.online == '1' ? '是':'否'}}</td>
+                                            <td>：<el-tag size="small" :type="t.online == '1'?'success':'danger'">{{t.online == '1' ? '是':'否'}}</el-tag></td>
                                         </tr>
                                         <tr>
                                             <td>最后心跳时间</td>
-                                            <td>：{{t.last_time}}</td>
+                                            <td>：{{getDateTimeInfo(t.last_time)}}</td>
                                         </tr>
 
                                     </table>
@@ -458,11 +458,11 @@
                                         </tr>
                                         <tr>
                                             <td>是否在线 </td>
-                                            <td>：{{t.online == '1' ? '是':'否'}}</td>
+                                            <td>：<el-tag size="small" :type="t.online == '1'?'success':'danger'">{{t.online == '1' ? '是':'否'}}</el-tag></td>
                                         </tr>
                                         <tr>
                                             <td>最后心跳时间</td>
-                                            <td>：{{t.last_time}}</td>
+                                            <td>：{{getDateTimeInfo(t.last_time)}}</td>
                                         </tr>
 
                                     </table>
@@ -761,6 +761,10 @@
                 if (target.level == 'ERROR') return 'danger';
                 if (target.level == 'FATAL') return 'danger';
                 return '';
+            },//计算 时间信息
+            getDateTimeInfo(dt) {
+                if(!dt)return '未知';
+                return timeAgo(new Date(dt));
             }
 
         }

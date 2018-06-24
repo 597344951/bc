@@ -130,3 +130,30 @@ function exitFullScreen(_ins) {
 		});
 	}
 }
+/**
+ * 指定时间据当前过去了多长时间
+ * @param {*} dt 
+ */
+function timeAgo(dt) {
+	var n = new Date().getTime();
+	var f = n - dt.getTime();
+	var bs = (f >= 0 ? '前' : '后'); //判断时间点是在当前时间的 之前 还是 之后
+	f = Math.abs(f);
+	// return f;
+	if (f < 6e4) {
+		return '刚刚'
+	} //小于60秒,刚刚
+	if (f < 36e5) {
+		return parseInt(f / 6e4) + '分钟' + bs
+	} //小于1小时,按分钟
+	if (f < 864e5) {
+		return parseInt(f / 36e5) + '小时' + bs
+	} //小于1天按小时
+	if (f < 2592e6) {
+		return parseInt(f / 864e5) + '天' + bs
+	} //小于1个月(30天),按天数
+	if (f < 31536e6) {
+		return parseInt(f / 2592e6) + '个月' + bs
+	} //小于1年(365天),按月数
+	return parseInt(f / 31536e6) + '年' + bs; //大于365天,按年算
+}
