@@ -152,6 +152,13 @@
 
         .el-dialog__body {
             overflow: auto;
+            padding: 0 15px 15px 15px;
+        }
+        .el-menu-item i{
+            color:auto;
+        }
+        .el-button--primary>i{
+            color:white;
         }
     </style>
 </head>
@@ -168,9 +175,9 @@
                         <el-menu-item index="2">
                             <i class="el-icon-close offline-icon"></i> 终端不在线 (0)</el-menu-item>
                         <el-menu-item index="-3" class="t-title" disabled>
-                            <el-button-group>
-                                <el-button size="small" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
-                                <el-button size="small" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
+                            <el-button-group class="control-button">
+                                <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
+                                <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                             </el-button-group>
                         </el-menu-item>
                         <el-menu-item index="-2" :style="{'float':'right'}" class="t-title" disabled>
@@ -335,7 +342,13 @@
             </div>
         </div>
         <!--dialog-->
-        <el-dialog :title="tcw.title" :visible.sync="tcw.visiable" width="50%" height="300">
+        <el-dialog :title="tcw.title" :visible.sync="tcw.visiable" :fullscreen="tcw.fullscreen" :width="tcw.fullscreen?'100%':'70%'">
+            <div slot="title">
+                <span class="el-dialog__title"> {{tcw.title}}</span>
+                <el-button-group style="margin-left:30px;">
+                    <el-button size="small" icon="el-icon-rank" @click="tcw.fullscreen=!tcw.fullscreen" title="最大"></el-button>
+                </el-button-group>
+            </div>
             <div class="command-list">
                 <template v-for="control in controlList">
                     <a class="action" :class="control.checked ? 'active':''" id="start" @click="SendCommand(control)">
@@ -345,7 +358,13 @@
                 </template>
             </div>
         </el-dialog>
-        <el-dialog :title="tlw.title" :visible.sync="tlw.visiable" :fullscreen="false" width="70%">
+        <el-dialog :title="tlw.title" :visible.sync="tlw.visiable" :fullscreen="tlw.fullscreen" :width="tlw.fullscreen?'100%':'70%'">
+            <div slot="title">
+                <span class="el-dialog__title"> {{tlw.title}}</span>
+                <el-button-group style="margin-left:30px;">
+                    <el-button size="small" icon="el-icon-rank" @click="tlw.fullscreen=!tlw.fullscreen" title="最大"></el-button>
+                </el-button-group>
+            </div>
             <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
                 <el-menu-item index="1"> 操作日志 </el-menu-item>
                 <el-menu-item index="2"> 系统日志 </el-menu-item>
@@ -388,12 +407,13 @@
                 </el-main>
             </el-container>
         </el-dialog>
-        <el-dialog :title="pgw.title" :visible.sync="pgw.visiable" :fullscreen="false" width="70%">
+        <el-dialog :title="pgw.title" :visible.sync="pgw.visiable" :fullscreen="pgw.fullscreen" :width="pgw.fullscreen?'100%':'70%'">
             <div slot="title">
-               <span class="el-dialog__title"> {{pgw.title}}</span>
+                <span class="el-dialog__title"> {{pgw.title}}</span>
                 <el-button-group style="margin-left:30px;">
-                    <el-button size="small" icon="el-icon-menu" @click="prg_dis_h_v=false"></el-button>
-                    <el-button size="small" icon="el-icon-tickets" @click="prg_dis_h_v=true"></el-button>
+                    <el-button size="small" icon="el-icon-menu" @click="prg_dis_h_v=false" :type="!prg_dis_h_v?'primary':''"></el-button>
+                    <el-button size="small" icon="el-icon-tickets" @click="prg_dis_h_v=true" :type="prg_dis_h_v?'primary':''"></el-button>
+                    <el-button size="small" icon="el-icon-rank" @click="pgw.fullscreen=!pgw.fullscreen" title="最大"></el-button>
                 </el-button-group>
             </div>
 
@@ -563,17 +583,20 @@
             pgw: {
                 title: '',
                 visiable: false,
-                terminal: null
+                terminal: null,
+                fullscreen: false
             },
             tcw: {
                 title: '终端控制指令下发',
                 visiable: false,
-                terminal: null
+                terminal: null,
+                fullscreen: false
             },
             tlw: {
                 title: '日志信息',
                 visiable: false,
-                terminal: null
+                terminal: null,
+                fullscreen: false
             },
             controlList: [{
                 type: 'play',

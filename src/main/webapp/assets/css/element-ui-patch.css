@@ -10,7 +10,8 @@
 }
 
 .el-dialog__body {
-	padding: 5px 5px;
+	overflow: auto;
+    padding: 0 15px;
 }
 
 /**dialog 没有title信息**/

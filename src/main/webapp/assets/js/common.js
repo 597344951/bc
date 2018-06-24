@@ -80,3 +80,53 @@ function $message(msg, type, _ins) {
 		type: type
 	});
 }
+
+/*
+ * 浏览器全屏
+ */
+function fullScreen(_ins) {
+	var el = document.documentElement;
+	var rfs = el.requestFullScreen || el.webkitRequestFullScreen;
+	if (typeof rfs != "undefined" && rfs) {
+		rfs.call(el);
+	} else if (typeof window.ActiveXObject != "undefined") {
+		var wscript = new ActiveXObject("WScript.Shell");
+		if (wscript != null) {
+			wscript.SendKeys("{F11}");
+		}
+	} else if (el.msRequestFullscreen) {
+		el.msRequestFullscreen();
+	} else if (el.oRequestFullscreen) {
+		el.oRequestFullscreen();
+	} else {
+		_ins.$message({
+			message: "浏览器不支持全屏调用！请更换浏览器或按F11键切换全屏",
+			type: 'warn'
+		});
+	}
+}
+
+/*
+ * 浏览器退出全屏
+ */
+function exitFullScreen(_ins) {
+	var el = document;
+	var cfs = el.cancelFullScreen || el.webkitCancelFullScreen || el.exitFullScreen;
+	if (typeof cfs != "undefined" && cfs) {
+		cfs.call(el);
+	} else if (typeof window.ActiveXObject != "undefined") {
+		var wscript = new ActiveXObject("WScript.Shell");
+		if (wscript != null) {
+			wscript.SendKeys("{F11}");
+		}
+	} else if (el.msExitFullscreen) {
+		el.msExitFullscreen();
+	} else if (el.oRequestFullscreen) {
+		el.oCancelFullScreen();
+	} else {
+		_ins.$message({
+			message: "浏览器不支持全屏调用！请更换浏览器或按F11键切换全屏",
+			type: 'warn'
+		});
+	}
+}

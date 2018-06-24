@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="/assets/css/color-296FB8.css">
     <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/index.css">
+
+    <script src="/assets/js/common.js"></script>
     
 </head>
 
@@ -59,9 +61,10 @@
                                 </el-dropdown>
                             </li>
                             <li>
+                                <message-notice :data="messages" @click="messageClick" @allclick="messageAllClick"></message-notice>
                             </li>
                             <li>
-                                <message-notice :data="messages" @click="messageClick" @allclick="messageAllClick"></message-notice>
+                                <span class="el-icon-rank pop-message-button" @click="setFullscreen" title="最大"></span>
                             </li>
                         </ul>
                     </el-col>
@@ -137,7 +140,8 @@
                     menu_txt: '#48576a',
                     menu_act_bg: '#d1dbe5',
                     menu_act_txt: '#20a0ff'
-                }
+                },
+                fullscreen:false
             },
 
             tab_index: '1-1', //tab选中分页index
@@ -256,7 +260,16 @@
             menuItemClick(obj) {
                 console.log('打开' + obj.title)
                 this.addTab(obj);
-            }
+            },
+            //设置全屏
+            setFullscreen(){
+                this.app.fullscreen = !this.app.fullscreen;
+                if(this.app.fullscreen){
+                    fullScreen(this);
+                }else{
+                    exitFullScreen(this);
+                }
+            }    
         }
     });
 </script>
