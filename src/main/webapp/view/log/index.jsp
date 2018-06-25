@@ -25,6 +25,13 @@
     .queryForm > .el-form-item > .el-form-item__content>.el-date-editor.el-input{
         width:130px;
     }
+    .log-table{
+        width:80%;
+    }
+    .log-table>tbody>tr>:nth-child(1){
+        width:100px;
+        font-weight: bolder;
+    }
 </style>
 </head>
 <body>
@@ -70,7 +77,22 @@
                 <el-table :data="logs" style="width: 100%" v-loading="loading">
                     <el-table-column type="expand">
                         <template slot-scope="props">
-                            <pre class="brush: js">{{ props.row.params }}</pre>
+                            <table class="log-table">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                                发生位置 :
+                                        </td>
+                                        <td>{{props.row.method}}</td>
+                                    </tr>
+                                    <tr>
+                                            <td>
+                                                    详细数据 :
+                                            </td>
+                                            <td><pre class="brush: js">{{ props.row.params }}</pre></td>
+                                        </tr>
+                                </tbody>
+                            </table>
                         </template>
                     </el-table-column>
                     <el-table-column label="id" prop="logId" width="100">
@@ -100,7 +122,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="执行位置" prop="method">
+                    <el-table-column label="日志内容" prop="msg">
                     </el-table-column>
                 </el-table>
             </template>

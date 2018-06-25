@@ -12,11 +12,14 @@
 			width: 98%;
 			margin: 20px auto;
 		}
+		/* .el-container {
+			height: 100%;
+		} */
 		.el-table thead,.el-table__row {
 			font-size: 14px;
 		}
 		.el-row {
-			margin: 5px auto;
+			margin: 10px auto;
 			width: 95%;
 		}
 		.el-transfer {
@@ -49,19 +52,24 @@
             width: 200px;
             height: 250px;
             border-radius: 5px;
-            padding: 4px;
+            padding: 2px;
             margin: 10px;
             background-color: ghostwhite;
             float: left;
 			position: relative;
         }
+		.image-box.active {
+			border: 2px solid #107cdc;
+			padding: 0px;
+		}
         .image {
             width: 100%;
             height: 175px;
 			background: white;
         }
         .bottom {
-            padding: 5px 0px;
+            padding: 5px 5px;
+			text-align: center;
         }
         .bottom p {
             margin: 0px;
@@ -97,7 +105,7 @@
 			<el-main v-loading="loading">
 				<div v-show="step==0">
 					<h3>选择模板</h3>
-					<el-row :gutter="20">
+					<%-- <el-row :gutter="20">
 						<el-col :span="3">
 							<el-select
 									size="medium"
@@ -113,23 +121,39 @@
 						<el-col :span="2">
 							<el-button size="medium" type="primary" icon="el-icon-search" @click="filterTemplate"></el-button>
 						</el-col>
-					</el-row>
+					</el-row> --%>
 					<el-row :gutter="20">
-						<div class="image-box">
-							<el-radio v-model="selectedTemplateId" label="0"></el-radio>
-							<div class="image"></div>
-							<div class="bottom">
-								<p>空白模板</p>
-							</div>
-						</div>
-
-						<div class="image-box" v-for="t in showTemplateArr">
-							<el-radio v-model="selectedTemplateId" :label="t.tpId"></el-radio>
-							<img :src="t.previewPicture" class="image">
-							<div class="bottom">
-								<p>{{t.desc}}</p>
-							</div>
-						</div>
+						<el-col>
+							<el-tabs tab-position="left" style="height: 450px; overflow: auto">
+								<el-tab-pane label="最近使用">
+									<div class="image-box" v-bind:class="{active: selectedTemplateId==0}" @click="startTemplate('0')">
+										<el-radio v-model="selectedTemplateId" label="0"></el-radio>
+										<div class="image"></div>
+										<div class="bottom">
+											<p>空白模板</p>
+										</div>
+									</div>
+								</el-tab-pane>
+								<el-tab-pane label="常用模板">
+									<div class="image-box" v-bind:class="{active: selectedTemplateId==0}" @click="startTemplate('0')">
+										<el-radio v-model="selectedTemplateId" label="0"></el-radio>
+										<div class="image"></div>
+										<div class="bottom">
+											<p>空白模板</p>
+										</div>
+									</div>
+								</el-tab-pane>
+								<el-tab-pane :label="key" v-for="(value, key) in showTemplateArr">
+									<div class="image-box" v-for="t in value" @click="startTemplate(t.tpId)" v-bind:class="{active: selectedTemplateId==t.tpId}">
+										<el-radio v-model="selectedTemplateId" :label="t.tpId"></el-radio>
+										<img :src="t.previewPicture" class="image">
+										<div class="bottom">
+											<p>{{t.desc}}</p>
+										</div>
+									</div>
+								</el-tab-pane>
+							</el-tabs>
+						</el-col>		
 					</el-row>
 				</div>
 				<%-- 内容编辑 --%>
@@ -172,10 +196,10 @@
 							</el-time-picker>
 						</el-col>
 					</el-row>
-					<%-- <el-row :gutter="20">
+					<el-row :gutter="20">
 						<el-col :span="4"><h4>播放设置</h4></el-col>
 						<el-col :span="19">
-							<el-select
+							<%-- <el-select
 									style="width: 18%;"
 									v-model="resolution"
 									placeholder="屏幕分辨率">
@@ -193,9 +217,13 @@
 								<el-option key="1" label="触屏" value="1"></el-option>
 							</el-select>
 							：
-							<el-input style="width: 18%;" v-model="playLength" placeholder="播放时长（秒）"></el-input>
+							<el-input style="width: 18%;" v-model="playLength" placeholder="播放时长（秒）"></el-input> --%>
+							<el-checkbox-group v-model="screenDirection" style="display: inline-block;">
+								<el-checkbox v-for="d in screenDirections" :label="d" :key="d">{{d}}</el-checkbox>
+							</el-checkbox-group>
+							（勾选发布节目的显示类型：横屏/竖屏）
 						</el-col>
-					</el-row> --%>
+					</el-row>
 					<el-row :gutter="20">
 						<el-col :span="4">
 							<h4>内容 [<el-button type="text" @click="showTemplates">选取模板</el-button>]</h4>
@@ -255,7 +283,7 @@
 					<h3>选择发布终端</h3>
 					<el-table
 							ref="multipleTable"
-							:data="terminals"
+							:data="showTerminals"
 							height="500"
 							tooltip-effect="dark"
 							style="width: 100%;"
@@ -378,10 +406,10 @@
                 additionDialogVisible: false,
                 commitCheckMsgVisible: true,
                 templates:[],
-				templateArr: [],
-				showTemplateArr: [],
+				templateArr: {},
+				showTemplateArr: {},
 				keyword: '',
-				selectedTemplateId: '0',
+				selectedTemplateId: '-1',
 				selectedTemplate: {},
 				selectedTemplatePreview: '',
 				type: 4,
@@ -390,13 +418,15 @@
 				endDate:'',
 				time: '',
 				screenType: '0',
-				screenDirection: '竖屏',
+				screenDirections: ['竖屏', '横屏'],
+				screenDirection: ['竖屏'],
 				playLength: 100,
-				resolution: 1920x1080,
+				resolution: '1920x1080',
 				week: '',
                 templateText: '',
                 material: [],
                 terminals: [],
+				showTerminals:[],
                 terminalGroup: {},
                 selectedTerminals: [],
 				selectedExUser: [],
@@ -411,16 +441,25 @@
 			},
             methods: {
 			    nextStep() {
-					if(this.step == 0) {
-						for(var i in this.templateArr) {
-							if(this.selectedTemplateId == this.templateArr[i].tpId) {
-								this.selectedTemplate = this.templateArr[i].content
-								ue.setContent(this.selectedTemplate)
-								break
-							}
-						}
-					}
 					if(commitCheck()) {
+						if(this.step == 0) {
+							for(var name in this.templateArr) {
+								for(var i in this.templateArr[name]) {
+									if(this.selectedTemplateId == this.templateArr[name][i].tpId) {
+										this.selectedTemplate = this.templateArr[name][i].content
+										ue.setContent(this.selectedTemplate)
+										break
+									}
+								}
+							}
+						} else if(this.step == 1) {
+							app.showTerminals = []
+							app.terminals.forEach(item => {
+								if(app.screenDirection.indexOf(item.direction) >= 0) {
+									app.showTerminals.push(item)
+								}
+							})
+						}
                         this.step ++;
 					}
 				},
@@ -532,7 +571,11 @@
 							this.showTemplateArr.push(item)
 						}
 					})
+				},
+				startTemplate(id) {
+					this.selectedTemplateId = id
 				}
+
 			}
 		});
 		//编辑器
@@ -588,7 +631,11 @@
 
         function commitCheck() {
             var msgs = [];
-            if(app.step == 1) {
+			if(app.step == 0) {
+				if(app.selectedTemplateId == -1) {
+					msgs.push('* 请选择一个模板开始.');
+				}
+			} else if(app.step == 1) {
                 if(!app.title) {
                     msgs.push('* 请填写主题.');
                 }
@@ -644,7 +691,7 @@
 					app.templates = reps.data;
 					for(var i in app.templates) {
 						for(var j in app.templates[i].children) {
-							getTemplateContent(app.templates[i].name + ' > ' +app.templates[i].children[j].name, app.templates[i].children[j]);
+							getTemplateContent(app.templates[i].name, app.templates[i].children[j].name, app.templates[i].children[j]);
 						}
 					}
 					setTimeout(() => {
@@ -659,14 +706,17 @@
 			});
 		}
 
-        function getTemplateContent(desc, type) {
+        function getTemplateContent(name1, name2, type) {
+			app.templateArr[name2] = []
+			app.showTemplateArr[name2] = []
+
             get('/tp/listByType?tpTypeId=' + type.id, reps => {
                 if(reps.status) {
                     type.children = reps.data;
 					reps.data.forEach((item => {
-						item.desc = desc + " > " + item.title
-						app.templateArr.push(item)
-						app.showTemplateArr.push(item)
+						item.desc = name1 + '>' + name2 + " > " + item.title
+						app.templateArr[name2].push(item)
+						app.showTemplateArr[name2].push(item)
 					}))
 					
                 }
@@ -706,9 +756,6 @@
 					}
 					let size, direction, type, resolution, status
 					reps.data.forEach(item => {
-						if(item.OnlineStatus != 1 || item.ScreenDirection != app.screenDirection) {
-							return;
-						}
 						app.terminals.push({
 							id: item.PkId,
 							name: item.Name,

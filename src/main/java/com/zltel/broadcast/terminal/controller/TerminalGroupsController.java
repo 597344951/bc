@@ -28,7 +28,6 @@ public class TerminalGroupsController {
     @Autowired
     private TerminalGroupsService tbs;
     @RequestMapping(value="/queryInfo/{pageNum}-{pageSize}", method=RequestMethod.POST)
-    @LogPoint("查询终端分组信息")
     @RequiresPermissions(value = {"terminal:group:query"})
     @ApiOperation(value = "查询终端分组信息")
     public R queryBaiscInfo(@RequestBody TerminalGroup tbi,  @PathVariable("pageNum")int pageNum,@PathVariable("pageSize") int pageSize) {
@@ -40,7 +39,6 @@ public class TerminalGroupsController {
         }
     }
     @RequestMapping(value="/queryInfos", method=RequestMethod.POST)
-    @LogPoint("查询终端基础信息")
     @RequiresPermissions(value = {"terminal:group:query"})
     @ApiOperation(value = "查询终端基础信息")
     public R queryBaiscInfos(@RequestBody TerminalGroup record) {

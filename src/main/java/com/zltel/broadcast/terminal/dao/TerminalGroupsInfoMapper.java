@@ -2,7 +2,6 @@ package com.zltel.broadcast.terminal.dao;
 
 import java.util.List;
 
-import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.terminal.bean.TerminalGroupsInfo;
 
 public interface TerminalGroupsInfoMapper {

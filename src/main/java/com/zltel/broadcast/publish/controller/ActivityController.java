@@ -1,5 +1,6 @@
 package com.zltel.broadcast.publish.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.publish.service.ActivityService;
@@ -7,7 +8,6 @@ import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.um.bean.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +35,21 @@ public class ActivityController extends BaseController {
     private String uploadFileDir;
     @Value("${material.temp.dir}")
     private String uploadTempDir;
+
+    @GetMapping(value = "/activity/{pageNum}/{pageSize}")
+    @ResponseBody
+    public R activity(@PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize) {
+        R r;
+        try {
+            r = R.ok();
+            PageInfo page = new PageInfo(activityService.queryFinishedActivity(pageNum, pageSize));
+            r.setData(page);
+        } catch (Exception e) {
+            e.printStackTrace();
+            r = R.error(e.toString());
+        }
+        return r;
+    }
 
     @GetMapping(value = "/activity/addition/{contentId}")
     @ResponseBody

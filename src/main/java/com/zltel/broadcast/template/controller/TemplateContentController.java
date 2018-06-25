@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
@@ -56,6 +57,7 @@ public class TemplateContentController extends BaseController{
 
     @ApiOperation(value = "删除模板信息")
     @DeleteMapping("/template/{tpId}")
+    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="删除模版",template="删除模版id:${tpId}")
     public R delete(@PathVariable("tpId") Integer tpId) {
         TemplateContent tc = new TemplateContent();
         tc.setTpId(tpId);
@@ -70,6 +72,7 @@ public class TemplateContentController extends BaseController{
 
     @ApiOperation(value = "新增模板信息")
     @PostMapping("/template")
+    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="新增模版",template="新增模版:${tc.title}")
     public R save(@RequestBody TemplateContent tc) {
         ValidatorUtils.validateEntity(tc);
         SysUser sysUser = this.getSysUser();

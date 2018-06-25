@@ -10,11 +10,29 @@
 		<head>
 			<base href="<%=basePath%>">
 			<meta charset="UTF-8">
+			<title>终端机基础信息</title>
 			<!-- 引入样式 -->
 		
 			<%@include file="/include/head.jsp"%>
 				<%@include file="/include/echarts.jsp"%>
 					<%@include file="/include/vcharts.jsp"%>
+					<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.6&key=7b04f2b82ee732b4a50305a2a49b0985"></script>
+					<!-- <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script> -->
+					<!-- <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+					<script src="http://cache.amap.com/lbs/static/es5.min.js"/> -->
+				
+					<style>
+						#container {width:940px; height: 680px; }  	
+						.info-tip {
+							position: absolute;
+							top: 10px;
+            				right: 10px;
+            				font-size: 12px;
+            				background-color: #fff;
+            				height: 35px;
+            				text-align: left;
+        }					
+					</style>
 		</head>
 
 <body>
@@ -23,7 +41,6 @@
 			<div role="table">
 				<div class="toolbar">
 					<div class="grid-content bg-purple">
-						<el-button type="primary" size="small" icon="el-icon-plus" title="增加" @click="addT()">增加</el-button>
 						<!-- <el-button type="primary" size="small" icon="el-icon-search" @click="search()">搜索</el-button> -->
 							<el-popover placement="right" width="400" trigger="click">
 								<el-form ref="form" label-width="80px" size="mini">
@@ -48,6 +65,10 @@
 							</el-popover>
 							<el-button type="primary" size="small" icon="el-icon-refresh" @click="refresh()">刷新</el-button>
 							<el-button type="primary" size="small" icon="el-icon-info" @click="statistic()">图表</el-button>
+							<el-button type="primary" size="small" icon="el-icon-circle-check-outline" @click="online()">在线设备</el-button>
+							<el-button type="primary" size="small" icon="el-icon-circle-close-outline" @click="outline()">离线设备</el-button>
+							<el-button type="primary" size="small" icon="el-icon-circle-close-outline" @click="test()">test</el-button>
+							
 					</div>
 				</div>
 			</div>
@@ -55,6 +76,19 @@
 
 			<!--表格主体-->
 			<el-main>
+					<el-dialog title="test" :visible.sync="tbi.test" >
+							<div id="container">
+									
+							</div> 
+							<div class="button-group">
+									<input id="setFitView" class="button" type="button" value="地图自适应显示"/>
+								</div>
+								<div class="info-tip">
+									<div id="centerCoord"></div>
+									<div id="tips"></div>
+							</div>
+					</el-dialog>
+					
 				<template>
 					<el-table :data="pager.list">
 
@@ -82,7 +116,6 @@
 						<el-table-column label="操作" fixed="right" width="200">
 							<template slot-scope="scope">
 								<el-button size="mini" type="info" @click="updateTbi(scope.row)">编辑</el-button>
-								<el-button size="mini" type="danger " @click="handleDelete(scope.row.oid) ">删除</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -94,11 +127,14 @@
 				</el-pagination>
 			</el-footer>
 		</el-container>
+	
+			
+		
 		<el-dialog title="" :visible.sync="tbi.visible" width="40%">
 			<el-form :model="tbi" label-width="100px" size="mini">
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
-						<el-form-item label="终端名称">
+						<el-form-item label="终端名称" v-if="tbi.search">
 							<el-input v-model="tbi.data.name" ></el-input>
 						</el-form-item>
 					</el-col>
@@ -108,7 +144,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 						<el-form-item label="在线状态">
 							<el-input v-model="tbi.data.online" ></el-input>
@@ -120,7 +156,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 						<el-form-item label="屏幕尺寸">
 							<el-input v-model="tbi.data.size" ></el-input>
@@ -144,7 +180,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 						<el-form-item label="标识ID">
 							<el-input v-model="tbi.data.id"></el-input>
@@ -156,7 +192,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 
 						<el-form-item label="类别id">
@@ -169,7 +205,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 
 						<el-form-item label="最新时间">
@@ -182,7 +218,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 
 						<el-form-item label="mac地址">
@@ -195,7 +231,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row type="flex" justify="center">
+				<el-row type="flex" justify="center" v-if="tbi.search">
 					<el-col :span="10">
 
 						<el-form-item label="系统版本">
@@ -421,6 +457,7 @@
 				visible: false,
 				update: false, // 是否是更新
 				search: false,
+				test:false,
 				data: {
 					oid: "",
 					name: "",
@@ -490,6 +527,7 @@
 					this.tbi.visible = false,
 					this.tbi.update = false,
 					this.tbi.search = false,
+					this.tbi.test=false,
 					this.tbi.data.oid = "",
 					this.tbi.data.name = "",
 					this.tbi.data.id = "",
@@ -545,6 +583,65 @@
 				});
 			},
 
+			test(){
+				
+				var tbi = this.tbi;
+				tbi.test = true;
+				setTimeout(()=>{
+					this.drawmap();
+				},200);
+			},
+			drawmap() {
+				var map = new AMap.Map('container', {
+					resizeEnable: true,
+					zoom: 11,//级别
+					center: [120.187222,30.24298],//中心点坐标
+					// viewMode: '3D',//使用3D视图
+					layers: [//使用多个图层
+						new AMap.TileLayer.Satellite(),
+						new AMap.TileLayer.RoadNet(),
+					],
+				});
+				map.getLayers()[0].hide();//默认隐藏卫星图层
+				map.clearMap();  // 清除地图覆盖物
+				var markers = [{
+					icon: 'http://webapi.amap.com/theme/v1.3/markers/n/mark_b1.png',
+					position: [116.205467, 39.907761]
+				}, {
+					icon: 'http://webapi.amap.com/theme/v1.3/markers/n/mark_b2.png',
+					position: [116.368904, 39.913423]
+				}, {
+					icon: 'http://webapi.amap.com/theme/v1.3/markers/n/mark_b3.png',
+					position: [116.305467, 39.807761]
+				}];
+				// 添加一些分布不均的点到地图上,地图上添加三个点标记，作为参照
+				markers.forEach(function (marker) {
+					new AMap.Marker({
+						map: map,
+						icon: marker.icon,
+						position: [marker.position[0], marker.position[1]],
+						offset: new AMap.Pixel(-12, -36)
+					});
+				});
+				var center = map.getCenter();
+				var centerText = '当前中心点坐标：' + center.getLng() + ',' + center.getLat();
+				document.getElementById('centerCoord').innerHTML = centerText;
+				document.getElementById('tips').innerHTML = '成功添加三个点标记，其中有两个在当前地图视野外！';
+
+				// 添加事件监听, 使地图自适应显示到合适的范围
+				AMap.event.addDomListener(document.getElementById('setFitView'), 'click', function () {
+					var newCenter = map.setFitView();
+					document.getElementById('centerCoord').innerHTML = '当前中心点坐标：' + newCenter.getCenter();
+					document.getElementById('tips').innerHTML = '通过setFitView，地图自适应显示到合适的范围内,点标记已全部显示在视野中！';
+				});
+				AMap.event.addListener(map, 'zoomchange', function () {
+					if(map.getZoom>=14){
+						map.getLayers()[0].show();
+					}else{
+						map.getLayers()[0].hide();
+					}
+				});
+			},
 
 			updateTbi(a) {
 				var tbi = this.tbi;
@@ -575,6 +672,19 @@
 				tbi.search = true;
 				this.updateorinsert(tbi);
 			},
+			online(){
+				var tbi =this.tbi;
+				tbi.search= true;
+				tbi.data.online='1';
+				this.updateorinsert(tbi)
+			},
+			outline(){
+				var tbi =this.tbi;
+				tbi.search= true;
+				tbi.data.online='0';
+				this.updateorinsert(tbi)
+			},
+			
 			updateorinsert(tbi) {
 				var a = this;
 				if (tbi.search) {
@@ -711,7 +821,6 @@
 
 	});
 		</script>
-		<script type="text/javascript">
-		</script>
+
 
 		</html>

@@ -1,5 +1,7 @@
 package com.zltel.broadcast.terminal.service;
 
+import java.util.Map;
+
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
 
@@ -16,7 +18,9 @@ public interface TerminalBasicInfoService {
 
     int updateByPrimaryKey(TerminalBasicInfo record);
 
-    public R queryBasicInfo(TerminalBasicInfo record, int pageNum, int pageSize) throws Exception;
+    public R queryBasicInfo(TerminalBasicInfo record, int pageNum, int pageSize) ;
     
     public R echarts(String string) throws Exception;
+    /**统计设备在线状态数**/
+    public Map<String, Integer> countOnlineTerminal();
 }

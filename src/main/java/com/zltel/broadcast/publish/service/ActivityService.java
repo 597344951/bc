@@ -60,4 +60,12 @@ public interface ActivityService {
      * @return
      */
     public List<Map<String, Object>> queryParticipant(int contentId);
+
+    /**
+     * 已结束活动
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public List<Map<String, Object>> queryFinishedActivity(int pageNum, int pageSize);
 }

@@ -144,4 +144,9 @@ public class ActivityServiceImpl implements ActivityService {
     public List<Map<String, Object>> queryParticipant(int contentId) {
         return activityDao.queryParticipant(contentId);
     }
+
+    @Override
+    public List<Map<String, Object>> queryFinishedActivity(int pageNum, int pageSize) {
+        return activityDao.queryFinishedActivity(pageNum, pageSize);
+    }
 }

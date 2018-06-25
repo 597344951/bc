@@ -78,4 +78,12 @@ public interface ActivityDao {
      * @return
      */
     public List<Map<String, Object>> queryParticipant(@Param("contentId") int contentId);
+
+    /**
+     * 已结束活动
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public List<Map<String, Object>> queryFinishedActivity(@Param("pageNum") int pageNum, @Param("pageSize") int pageSize);
 }

@@ -53,11 +53,9 @@
                         <li>
                             <message-notice :data="messages" @click="message_click" @allclick="messageAllClick"></message-notice>
                         </li>
-                        <!-- 
                         <li>
-                            <span>测试按钮</span>
+                             <span class="el-icon-rank pop-message-button" @click="setFullscreen" title="最大"></span>
                         </li>
-                         -->
                     </ul>
                 </el-col>
             </el-col>
@@ -134,7 +132,8 @@
                     menu_txt: '#48576a',
                     menu_act_bg: '#d1dbe5',
                     menu_act_txt: title_theme
-                }
+                },
+                fullscreen:false
             },
             tab_index: '', //tab选中分页index
             openTabDatas: [], //tab分页中的数据
@@ -298,7 +297,16 @@
                 this.changeTheme.visible = false;
 
                 //this.app.colors.menu_bg = ColorCalc.gradient(color,36)
-            }
+            },
+            //设置全屏
+            setFullscreen(){
+                this.app.fullscreen = !this.app.fullscreen;
+                if(this.app.fullscreen){
+                    fullScreen(this);
+                }else{
+                    exitFullScreen(this);
+                }
+            }    
         },
         components:{
             //局部注册组件

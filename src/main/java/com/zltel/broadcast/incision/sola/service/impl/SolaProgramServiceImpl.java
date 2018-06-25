@@ -1,6 +1,7 @@
 package com.zltel.broadcast.incision.sola.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.incision.sola.utils.DESUtil;
 import com.zltel.broadcast.incision.sola.utils.HttpUtil;
@@ -113,8 +114,9 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         param.put("screenId", tid);
         String msg = execute(param, "GetScreenProgramList");
         if(msg.contains("-1:发生错误") || msg.contains("-2:你没有权限访问") || msg.contains("0:执行失败")) {
-            log.error("拉取终端操作日志失败：" + msg);
-            return null;
+            String em = "拉取终端节目失败：" + msg;
+            log.error(em);
+            throw new RRException(em);
         }
         return (List<Map<String, Object>>) JSON.parse(msg);
     }

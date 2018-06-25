@@ -98,5 +98,26 @@
         inner join sys_user u on u.user_id = ap.user_id
         where ap.content_id = #{contentId}
     </select>
+    
+    <select id="queryFinishedActivity" resultType="java.util.Map">
+        select c.content_id,
+        c.title,
+        c.content_type_id,
+        DATE_FORMAT(c.start_date, '%Y-%m-%d') as start_date,
+        DATE_FORMAT(c.end_date, '%Y-%m-%d') as end_date,
+        c.period,
+        c.user_id,
+        c.snapshot,
+        c.process_item_id,
+        DATE_FORMAT(c.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
+        pi.label,
+        u.username,
+        u.email
+        from publish_content c
+        inner join publish_process_item pi on pi.process_item_id = c.process_item_id
+        inner join sys_user u on u.user_id = c.user_id
+        where c.process_item_id = 6 and c.content_type_id = 3
+        order by c.add_date desc
+    </select>
 
 </mapper>

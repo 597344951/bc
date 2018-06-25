@@ -19,7 +19,7 @@
 
         .termialDis {
             padding: 0px;
-            width: 250px;
+            width: 260px;
             margin: 5px;
             text-align: center;
             float: left;
@@ -46,8 +46,7 @@
 
         .termialDis>div>div>.ratio {
             position: relative;
-            top: 10px;
-            top: -20px;
+            top: -19px;
             background-color: #ddd;
             background: linear-gradient(white, #ccc);
         }
@@ -141,9 +140,11 @@
         .screenshoot-h>.image {
             width: 100%;
         }
-
+        .disInfo{
+            width: 100%;
+        }
         .disInfo>tbody>tr>td {
-            padding: 0 5px;
+            padding: 3px 5px;
         }
 
         .bottom-h>button {
@@ -168,12 +169,12 @@
         <div id="toolbar">
             <el-row>
                 <el-col :span="24">
-                    <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
+                    <el-menu :default-active="tqueryIf.online=='1'?'1':'2'" class="el-menu-demo" mode="horizontal">
                         <el-menu-item index="-1" class="t-title" disabled>终端情况: </el-menu-item>
-                        <el-menu-item index="1">
-                            <i class="el-icon-check online-icon"></i>正常 (10)</el-menu-item>
-                        <el-menu-item index="2">
-                            <i class="el-icon-close offline-icon"></i> 终端不在线 (0)</el-menu-item>
+                        <el-menu-item index="1" @click="changeSearch(1)">
+                            <i class="el-icon-check online-icon"></i>正常 ({{onlineCount.online?onlineCount.online:0}})</el-menu-item>
+                        <el-menu-item index="2" @click="changeSearch(0)">
+                            <i class="el-icon-close offline-icon"></i> 终端不在线 ({{onlineCount.offline?onlineCount.offline:0}})</el-menu-item>
                         <el-menu-item index="-3" class="t-title" disabled>
                             <el-button-group class="control-button">
                                 <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
@@ -181,8 +182,8 @@
                             </el-button-group>
                         </el-menu-item>
                         <el-menu-item index="-2" :style="{'float':'right'}" class="t-title" disabled>
-                            <el-pagination class="pagebar" :current-page="1" :page-sizes="[10, 20, 30]" :page-size="10" layout="total, sizes, prev, pager, next, jumper"
-                                :total="20">
+                            <el-pagination class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
+                                :total="tpager.total" @size-change="handleSizeChange" @current-change="handleCurrentChange">
                             </el-pagination>
                         </el-menu-item>
                     </el-menu>
@@ -367,9 +368,10 @@
             </div>
             <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
                 <el-menu-item index="1"> 操作日志 </el-menu-item>
-                <el-menu-item index="2"> 系统日志 </el-menu-item>
+                <el-menu-item index="2"> 终端执行日志 </el-menu-item>
+                <el-menu-item index="3"> 系统日志 </el-menu-item>
                 <el-menu-item index="3"> 心跳日志 </el-menu-item>
-                <el-menu-item index="4"> 播放器日志 </el-menu-item>
+                <el-menu-item index="5"> 播放器日志 </el-menu-item>
             </el-menu>
             <el-container>
                 <el-main>
@@ -420,15 +422,14 @@
             <div v-if="prg_dis_h_v">
                 <table class="table table-board">
                     <thead>
-                        <th>屏幕截图</th>
-                        <th>硬件信息</th>
-                        <th>软件信息</th>
-                        <th>地理位置信息</th>
+                        <th>节目封面</th>
+                        <th>节目信息</th>
+                        <th>播放模式</th>
                         <th>控制</th>
                     </thead>
                     <tbody>
-                        <template v-for="t in terminals">
-                            <tr :class="t.online=='1' ? 'online':'offline'">
+                        <template v-for="t in tprograms">
+                            <tr >
                                 <td>
                                     <div class="screenshoot-h">
                                         <img src="/assets/img/program-test.jpg" class="image">
@@ -437,83 +438,32 @@
                                 <td>
                                     <table class="disInfo">
                                         <tr>
-                                            <td>设备名 </td>
-                                            <td>：{{t.name}}</td>
+                                            <td>节目名称 </td>
+                                            <td>：{{t.Name}}</td>
                                         </tr>
                                         <tr>
-                                            <td>屏幕尺寸 </td>
-                                            <td>：{{t.size}}</td>
+                                            <td>发布类型 </td>
+                                            <td>：<span v-html="t.PublishTypeStr"></span></td>
                                         </tr>
                                         <tr>
-                                            <td>分辨率 </td>
-                                            <td>：{{t.ratio}}</td>
+                                            <td>发布人 </td>
+                                            <td>：{{t.UserName}}</td>
                                         </tr>
                                         <tr>
-                                            <td>屏幕类型</td>
-                                            <td>：{{t.rev}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>触摸屏 </td>
-                                            <td>：{{t.typ}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>是否在线 </td>
-                                            <td>：<el-tag size="small" :type="t.online == '1'?'success':'danger'">{{t.online == '1' ? '是':'否'}}</el-tag></td>
-                                        </tr>
-                                        <tr>
-                                            <td>最后心跳时间</td>
-                                            <td>：{{getDateTimeInfo(t.last_time)}}</td>
-                                        </tr>
-
-                                    </table>
-                                </td>
-                                <td>
-                                    <table class="disInfo">
-                                        <tr>
-                                            <td>当前节目</td>
-                                            <td>：暂无节目</td>
-                                        </tr>
-                                        <tr>
-                                            <td>操作系统</td>
-                                            <td>：{{t.sys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>IP</td>
-                                            <td>：{{t.ip}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>MAC</td>
-                                            <td>：{{t.mac}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>版本</td>
-                                            <td>：{{t.ver}}</td>
+                                            <td>发布时间</td>
+                                            <td>：{{t.CreateTime}}</td>
                                         </tr>
                                     </table>
                                 </td>
                                 <td>
                                     <table class="disInfo">
                                         <tr>
-                                            <td>位置</td>
-                                            <td>：{{t.addr}}</td>
+                                            <td>播放时间 ：</td>
+                                            <td><span v-html="t.PlayTime"></span></td>
                                         </tr>
                                         <tr>
-                                            <td>Gis</td>
-                                            <td>：{{t.gis}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>保修状态</td>
-                                            <td>：
-                                                <el-tag type="success" size="small">{{t.warranty}} 未过保</el-tag>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>loc</td>
-                                            <td>：{{t.loc}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>联系电话</td>
-                                            <td>：{{t.tel}}</td>
+                                            <td>有效日期 ：</td>
+                                            <td>{{t.ActiveTime}}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -533,29 +483,28 @@
                 </table>
             </div>
             <div v-if="!prg_dis_h_v">
-                <template v-for="t in terminals">
-                    <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
+                <template v-for="t in tprograms">
+                    <el-card class="termialDis" :body-style="{ padding: '0px' }">
                         <div class="deviceInfo">
-                            <span class="name">{{t.name}}</span>
-                            <span class="size">{{t.size}}</span>
+                            <span class="name">{{t.Name}}</span>
                         </div>
                         <div class="screenshoot">
-                            <img src="/assets/img/program-test.jpg" class="image">
+                            <img :src="getImgUrl(t.CoverImage)" class="image">
                             <div class="ratio">{{t.ratio}}</div>
                         </div>
                         <div class="control" style="">
                             <table class="disInfo">
                                 <tr>
-                                    <td>当前节目</td>
-                                    <td>：暂无节目</td>
+                                    <td>发布类型 </td>
+                                    <td>：<span v-html="t.PublishTypeStr"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>IP</td>
-                                    <td>：{{t.ip}}</td>
+                                    <td>发布人 </td>
+                                    <td>：{{t.UserName}}</td>
                                 </tr>
                                 <tr>
-                                    <td>版本</td>
-                                    <td>：{{t.ver}}</td>
+                                    <td>发布时间</td>
+                                    <td>：{{t.CreateTime}}</td>
                                 </tr>
                             </table>
                             <div class="bottom clearfix">
@@ -573,13 +522,25 @@
 </body>
 
 <script>
-    window.ins = new Vue({
+    window.appInstince = new Vue({
         el: '#app',
         data: {
             prg_dis_h_v: false,
             dis_h_v: false,
-            terminals: [],
+            terminals: [],//终端数据
+            tprograms:[],//终端节目数据
             logs: [],
+            tpager:{
+                total:0,
+                current:1,
+                size:10
+            },
+            onlineCount:{
+
+            },
+            tqueryIf:{
+                online:'1'
+            },
             pgw: {
                 title: '',
                 visiable: false,
@@ -716,8 +677,16 @@
         methods: {
             loadTeminalInfo() {
                 let me = this;
-                ajax_promise('/terminal/list', 'get').then((result) => {
-                    me.terminals = result.data;
+                let url = '/terminal/basic/queryInfo/'+this.tpager.current+'-'+this.tpager.size;
+                ajax_json_promise(url, 'post',this.tqueryIf).then((result) => {
+                    if(result.data){
+                        me.tpager.total = result.data.total;
+                        me.terminals = result.data.list;
+                    }else{
+                        me.tpager.total = 0;
+                        me.terminals = [];
+                    }
+                    me.onlineCount = result.online;
                 });
             },
             loadTerminalLogs() {
@@ -735,9 +704,14 @@
                 this.tcw.title = tm_info.name + ' 控制指令';
             },
             openTerminalProgram(tm_info) {
+                let me = this;
                 this.pgw.visiable = true;
                 this.pgw.title = tm_info.name + ' 节目列表';
                 this.tlw.terminal = tm_info;
+                let url = '/terminal/control/'+tm_info.id+'/program';
+                ajax_promise(url,'get').then(result=>{
+                    me.tprograms = result.data;
+                });
             },
             openTerminalLog(tm_info) {
                 this.tlw.terminal = tm_info;
@@ -749,9 +723,16 @@
                     c.checked = false;
                 });
                 control.checked = true;
-                this.$message({
-                    message: '已送指令: ' + control.label,
-                    type: 'success'
+                let tid = this.tcw.terminal.id
+                let cmd = {commandName:control.label,command:control.type,commandContent:control.opt,screenId:tid};
+                let url = '/terminal/control/'+tid+'/command';
+                ajax_json_promise(url,'post',cmd).then(result =>{
+                    if(result.status){
+                        this.$message({
+                            message: '已送指令: ' + control.label,
+                            type: 'success'
+                        });
+                    }
                 });
             },
             level_dis(target) {
@@ -765,8 +746,26 @@
             getDateTimeInfo(dt) {
                 if(!dt)return '未知';
                 return timeAgo(new Date(dt));
-            }
-
+            }, 
+            handleSizeChange(val) {
+              //console.log(`每页 ${val} 条`);
+              this.tpager.size = val;
+              this.loadTeminalInfo();
+          },
+          handleCurrentChange(val) {
+              //console.log(`当前页: ${val}`);
+              this.tpager.current = val;
+              this.loadTeminalInfo();
+          },
+          changeSearch(type){
+              this.tqueryIf.online=type;
+              this.loadTeminalInfo();
+          },
+          getImgUrl(str){
+            let pt = /img\W+src=[\"]+([\/\-\.\w]+)+/
+            var group = str.match(pt); 
+            return group[1];
+          }
         }
     });
 </script>

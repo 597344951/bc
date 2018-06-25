@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
@@ -43,6 +44,7 @@ public class TemplateTypeController extends BaseController {
 
     @ApiOperation(value = "新建分类信息", notes = "新建模板分类信息")
     @PostMapping(value = "/tptype")
+    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="新增模版分类",template="新增模版分类:${tpt.name}")
     public R save(@RequestBody TemplateType tpt) {
         ValidatorUtils.validateEntity(tpt);
         tpt.setBuiltin(false);
@@ -71,6 +73,7 @@ public class TemplateTypeController extends BaseController {
 
     @ApiOperation(value = "删除分类信息")
     @DeleteMapping("/tptype/{tpTypeId}")
+    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="删除模版分类",template="删除模版分类id:${tpTypeId}")
     public R delete(@PathVariable("tpTypeId") Integer tpTypeId) {
         if (null == tpTypeId) throw new RRException("输入删除分类的id");
         TemplateType tc = new TemplateType();
