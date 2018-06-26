@@ -1,0 +1,42 @@
+<div>
+    <el-container>
+        <el-aside width="200px">
+            <el-tree :data="catelogTreeData" :props="defaultProps" @node-click="selectCatelog"></el-tree>
+        </el-aside>
+        <el-main>
+            <div  >
+                <template v-for="t in programTemplates">
+                    <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
+                        <div class="deviceInfo">
+                            <span class="name"> <el-checkbox v-model="t.checked">{{t.name}}</el-checkbox> </span>
+                        </div>
+                        <div class="screenshoot">
+                            <img src="/assets/img/program-test.jpg" class="image">
+                            <div class="ratio">{{t.ratio}}</div>
+                        </div>
+                        <div class="control" style="">
+                            <table class="disInfo">
+                                <tr>
+                                    <td>当前节目</td>
+                                    <td>：暂无节目</td>
+                                </tr>
+                                <tr>
+                                    <td>IP</td>
+                                    <td>：{{t.ip}}</td>
+                                </tr>
+                                <tr>
+                                    <td>版本</td>
+                                    <td>：{{t.ver}}</td>
+                                </tr>
+                            </table>
+                            <div class="bottom clearfix">
+                                 
+                            </div>
+                        </div>
+                    </el-card>
+                </template>
+            </div>
+        </el-main>
+    </el-container>
+    
+</div>

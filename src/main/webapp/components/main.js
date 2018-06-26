@@ -14,11 +14,13 @@ import PmInfo from '/components/loadAnimation/pm-info.main.js';
 import FestivalInfo from '/components/loadAnimation/festival-info.main.js';
 import HotNews from '/components/loadAnimation/hot-news.main.js';
 import LoadReport from '/components/loadAnimation/load-report.main.js';
+import ProgramTemplate from '/components/template/program-template.main.js';
 
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
 export const comps = [MessageNotice, TitleH1, AddEvent, EventToolTip, CostPlan, PlanSuggest,
-    EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport 
+    EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport ,
+    ProgramTemplate
 ];
 comps.map((comp) => {
     if (checkModuleName(comp))
