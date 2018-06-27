@@ -703,7 +703,7 @@
                     pager.loading = false;
                     let data = result.data;
                     let pg = result.pager;
-                    pager.total = pg.total;
+                    if(pg)pager.total = pg.total;
                     this.extLogs = data;
                 });
             },
@@ -716,7 +716,7 @@
                     pager.loading = false;
                     let data = result.data;
                     let pg = result.pager;
-                    pager.total = pg.total;
+                    if(pg)pager.total = pg.total;
                     this.optLogs = data;
                 });
             }
