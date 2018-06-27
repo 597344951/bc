@@ -264,30 +264,7 @@ let program = [{
   "UserName": "ibo_55XIte",
   "CreateTime": "2018-05-08 17:39:16"
 }]
-
-let optLogs = {
-  "PageCount": 1, //总页数
-  "RecordCount": 3, //总条数
-  "DISOperationLogModelList": [{
-    "PkId": 10,
-    "Remark": "简单推送节目：普通测试到终端：PC201606111543",
-    "CreateTime": "2018-03-28 11:11:28",
-    "UserName": "admin",
-    "IP": "10.0.0.145"
-  }, {
-    "PkId": 9,
-    "Remark": "推送管理融合节目：到终端：PC201606111543",
-    "CreateTime": "2018-03-28 11:10:28",
-    "UserName": "admin",
-    "IP": "10.0.0.145"
-  }, {
-    "PkId": 8,
-    "Remark": "推送管理融合节目：到终端：PC201606111543",
-    "CreateTime": "2018-03-28 11:10:28",
-    "UserName": "admin",
-    "IP": "10.0.0.145"
-  }]
-}
+ 
 let executeLogs = {
   "PageCount": 1, //总页数
   "RecordCount": 1, //总条数
@@ -301,6 +278,25 @@ let executeLogs = {
   }]
 }
 
+let optlog = [{
+  "pkId": 10,
+  "remark": "简单推送节目：普通测试到终端：PC201606111543",
+  "createTime": "2018-03-28 11:11:28",
+  "userName": "admin",
+  "ip": "10.0.0.145"
+}, {
+  "pkId": 9,
+  "remark": "推送管理融合节目：到终端：PC201606111543",
+  "createTime": "2018-03-28 11:10:28",
+  "userName": "admin",
+  "ip": "10.0.0.145"
+}, {
+  "pkId": 8,
+  "remark": "推送管理融合节目：到终端：PC201606111543",
+  "createTime": "2018-03-28 11:10:28",
+  "userName": "admin",
+  "ip": "10.0.0.145"
+}]
 
 Mock.mock("/terminal/list", "get", {
   code: 200,
@@ -317,16 +313,29 @@ Mock.mock("/terminal/logs", "post", {
   "data": logs
 });
 
+Mock.mock("/terminal/control/2/operatelog/1-10",'get',{
+  code: 200,
+  status: true,
+  msg: "success",
+  "data": optlog,
+  pager:{
+    total:100
+  }
+});
+
 //查询终端节目
+/*
 Mock.mock("/terminal/control/1/program", "get", {
   code: 200,
   status: true,
   msg: "success",
   "data": program
 });
+
 Mock.mock("/terminal/control/2/program", "get", {
   code: 200,
   status: true,
   msg: "success",
   "data": program
 });
+*/

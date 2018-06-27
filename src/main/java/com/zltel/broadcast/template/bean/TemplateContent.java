@@ -21,6 +21,12 @@ public class TemplateContent {
     private String content;
 
     private String previewPicture;
+    /**关联节目id**/
+    @NotBlank(message="关联节目模版不能为空")
+    private String programTemplate;
+    /**关联节目所属分类id**/
+    @NotBlank(message="关联节目模版类别不能为空")
+    private String categoryId;
     
     public Integer getTpId() {
         return tpId;
@@ -85,4 +91,21 @@ public class TemplateContent {
     public void setPreviewPicture(String previewPicture) {
         this.previewPicture = previewPicture;
     }
+
+    public String getProgramTemplate() {
+        return programTemplate;
+    }
+
+    public void setProgramTemplate(String programTemplate) {
+        this.programTemplate = programTemplate;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+    
 }

@@ -15,6 +15,11 @@ public class RRException extends RuntimeException {
     private String msg;
     private int code = 500;
 
+    /** 创建异常信息 并抛出 **/
+    public static void makeThrow(String msg) {
+        throw new RRException(msg);
+    }
+
     public RRException(String msg) {
         super(msg);
         this.msg = msg;

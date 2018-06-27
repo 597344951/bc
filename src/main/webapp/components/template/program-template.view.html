@@ -1,36 +1,56 @@
 <div>
     <el-container>
         <el-aside width="200px">
-            <el-tree :data="catelogTreeData" :props="defaultProps" @node-click="selectCatelog"></el-tree>
+            <el-tree :data="catelogTreeData" :props="defaultProps" :default-expand-all="true" :expand-on-click-node="false"  @node-click="selectCatelog"></el-tree>
         </el-aside>
-        <el-main>
-            <div  >
+        <el-main style="padding:0 20px;">
+            <el-row>
+                <el-col :span="16">
+                    <!--查询-->
+                    <span style="font-size:18px;font-weight:bolder;">{{curCate.name}}</span>
+                </el-col>
+                <el-col :span="8">
+                    <!--分页-->
+                    <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
+                                :total="tpager.total" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+                            </el-pagination>
+                </el-col>
+            </el-row>
+            <div v-loading.fullscreen.lock="loading">
                 <template v-for="t in programTemplates">
-                    <el-card class="termialDis" :class="t.online=='1' ? 'online':'offline'" :body-style="{ padding: '0px' }">
+                    <el-card class="termialDis" :body-style="{ padding: '0px' }">
                         <div class="deviceInfo">
-                            <span class="name"> <el-checkbox v-model="t.checked">{{t.name}}</el-checkbox> </span>
+                            <span class="name">
+                                {{t.name}}
+                            </span>
                         </div>
                         <div class="screenshoot">
-                            <img src="/assets/img/program-test.jpg" class="image">
-                            <div class="ratio">{{t.ratio}}</div>
+                            <img :src="t.coverImageUrl" class="image">
+                            <div class="ratio">{{t.resolution}}</div>
                         </div>
-                        <div class="control" style="">
+                        <div class="control">
                             <table class="disInfo">
+                                <tbody>
                                 <tr>
-                                    <td>当前节目</td>
-                                    <td>：暂无节目</td>
+                                    <td>所属目录</td> <td>：</td>
+                                    <td>{{t.categoryId}}</td>
                                 </tr>
                                 <tr>
-                                    <td>IP</td>
-                                    <td>：{{t.ip}}</td>
+                                    <td>播放时长</td> <td>：</td>
+                                    <td>{{t.playTime}}</td>
                                 </tr>
                                 <tr>
-                                    <td>版本</td>
-                                    <td>：{{t.ver}}</td>
+                                    <td>节目类型</td> <td>：</td>
+                                    <td>{{t.modelTypeName}}</td>
                                 </tr>
+                                <tr>
+                                    <td>创建时间</td> <td>：</td>
+                                    <td>{{t.createTime}}</td>
+                                </tr></tbody>
                             </table>
                             <div class="bottom clearfix">
-                                 
+                                <el-button type="button" size="mini" class="button" @click="openProgramView(t)">预览</el-button>
+                                <el-button type="primary" size="mini" class="button" @click="choseProgramTempate(t)">选定</el-button>
                             </div>
                         </div>
                     </el-card>
@@ -38,5 +58,5 @@
             </div>
         </el-main>
     </el-container>
-    
+
 </div>

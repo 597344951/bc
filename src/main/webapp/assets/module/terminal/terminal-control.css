@@ -5,14 +5,24 @@
 .termialDis {
     padding: 0px;
     width: 260px;
-    margin: 5px;
+    margin: 15px;
     text-align: center;
     float: left;
 }
-
-.termialDis>div>.screenshoot {
+.termialDis:hover{
+    box-shadow: 4px 4px 18px 8px #d4d4d4;
+    width:265px;
+}
+.termialDis>div>.screenshoot,.termialDis-table>td>.screenshoot{
     height: 150px;
     background: url(/assets/img/no-program.png) center center no-repeat #fff;
+    max-width: 258px;
+    border: solid 1px #eee;
+    margin: 0 auto;
+}
+.termialDis-table>td>.screenshoot>img{
+    max-height:100%;
+    max-width:100%;
 }
 
 .offline>div>.screenshoot {
@@ -123,7 +133,8 @@
 }
 
 .screenshoot-h>.image {
-    width: 100%;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .disInfo {
@@ -132,6 +143,16 @@
 
 .disInfo>tbody>tr>td {
     padding: 3px 5px;
+    font-size: 14px;
+}
+.disInfo>tbody>tr>td:nth-child(1) {
+    max-width: 100px;
+    width:30%;
+}
+.disInfo>tbody>tr>td:nth-child(2){
+    font-weight:bolder;
+    width: 5px;
+    text-align: center;
 }
 
 .bottom-h>button {
@@ -149,4 +170,9 @@
 
 .el-button--primary>i {
     color: white;
+}
+
+.disInfo-overflow{
+    text-overflow: ellipsis; white-space:nowrap;max-width:130px;overflow:hidden;
+    margin:0;
 }

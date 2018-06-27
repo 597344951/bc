@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zltel.broadcast.template.dao.TemplateContentMapper">
-	<resultMap id="BaseResultMap" type="com.zltel.broadcast.template.bean.TemplateContent">
+<mapper
+	namespace="com.zltel.broadcast.template.dao.TemplateContentMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.template.bean.TemplateContent">
 		<id column="tp_id" jdbcType="INTEGER" property="tpId" />
-		<result column="tp_type_id" jdbcType="INTEGER" property="tpTypeId" />
+		<result column="tp_type_id" jdbcType="INTEGER"
+			property="tpTypeId" />
 		<result column="orgid" jdbcType="INTEGER" property="orgid" />
 		<result column="uid" jdbcType="INTEGER" property="uid" />
 		<result column="title" jdbcType="VARCHAR" property="title" />
-		<result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
-		<result column="preview_picture" jdbcType="VARCHAR" property="previewPicture" />
+		<result column="createtime" jdbcType="TIMESTAMP"
+			property="createtime" />
+		<result column="preview_picture" jdbcType="VARCHAR"
+			property="previewPicture" />
+		<result column="program_template" jdbcType="VARCHAR"
+			property="programTemplate" />
+		<result column="category_id" jdbcType="VARCHAR"
+			property="categoryId" />
 	</resultMap>
-	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.template.bean.TemplateContent">
-		<result column="content" jdbcType="LONGVARCHAR" property="content" />
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.template.bean.TemplateContent">
+		<result column="content" jdbcType="LONGVARCHAR"
+			property="content" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		tp_id, tp_type_id, orgid, uid, title, createtime,preview_picture
+		tp_id, tp_type_id, orgid, uid, title,
+		createtime,preview_picture,program_template,category_id
 	</sql>
 	<sql id="Blob_Column_List">
 		content
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
 		select
 		<include refid="Base_Column_List" />
 		,
@@ -27,18 +40,28 @@
 		from template_content
 		where tp_id = #{tpId,jdbcType=INTEGER}
 	</select>
-	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
 		delete from template_content
-		where tp_id = #{tpId,jdbcType=INTEGER}
+		where tp_id =
+		#{tpId,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
+	<insert id="insert"
+		parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		insert into template_content (tp_id, tp_type_id, orgid,
-		uid, title, createtime, content,preview_picture)
-		values (#{tpId,jdbcType=INTEGER}, #{tpTypeId,jdbcType=INTEGER}, #{orgid,jdbcType=INTEGER},
-		#{uid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
-		#{content,jdbcType=LONGVARCHAR},#{previewPicture,jdbcType=VARCHAR})
+		uid, title, createtime,
+		content,preview_picture,program_template,category_id)
+		values
+		(#{tpId,jdbcType=INTEGER}, #{tpTypeId,jdbcType=INTEGER},
+		#{orgid,jdbcType=INTEGER},
+		#{uid,jdbcType=INTEGER},
+		#{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
+		#{content,jdbcType=LONGVARCHAR},#{previewPicture,jdbcType=VARCHAR},#{programTemplate,jdbcType=VARCHAR},
+		#{categoryId,jdbcType=VARCHAR}
+		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		insert into template_content
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="tpId != null">
@@ -63,7 +86,13 @@
 				content,
 			</if>
 			<if test="previewPicture != null">
-				preview_picture
+				preview_picture,
+			</if>
+			<if test="programTemplate != null">
+				program_template,
+			</if>
+			<if test="categoryId != null">
+				category_id
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -89,11 +118,18 @@
 				#{content,jdbcType=LONGVARCHAR},
 			</if>
 			<if test="previewPicture != null">
-				#{previewPicture,jdbcType=VARCHAR}
+				#{previewPicture,jdbcType=VARCHAR},
+			</if>
+			<if test="programTemplate != null">
+				#{programTemplate,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryId != null">
+				#{categoryId,jdbcType=VARCHAR}
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		update template_content
 		<set>
 			<if test="tpTypeId != null">
@@ -115,31 +151,58 @@
 				content = #{content,jdbcType=LONGVARCHAR},
 			</if>
 			<if test="previewPicture != null">
-				preview_picture = #{previewPicture,jdbcType=VARCHAR}
+				preview_picture = #{previewPicture,jdbcType=VARCHAR},
+			</if>
+			<if test="programTemplate != null">
+				program_template = #{programTemplate,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryId != null">
+				category_id = #{categoryId,jdbcType=VARCHAR}
 			</if>
 		</set>
 		where tp_id = #{tpId,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		update template_content
-		set tp_type_id = #{tpTypeId,jdbcType=INTEGER},
+		set tp_type_id =
+		#{tpTypeId,jdbcType=INTEGER},
 		orgid = #{orgid,jdbcType=INTEGER},
-		uid = #{uid,jdbcType=INTEGER},
+		uid =
+		#{uid,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
-		createtime = #{createtime,jdbcType=TIMESTAMP},
-		content = #{content,jdbcType=LONGVARCHAR},
-		preview_picture = #{previewPicture,jdbcType=VARCHAR}
-		where tp_id = #{tpId,jdbcType=INTEGER}
+		createtime =
+		#{createtime,jdbcType=TIMESTAMP},
+		content =
+		#{content,jdbcType=LONGVARCHAR},
+		preview_picture =
+		#{previewPicture,jdbcType=VARCHAR},
+		program_template =
+		#{programTemplate,jdbcType=VARCHAR},
+		category_id =
+		#{categoryId,jdbcType=VARCHAR}
+		where tp_id =
+		#{tpId,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		update template_content
-		set tp_type_id = #{tpTypeId,jdbcType=INTEGER},
+		set tp_type_id =
+		#{tpTypeId,jdbcType=INTEGER},
 		orgid = #{orgid,jdbcType=INTEGER},
-		uid = #{uid,jdbcType=INTEGER},
+		uid =
+		#{uid,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
-		createtime = #{createtime,jdbcType=TIMESTAMP},
-		preview_picture = #{previewPicture,jdbcType=VARCHAR}
-		where tp_id = #{tpId,jdbcType=INTEGER}
+		createtime =
+		#{createtime,jdbcType=TIMESTAMP},
+		preview_picture =
+		#{previewPicture,jdbcType=VARCHAR}
+		,program_template =
+		#{programTemplate,jdbcType=VARCHAR},
+		category_id =
+		#{categoryId,jdbcType=VARCHAR}
+		where tp_id =
+		#{tpId,jdbcType=INTEGER}
 	</update>
 	<sql id="QUERY_WHERE">
 		<where>
@@ -147,17 +210,18 @@
 				AND tp_id = #{tpId,jdbcType=INTEGER}
 			</if>
 			<if test="tpTypeId != null">
-				AND tp_type_id = #{tpTypeId,jdbcType=INTEGER} 
+				AND tp_type_id = #{tpTypeId,jdbcType=INTEGER}
 			</if>
 			<if test="orgid != null">
 				AND orgid = #{orgid,jdbcType=INTEGER}
 			</if>
 			<if test="uid != null">
-				AND uid = #{uid,jdbcType=INTEGER} 
+				AND uid = #{uid,jdbcType=INTEGER}
 			</if>
 		</where>
 	</sql>
-	<select id="queryByType" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+	<select id="queryByType" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
 		select
 		<include refid="Base_Column_List" />
 		,
@@ -166,9 +230,11 @@
 		<include refid="QUERY_WHERE" />
 	</select>
 	<delete id="delete">
-		delete from template_content <include refid="QUERY_WHERE" />
+		delete from template_content
+		<include refid="QUERY_WHERE" />
 	</delete>
-	<select id="query" resultMap="ResultMapWithBLOBs" parameterType="com.zltel.broadcast.template.bean.TemplateContent">
+	<select id="query" resultMap="ResultMapWithBLOBs"
+		parameterType="com.zltel.broadcast.template.bean.TemplateContent">
 		select
 		<include refid="Base_Column_List" />
 		,

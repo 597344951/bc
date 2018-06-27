@@ -1,7 +1,16 @@
 var appInstince = new Vue({
   el: "#app",
   data: {
+    //节目模版选择
+    ptw: {
+      visiable: false
+    },
     rules: {
+      programTemplateName: [{
+        required: true,
+        message: "请选择节目模版",
+        trigger: "blur"
+      }],
       name: [{
           required: true,
           message: "请输入名称",
@@ -53,8 +62,8 @@ var appInstince = new Vue({
       label: "name",
       value: "id"
     },
-    tp_empty:{
-      previewPicture:''
+    tp_empty: {
+      previewPicture: ''
     },
     tp: {
       title: "文章模板编辑",
@@ -64,7 +73,7 @@ var appInstince = new Vue({
         title: "模板标题",
         content: "模板正文",
         tpTypeIds: [1, 3],
-        previewPicture:''
+        previewPicture: ''
       }
     },
     tpt: {
@@ -209,7 +218,9 @@ var appInstince = new Vue({
       this.tp.visible = true;
       this.tp.update = false;
       this.tp.title = "新增模板";
-      this.tp.data = {previewPicture:''};
+      this.tp.data = {
+        previewPicture: ''
+      };
       _editor.setContent("");
     },
     // 修改模板
@@ -274,7 +285,7 @@ var appInstince = new Vue({
       });
     },
     handleAvatarSuccess(res, file) {
-      this.tp.data.previewPicture = res.url;//URL.createObjectURL(file.raw);
+      this.tp.data.previewPicture = res.url; //URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type.startsWith('image');
@@ -287,6 +298,14 @@ var appInstince = new Vue({
         this.$message.error('上传头像图片大小不能超过 2MB!');
       }
       return isJPG && isLt2M;
+    },
+    choseProgramTemplate(pt) {
+      console.log("已选择节目模版", pt)
+      this.ptw.visiable = false;
+      this.tp.data.programTemplate = pt.programId;
+      this.tp.data.programTemplateName = pt.name;
+      this.tp.programTempate = pt;
+      this.tp.data.categoryId = pt.categoryId;
     }
   }
 });
@@ -294,7 +313,7 @@ var appInstince = new Vue({
 
 // 编辑器
 var _editor = UE.getEditor("templateText", {
-  
+
 });
 
 function getTpTypeIds(data, tpt_data) {
