@@ -1,0 +1,152 @@
+#terminalDisplay {
+    padding: 10px;
+}
+
+.termialDis {
+    padding: 0px;
+    width: 260px;
+    margin: 5px;
+    text-align: center;
+    float: left;
+}
+
+.termialDis>div>.screenshoot {
+    height: 150px;
+    background: url(/assets/img/no-program.png) center center no-repeat #fff;
+}
+
+.offline>div>.screenshoot {
+    height: 150px;
+    background: url(/assets/img/offline.png) center center no-repeat #fff;
+}
+
+.termialDis>div>div>.image {
+    display: block;
+    max-height: 150px;
+    width: 100%;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
+
+.termialDis>div>div>.ratio {
+    position: relative;
+    top: -19px;
+    background-color: #ddd;
+    background: linear-gradient(white, #ccc);
+}
+
+.termialDis>div>.control {
+    padding: 10px;
+    text-align: left;
+}
+
+.termialDis>div>.deviceInfo {
+    text-align: left;
+    padding: 10px;
+}
+
+.termialDis>div>.deviceInfo>.name {
+    font-weight: bolder;
+}
+
+.termialDis>div>.deviceInfo>.size {
+    float: right;
+}
+
+.termialDis>div>.control>.bottom {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.offline {
+    background-color: #c0c4cc;
+}
+
+.t-title {
+    cursor: auto !important;
+    opacity: 1 !important;
+}
+
+.online-icon {
+    background: green;
+    color: green !important;
+}
+
+.offline-icon {
+    background: #ddd;
+    color: #ddd !important;
+}
+
+.pagebar {
+    margin-top: 15px;
+}
+
+.command-list {
+    overflow: auto;
+    margin-bottom: 100px;
+}
+
+.command-list>.action {
+    display: inline-block;
+    position: relative;
+    margin: 6px 6px 3px;
+    width: 90px;
+    height: 90px;
+    border-radius: 5px;
+    color: #999;
+    text-align: center;
+    cursor: pointer;
+    float: left;
+    border: solid 1px #ddd;
+    text-decoration: none;
+    background-color: #eee;
+}
+
+.command-list>.action>i {
+    font-size: 55px;
+    color: orange;
+    margin-top: 5px;
+}
+
+.command-list>.active {
+    background-color: #337ab7;
+    color: white;
+}
+
+.command-list>.active>i {
+    color: white;
+}
+
+.screenshoot-h {
+    width: 250px;
+}
+
+.screenshoot-h>.image {
+    width: 100%;
+}
+
+.disInfo {
+    width: 100%;
+}
+
+.disInfo>tbody>tr>td {
+    padding: 3px 5px;
+}
+
+.bottom-h>button {
+    margin-top: 10px;
+}
+
+.el-dialog__body {
+    overflow: auto;
+    padding: 0 15px 15px 15px;
+}
+
+.el-menu-item i {
+    color: auto;
+}
+
+.el-button--primary>i {
+    color: white;
+}
