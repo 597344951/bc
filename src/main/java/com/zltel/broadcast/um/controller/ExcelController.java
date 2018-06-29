@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zltel.broadcast.common.annotation.LogPoint;
+import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.um.bean.PartyUser;
 import com.zltel.broadcast.um.service.ExcelService;
@@ -25,7 +26,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RequestMapping(value="/excel")
 @RestController
-public class ExcelController {
+public class ExcelController extends BaseController{
 	
 	@Autowired
 	private ExcelService excelService;
@@ -96,7 +97,7 @@ public class ExcelController {
 		try {
 			excelService.exportPartyUsersExcelExample(response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 		} 
 	}
 	

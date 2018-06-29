@@ -7,10 +7,10 @@ import java.util.List;
 import javax.annotation.Generated;
 import javax.annotation.Resource;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.PageRowBounds;
 import com.zltel.BroadcastApplicationTests;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.incision.sola.bean.Category;
@@ -19,6 +19,7 @@ import com.zltel.broadcast.incision.sola.bean.OptLog;
 import com.zltel.broadcast.incision.sola.bean.ProgramTemp;
 import com.zltel.broadcast.incision.sola.bean.PubedProgram;
 import com.zltel.broadcast.incision.sola.bean.ResultStatus;
+import com.zltel.broadcast.incision.sola.bean.Screen;
 
 @Generated(value = "org.junit-tools-1.0.6")
 public class SolaProgramServiceTest extends BroadcastApplicationTests {
@@ -79,11 +80,11 @@ public class SolaProgramServiceTest extends BroadcastApplicationTests {
             logout.info("获取模版节目信息:{}", JSON.toJSON(pgs));
         });
     }
-    
+
     @Test
-    public void testGetProgramList2()throws Exception{
+    public void testGetProgramList2() throws Exception {
         Pager prb = new Pager(1, 10);
-        List<Category> cats  = this.service.getProgramCategoryList(0);
+        List<Category> cats = this.service.getProgramCategoryList(0);
         cats.forEach(c -> {
             List<ProgramTemp> pgs = this.service.getProgramList(0, prb);
             logout.info("获取节目信息:{}", JSON.toJSON(pgs));
@@ -106,14 +107,25 @@ public class SolaProgramServiceTest extends BroadcastApplicationTests {
         logout.info("查询终端执行日志,分页:{},内容:{}", JSON.toJSONString(prb), JSON.toJSONString(logs));
     }
 
-    
+    /** 测试无效终端 **/
+    @Test
+    public void testGetScreenExecuteLogList2() {
+        Pager prb = new Pager(1, 10);
+        try {
+            List<ExecuteLog> logs = this.service.getScreenExecuteLogList(3, prb);
+            logout.info("查询终端执行日志,分页:{},内容:{}", JSON.toJSONString(prb), JSON.toJSONString(logs));
+        } catch (Exception e) {
+            Assert.assertEquals(e.getMessage(), "拉取执行日志失败: 终端无效\"");
+        }
+    }
+
 
     @Test
     public void testGetScreenCategoryList() {
-       Object data = this.service.getScreenCategoryList(0);
-       logout.info("获取终端分类信息:{}",JSON.toJSONString(data));
+        Object data = this.service.getScreenCategoryList(0);
+        logout.info("获取终端分类信息:{}", JSON.toJSONString(data));
     }
-   
+
 
     @Test
     public void testGetBreakingNewsList() {
@@ -121,7 +133,7 @@ public class SolaProgramServiceTest extends BroadcastApplicationTests {
         String etime = "";
         Pager prb = new Pager(1, 10);
         Object data = this.service.getBreakingNewsList(stime, etime, prb);
-        logout.info("获取紧急插播节目: {}",JSON.toJSONString(data));
+        logout.info("获取紧急插播节目: {}", JSON.toJSONString(data));
     }
 
     @Test
@@ -129,12 +141,18 @@ public class SolaProgramServiceTest extends BroadcastApplicationTests {
         List<PubedProgram> datas = this.service.getScreenProgramList(TID);
         logout.info("终端已发布节目: {}", JSON.toJSONString(datas));
     }
-    
+
     @Test
     public void testQueryTerminal() {
         Object v = this.service.queryTerminal();
-        logout.info("查询终端信息: {}",JSON.toJSONString(v));
+        logout.info("查询终端信息: {}", JSON.toJSONString(v));
     }
-    
+
+    @Test
+    public void testGetScreenList() {
+        Pager prb = new Pager(1, 10);
+        List<Screen> list = this.service.getScreenList(0, prb);
+        logout.info("查询终端信息 pager:{} , data:{}", JSON.toJSONString(prb), JSON.toJSONString(list));
+    }
 
 }

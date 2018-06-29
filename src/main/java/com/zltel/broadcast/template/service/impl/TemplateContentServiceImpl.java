@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageRowBounds;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.template.bean.TemplateContent;
@@ -30,8 +31,8 @@ public class TemplateContentServiceImpl extends BaseDaoImpl<TemplateContent>
     }
 
     @Override
-    public List<TemplateContent> queryByType(TemplateContent record) {
-        return this.templateContentMapper.queryByType(record);
+    public List<TemplateContent> queryByType(TemplateContent record,PageRowBounds prb) {
+        return this.templateContentMapper.queryByType(record,prb);
     }
 
     @Override

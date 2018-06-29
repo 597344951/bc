@@ -1,0 +1,111 @@
+.time {
+    font-size: 13px;
+    color: #999;
+}
+
+.image {
+    width: 100%;
+    display: block;
+}
+
+.bottom {
+    margin-top: 13px;
+    line-height: 12px;
+}
+
+
+
+.box-card {
+    width: 200px;
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+.box-card:hover{
+    width:205px;
+    box-shadow: 4px 4px 18px 8px #d4d4d4;
+}
+
+.el-main,
+.el-header {
+    padding: 0;
+}
+.el-main{
+    padding:0 20px;
+}
+
+
+/**页面预览**/
+
+.page-thumb {
+    transform: scale(0.36);
+}
+
+.editTp {
+    width:90%;
+}
+
+.previewPic {
+    width: 150px;
+    height: 200px;
+}
+
+.time {
+    font-size: 13px;
+    color: #999;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: bolder;
+}
+
+.bottom {
+    margin-top: 13px;
+    line-height: 12px;
+}
+
+.image {
+    display: block;
+    margin: 0 auto;
+    height: 170px;
+    width: auto;
+    max-width:100%;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+
+.clearfix:after {
+    clear: both
+}
+
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+}

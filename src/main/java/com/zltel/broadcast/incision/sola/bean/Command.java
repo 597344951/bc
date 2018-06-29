@@ -1,4 +1,4 @@
-package com.zltel.broadcast.terminal.bean;
+package com.zltel.broadcast.incision.sola.bean;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -108,7 +108,7 @@ import javax.validation.constraints.NotNull;
  * @author wangch
  *
  **/
-public class CmdBean {
+public class Command {
     @NotNull(message = "操作终端不能为空")
     private int screenId;
     @NotBlank(message = "操作命令不能为空")
@@ -150,6 +150,4 @@ public class CmdBean {
     public void setCommandContent(String commandContent) {
         this.commandContent = commandContent;
     }
-
-
 }

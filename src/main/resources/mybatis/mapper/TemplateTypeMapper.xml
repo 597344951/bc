@@ -164,6 +164,9 @@
 		COUNT(1) COUNT
 		FROM template_content tc
 		WHERE tc.orgid = #{orgid}
+		<if test="keyword != null and keyword !=''">
+			AND tc.title like concat('%',#{keyword},'%')
+		</if>
 		GROUP BY tc.tp_type_id
 		) t ON tt.tp_type_id =
 		t.tp_type_id

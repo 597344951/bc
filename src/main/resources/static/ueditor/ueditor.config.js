@@ -406,7 +406,7 @@
 			mark:   [],
 			nav:    [],
 			ol:     ['class', 'style'],
-			p:      ['class', 'style'],
+			p:      ['class', 'style', 'id', 'name'],
 			pre:    ['class', 'style'],
 			s:      [],
 			section:[],

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
@@ -38,7 +39,9 @@ public class BaseController {
 
     public SysUser getSysUser() {
         Subject subject = SecurityUtils.getSubject();
-        return (SysUser) subject.getPrincipal();
+        SysUser user = (SysUser) subject.getPrincipal();
+        if(null == user)throw new UnauthenticatedException();
+        return user;
     }
 
     public void log(HttpSession session, String level, String msg) {

@@ -23,11 +23,13 @@ import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.incision.sola.bean.BreakingNews;
 import com.zltel.broadcast.incision.sola.bean.Category;
+import com.zltel.broadcast.incision.sola.bean.Command;
 import com.zltel.broadcast.incision.sola.bean.ExecuteLog;
 import com.zltel.broadcast.incision.sola.bean.OptLog;
 import com.zltel.broadcast.incision.sola.bean.ProgramTemp;
 import com.zltel.broadcast.incision.sola.bean.PubedProgram;
 import com.zltel.broadcast.incision.sola.bean.ResultStatus;
+import com.zltel.broadcast.incision.sola.bean.Screen;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.incision.sola.utils.DESUtil;
 import com.zltel.broadcast.incision.sola.utils.HttpUtil;
@@ -42,6 +44,8 @@ import com.zltel.broadcast.incision.sola.utils.JsonUtils;
 @Service
 public class SolaProgramServiceImpl implements SolaProgramService {
 
+    private static final String CATEGORY_ID = "categoryId";
+
     private static final String SCREEN_ID = "screenId";
 
     private static final String PAGE_COUNT = "pageCount";
@@ -51,6 +55,9 @@ public class SolaProgramServiceImpl implements SolaProgramService {
     private static final String ORG_ID = "OrgId";
 
     private static final String RECORD_COUNT = "RecordCount";
+
+    public static final int ADD_PROGRAM_WITH_TEMPLATE = 1;
+    public static final int ADD_PROGRAM_NO_TEMPLATE = 2;
 
     private static final Logger log = LoggerFactory.getLogger(SolaProgramServiceImpl.class);
 
@@ -64,9 +71,17 @@ public class SolaProgramServiceImpl implements SolaProgramService {
     private int org;
 
     @Override
-    public int addProgram(Map<String, Object> program) {
+    public int addProgram(Map<String, Object> program, int type) {
         program.put(ORG_ID, org);
-        String ret = execute(program, "AddProgram");
+        String ret;
+
+        if (ADD_PROGRAM_WITH_TEMPLATE == type) {
+            ret = execute(program, "TempletProgram");
+        } else if (ADD_PROGRAM_NO_TEMPLATE == type) {
+            ret = execute(program, "AddProgram");
+        } else {
+            ret = "-10:未知节目创建类型";
+        }
         log.debug("新增节目<AddProgram>:{}", ret);
         ResultStatus rs = this.handleResultStatus(ret);
         if (!rs.isSuccess()) {
@@ -129,7 +144,7 @@ public class SolaProgramServiceImpl implements SolaProgramService {
     public List<Map<String, Object>> queryTerminal() {
         Map<String, Object> param = new HashMap<>();
         param.put(ORG_ID, org);
-        param.put("categoryId", 0);
+        param.put(CATEGORY_ID, 0);
         param.put(PAGE_INDEX, 1);
         param.put(PAGE_COUNT, Integer.MAX_VALUE);
         String msg = execute(param, "GetScreenList");
@@ -144,6 +159,28 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         return (List<Map<String, Object>>) map.get("DISSchoolClassScreenModelList");
     }
 
+    public List<Screen> getScreenList(int categoryId, Pager pager) {
+        List<Screen> rets = null;
+        Map<String, Object> param = new HashMap<>();
+        param.put(ORG_ID, org);
+        param.put(CATEGORY_ID, categoryId);
+        param.put(PAGE_INDEX, pager.getPageIndex());
+        param.put(PAGE_COUNT, pager.getLimit());
+        String msg = execute(param, "GetScreenList");
+        ResultStatus rs = this.handleResultStatus(msg);
+        if (!rs.isSuccess()) {
+            String em = "拉取终端信息失败: " + rs.getMsg();
+            log.error(em);
+            RRException.makeThrow(em);
+        }
+        JSONObject jsonObject = JSON.parseObject(msg);
+        Integer rcs = (Integer) jsonObject.get(RECORD_COUNT);
+        pager.setTotal(Long.valueOf(rcs));
+
+        JSONArray ja = jsonObject.getJSONArray("DISSchoolClassScreenModelList");
+        rets = ja.stream().map(jo -> JSON.toJavaObject((JSONObject) jo, Screen.class)).collect(Collectors.toList());
+        return rets;
+    }
 
 
     @SuppressWarnings("unchecked")
@@ -183,6 +220,10 @@ public class SolaProgramServiceImpl implements SolaProgramService {
             RRException.makeThrow(em);
         }
         return true;
+    }
+
+    public boolean terminalCommand(Command cmd) {
+        return this.terminalCommand(cmd.getScreenId(), cmd.getCommandName(), cmd.getCommand(), cmd.getCommandContent());
     }
 
     private String execute(Map<String, Object> program, String serviceName) {
@@ -310,7 +351,7 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         List<ProgramTemp> rets = null;
         Map<String, Object> param = new HashMap<>();
         param.put(ORG_ID, org);
-        param.put("categoryId", categoryId);
+        param.put(CATEGORY_ID, categoryId);
         param.put(PAGE_INDEX, prb.getPageIndex());
         param.put(PAGE_COUNT, prb.getLimit());
         String msg = execute(param, "GetProgramList");

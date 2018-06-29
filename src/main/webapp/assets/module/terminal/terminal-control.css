@@ -9,34 +9,77 @@
     text-align: center;
     float: left;
 }
-.termialDis:hover{
+
+.termialDis:hover {
     box-shadow: 4px 4px 18px 8px #d4d4d4;
-    width:265px;
+    width: 265px;
 }
-.termialDis>div>.screenshoot,.termialDis-table>td>.screenshoot{
-    height: 150px;
+
+.termialDis>div>.screenshoot,
+.termialDis-table>td>.screenshoot,
+.termialDis>div>.screenshoot-h,
+.termialDis>div>.screenshoot-v {
+    height: 170px;
     background: url(/assets/img/no-program.png) center center no-repeat #fff;
     max-width: 258px;
     border: solid 1px #eee;
     margin: 0 auto;
 }
-.termialDis-table>td>.screenshoot>img{
-    max-height:100%;
-    max-width:100%;
+
+.termialDis-table>td>.screenshoot>img,
+.termialDis>div>.screenshoot>img {
+    height: 100%;
+    width: 100%;
+}
+
+/**竖屏 高度100% 宽度自适应**/
+
+.termialDis>div>.screenshoot-v>img {
+    height: 100%;
+    width: auto;
+}
+
+.termialDis>div>.screenshoot-h>img {
+    width: 100%;
+    height: 100%;
+}
+
+/**terminal table 展示**/
+
+.terminal-table-dis>tbody>.offline,
+.termialDis-offline {
+    background-color: #c0c4cc;
+}
+
+.terminal-table-dis>tbody>tr>td>.screenshoot-h,
+.terminal-table-dis>tbody>tr>td>.screenshoot-v,
+.terminal-table-dis>tbody>tr>td>.screenshoot {
+    height: 150px;
+    width: 250px;
+    background: url(/assets/img/no-program.png) center center no-repeat #fff;
+    border: solid 1px #eee;
+    text-align: center;
+    margin: auto 0;
+}
+
+.terminal-table-dis>tbody>tr>td>.screenshoot-h>.image {
+    max-height: 100%;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+}
+
+.terminal-table-dis>tbody>tr>td>.screenshoot-v>.image {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: 100%;
+    margin: 0 auto;
 }
 
 .offline>div>.screenshoot {
     height: 150px;
     background: url(/assets/img/offline.png) center center no-repeat #fff;
-}
-
-.termialDis>div>div>.image {
-    display: block;
-    max-height: 150px;
-    width: 100%;
-    text-align: center;
-    margin: 0px;
-    padding: 0px;
 }
 
 .termialDis>div>div>.ratio {
@@ -67,10 +110,6 @@
 .termialDis>div>.control>.bottom {
     margin-top: 10px;
     text-align: center;
-}
-
-.offline {
-    background-color: #c0c4cc;
 }
 
 .t-title {
@@ -128,31 +167,32 @@
     color: white;
 }
 
-.screenshoot-h {
-    width: 250px;
-}
+.terminal-disInfo-big {}
 
-.screenshoot-h>.image {
-    max-height: 100%;
-    max-width: 100%;
-}
-
-.disInfo {
+.disInfo,
+.terminal-disInfo-big {
     width: 100%;
 }
 
-.disInfo>tbody>tr>td {
-    padding: 3px 5px;
+.disInfo>tbody>tr>td,
+.terminal-disInfo-big>tbody>tr>td {
     font-size: 14px;
 }
-.disInfo>tbody>tr>td:nth-child(1) {
+
+.disInfo>tbody>tr>td:nth-child(1),
+.terminal-disInfo-big>tbody>tr>td:nth-child(1) {
     max-width: 100px;
-    width:30%;
+    width: 30%;
 }
-.disInfo>tbody>tr>td:nth-child(2){
-    font-weight:bolder;
+
+.disInfo>tbody>tr>td:nth-child(2) {
+    font-weight: bolder;
     width: 5px;
     text-align: center;
+}
+
+.terminal-disInfo-big>tbody>tr>td:nth-child(2) {
+    padding: 3px 5px;
 }
 
 .bottom-h>button {
@@ -172,7 +212,10 @@
     color: white;
 }
 
-.disInfo-overflow{
-    text-overflow: ellipsis; white-space:nowrap;max-width:130px;overflow:hidden;
-    margin:0;
+.disInfo-overflow {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 130px;
+    overflow: hidden;
+    margin: 0;
 }

@@ -7,7 +7,7 @@
 <html>
 <head>
 <base href="<%=basePath%>">
-<title>登陆系统</title>
+<title>${sysInfo.appname}</title>
 <%@include file="/include/head.jsp"%>
 <style>
 	html,body{
@@ -19,6 +19,7 @@
 		overflow: hidden;
 		-webkit-background-size: 100% 100%;
 		background-size: 100% 100%;
+		background-color: #337ab7;
 	}
 	*{
 		margin: 0;

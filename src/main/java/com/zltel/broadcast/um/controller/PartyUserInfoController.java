@@ -46,7 +46,7 @@ public class PartyUserInfoController extends BaseController  {
 		try {
 			return partyUserInfoService.queryPartyUserInfos(partyUserMap, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询党员信息失败");
 		}
 	}
@@ -64,7 +64,7 @@ public class PartyUserInfoController extends BaseController  {
 		try {
 			partyUserInfoService.getPartyUserInfoIdPhoto(response, partyId);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class PartyUserInfoController extends BaseController  {
 		try {
 			return partyUserInfoService.savePartyUserInfoIdPhoto(request, file);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("后台出错，停止党员注册");
 		}
 	}
@@ -99,7 +99,7 @@ public class PartyUserInfoController extends BaseController  {
 		try {
 			return partyUserInfoService.insertPartyUserInfo(request, partyUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("添加党员信息出错");
 		}
 	}
@@ -117,7 +117,7 @@ public class PartyUserInfoController extends BaseController  {
 		try {
 			return partyUserInfoService.updatePartyUserIdPhoto(request, file, partyUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("修改证件照出错");
 		}
 	}
@@ -135,7 +135,7 @@ public class PartyUserInfoController extends BaseController  {
 		try {
 			return partyUserInfoService.updatePartyUserInfo(request, partyUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("修改党员信息出错");
 		}
 	}

@@ -155,8 +155,9 @@ public interface PublishService {
      * 发布
      * @param user
      * @param contentId
+     * @param period
      */
-    public void publish(SysUser user, int contentId);
+    public void publish(SysUser user, int contentId, Map<String, Object> period);
 
     /**
      * 下架

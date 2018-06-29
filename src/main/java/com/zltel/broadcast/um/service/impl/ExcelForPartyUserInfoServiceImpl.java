@@ -646,9 +646,11 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				}
 			}
 			
-			//组织职责编号
-			if (row.getCell(40) != null) {
-				
+			//加入组织时间
+			if (row.getCell(41) != null) {
+				orgRelation.setOrgRltJoinTime(row.getCell(41).getDateCellValue());
+			} else {
+				orgRelation.setOrgRltJoinTime(new Date());
 			}
 			
 			baseUserInfo.setIsParty(1);
@@ -710,7 +712,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			anchor.setRow2(17);
 			drawing.createPicture(anchor, pictureIdx);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 		} finally {
 			FileUtil.closeIO(bis);
 		}

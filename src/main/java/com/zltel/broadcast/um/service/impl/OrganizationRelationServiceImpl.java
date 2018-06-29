@@ -104,8 +104,10 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 							null : (int)organizationRelationMap.get("partyStatus") == 1 ? "正常" : "停止党籍");
 						
 						Date birthDay = DateUtil.toDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("birthDate") == null || organizationRelationMap.get("birthDate") == "" ?
-								null : organizationRelationMap.get("birthDate").toString());
+							null : organizationRelationMap.get("birthDate").toString());
 						organizationRelationMap.put("age", PartyUserInfoServiceImpl.getPartyUserAge(birthDay));
+						organizationRelationMap.put("orgRltJoinTime", DateUtil.formatDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("orgRltJoinTime") == null ||
+								organizationRelationMap.get("orgRltJoinTime") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD, organizationRelationMap.get("orgRltJoinTime").toString())));
 						count++;
 					}
 				}
@@ -249,6 +251,7 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 			organizationRelationMapper.deleteOrgRelationByUserId(organizationRelation.getOrgRltUserId());
 			int count = 0;
 			if (orgRltDutys != null && orgRltDutys.size() > 0) {
+				if (organizationRelation.getOrgRltJoinTime() == null) organizationRelation.setOrgRltJoinTime(new Date());
 				for (Integer orgDuty : orgRltDutys) {
 					organizationRelation.setOrgRltId(null);	//自增，不需要设置值
 					organizationRelation.setOrgRltDutyId(orgDuty);

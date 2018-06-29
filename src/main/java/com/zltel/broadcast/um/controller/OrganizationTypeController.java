@@ -39,7 +39,7 @@ public class OrganizationTypeController extends BaseController {
 		try {
 			return organizationTypeService.queryOrgTypes(organizationType, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织类型失败");
 		}
 	}
@@ -57,7 +57,7 @@ public class OrganizationTypeController extends BaseController {
 		try {
 			return organizationTypeService.queryOrgTypesNotPage(organizationType);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织类型失败");
 		}
 	}

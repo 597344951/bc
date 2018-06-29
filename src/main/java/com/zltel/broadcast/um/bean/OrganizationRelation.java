@@ -1,5 +1,7 @@
 package com.zltel.broadcast.um.bean;
 
+import java.util.Date;
+
 public class OrganizationRelation {
     private Integer orgRltId;
 
@@ -8,6 +10,16 @@ public class OrganizationRelation {
     private Integer orgRltDutyId;
 
     private Integer orgRltUserId;
+    
+    private Date orgRltJoinTime;
+
+	public Date getOrgRltJoinTime() {
+		return orgRltJoinTime;
+	}
+
+	public void setOrgRltJoinTime(Date orgRltJoinTime) {
+		this.orgRltJoinTime = orgRltJoinTime;
+	}
 
 	public Integer getOrgRltId() {
         return orgRltId;

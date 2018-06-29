@@ -35,9 +35,10 @@ public class TemplateTypeController extends BaseController {
 
     @ApiOperation(value = "查询分类树形结构信息", notes = "根据用户所在组织查询其所具有的模板分类信息")
     @GetMapping(value = "/listTypeTree")
-    public R listTypeTree() {
+    public R listTypeTree(String keyword) {
         TemplateType tp = new TemplateType();
         tp.setOrgid(this.getSysUser().getOrgId());
+        tp.setKeyword(keyword);
         List<TemplateTypeTreeNode> result = this.templateTypeService.getTypeTree(tp);
         return R.ok().setData(result);
     }

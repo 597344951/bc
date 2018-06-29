@@ -13,8 +13,8 @@
 <title>党委管理</title>
 <%@include file="/include/head_notbootstrap.jsp"%>
 <script type="text/javascript" src="/json/address-pca.json"></script>
-<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&key=b8db1a2a77d2226ba663235353e3546b&plugin=AMap.Geocoder"></script> 
-<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&key=b8db1a2a77d2226ba663235353e3546b&plugin=AMap.Geocoder"></script>
+<%@include file="/include/echarts.jsp"%>
 <style type="text/css">
 	body {
 		
@@ -45,11 +45,108 @@
 		text-decoration:underline;  /*鼠标放上去有下划线*/
 		color: red;
 	}
-	div[id*="container"] {
-		width: 35%; 
+	div[id*="container"] {	/*地图*/
+		width: 92%;
 		height: 230px;
 		margin: 10px 0;
-		border: 1px solid black;
+		border-radius: 10px;
+   		box-shadow:3px 3px 10px #909090;
+	}
+	.zzcy,.xszz{
+		width: 45%;
+		height: 200px;
+		background-color: #fff;
+		border-radius:10px;
+		margin: 10px;
+		float: left;
+		text-align: center;
+		overflow: hidden;
+		position: relative;
+		box-shadow:3px 3px 10px #909090;
+	}
+	.zzcy{
+		margin-left: 0px;
+	}
+	.zzcy:hover,.xszz:hover{
+		box-shadow:10px 10px 10px #909090;
+		cursor: pointer;
+		
+	}
+
+	.title{
+		margin:10px ;
+		font-size: 18px;
+		font-weight: bold;
+		color: #999;
+		text-align: center;
+	}
+	
+	.woman,.man{
+		text-align: left;
+		padding-left: 20px;
+		margin-bottom: 5px;
+		float: left;
+		text-align: center;
+	}
+	.woman-image{
+		width: 50px;
+		height: 70px;
+		display: inline-block;
+		background: url(/view/pm/img/woman.png) no-repeat;
+		background-size: 50px 70px;
+	}
+	.man-image{
+		width: 50px;
+		height: 70px;
+		display: inline-block;
+		background: url(/view/pm/img/man.png) no-repeat;
+		background-size: 50px 70px;
+	}
+	.date{
+		margin:0 0 10px;
+		border:1px solid #ddd;
+		width: 80%;
+		height: 30px;
+		border-radius: 6px;
+		margin-left: 10px;
+	}
+	.bottom-main{
+		overflow: auto;
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		height: 40px;
+	}
+	.main1,.main2{
+		float: left;
+		width: 50%;
+		line-height: 40px;
+		color: #999;
+		font-size: 14px;
+		background: #de0000;
+		font-size: 15px;
+		color:#fff;
+	}
+	.main1:hover,.main2:hover{
+		/*font-weight: bold;*/
+	}
+	.main1:active,.main2:active{
+		font-size: 16px;
+		font-weight: bold;
+	}
+	.main1{
+		box-sizing: border-box;
+		border-right: 1px solid #fff;
+	}
+	.total{
+		text-align: left;
+		padding-left: 10px;
+	}
+	.orgInfosRelationClass{
+		width: 300px;
+		height: 300px;
+		margin: 10px;
+		float: left;
 	}
 </style>
 </head>
@@ -137,75 +234,118 @@
 					<el-table @expand-change="setMap" size="small" :data="partyOrg_manager_orgInfoPages.list" style="width: 100%">
 						<el-table-column type="expand">
 							<template slot-scope="scope">
-								<el-row :gutter="20" v-if="scope.row.orgLevel1s.length != 0">
-									<el-col :span="24">
-										<el-collapse>
-										  	<el-collapse-item>
-										  		<template slot="title">
-											    	<div>
-											    		<a href="javascript:void(0)">
-												    		<i class="el-icon-arrow-down"></i>
-												    		<span style="font: bold;">领导风采</span>
-												    		<i class="el-icon-arrow-down"></i>
-											    		</a>
-											    	</div>
-											    </template>
-											    <div style="background-image: url(/view/pm/img/orgInfoOfLeaderBG.png);padding: 10px">
-												    <div style="margin-bottom: 10px" align="center">
-														<el-popover 
-															class="orgLeaderBG"
-															v-for="item in scope.row.orgLevel1s"
-															placement="top" 
-														  	width="100" 
-														  	trigger="hover" >
-														  	<span slot="reference" style="margin: 5px"><img :src="getPath(item)" width="100" height="150" /></span>
-														  	<div>
-														  		<p>{{item.orgDutyName}}：{{item.name}}</p>
-														  	</div>
-														</el-popover>
+								<div style="width: 60%; margin: 0 auto;">
+									<el-row :gutter="20" v-if="scope.row.orgLevel1s.length != 0">
+										<el-col :span="24">
+											<el-collapse>
+											  	<el-collapse-item>
+											  		<template slot="title">
+												    	<div style="text-align: center;">
+												    		<a href="javascript:void(0)">
+													    		<i class="el-icon-arrow-down"></i>
+													    		<span style="font-weight: bold;">领导信息</span>
+													    		<i class="el-icon-arrow-down"></i>
+												    		</a>
+												    	</div>
+												    </template>
+												    <div style="background-image: url(/view/pm/img/orgInfoOfLeaderBG.png);padding: 10px">
+													    <div style="margin-bottom: 10px" align="center">
+															<el-popover 
+																class="orgLeaderBG"
+																v-for="item in scope.row.orgLevel1s"
+																placement="top" 
+															  	width="100" 
+															  	trigger="hover" >
+															  	<span slot="reference" style="margin: 5px"><img :src="getPath(item)" width="100" height="150" /></span>
+															  	<div>
+															  		<p>{{item.orgDutyName}}：{{item.name}}</p>
+															  	</div>
+															</el-popover>
+														</div>
+														<div align="center">
+															<el-popover 
+																class="orgLeaderBG"
+																v-for="item in scope.row.orgLevel2s"
+																placement="top" 
+															  	width="100" 
+															  	trigger="hover" >
+															  	<span slot="reference" style="margin: 5px"><img :src="getPath(item)" width="100" height="150" /></span>
+															  	<div>
+															  		<p>{{item.orgDutyName}}：{{item.name}}</p>
+															  	</div>
+															</el-popover>
+														</div>
 													</div>
-													<div align="center">
-														<el-popover 
-															class="orgLeaderBG"
-															v-for="item in scope.row.orgLevel2s"
-															placement="top" 
-														  	width="100" 
-														  	trigger="hover" >
-														  	<span slot="reference" style="margin: 5px"><img :src="getPath(item)" width="100" height="150" /></span>
-														  	<div>
-														  		<p>{{item.orgDutyName}}：{{item.name}}</p>
-														  	</div>
-														</el-popover>
-													</div>
-												</div>
-										  	</el-collapse-item>
-										</el-collapse>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="7">组织名称：{{scope.row.orgInfoName}}</el-col>
-									<el-col :span="3">组织类型：{{scope.row.orgTypeName}}</el-col>
-								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="24">
-										管委会地址：
-										{{scope.row.orgInfoCommitteeProvince}}-
-										{{scope.row.orgInfoCommitteeCity}}-
-										{{scope.row.orgInfoCommitteeArea}}-
-										{{scope.row.orgInfoCommitteeDetail}}
-									</el-col>
-								</el-row>
-								<div :id="'container'+scope.row.orgInfoId"></div>
-								<el-row :gutter="20" v-for="item in scope.row.orgLevel1s">
-									<el-col :span="3">{{item.orgDutyName}}：{{item.name}}</el-col>
-									<el-col :span="3">性别：{{item.sex}}</el-col>
-									<el-col :span="3">年龄：{{item.age}}</el-col>
-									<el-col :span="6">联系电话：{{item.mobilePhone}}</el-col>
-								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="3">共有成员：<a @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgPeoples(scope.row)" href="javascript:void(0)">{{scope.row.orgMemberNum}} 人</a></el-col>
-									<el-col :span="3">共有下属组织：<a @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgChildrens(scope.row)" href="javascript:void(0)">{{scope.row.orgChildrensNum}} 个</a></el-col>
-								</el-row>
+											  	</el-collapse-item>
+											</el-collapse>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="12">组织名称：{{scope.row.orgInfoName}}</el-col>
+										<el-col :span="12">组织类型：{{scope.row.orgTypeName}}</el-col>
+									</el-row>
+									<el-row :gutter="20" v-for="item in scope.row.orgLevel1s">
+										<el-col :span="5">{{item.orgDutyName}}：{{item.name}}</el-col>
+										<el-col :span="3">性别：{{item.sex}}</el-col>
+										<el-col :span="3">年龄：{{item.age}}</el-col>
+										<el-col :span="6">联系电话：{{item.mobilePhone}}</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="24">
+											管委会地址：
+											{{scope.row.orgInfoCommitteeProvince}}-
+											{{scope.row.orgInfoCommitteeCity}}-
+											{{scope.row.orgInfoCommitteeArea}}-
+											{{scope.row.orgInfoCommitteeDetail}}
+										</el-col>
+									</el-row>
+									<div :id="'container'+scope.row.orgInfoId"></div>	<!-- 地图信息 -->
+									<div class="zzcy">
+										<p class="title">组织成员 <span style="color: red;">{{scope.row.orgMemberNum}}</span> 人</p>
+										<p style="text-align: left; padding-left: 10px;">今日新增成员：</p>
+										<div class="woman">
+											<span class="woman-image"></span>
+											<span class="woman-data">
+												+ 
+												<span style="color: red; font-weight: bold; font-size: 22px">{{scope.row.thisOrgNowTimeWoManCounts}}</span> 
+												人
+											</span>
+										</div>
+										<div class="man">
+											<span class="man-image"></span>
+											<span class="man-data">
+												+ 
+												<span style="color: red; font-weight: bold; font-size: 22px">{{scope.row.thisOrgNowTimeManCounts}}</span> 
+												人
+											</span>
+										</div>
+										<div class="bottom-main">
+											<div class="main1" @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgPeoples(scope.row)">
+												所有成员
+											</div>
+											<div class="main2" @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgPeoplesChart(scope.row)">
+												报表分析
+											</div>
+										</div>
+									</div>
+
+									<div class="xszz">
+										<p class="title">下属组织</p>
+										<div class="total">
+											共有下属组织：
+											<span style="color: red; font-weight: bold; font-size: 22px">{{scope.row.orgChildrensNum}}</span>
+											个
+										</div>
+										<div class="bottom-main">
+											<div class="main1" @click="partyOrg_manager_setOrgInfoIdOfShowThisOrgChildrens(scope.row)">
+												查看组织
+											</div>
+											<div class="main2" @click="partyOrg_manager_setOrgInfoIdOfShowOrgInfosChildrenChart(scope.row)">
+												组织结构
+											</div>
+										</div>
+									</div>
+								</div>
 							</template>
 						</el-table-column>
 						<el-table-column label="组织ID" prop="orgInfoId"></el-table-column>
@@ -240,6 +380,14 @@
 
 
 
+		<el-dialog @close="partyOrg_manager_resetOrgInfosRelationDialog" title="组织成员分析" :visible.sync="partyOrg_manager_showOrgInfosRelationDialog" width="70%">
+			<div class="orgInfosRelationClass" id="joinOrgProportionOfMenAndWomenChart"></div>
+			<div class="orgInfosRelationClass" id="totalOrgProportionOfMenAndWomenChart"></div>
+		</el-dialog>
+
+		<el-dialog @close="partyOrg_manager_resetOrgInfosChildren" title="下属组织关系图" :visible.sync="partyOrg_manager_showOrgInfosChildrenDialog" width="70%">
+			<div style="width: 90%; height: 500px; margin: 0 auto" id="childrensOrgChildren"></div>
+		</el-dialog>
 
 		<el-dialog @close="" title="下属组织信息" :visible.sync="partyOrg_manager_showThisOrgChildrensDialog" width="82%">
 			<el-container>
@@ -279,7 +427,7 @@
 						<el-table-column label="姓名" prop="name"></el-table-column>
 						<el-table-column label="性别" prop="sex"></el-table-column>
 						<el-table-column label="民族" prop="nationName"></el-table-column>
-						<el-table-column label="生日" prop="birthDate"></el-table-column>
+						<el-table-column label="生日" prop="birthDate" width="150px"></el-table-column>
 						<el-table-column label="年龄">
 							<template slot-scope="scope">
 								<span>{{scope.row.age}} 岁</span>
@@ -290,7 +438,8 @@
 						<el-table-column label="党员类型" prop="partyType"></el-table-column>
 						<el-table-column label="党员状态" prop="partyStatus"></el-table-column>
 						<el-table-column label="职责" prop="orgDutyName"></el-table-column>
-						<el-table-column label="操作">
+						<el-table-column label="加入时间" prop="orgRltJoinTime" width="150px"></el-table-column>
+						<el-table-column fixed="right" label="操作">
 							<template slot-scope="scope">
 								<el-button @click="partyOrg_manager_openChangeUserDutyThisOrgDialog(scope.row)" type="text" size="mini">岗位管理</el-button>
 							</template>
@@ -578,6 +727,8 @@
 			partyOrg_manager_showThisOrgPeoplesDialog: false,	/*查看这个组织下成员信息弹窗*/
 			partyOrg_manager_showThisOrgChildrensDialog: false, 	/*下属组织信息*/
 			partyOrg_manager_changeUserDutyThisOrgDialog: false,	/*变更用户职责弹窗*/
+			partyOrg_manager_showOrgInfosChildrenDialog: false, 	/*下属组织关系图弹窗*/
+			partyOrg_manager_showOrgInfosRelationDialog: false, 	/*组织人员分析图弹窗*/
 			partyOrg_manager_orgInfoTreeOfInsert: [],	/*添加组织信息时的组织关系树*/
 			partyOrg_manager_orgInfoTreeOfInsertProps: {
 				children: 'children',
@@ -666,7 +817,8 @@
 			    	pageSize: 10,	/* 页面大小 */
 			    	total: 0,
 			    	list: []
-				}
+				},
+				partyOrg_manager_orgInfosChildrenTree: []	/*组织关系树图*/
 			}
 		},
 		created: function () {
@@ -1236,6 +1388,226 @@
 			            message: '已取消操作'
 			        });  
 		        });
+			},
+			partyOrg_manager_setOrgInfoIdOfShowOrgInfosChildrenChart(row) {	/*查看当前组织下属组织关系图*/
+				var obj = this;
+        		obj.partyOrg_manager_ThisOrgInfos.orgInfoId = row.orgInfoId;
+        		obj.partyOrg_manager_showOrgInfosChildren();
+			},
+			partyOrg_manager_showOrgInfosChildren(){
+				var obj = this;
+
+				var url = "/org/ifmt/queryOrgInfosToTrees";
+				var t = {
+					orgInfoId: obj.partyOrg_manager_ThisOrgInfos.orgInfoId
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree = data.data;
+							var trees = new Array;
+							obj.partyOrg_manager_getOrgChildrensTree(obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree, trees);
+
+							setTimeout(()=>{
+								obj.partyOrg_manager_setChartForOrgChildrens(trees);
+							},200)
+						}
+					}
+
+				})
+
+				obj.partyOrg_manager_showOrgInfosChildrenDialog = true;
+			},
+			partyOrg_manager_getOrgChildrensTree(orgInfosRelationTree, trees) {
+				var obj = this;
+				if (orgInfosRelationTree != null && orgInfosRelationTree.length > 0) {
+					for (var i = 0; i < orgInfosRelationTree.length; i++) {
+						var tree = {name: null, children: null}
+						tree.name = orgInfosRelationTree[i].data.orgInfoName;
+						tree.children = new Array;
+						trees[i] = tree;
+						obj.partyOrg_manager_getOrgChildrensTree(orgInfosRelationTree[i].children, tree.children);
+					}
+				}
+			},
+			partyOrg_manager_setChartForOrgChildrens(orgInfosRelationTree) {
+				var Orgchildrens = echarts.init(document.getElementById("childrensOrgChildren"));
+				Orgchildrens.setOption(
+					{
+				        tooltip: {
+				            trigger: 'item',
+				            triggerOn: 'mousemove'
+				        },
+				        series: [
+				            {
+				                type: 'tree',
+
+				                data: orgInfosRelationTree,
+
+				                top: '1%',
+				                left: '7%',
+				                bottom: '1%',
+				                right: '20%',
+
+				                symbolSize: 7,
+
+				                label: {
+				                    normal: {
+				                        position: 'left',
+				                        verticalAlign: 'middle',
+				                        align: 'right',
+				                        fontSize: 12
+				                    }
+				                },
+
+				                leaves: {
+				                    label: {
+				                        normal: {
+				                            position: 'right',
+				                            verticalAlign: 'middle',
+				                            align: 'left'
+				                        }
+				                    }
+				                },
+
+				                expandAndCollapse: true,
+				                animationDuration: 550,
+				                animationDurationUpdate: 750
+				            }
+				        ]
+				    }
+				);
+			},
+			partyOrg_manager_resetOrgInfosChildren() {
+				var obj = this;
+				obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree = new Array;
+				var Orgchildrens = echarts.init(document.getElementById("childrensOrgChildren"));
+				Orgchildrens.clear();
+			},
+			partyOrg_manager_resetOrgInfosRelationDialog(){	/*组织人员分析弹窗关闭时重置图表*/
+				var joinorgProportionOfMenAndWomenChart = echarts.init(document.getElementById("joinOrgProportionOfMenAndWomenChart"));
+				joinorgProportionOfMenAndWomenChart.clear();
+				var totalOrgProportionOfMenAndWomenChart = echarts.init(document.getElementById("totalOrgProportionOfMenAndWomenChart"));
+				totalOrgProportionOfMenAndWomenChart.clear();
+			},
+			partyOrg_manager_setOrgInfoIdOfShowThisOrgPeoplesChart(row) {	/*组织人员报表分析*/
+				var obj = this;
+				setTimeout(()=>{
+					obj.partyOrg_manager_setjoinOrgProportionOfMenAndWomenChart(row);
+					obj.partyOrg_manager_settotalOrgProportionOfMenAndWomenChart(row);
+				},200)
+				obj.partyOrg_manager_showOrgInfosRelationDialog = true;
+			},
+			partyOrg_manager_setjoinOrgProportionOfMenAndWomenChart(row) {	/*今日新增男女比例*/
+				var joinorgProportionOfMenAndWomenChart = echarts.init(document.getElementById("joinOrgProportionOfMenAndWomenChart"));
+				joinorgProportionOfMenAndWomenChart.setOption(
+					{
+					    title : {
+					        text: '今日新增人数',
+					        subtext: '男女比例',
+					        x:'center'
+					    },
+					    tooltip : {
+					        trigger: 'item',
+					        formatter: "{a} <br/>{b} : {c} ({d}%)"
+					    },
+					    legend: {
+					        orient: 'vertical',
+					        left: 'left',
+					        data: ['男','女']
+					    },
+					    series : [
+					        {
+					            name: '比例',
+					            type: 'pie',
+					            radius : '55%',
+					            center: ['50%', '60%'],
+					            data:[
+					            	{value: row.thisOrgNowTimeWoManCounts, name:'女'},
+					                {value: row.thisOrgNowTimeManCounts, name:'男'}
+					                
+					            ],
+					            itemStyle: {
+					                emphasis: {
+					                    shadowBlur: 10,
+					                    shadowOffsetX: 0,
+					                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+					                }
+					            }
+					        }
+					    ]
+					}
+				);
+			},
+			partyOrg_manager_settotalOrgProportionOfMenAndWomenChart(row){	/*此组织总男女比例*/
+				var obj = this;
+				var manCount = 0;
+				var woMenCount = 0;
+
+				var url = "/org/ifmt/queryOrgRelationsNewForUserId";
+				var t = {
+					orgRltInfoId: row.orgInfoId,
+					sex: '男'
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							manCount = data.data.length;
+						}
+					}
+
+				})
+				t.sex = '女';
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							woMenCount = data.data.length;
+						}
+					}
+
+				})
+
+				var totalOrgProportionOfMenAndWomenChart = echarts.init(document.getElementById("totalOrgProportionOfMenAndWomenChart"));
+				setTimeout(()=>{
+					totalOrgProportionOfMenAndWomenChart.setOption(
+						{
+						    title : {
+						        text: '组织所有人员',
+						        subtext: '男女比例',
+						        x:'center'
+						    },
+						    tooltip : {
+						        trigger: 'item',
+						        formatter: "{a} <br/>{b} : {c} ({d}%)"
+						    },
+						    legend: {
+						        orient: 'vertical',
+						        left: 'left',
+						        data: ['男','女']
+						    },
+						    series : [
+						        {
+						            name: '比例',
+						            type: 'pie',
+						            radius : '55%',
+						            center: ['50%', '60%'],
+						            data:[
+						            	{value: woMenCount, name:'女'},
+						                {value: manCount, name:'男'}
+						                
+						            ],
+						            itemStyle: {
+						                emphasis: {
+						                    shadowBlur: 10,
+						                    shadowOffsetX: 0,
+						                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+						                }
+						            }
+						        }
+						    ]
+						}
+					);
+				},200)
 			}
 		}
 	});

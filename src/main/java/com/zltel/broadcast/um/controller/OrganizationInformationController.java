@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.annotation.LogPoint;
+import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.um.bean.OrganizationInformation;
 import com.zltel.broadcast.um.service.OrganizationInformationService;
@@ -24,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RequestMapping(value="/org/ifmt")
 @RestController
-public class OrganizationInformationController {
+public class OrganizationInformationController extends BaseController {
 	@Autowired
 	private OrganizationInformationService organizationInformationService;
 	
@@ -41,7 +42,25 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryOrgInfosToTree(organizationInformation);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
+			return R.error().setMsg("查询组织信息生成树失败");
+		}
+	}
+	
+	/**
+	 * 查询组织信息生成树
+	 * @param orgInfoConditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgInfosToTrees", method=RequestMethod.POST)
+	@LogPoint("查询组织信息生成树")
+	@RequiresPermissions(value = {"org:info:query"})
+	@ApiOperation(value = "查询组织信息生成树")
+	public R queryOrgInfosToTrees(@RequestParam Map<String, Object> orgInfoConditions) {
+		try {
+			return organizationInformationService.queryOrgInfosToTree(orgInfoConditions);
+		} catch (Exception e) {
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息生成树失败");
 		}
 	}
@@ -59,7 +78,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryOrgInfos(organizationInformation);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息失败");
 		}
 	}
@@ -77,7 +96,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryOrgInfosForMap(organizationInformation, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息失败");
 		}
 	}
@@ -95,7 +114,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryThisOrgChildren(organizationInformation, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息失败");
 		}
 	}
@@ -113,7 +132,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryOrgInfosCommitteeProvince(organizationInformation);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询省份信息失败");
 		}
 	}
@@ -131,7 +150,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryOrgInfosCommitteeCity(organizationInformation);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询城市信息失败");
 		}
 	}
@@ -149,7 +168,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.queryOrgInfosCommitteeArea(organizationInformation);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询地区信息失败");
 		}
 	}
@@ -167,7 +186,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.insertOrgInfo(organizationInformation);	//开始添加组织信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织信息添加失败。");
 		}
 	}
@@ -185,7 +204,7 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.updateOrgInfo(organizationInformation);	//开始修改系统用户信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织信息修改出错。");
 		}
 	}
@@ -203,8 +222,26 @@ public class OrganizationInformationController {
 		try {
 			return organizationInformationService.deleteOrgInfo(organizationInformation);	//开始删除组织信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织信息删除失败。");
+		}
+	}
+	
+	/**
+	 * 得到用户数量
+	 * @param organizationInfo 
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgRelationsNewForUserId", method=RequestMethod.POST)
+	@LogPoint("得到用户数量")
+	@RequiresPermissions(value = {"org:info:query"})
+	@ApiOperation(value = "得到用户数量")
+	public R queryOrgRelationsNewForUserId(@RequestParam Map<String, Object> organizationInformation) {
+		try {
+			return organizationInformationService.queryOrgRelationsNewForUserId(organizationInformation);	//开始删除组织信息
+		} catch (Exception e) {
+			logout.error(e.getMessage());
+			return R.error().setMsg("没有查询到用户数量。");
 		}
 	}
 }

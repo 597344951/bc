@@ -2,6 +2,7 @@ package com.zltel.broadcast.um.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -36,5 +37,35 @@ public class DateUtil {
            logout.error("转换日期错误:{}",e.getMessage());
         }
         return null;
+    }
+    
+    /**
+     * 得到指定日期开始时间
+     * @param date
+     * @return
+     */
+    public static Date getDateOfStartTime(Date date) {
+    	Calendar todayStart = Calendar.getInstance();
+    	todayStart.setTime(date);
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);    
+        todayStart.set(Calendar.MINUTE, 0);    
+        todayStart.set(Calendar.SECOND, 0);    
+        todayStart.set(Calendar.MILLISECOND, 0);    
+        return todayStart.getTime();   
+    }
+    
+    /**
+     * 得到指定日期结束时间
+     * @param date
+     * @return
+     */
+    public static Date getDateOfEndTime(Date date) {
+    	Calendar todayEnd = Calendar.getInstance();    
+    	todayEnd.setTime(date);
+        todayEnd.set(Calendar.HOUR_OF_DAY, 23);    
+        todayEnd.set(Calendar.MINUTE, 59);    
+        todayEnd.set(Calendar.SECOND, 59);    
+        todayEnd.set(Calendar.MILLISECOND, 999);    
+        return todayEnd.getTime();  
     }
 }

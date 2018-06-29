@@ -51,7 +51,7 @@ public class MaterialServiceImpl implements MaterialService {
             try {
                 FileUtil.copy(srcFile, descFile, true);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
                 log.warn("素材文件同步失败，失败文件：" + url + ",错误信息：" + e);
             }
         }
@@ -74,7 +74,9 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public void saveUeditorMaterial(SysUser user, Map<String, Object> content, String srcDir, String descDir) {
         try {
-            Document doc = Jsoup.parse((String) content.get("content"));
+            List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
+            Document doc = Jsoup.parse((String) content.get("templateText"));
+            //图片
             Elements imgs = doc.getElementsByTag("img");
             String src, fileName, alt;
             String srcFile, descFile, descFileUrl;
@@ -84,6 +86,7 @@ public class MaterialServiceImpl implements MaterialService {
                 src = img.attr("src");
                 alt = img.attr("alt");
                 fileName = src.substring(src.lastIndexOf("/") + 1, src.length());
+                alt = StringUtils.isNotEmpty(alt) ? alt : fileName;
                 srcFile = srcDir + src;
                 descFileUrl = "/" + user.getUserId() + "/" + FileUtil.getYMD() + "/" + fileName;
                 descFile = descDir + descFileUrl;
@@ -91,9 +94,12 @@ public class MaterialServiceImpl implements MaterialService {
 
                 // 添加记录
                 material = new HashMap<String, Object>();
-                material.put("type", "picture");
+                material.put("isFile", true);
+                material.put("type", Constant.MATERIAL_TYPE_PICTURE);
+                material.put("name", alt);
                 material.put("url", descFileUrl);
-                material.put("description", StringUtils.isEmpty(alt) ? fileName : alt);
+
+                /*material.put("description", alt);
                 material.put("user_id", user.getUserId());
                 material.put("org_id", user.getOrgId());
                 material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
@@ -103,13 +109,27 @@ public class MaterialServiceImpl implements MaterialService {
                 simpleDao.add("material", material);
 
                 // 替换模板中的url
-                img.attr("src", "/material/image/" + material.get("id"));
+                img.attr("src", "/material/image/" + material.get("id"));*/
+                //回填到素材
+                materials.add(material);
             }
-
-            publishDao.updateTemplate(doc.body().html(), ((Long) content.get("id")).intValue());
+            /*publishDao.updateTemplate(doc.body().html(), ((Long) content.get("id")).intValue());*/
+            //文字
+            Elements ps = doc.getElementsByTag("p");
+            for (int i=0; i<ps.size(); i++) {
+                Element p = ps.get(i);
+                String name = p.attr("id");
+                String inner = p.html();
+                material = new HashMap<String, Object>();
+                material.put("isFile", false);
+                material.put("type", Constant.MATERIAL_TYPE_TEXT);
+                material.put("name", StringUtils.isNotEmpty(name) ? name : "段落" + i);
+                material.put("content", inner);
+                materials.add(material);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            log.warn("保存Ueditor图片失败!!!");
+            log.error(e.getMessage());
+            log.warn("保存Ueditor素材失败!!!");
         }
 
     }

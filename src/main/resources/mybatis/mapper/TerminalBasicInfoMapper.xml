@@ -27,6 +27,8 @@
 		<result column="warranty" jdbcType="VARCHAR"
 			property="warranty" />
 		<result column="loc" jdbcType="VARCHAR" property="loc" />
+		<result column="cover_image" jdbcType="VARCHAR" property="coverImage" />
+		<result column="last_syn_time" jdbcType="TIMESTAMP" property="lastSynTime" />
 	</resultMap>
 	<resultMap id="EChartsMap"
 		type="com.zltel.broadcast.terminal.bean.TerminalEcharts">
@@ -34,9 +36,10 @@
 		<result column="value" jdbcType="VARCHAR" property="value" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		oid, name, id, code, type_id, res_time, online, last_time, ip, mac, sys,
+		oid, name, id, code, type_id, res_time, online, last_time,
+		ip, mac, sys,
 		size, ratio,
-		rev, ver, typ, tel, addr, gis, warranty, loc
+		rev, ver, typ, tel, addr, gis, warranty, loc , cover_image,last_syn_time
 	</sql>
 	<select id="selectByPrimaryKey"
 		parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -48,20 +51,25 @@
 	<delete id="deleteByPrimaryKey"
 		parameterType="java.lang.Integer">
 		delete from terminal_basic_info
-		where oid = #{oid,jdbcType=INTEGER}
+		where oid =
+		#{oid,jdbcType=INTEGER}
 	</delete>
 	<insert id="insert"
 		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		insert into terminal_basic_info ( name, id,
-		code, type_id, res_time,
+		code,
+		type_id, res_time,
 		online, last_time, ip,
 		mac, sys, size, ratio,
-		rev, ver, typ, tel,
+		rev,
+		ver, typ, tel,
 		addr, gis, warranty, loc)
-		values (#{name,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR},
+		values
+		(#{name,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR},
 		#{code,jdbcType=VARCHAR}, #{typeId,jdbcType=VARCHAR},
 		#{resTime,jdbcType=VARCHAR},
-		#{online,jdbcType=VARCHAR}, #{lastTime,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR},
+		#{online,jdbcType=VARCHAR},
+		#{lastTime,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR},
 		#{mac,jdbcType=VARCHAR}, #{sys,jdbcType=VARCHAR},
 		#{size,jdbcType=VARCHAR}, #{ratio,jdbcType=VARCHAR},
 		#{rev,jdbcType=VARCHAR}, #{ver,jdbcType=VARCHAR},
@@ -272,26 +280,35 @@
 	<update id="updateByPrimaryKey"
 		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		update terminal_basic_info
-		set name = #{name,jdbcType=VARCHAR},
+		set name =
+		#{name,jdbcType=VARCHAR},
 		id = #{id,jdbcType=VARCHAR},
-		code = #{code,jdbcType=VARCHAR},
+		code =
+		#{code,jdbcType=VARCHAR},
 		type_id = #{typeId,jdbcType=VARCHAR},
 		res_time = #{resTime,jdbcType=VARCHAR},
-		online = #{online,jdbcType=VARCHAR},
+		online =
+		#{online,jdbcType=VARCHAR},
 		last_time = #{lastTime,jdbcType=VARCHAR},
 		ip = #{ip,jdbcType=VARCHAR},
 		mac = #{mac,jdbcType=VARCHAR},
-		sys = #{sys,jdbcType=VARCHAR},
+		sys =
+		#{sys,jdbcType=VARCHAR},
 		size = #{size,jdbcType=VARCHAR},
-		ratio = #{ratio,jdbcType=VARCHAR},
+		ratio =
+		#{ratio,jdbcType=VARCHAR},
 		rev = #{rev,jdbcType=VARCHAR},
-		ver = #{ver,jdbcType=VARCHAR},
+		ver =
+		#{ver,jdbcType=VARCHAR},
 		typ = #{typ,jdbcType=VARCHAR},
-		tel = #{tel,jdbcType=VARCHAR},
+		tel =
+		#{tel,jdbcType=VARCHAR},
 		addr = #{addr,jdbcType=VARCHAR},
-		gis = #{gis,jdbcType=VARCHAR},
+		gis =
+		#{gis,jdbcType=VARCHAR},
 		warranty = #{warranty,jdbcType=VARCHAR},
-		loc = #{loc,jdbcType=VARCHAR}
+		loc =
+		#{loc,jdbcType=VARCHAR}
 		where oid = #{oid,jdbcType=INTEGER}
 	</update>
 	<select id="queryBasicInfo"
@@ -365,39 +382,47 @@
 		</if>
 	</select>
 	<select id="queryAll" resultMap="BaseResultMap"> select * from
-		terminal_basic_info where 1=1</select>
+		terminal_basic_info where 1=1
+	</select>
 	<select id="ratioEcharts" resultMap="EChartsMap"> select t.ratio name ,
-		count(t.oid) value from terminal_basic_info t group by ratio</select>
+		count(t.oid) value from terminal_basic_info t group by ratio
+	</select>
 	<select id="onlineEcharts" resultMap="EChartsMap"> select case t.online when
 		'1' then '在线' when '0' then'离线' else t.online end name, count(t.oid)
-		value from terminal_basic_info t group by online</select>
+		value from terminal_basic_info t group by online
+	</select>
 	<select id="locEcharts" resultMap="EChartsMap"> select t.loc name
-		,count(t.oid) value from terminal_basic_info t group by t.loc</select>
+		,count(t.oid) value from terminal_basic_info t group by t.loc
+	</select>
 	<select id="warrantyEcharts" resultMap="EChartsMap"> select t.warranty name
 		,count(t.oid) value from terminal_basic_info t group by t.warranty
 	</select>
 	<select id="revEcharts" resultMap="EChartsMap"> select t.rev name
-		,count(t.oid) value from terminal_basic_info t group by t.rev </select>
+		,count(t.oid) value from terminal_basic_info t group by t.rev
+	</select>
 	<select id="verEcharts" resultMap="EChartsMap"> select t.ver name
-		,count(t.oid) value from terminal_basic_info t group by t.ver </select>
+		,count(t.oid) value from terminal_basic_info t group by t.ver
+	</select>
 	<select id="typEcharts" resultMap="EChartsMap"> select case t.typ when '1'
 		then '一体机' when '2' then'播放盒+显示屏' when '3' then '播放盒+投影仪' else t.typ
 		end name, count(t.oid) value from terminal_basic_info t group by t.typ
 	</select>
 	<select id="tCountEcharts" resultMap="EChartsMap"> select count(t.oid) name
-		,count(t.oid) value from terminal_basic_info t where 1=1</select>
-	<select id="countOnlineTerminal" resultType="com.zltel.broadcast.terminal.bean.OnlineCountBean">
+		,count(t.oid) value from terminal_basic_info t where 1=1
+	</select>
+	<select id="countOnlineTerminal"
+		resultType="com.zltel.broadcast.terminal.bean.OnlineCountBean">
 		SELECT
-			CASE
+		CASE
 		WHEN ONLINE = 1 THEN
-			'online'
+		'online'
 		ELSE
-			'offline'
+		'offline'
 		END type,
-		 count(1) count
+		count(1) count
 		FROM
-			terminal_basic_info tbi
+		terminal_basic_info tbi
 		GROUP BY
-			tbi.online
+		tbi.online
 	</select>
 </mapper>

@@ -21,6 +21,13 @@ public interface OrganizationInformationService {
     int updateByPrimaryKey(OrganizationInformation record);
     
     /**
+	 * 得到用户数量
+	 * @param organizationInformation
+	 * @return
+	 */
+	public R queryOrgRelationsNewForUserId(Map<String, Object> organizationInformation);
+    
+    /**
      * 根据条件查询组织信息
      * @param organizationInformation 条件
      * @return
@@ -50,6 +57,14 @@ public interface OrganizationInformationService {
      * @throws Exception
      */
     public R queryOrgInfosToTree(OrganizationInformation organizationInformation) throws Exception;
+    
+    /**
+     * 根据条件查询组织信息树
+     * @param orgInfoConditions
+     * @return
+     * @throws Exception
+     */
+    public R queryOrgInfosToTree(Map<String, Object> orgInfoConditions);
     
     /**
      * 查询省份

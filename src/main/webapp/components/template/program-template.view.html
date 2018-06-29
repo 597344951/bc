@@ -5,11 +5,11 @@
         </el-aside>
         <el-main style="padding:0 20px;">
             <el-row>
-                <el-col :span="16">
+                <el-col :span="10">
                     <!--查询-->
                     <span style="font-size:18px;font-weight:bolder;">{{curCate.name}}</span>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="14" style="text-align: right;">
                     <!--分页-->
                     <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
                                 :total="tpager.total" @size-change="handleSizeChange" @current-change="handleCurrentChange">
@@ -18,18 +18,18 @@
             </el-row>
             <div v-loading.fullscreen.lock="loading">
                 <template v-for="t in programTemplates">
-                    <el-card class="termialDis" :body-style="{ padding: '0px' }">
-                        <div class="deviceInfo">
-                            <span class="name">
+                    <el-card class="card-item" :body-style="{ padding: '0px' }">
+                        <div class="title">
+                            <span class="bolder">
                                 {{t.name}}
                             </span>
                         </div>
-                        <div class="screenshoot">
+                        <div class="cover-image-container">
                             <img :src="t.coverImageUrl" class="image">
-                            <div class="ratio">{{t.resolution}}</div>
+                            <div class="descript">{{t.resolution}}</div>
                         </div>
-                        <div class="control">
-                            <table class="disInfo">
+                        <div class="content">
+                            <table class="dis-info-min">
                                 <tbody>
                                 <tr>
                                     <td>所属目录</td> <td>：</td>
@@ -48,11 +48,11 @@
                                     <td>{{t.createTime}}</td>
                                 </tr></tbody>
                             </table>
-                            <div class="bottom clearfix">
+                        </div>
+                        <div class="bottom clearfix">
                                 <el-button type="button" size="mini" class="button" @click="openProgramView(t)">预览</el-button>
                                 <el-button type="primary" size="mini" class="button" @click="choseProgramTempate(t)">选定</el-button>
                             </div>
-                        </div>
                     </el-card>
                 </template>
             </div>

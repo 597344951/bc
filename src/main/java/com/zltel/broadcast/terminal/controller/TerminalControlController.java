@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.pagehelper.PageRowBounds;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
+import com.zltel.broadcast.incision.sola.bean.Command;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
-import com.zltel.broadcast.terminal.bean.CmdBean;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -65,10 +64,9 @@ public class TerminalControlController extends BaseController {
     }
 
     @PostMapping("/{tid}/command")
-    public R terminalCommand(@PathVariable("tid") int tid, @RequestBody CmdBean cmd) {
+    public R terminalCommand(@PathVariable("tid") int tid, @RequestBody Command cmd) {
         ValidatorUtils.validateEntity(cmd);
-        boolean ret = this.solaProgramService.terminalCommand(cmd.getScreenId(), cmd.getCommandName(), cmd.getCommand(),
-                cmd.getCommandContent());
+        boolean ret = this.solaProgramService.terminalCommand(cmd);
         return ret ? R.ok() : R.error();
     }
 

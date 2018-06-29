@@ -1,6 +1,16 @@
 var appInstince = new Vue({
   el: "#app",
   data: {
+    keyword: '',
+    //当前目录
+    currentCategory: {
+      name: '所有类别'
+    },
+    tpager: {
+      total: 0,
+      current: 1,
+      size: 10
+    },
     //节目模版选择
     ptw: {
       visiable: false
@@ -73,7 +83,8 @@ var appInstince = new Vue({
         title: "模板标题",
         content: "模板正文",
         tpTypeIds: [1, 3],
-        previewPicture: ''
+        previewPicture: '',
+        programTemplate: ''
       }
     },
     tpt: {
@@ -98,19 +109,39 @@ var appInstince = new Vue({
   },
   mounted() {
     this.loadTreeData();
+    this.loadTpTypeData(null, this);
+  },
+  computed: {
+    
   },
   methods: {
+    //查询模板
+    searchTemplate(){
+      this.currentCategory.name = '所有类别';
+      this.loadTpTypeData();
+      this.loadTreeData();
+    },
     // 加载类别树的数据
     loadTreeData: function () {
       var ins = this;
-      ajax("tpt/listTypeTree", "get", "", function (result) {
+      let data = {keyword:this.keyword};
+      ajax("tpt/listTypeTree", "get", data, function (result) {
         ins.tpt_data = result.data;
       });
     },
     // 加载分类数据
-    loadTpTypeData: function (data, ins) {
-      ajax_json("tp/listByType", "get", data, function (result) {
+    loadTpTypeData: function (data) {
+      let ins = this;
+      if (data) {
+        this.currentCategory = data;
+      } else {
+        data = {};
+      }
+      let url = 'tp/listByType/' + this.tpager.current + '-' + this.tpager.size;
+      data.keyword = this.keyword;
+      ajax_json(url, "get", data, function (result) {
         ins.tps = result.data;
+        ins.tpager.total = result.pager.total;
       });
     }, // 重新加载分类数据
     reloadTpTypeData: function () {
@@ -306,6 +337,14 @@ var appInstince = new Vue({
       this.tp.data.programTemplateName = pt.name;
       this.tp.programTempate = pt;
       this.tp.data.categoryId = pt.categoryId;
+    },
+    handleSizeChange(val) {
+      this.tpager.size = val;
+      this.loadTpTypeData();
+    },
+    handleCurrentChange(val) {
+      this.tpager.current = val;
+      this.loadTpTypeData();
     }
   }
 });

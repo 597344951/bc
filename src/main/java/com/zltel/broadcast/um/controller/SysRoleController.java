@@ -39,7 +39,7 @@ public class SysRoleController extends BaseController {
 		try {
 			return sysRoleService.querySysRoles(sysRole, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询系统角色信息失败");
 		}
 	}
@@ -57,7 +57,7 @@ public class SysRoleController extends BaseController {
 		try {
 			return sysRoleService.querySysRolesNotPage(sysRole);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询系统角色信息失败");
 		}
 	}
@@ -75,7 +75,7 @@ public class SysRoleController extends BaseController {
 		try {
 			return sysRoleService.updateSysRole(sysRole);	//开始修改系统角色信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统角色信息修改出错。");
 		}
 	}
@@ -93,7 +93,7 @@ public class SysRoleController extends BaseController {
 		try {
 			return sysRoleService.deleteSysRole(sysRole);	//开始删除系统角色信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统角色删除失败。");
 		}
 	}
@@ -112,7 +112,7 @@ public class SysRoleController extends BaseController {
 		try {
 			return sysRoleService.insertSysRole(sysRole);	//开始添加系统角色信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统角色添加失败。");
 		}
 	}

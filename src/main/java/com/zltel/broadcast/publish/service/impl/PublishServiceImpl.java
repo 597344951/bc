@@ -10,11 +10,13 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
+import com.zltel.broadcast.incision.sola.service.impl.SolaProgramServiceImpl;
 import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.dao.PublishDao;
 import com.zltel.broadcast.publish.service.PublishService;
 import com.zltel.broadcast.um.bean.SysUser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +57,9 @@ public class PublishServiceImpl implements PublishService {
         detail.put("content", content.get("templateText"));
         detail.put("content_type_id", contentTypeId);
         detail.put("user_id", user.getUserId());
-        detail.put("start_date", content.get("startDate"));
+        /*detail.put("start_date", content.get("startDate"));
         detail.put("end_date", content.get("endDate"));
-        detail.put("period", content.get("period"));
+        detail.put("period", content.get("period"));*/
         detail.put("relate_content_id", content.get("relateContent"));
         detail.put("add_date", add_date);
         detail.put("update_date", add_date);
@@ -95,20 +97,25 @@ public class PublishServiceImpl implements PublishService {
         // 添加素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         Map<String, Object> material;
+
         for (Map<String, Object> m : materials) {
-            material = new HashMap<String, Object>();
-            material.put("type", m.get("type"));
-            material.put("content", m.get("content"));
-            material.put("url", m.get("url"));
-            material.put("description", m.get("name"));
-            material.put("user_id", user.getUserId());
-            material.put("org_id", user.getOrgId());
-            material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
-            material.put("relate_content_id", detail.get("id"));
-            material.put("add_date", add_date);
-            material.put("update_date", add_date);
-            simpleDao.add("material", material);
-            m.put("id", material.get("id"));
+            boolean isFile = (boolean) m.get("isFile");
+            if(isFile) {
+                material = new HashMap<String, Object>();
+                material.put("type", m.get("type"));
+                material.put("name", m.get("name"));
+                material.put("content", m.get("content"));
+                material.put("url", m.get("url"));
+                material.put("description", m.get("name"));
+                material.put("user_id", user.getUserId());
+                material.put("org_id", user.getOrgId());
+                material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
+                material.put("relate_content_id", detail.get("id"));
+                material.put("add_date", add_date);
+                material.put("update_date", add_date);
+                simpleDao.add("material", material);
+                m.put("id", material.get("id"));
+            }
         }
 
         // 发布终端
@@ -241,45 +248,70 @@ public class PublishServiceImpl implements PublishService {
      * @return
      */
     private int addToEditor(Map<String, Object> content) {
-        String modeltype = (String) content.get("screenType");
-        String playtime = (String) content.get("playLength");
-        String resolution = (String) content.get("resolution");
-        int resolutionw = Integer.parseInt(resolution.split("x")[0]);
-        int resolutionh = Integer.parseInt(resolution.split("x")[1]);
         Map<String, Object> program = new HashMap<String, Object>();
-        program.put("title", content.get("title"));
-        program.put("categoryId", 1);
-        program.put("modeltype", Integer.parseInt(modeltype));
-        program.put("resolutionw", resolutionw);
-        program.put("resolutionh", resolutionh);
-        program.put("playtime", Integer.parseInt(playtime));
-        program.put("des", content.get("title"));
+        String programTemplateId = (String) content.get("programTemplateId");
+        String programTemplateCategoryId = (String) content.get("programTemplateCategoryId");
+        int addType;
+        if(StringUtils.isNotEmpty(programTemplateId) && StringUtils.isNotEmpty(programTemplateCategoryId)) {
+            //使用模板添加节目
+            program.put("templetId", programTemplateId);
+            program.put("categoryId", programTemplateCategoryId);
+            addType = SolaProgramServiceImpl.ADD_PROGRAM_WITH_TEMPLATE;
+        } else {
+            //不适用模板添加节目
+            String modeltype = (String) content.get("screenType");
+            String playtime = (String) content.get("playLength");
+            String resolution = (String) content.get("resolution");
+            int resolutionw = Integer.parseInt(resolution.split("x")[0]);
+            int resolutionh = Integer.parseInt(resolution.split("x")[1]);
+            program.put("title", content.get("title"));
+            program.put("categoryId", 1);
+            program.put("modeltype", Integer.parseInt(modeltype));
+            program.put("resolutionw", resolutionw);
+            program.put("resolutionh", resolutionh);
+            program.put("playtime", Integer.parseInt(playtime));
+            program.put("des", content.get("title"));
+            addType = SolaProgramServiceImpl.ADD_PROGRAM_NO_TEMPLATE;
+        }
         // 素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         List<Map<String, Object>> resources = new ArrayList<>();
         for (Map<String, Object> material : materials) {
+            boolean isFile = (boolean) material.get("isFile");
             Map<String, Object> res = new HashMap<String, Object>();
             String type = (String) material.get("type");
             String name = (String) material.get("name");
-            String url = material.get("id") + name.substring(name.lastIndexOf("."), name.length());
+            String url;
+            if(isFile) {
+                url = material.get("id") + name.substring(name.lastIndexOf("."), name.length());
+            } else {
+                url = "";
+            }
+
             if (Constant.MATERIAL_TYPE_PICTURE.equals(type)) {
                 res.put("Type", 2);
                 res.put("Url", host + "/material/image/" + url);
                 res.put("Content", "");
-            } else if (Constant.MATERIAL_TYPE_AUDIO.equals(type) || Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
+            } else if (Constant.MATERIAL_TYPE_AUDIO.equals(type)) {
+                res.put("Type", 4);
+                res.put("Url", host + "/material/download/" + material.get("id"));
+                res.put("Content", "");
+            } else if(Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
                 res.put("Type", 3);
                 res.put("Url", host + "/material/download/" + material.get("id"));
                 res.put("Content", "");
-            } else {
+            } else if(Constant.MATERIAL_TYPE_TEXT.equals(type)) {
                 res.put("Type", 1);
                 res.put("Content", material.get("content"));
                 res.put("Url", "");
+            } else {
+                continue;
             }
             res.put("Name", name);
             resources.add(res);
         }
         program.put("resourcesJson", JSON.toJSONString(resources));
-        return solaProgramService.addProgram(program);
+        return solaProgramService.addProgram(program, addType);
     }
 
     /**
@@ -634,17 +666,28 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void publish(SysUser user, int contentId) {
+    public void publish(SysUser user, int contentId, Map<String, Object> period) {
         // 调用发布接口
         Map<String, Object> content = publishDao.get(contentId);
         Map<String, Object> queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         List<Map<String, Object>> terminals = simpleDao.query("publish_terminal", queryParam);
         content.put("terminals", terminals);
+        content.put("start_date", period.get("startDate"));
+        content.put("end_date", period.get("endDate"));
+        content.put("period", period.get("period"));
+        content.put("weeks", period.get("weeks"));
         solaProgramService.publish(content);
+        //更新播放时间内容
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("start_date", period.get("startDate"));
+        updateData.put("end_date", period.get("endDate"));
+        updateData.put("period", period.get("period"));
+        updateData.put("weeks", period.get("weeks"));
+        updateData.put("update_date", new Date());
+        simpleDao.update("publish_content", updateData, queryParam);
         changeProcess(contentId, Constant.PUBLISHING);
-        addProcessState(contentId, user.getUserId(), Constant.PUBLISHING,
-                Constant.MSG_CONTENT_PUBLISHING + user.getUsername(), null);
+        addProcessState(contentId, user.getUserId(), Constant.PUBLISHING, Constant.MSG_CONTENT_PUBLISHING + user.getUsername(), null);
     }
 
     @Override

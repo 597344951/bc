@@ -9,6 +9,9 @@
         .el-table thead,.el-table__row {
             font-size: 14px;
         }
+        .period-input {
+            width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -23,9 +26,9 @@
                         <el-table-column prop="title" label="主题"></el-table-column>
                         <el-table-column prop="sponsor" label="发起人"></el-table-column>
                         <el-table-column prop="date" label="时间" width="180"></el-table-column>
-                        <el-table-column prop="startDate" label="预定开始时间" width="120"></el-table-column>
+                        <%-- <el-table-column prop="startDate" label="预定开始时间" width="120"></el-table-column>
                         <el-table-column prop="endDate" label="预定结束时间" width="120"></el-table-column>
-                        <el-table-column prop="period" label="预定播放时段" width="120"></el-table-column>
+                        <el-table-column prop="period" label="预定播放时段" width="120"></el-table-column> --%>
                         <el-table-column prop="state" label="当前状态">
                             <template slot-scope="scope">
                                 <el-tag>{{scope.row.state}}</el-tag>
@@ -34,7 +37,7 @@
                         <el-table-column label="查看" width="200">
                             <template slot-scope="scope">
                                 <el-button type="text" size="small" v-if="scope.row.operate.process" @click="getProcessState(scope.row)">进度</el-button>
-                                <el-button type="text" size="small" v-if="scope.row.operate.template" @click="viewTemplate(scope.row)">模板</el-button>
+                                <%-- <el-button type="text" size="small" v-if="scope.row.operate.template" @click="viewTemplate(scope.row)">模板</el-button> --%>
                                 <el-button type="text" size="small" v-if="scope.row.operate.snapshot" @click="view(scope.row)">预览</el-button>
                                 <el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
                             </template>
@@ -46,7 +49,7 @@
                                 <el-button type="text" size="small" @click="preCommitMoreEdit(scope.row)" v-if="scope.row.operate.more_edit_commit">编辑提交</el-button>
                                 <el-button type="text" size="small" @click="preVerify(scope.row, true)" v-if="scope.row.operate.verify">审核（通过）</el-button>
                                 <el-button type="text" size="small" @click="preVerify(scope.row, false)" v-if="scope.row.operate.verify">审核（不通过）</el-button>
-                                <el-button type="text" size="small" @click="publish(scope.row)" v-if="scope.row.operate.publish">发布</el-button>
+                                <el-button type="text" size="small" @click="openPublishPeriod(scope.row)" v-if="scope.row.operate.publish">发布</el-button>
                                 <el-button type="text" size="small" @click="discard(scope.row)" v-if="scope.row.operate.delete">移除</el-button>
                             </template>
                         </el-table-column>
@@ -97,6 +100,50 @@
             </el-table>
         </el-dialog>
 
+        <el-dialog title="选择播放时间" :visible="publishPeriod.show" :show-close="false" width="500px">
+			<el-form :model="publishPeriod.period" :rules="publishPeriod.rules" ref="publishPeriod" label-width="150px">
+                <el-form-item label="开始日期" prop="startDate">
+                    <el-date-picker v-model="publishPeriod.period.startDate" type="date" placeholder="开始日期" value-format="yyyy-MM-dd 00:00:00" style="width: 300px"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="结束日期" prop="endDate">
+                    <el-date-picker v-model="publishPeriod.period.endDate" type="date" placeholder="开始日期" value-format="yyyy-MM-dd 00:00:00" style="width: 300px"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="工作/非工作日" prop="week">
+                    <el-select
+                            class="period-input"
+                            v-model="publishPeriod.period.week"
+                            multiple
+                            collapse-tags
+                            placeholder="工作日/非工作日">
+                        <el-option key="0" label="星期日" value="0"></el-option>
+                        <el-option key="1" label="星期一" value="1"></el-option>
+                        <el-option key="2" label="星期二" value="2"></el-option>
+                        <el-option key="3" label="星期三" value="3"></el-option>
+                        <el-option key="4" label="星期四" value="4"></el-option>
+                        <el-option key="5" label="星期五" value="5"></el-option>
+                        <el-option key="6" label="星期六" value="6"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="每日时段" prop="time">
+                    <el-time-picker
+                            style="width: 300px"
+                            is-range
+                            v-model="publishPeriod.period.time"
+                            range-separator="-"
+                            value-format="H:mm"
+                            start-placeholder="开始时间"
+                            end-placeholder="结束时间"
+                            placeholder="选择时间范围">
+                    </el-time-picker>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button size="mini" @click="publishPeriod.show = false">取 消</el-button>
+                <el-button size="mini" @click="resetForm('publishPeriod')">重 置</el-button>
+                <el-button size="mini" type="primary" @click="publish('publishPeriod')">发 布</el-button>
+            </span>
+		</el-dialog>
+
 
         <el-dialog title="素材验证" :visible="commitMessage.show" :show-close="false" width="300px">
 			<p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
@@ -119,6 +166,29 @@
                     active: 0,
                     steps:[],
                     detail: []
+                },
+                publishPeriod: {
+                    show: false,
+                    period: {
+                        startDate: '',
+                        endDate: '',
+                        week: [],
+                        time: ''
+                    },
+                    rules: {
+                        startDate: [
+                            { required: true, message: '请选择开始时间', trigger: 'blur' }
+                        ],
+                        endDate: [
+                            { required: true, message: '请选择结束时间', trigger: 'blur' }
+                        ],
+                        week: [
+                            { required: true, message: '请选择工作/非工作日', trigger: 'blur' }
+                        ],
+                        time: [
+                            { required: true, message: '请选择时段', trigger: 'blur' }
+                        ]
+                    }
                 },
                 publishTerminal: {
                     show: false,
@@ -187,17 +257,35 @@
                         }
                     })
                 },
-                publish(row) {
-                    this.url = '/publish/process/publish/' + row.id;
-                    get(this.url, reps => {
-                        if(reps.status) {
-                            init();
-                            app.$message('发布成功 !');
-                            commitMessage()
+                openPublishPeriod(row) {
+                    this.url = '/publish/process/publish/' + row.id
+                    this.publishPeriod.show = true
+                },
+                publish(form) {
+                    this.$refs[form].validate((valid) => {
+                        if (valid) {
+                            this.$confirm('确认选择时间并发布？')
+                            .then(_ => {
+                                app.publishPeriod.show = false
+                                let postData = this.publishPeriod.period
+                                postData.period = postData.time[0] + '-' + postData.time[1]
+                                postData.weeks = postData.week.join(',')
+                                postJson(this.url, postData, reps => {
+                                    if(reps.status) {
+                                        init()
+                                        app.$message('发布成功 !')
+                                        commitMessage()
+                                    }
+                                })
+                            })
+                            .catch(_ => {});
                         } else {
-                            app.$message('发布失败 !');
+                            return false;
                         }
                     })
+                },
+                resetForm(form) {
+                    this.$refs[form].resetFields();
                 },
                 discard(row) {
                     this.url = '/publish/process/discard/' + row.id;
@@ -336,6 +424,7 @@
                 }
             });
         }
+        
         function post(url, postData, callback) {
             var postStr = '';
             for(var key in postData) {
@@ -346,6 +435,26 @@
                 url:url,
                 dataType:'json',
                 data: postStr,
+                success: function(reps){
+                    callback(reps);
+                },
+                error: function (err) {
+                    app.$notify({
+                        title: 'ERROR',
+                        message: '系统错误...',
+                        type: 'error'
+                    });
+                }
+            });
+        }
+
+        function postJson(url, postData, callback) {
+            $.ajax({
+                type:'POST',
+                url:url,
+                dataType:'json',
+                data: JSON.stringify(postData),
+                contentType: 'application/json',
                 success: function(reps){
                     callback(reps);
                 },

@@ -3,6 +3,8 @@ package com.zltel.broadcast.um.controller;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +28,9 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value="party/user/excel")
 @RestController
 public class ExcelForPartyUserInfoController {
+    
+    private static final Logger logout = LoggerFactory.getLogger(ExcelForPartyUserInfoController.class);
+
 	@Autowired
 	private ExcelForPartyUserInfoService excelForPartyUserInfoService;
 	
@@ -59,7 +64,7 @@ public class ExcelForPartyUserInfoController {
 		try {
 			excelForPartyUserInfoService.downloadValidataMsg(response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 		}
 	}
 	
@@ -76,7 +81,7 @@ public class ExcelForPartyUserInfoController {
 		try {
 			excelForPartyUserInfoService.exportPartyUserInfosExcel(response, partyUserInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 		}
 	}
 	
@@ -94,7 +99,7 @@ public class ExcelForPartyUserInfoController {
 		try {
 			excelForPartyUserInfoService.exportPartyUserInfosExcelExample(response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 		} 
 	}
 }

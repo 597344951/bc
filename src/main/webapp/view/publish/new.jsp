@@ -48,6 +48,7 @@
 		.template-preview {
 			width: 100%
 		}
+		
 		.image-box {
             width: 200px;
             height: 250px;
@@ -57,10 +58,12 @@
             background-color: ghostwhite;
             float: left;
 			position: relative;
+			border: 1px solid #ddd;
+			/* box-shadow: 0px 1px 16px 1px #7b7b7b; */
         }
 		.image-box.active {
-			border: 2px solid #107cdc;
-			padding: 0px;
+			border-radius: 5px;
+			box-shadow: 2px 1px 16px 1px #7b7b7b;
 		}
         .image {
             width: 100%;
@@ -94,7 +97,7 @@
 	<div id="app">
 		<el-container>
 			<el-header>
-				<el-steps :active="step" finish-status="success">
+				<el-steps :active="step" finish-status="success" simple>
 					<el-step title="选择模板"></el-step>
 					<el-step title="编辑内容"></el-step>
 					<el-step title="选择发布终端"></el-step>
@@ -105,8 +108,8 @@
 			<el-main v-loading="loading">
 				<div v-show="step==0">
 					<h3>选择模板</h3>
-					<%-- <el-row :gutter="20">
-						<el-col :span="3">
+					<el-row :gutter="20">
+						<%-- <el-col :span="3">
 							<el-select
 									size="medium"
 									v-model="screenDirection"
@@ -114,18 +117,18 @@
 								<el-option label="横屏" value="横屏"></el-option>
 								<el-option label="竖屏" value="竖屏"></el-option>
 							</el-select>
-						</el-col>
+						</el-col> --%>
 						<el-col :span="4">
 							<el-input size="medium" v-model="keyword" placeholder="输入关键字"></el-input>
 						</el-col>
 						<el-col :span="2">
 							<el-button size="medium" type="primary" icon="el-icon-search" @click="filterTemplate"></el-button>
 						</el-col>
-					</el-row> --%>
+					</el-row>
 					<el-row :gutter="20">
 						<el-col>
-							<el-tabs tab-position="left" style="height: 450px; overflow: auto">
-								<el-tab-pane label="最近使用">
+							<el-tabs tab-position="left" style="height: 450px; overflow: auto" v-model="activeCategory">
+								<el-tab-pane label="最近使用 (1) " name="最近使用">
 									<div class="image-box" v-bind:class="{active: selectedTemplateId==0}" @click="startTemplate('0')">
 										<el-radio v-model="selectedTemplateId" label="0"></el-radio>
 										<div class="image"></div>
@@ -134,7 +137,7 @@
 										</div>
 									</div>
 								</el-tab-pane>
-								<el-tab-pane label="常用模板">
+								<el-tab-pane label="常用模板 (1) " name="常用模板">
 									<div class="image-box" v-bind:class="{active: selectedTemplateId==0}" @click="startTemplate('0')">
 										<el-radio v-model="selectedTemplateId" label="0"></el-radio>
 										<div class="image"></div>
@@ -143,8 +146,8 @@
 										</div>
 									</div>
 								</el-tab-pane>
-								<el-tab-pane :label="key" v-for="(value, key) in showTemplateArr">
-									<div class="image-box" v-for="t in value" @click="startTemplate(t.tpId)" v-bind:class="{active: selectedTemplateId==t.tpId}">
+								<el-tab-pane :label="key + ' (' + value.length + ') '" :name="key" v-for="(value, key) in showTemplateArr">
+									<div class="image-box" v-for="t in value" @click="startTemplate(t.tpId, t.programTemplate, t.categoryId)" v-bind:class="{active: selectedTemplateId==t.tpId}">
 										<el-radio v-model="selectedTemplateId" :label="t.tpId"></el-radio>
 										<img :src="t.previewPicture" class="image">
 										<div class="bottom">
@@ -163,7 +166,7 @@
 						<el-col :span="4"><h4>主题 [<el-button type="text" @click="additionDialogVisible = true">补充</el-button>]</h4></el-col>
 						<el-col :span="19"><el-input v-model="title" placeholder="发布内容主题"></el-input></el-col>
 					</el-row>
-					<el-row :gutter="20">
+					<%-- <el-row :gutter="20">
 						<el-col :span="4"><h4>播放周期</h4></el-col>
 						<el-col :span="19">
 							<el-date-picker style="width: 18%;" v-model="startDate" type="date" placeholder="开始日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
@@ -195,7 +198,7 @@
 									placeholder="选择时间范围">
 							</el-time-picker>
 						</el-col>
-					</el-row>
+					</el-row> --%>
 					<el-row :gutter="20">
 						<el-col :span="4"><h4>播放设置</h4></el-col>
 						<el-col :span="19">
@@ -226,10 +229,10 @@
 					</el-row>
 					<el-row :gutter="20">
 						<el-col :span="4">
-							<h4>内容 [<el-button type="text" @click="showTemplates">选取模板</el-button>]</h4>
+							<h4>内容 <%-- [<el-button type="text" @click="showTemplates">选取模板</el-button>] --%></h4>
 						</el-col>
 						<el-col :span="19">
-							<div><script id="templateText" name="templateText" style="height:500px;" type="text/plain"></script></div>
+							<div><script id="templateText" name="templateText" style="height:300px;" type="text/plain"></script></div>
 						</el-col>
 					</el-row>
 					<%--图片--%>
@@ -291,6 +294,7 @@
 							@selection-change="handleSelectionChange">
 						<el-table-column type="selection" width="55"></el-table-column>
 						<el-table-column prop="name" label="名称"></el-table-column>
+						<el-table-column prop="address" label="位置信息"></el-table-column>
 						<el-table-column prop="status" label="在线状态" :filters="terminalGroup.status" :filter-method="filter" filter="bottom-end"></el-table-column>
 						<el-table-column prop="screenType" label="类型" :filters="terminalGroup.screenType" :filter-method="filter" filter="bottom-end"></el-table-column>
 						<el-table-column prop="interaction" label="触摸类型"></el-table-column>
@@ -409,7 +413,10 @@
 				templateArr: {},
 				showTemplateArr: {},
 				keyword: '',
+				activeCategory:'常用模板',
 				selectedTemplateId: '-1',
+				selectedProgramTemplateId: '',
+				selectedProgramTemplateCategoryId: '',
 				selectedTemplate: {},
 				selectedTemplatePreview: '',
 				type: 4,
@@ -420,7 +427,7 @@
 				screenType: '0',
 				screenDirections: ['竖屏', '横屏'],
 				screenDirection: ['竖屏'],
-				playLength: 100,
+				playLength: '100',
 				resolution: '1920x1080',
 				week: '',
                 templateText: '',
@@ -443,19 +450,25 @@
 			    nextStep() {
 					if(commitCheck()) {
 						if(this.step == 0) {
-							for(var name in this.templateArr) {
-								for(var i in this.templateArr[name]) {
-									if(this.selectedTemplateId == this.templateArr[name][i].tpId) {
-										this.selectedTemplate = this.templateArr[name][i].content
-										ue.setContent(this.selectedTemplate)
-										break
+							if(this.selectedTemplateId == 0) {
+								//空白, 清空
+								this.selectedTemplate = ''
+								ue.setContent(this.selectedTemplate)
+							} else {
+								for(var name in this.templateArr) {
+									for(var i in this.templateArr[name]) {
+										if(this.selectedTemplateId == this.templateArr[name][i].tpId) {
+											this.selectedTemplate = this.templateArr[name][i].content
+											ue.setContent(this.selectedTemplate)
+											break
+										}
 									}
 								}
 							}
 						} else if(this.step == 1) {
 							app.showTerminals = []
 							app.terminals.forEach(item => {
-								if(app.screenDirection.indexOf(item.direction) >= 0) {
+								if(app.screenDirection.indexOf(item.direction) >= 0 && item.status == '在线') {
 									app.showTerminals.push(item)
 								}
 							})
@@ -507,6 +520,13 @@
                             content.week = this.week;
                             content.templateText = ue.getContent();
                             content.addition = this.addition;
+							if(this.selectedProgramTemplateId) {
+								content.programTemplateId = this.selectedProgramTemplateId
+							}
+							if(this.selectedProgramTemplateCategoryId) {
+								content.programTemplateCategoryId = this.selectedProgramTemplateCategoryId
+							}
+							
                             //附加素材
 							content.material = this.material;
                             //终端
@@ -565,15 +585,22 @@
                     this.additionDialogVisible = false;
 				},
 				filterTemplate() {
-					this.showTemplateArr = []
-					this.templateArr.forEach(item => {
-						if(!this.keyword || item.desc.indexOf(this.keyword) >= 0) {
-							this.showTemplateArr.push(item)
-						}
+					this.showTemplateArr = {}
+					Object.keys(this.templateArr).forEach(key => {
+						this.showTemplateArr[key] = []
+						this.templateArr[key].forEach((item => {
+							if(!this.keyword || item.desc.indexOf(this.keyword) >= 0) {
+								this.showTemplateArr[key].push(item)
+								this.activeCategory = key
+							}
+						}))
+						
 					})
 				},
-				startTemplate(id) {
+				startTemplate(id, programTemplateId, programTemplateCategoryId) {
 					this.selectedTemplateId = id
+					this.selectedProgramTemplateId = programTemplateId
+					this.selectedProgramTemplateCategoryId = programTemplateCategoryId
 				}
 
 			}
@@ -639,9 +666,9 @@
                 if(!app.title) {
                     msgs.push('* 请填写主题.');
                 }
-                if(!app.startDate || !app.endDate || !app.time) {
+                /* if(!app.startDate || !app.endDate || !app.time) {
                     msgs.push('* 请完整输入内容预计发布时间.')
-                }
+                } */
                 if(!ue.getContent()) {
                     msgs.push('* 请选择模板或填写自定义内容.');
                 }
@@ -714,7 +741,7 @@
                 if(reps.status) {
                     type.children = reps.data;
 					reps.data.forEach((item => {
-						item.desc = name1 + '>' + name2 + " > " + item.title
+						item.desc = item.title
 						app.templateArr[name2].push(item)
 						app.showTemplateArr[name2].push(item)
 					}))
@@ -737,56 +764,68 @@
             });
 		}
 
+		function postJson(url, data, callback) {
+			$.ajax({
+                type:'POST',
+                url:url,
+                dataType:'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(reps) {
+                    callback(reps.data)
+                },
+                error: function (err) {
+					app.$message.error('系统错误, 请联系管理员')
+                }
+            });
+		}
+
         function getTerminals() {
 			const screenType = {
 				'1': '一体机',
 				'2': '播放盒+显示屏',
 				'3': '播放盒+投影仪'
 			}
-			get('/sola/terminals', reps => {
-				if(reps.status) {
-					app.terminals = []
-					app.terminalGroup = {
-						size: [],
-						direction: [],
-						screenType: [],
-						resolution: [],
-						status: []
+			postJson('/terminal/basic/queryInfo/1-10000', {}, reps => {
+				app.terminals = []
+				app.terminalGroup = {
+					size: [],
+					direction: [],
+					screenType: [],
+					resolution: [],
+					status: []
 
-					}
-					let size, direction, type, resolution, status
-					reps.data.forEach(item => {
-						app.terminals.push({
-							id: item.PkId,
-							name: item.Name,
-							code: item.Code,
-							size: item.ScreenSize,
-							direction: item.ScreenDirection,
-							interaction: item.ScreenInteraction,
-							screenType: screenType[item.ScreenType],
-							position: item.Position,
-							resolution: item.Resolution,
-							ip: item.IP,
-							mac: item.Mac,
-							regDate: item.RegDateTime,
-							version: item.Version,
-							status: item.OnlineStatus == 1 ? '在线' : '离线'
-						})
-						size = item.ScreenSize
-						addFilterItem(app.terminalGroup.size, size, "size:" + size)
-						direction = item.ScreenDirection
-						addFilterItem(app.terminalGroup.direction, direction, "direction:" + direction)
-						type = screenType[item.ScreenType]
-						addFilterItem(app.terminalGroup.screenType, type, "screenType:" + type)
-						resolution = item.Resolution
-						addFilterItem(app.terminalGroup.resolution, resolution, "resolution:" + resolution)
-						status = item.OnlineStatus == 1 ? '在线' : '离线'
-						addFilterItem(app.terminalGroup.status, status, "status:" + status)
-					})
-					
-				} else {
-					app.terminals = []
 				}
+				let size, direction, type, resolution, status
+				reps.list.forEach(item => {
+					app.terminals.push({
+						id: item.id,
+						name: item.name,
+						code: item.code,
+						size: item.size,
+						direction: item.rev,
+						interaction: item.typ,
+						screenType: screenType[item.typeId],
+						position: item.loc,
+						resolution: item.ratio,
+						ip: item.ip,
+						mac: item.mac,
+						regDate: item.resTime,
+						version: item.ver,
+						status: item.online == 1 ? '在线' : '离线',
+						address: item.addr
+					})
+					size = item.size
+					addFilterItem(app.terminalGroup.size, size, "size:" + size)
+					direction = item.rev
+					addFilterItem(app.terminalGroup.direction, direction, "direction:" + direction)
+					type = screenType[item.typeId]
+					addFilterItem(app.terminalGroup.screenType, type, "screenType:" + type)
+					resolution = item.ratio
+					addFilterItem(app.terminalGroup.resolution, resolution, "resolution:" + resolution)
+					status = item.online == 1 ? '在线' : '离线'
+					addFilterItem(app.terminalGroup.status, status, "status:" + status)
+				})
 			})
 		}
 
