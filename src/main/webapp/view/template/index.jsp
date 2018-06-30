@@ -62,24 +62,26 @@
                             </el-col>
                         </el-row>
                         <template v-for="tp in tps">
-                            <el-card class="box-card" :body-style="{ padding: '0px' }">
-                                <img :src="tp.previewPicture" class="image">
-                                <div style="padding: 14px;text-align:center;">
-                                    <span class="title">{{tp.title}}</span>
-                                    <div class="bottom clearfix">
-                                        <el-button-group>
-                                            <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
-                                            <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
-                                            <el-popover placement="top" width="160" v-model="tp.cfv">
-                                                <p>是否删除这个模板?</p>
-                                                <div style="text-align: right; margin: 0">
-                                                    <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
-                                                    <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
-                                                </div>
-                                                <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
-                                            </el-popover>
-                                        </el-button-group>
-                                    </div>
+                            <el-card class="passage-conver" :body-style="{ padding: '0px' }" >
+                                <div class="background-img" :style="{'background-image':'url('+tp.previewPicture+')'}" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)">
+                                    <!--<img src="tp.previewPicture" class="image">-->
+                                    <div class="control ">
+                                            <span class="title">{{tp.title}}</span>
+                                            <div v-show="tp.showtoolbar"  class="bottom clearfix">
+                                                <el-button-group>
+                                                    <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
+                                                    <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
+                                                    <el-popover placement="top" width="160" v-model="tp.cfv">
+                                                        <p>是否删除这个模板?</p>
+                                                        <div style="text-align: right; margin: 0">
+                                                            <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
+                                                            <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
+                                                        </div>
+                                                        <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
+                                                    </el-popover>
+                                                </el-button-group>
+                                            </div>
+                                        </div>
                                 </div>
                             </el-card>
                         </template>

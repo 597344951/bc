@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
 
 public interface PartyUserInfoService {
@@ -79,5 +80,5 @@ public interface PartyUserInfoService {
      * @return
      * @throws Exception
      */
-    public R deletePartyUserInfo(PartyUserInfo partyUserInfo) throws Exception;
+    public R deletePartyUserInfo(BaseUserInfo baseUserInfo) throws Exception;
 }

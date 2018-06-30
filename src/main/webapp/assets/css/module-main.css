@@ -27,6 +27,10 @@
 	font-weight: bolder;
 }
 
+.card-item .title .right{
+	float:right;
+}
+
 /**卡片预览图**/
 
 .card-item .cover-image-container {
@@ -115,4 +119,18 @@
 .dis-info-big>tbody>tr>td {
 	font-size: 14px;
 	padding: 5px;
+}
+
+
+.normal-menu-item{
+	cursor: auto !important;
+    opacity: 1 !important;
+}
+
+.normal-menu-item>.el-pagination{
+	margin-top: 15px;
+}
+
+.el-button--primary>i {
+    color: white;
 }

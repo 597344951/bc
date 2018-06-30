@@ -147,6 +147,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									@change="partyUser_manager_queryPartyUserInfos()"
 									v-model="partyUser_manager_queryPartyUserInfosCondition.name" placeholder="请输入用户名"></el-input>
 							</el-row>
+							<el-row>
+								<el-select @change="partyUser_manager_queryPartyUserInfos()" 
+										clearable v-model="partyUser_manager_queryPartyUserInfosCondition.isParty"
+										placeholder="是否党员">
+									<el-option label="否" :value="0"></el-option>
+									<el-option label="是" :value="1"></el-option>
+								</el-select>
+							</el-row>
 					  	</div>
 					</el-popover>
 				</el-row>
@@ -232,43 +240,45 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											<el-col :span="3">婚姻状况：{{scope.row.marriageStatus}}</el-col>
 											<el-col :span="6">子女状况：{{scope.row.childrenStatus}}</el-col>
 										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="3">党员类型：{{scope.row.typeName}}</el-col>
-											<el-col :span="3">党员状态：{{scope.row.statusName}}</el-col>
-											<el-col :span="6">加入或批准入党时间：{{scope.row.joinDateFormal}}</el-col>
-											<el-col :span="6">预备党员批准时间：{{scope.row.joinDateReserve}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="6">工作单位：{{scope.row.workUnit}}</el-col>
-											<el-col :span="6">工作性质：{{scope.row.workNature}}</el-col>
-											<el-col :span="6">加入工作时间：{{scope.row.joinWorkDate}}</el-col>
-											<el-col :span="6">聘任时长：{{scope.row.appointmentTimeLength}} 年</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="6">如何加入党支部：{{scope.row.joinPartyBranchType}}</el-col>
-											<el-col :span="6">一线情况：{{scope.row.firstLineTypeName}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="3">是否党务工作者：{{scope.row.partyStaffName}}</el-col>
-											<el-col :span="3">是否党代表：{{scope.row.partyRepresentativeName}}</el-col>
-											<el-col :span="3">是否志愿者：{{scope.row.volunteerName}}</el-col>
-											<el-col :span="3">是否困难党员：{{scope.row.difficultUserName}}</el-col>
-											<el-col :span="3">是否先进党员：{{scope.row.advancedUserName}}</el-col>
-											<el-col :span="3">是否积极党员：{{scope.row.positiveUserName}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="3">是否发展党员：{{scope.row.developUserName}}</el-col>
-											<el-col :span="3">是否失联党员：{{scope.row.missingUserName}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="22">{{scope.row.introduce}}</el-col>
-										</el-row>
+										<template v-if="scope.row.isParty == 1">
+											<el-row :gutter="20">
+												<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="3">党员类型：{{scope.row.typeName}}</el-col>
+												<el-col :span="3">党员状态：{{scope.row.statusName}}</el-col>
+												<el-col :span="6">加入或批准入党时间：{{scope.row.joinDateFormal}}</el-col>
+												<el-col :span="6">预备党员批准时间：{{scope.row.joinDateReserve}}</el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="6">工作单位：{{scope.row.workUnit}}</el-col>
+												<el-col :span="6">工作性质：{{scope.row.workNature}}</el-col>
+												<el-col :span="6">加入工作时间：{{scope.row.joinWorkDate}}</el-col>
+												<el-col :span="6">聘任时长：{{scope.row.appointmentTimeLength}} 年</el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="6">如何加入党支部：{{scope.row.joinPartyBranchType}}</el-col>
+												<el-col :span="6">一线情况：{{scope.row.firstLineTypeName}}</el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="3">是否党务工作者：{{scope.row.partyStaffName}}</el-col>
+												<el-col :span="3">是否党代表：{{scope.row.partyRepresentativeName}}</el-col>
+												<el-col :span="3">是否志愿者：{{scope.row.volunteerName}}</el-col>
+												<el-col :span="3">是否困难党员：{{scope.row.difficultUserName}}</el-col>
+												<el-col :span="3">是否先进党员：{{scope.row.advancedUserName}}</el-col>
+												<el-col :span="3">是否积极党员：{{scope.row.positiveUserName}}</el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="3">是否发展党员：{{scope.row.developUserName}}</el-col>
+												<el-col :span="3">是否失联党员：{{scope.row.missingUserName}}</el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
+											</el-row>
+											<el-row :gutter="20">
+												<el-col :span="22">{{scope.row.introduce}}</el-col>
+											</el-row>
+										</template>
 									</template>
 								</el-table-column>
 								<el-table-column label="姓名" prop="name" width=100></el-table-column>
@@ -594,207 +604,219 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
 				<el-row :gutter="20">
-					<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+					<el-col :span="6">
+						<el-form-item label="是否党员：" prop="isParty">
+							<el-select v-model="partyUser_manager_insertPartyUserForm.isParty">
+								<el-option label="否" :value="0"></el-option>
+								<el-option label="是" :value="1"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
 				</el-row>
 				
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="党员类型：" prop="type">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.type">
-								<el-option label="预备党员" :value="0"></el-option>
-								<el-option label="正式党员" :value="1"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="党员状态：" prop="status">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.status">
-								<el-option label="停止党籍" :value="0"></el-option>
-								<el-option label="正常" :value="1"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-tooltip class="item" effect="dark" content="正式党员批准时间" placement="top-start">
-							<el-form-item label="入党时间：" prop="joinDateFormal">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_insertPartyUserForm.joinDateFormal"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="加入或批准入党时间">
-							    </el-date-picker>
+				<template v-if="partyUser_manager_insertPartyUserForm.isParty == 1">
+					<el-row :gutter="20">
+						<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+					</el-row>
+					
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="党员类型：" prop="type">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.type">
+									<el-option label="预备党员" :value="0"></el-option>
+									<el-option label="正式党员" :value="1"></el-option>
+								</el-select>
 							</el-form-item>
-						</el-tooltip>
-					</el-col>
-					<el-col :span="6">
-						<el-tooltip class="item" effect="dark" content="预备党员批准时间" placement="top-start">
-							<el-form-item label="入党时间：" prop="joinDateReserve">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_insertPartyUserForm.joinDateReserve"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="预备党员批准时间">
-							    </el-date-picker>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党员状态：" prop="status">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.status">
+									<el-option label="停止党籍" :value="0"></el-option>
+									<el-option label="正常" :value="1"></el-option>
+								</el-select>
 							</el-form-item>
-						</el-tooltip>
-					</el-col>
-				</el-row>
-				
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="工作单位：" prop="workUnit">
-							<el-input clearable v-model="partyUser_manager_insertPartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="工作性质：" prop="workNature">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.workNature" filterable placeholder="请选择工作性质">
-								<el-option
-									v-for="workNatureType in partyUser_manager_workNatureTypes"
-									:key="workNatureType.name"
-									:label="workNatureType.name"
-									:value="workNatureType.workNatureId">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="工作时间：" prop="joinWorkDate">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_insertPartyUserForm.joinWorkDate"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="选择开始工作时间">
-						    </el-date-picker>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="聘任时长" prop="appointmentTimeLength">
-							<el-input clearable v-model="partyUser_manager_insertPartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-tooltip class="item" effect="dark" content="加入党支部方式" placement="top-start">
-							<el-form-item label="加入方式：" prop="joinPartyBranchType">
-								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.joinPartyBranchType" filterable placeholder="请选择加入党支部方式">
+						</el-col>
+						<el-col :span="6">
+							<el-tooltip class="item" effect="dark" content="正式党员批准时间" placement="top-start">
+								<el-form-item label="入党时间：" prop="joinDateFormal">
+									<el-date-picker
+										clearable
+								    	v-model="partyUser_manager_insertPartyUserForm.joinDateFormal"
+								    	type="date" 
+								    	value-format="yyyy-MM-dd" 
+								    	placeholder="加入或批准入党时间">
+								    </el-date-picker>
+								</el-form-item>
+							</el-tooltip>
+						</el-col>
+						<el-col :span="6">
+							<el-tooltip class="item" effect="dark" content="预备党员批准时间" placement="top-start">
+								<el-form-item label="入党时间：" prop="joinDateReserve">
+									<el-date-picker
+										clearable
+								    	v-model="partyUser_manager_insertPartyUserForm.joinDateReserve"
+								    	type="date" 
+								    	value-format="yyyy-MM-dd" 
+								    	placeholder="预备党员批准时间">
+								    </el-date-picker>
+								</el-form-item>
+							</el-tooltip>
+						</el-col>
+					</el-row>
+					
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="工作单位：" prop="workUnit">
+								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="工作性质：" prop="workNature">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.workNature" filterable placeholder="请选择工作性质">
 									<el-option
-										v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes"
-										:key="joinPartyBranchType.joinType"
-										:label="joinPartyBranchType.joinType"
-										:value="joinPartyBranchType.jpbtId">
+										v-for="workNatureType in partyUser_manager_workNatureTypes"
+										:key="workNatureType.name"
+										:label="workNatureType.name"
+										:value="workNatureType.workNatureId">
 									</el-option>
 								</el-select>
 							</el-form-item>
-						</el-tooltip>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="一线情况：" prop="firstLineTypeName">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
-								<el-option
-									v-for="firstLineType in partyUser_manager_firstLineTypes"
-									:key="firstLineType.firstLineTypeName"
-									:label="firstLineType.firstLineTypeName"
-									:value="firstLineType.fltId">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="党务工作者：" prop="partyStaff">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.partyStaff">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="党代表：" prop="partyRepresentative">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.partyRepresentative">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="工作时间：" prop="joinWorkDate">
+								<el-date-picker
+									clearable
+							    	v-model="partyUser_manager_insertPartyUserForm.joinWorkDate"
+							    	type="date" 
+							    	value-format="yyyy-MM-dd" 
+							    	placeholder="选择开始工作时间">
+							    </el-date-picker>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="聘任时长" prop="appointmentTimeLength">
+								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="志愿者：" prop="volunteer">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.volunteer">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="困难党员：" prop="difficultUser">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.difficultUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="先进党员：" prop="advancedUser">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.advancedUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="积极党员：" prop="positiveUser">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.positiveUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-tooltip class="item" effect="dark" content="加入党支部方式" placement="top-start">
+								<el-form-item label="加入方式：" prop="joinPartyBranchType">
+									<el-select clearable v-model="partyUser_manager_insertPartyUserForm.joinPartyBranchType" filterable placeholder="请选择加入党支部方式">
+										<el-option
+											v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes"
+											:key="joinPartyBranchType.joinType"
+											:label="joinPartyBranchType.joinType"
+											:value="joinPartyBranchType.jpbtId">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-tooltip>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="一线情况：" prop="firstLineTypeName">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
+									<el-option
+										v-for="firstLineType in partyUser_manager_firstLineTypes"
+										:key="firstLineType.firstLineTypeName"
+										:label="firstLineType.firstLineTypeName"
+										:value="firstLineType.fltId">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党务工作者：" prop="partyStaff">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.partyStaff">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党代表：" prop="partyRepresentative">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.partyRepresentative">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="发展党员：" prop="developUser">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.developUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="失联党员：" prop="missingUser">
-							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.missingUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="志愿者：" prop="volunteer">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.volunteer">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="困难党员：" prop="difficultUser">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.difficultUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="先进党员：" prop="advancedUser">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.advancedUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="积极党员：" prop="positiveUser">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.positiveUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="发展党员：" prop="developUser">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.developUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="失联党员：" prop="missingUser">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.missingUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="24">
-						<el-form-item label="简介：" prop="introduce">
-							<el-input
-							  	type="textarea"
-							 	:autosize="{ minRows: 4}"
-							 	placeholder="请输入内容"
-								v-model="partyUser_manager_insertPartyUserForm.introduce">
-							</el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
+					</el-row>
+
+					<el-row :gutter="20">
+						<el-col :span="24">
+							<el-form-item label="简介：" prop="introduce">
+								<el-input
+								  	type="textarea"
+								 	:autosize="{ minRows: 4}"
+								 	placeholder="请输入内容"
+									v-model="partyUser_manager_insertPartyUserForm.introduce">
+								</el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
+				</template>
 
 				<el-form-item>
 					<el-button size="small" type="primary" @click="partyUser_manager_insertPartyUser()">添加党员</el-button>
@@ -1038,207 +1060,219 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
 				<el-row :gutter="20">
-					<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+					<el-col :span="6">
+						<el-form-item label="是否党员：" prop="isParty">
+							<el-select v-model="partyUser_manager_updatePartyUserForm.isParty">
+								<el-option label="否" :value="0"></el-option>
+								<el-option label="是" :value="1"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
 				</el-row>
 				
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="党员类型：" prop="type">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.type">
-								<el-option label="预备党员" :value="0"></el-option>
-								<el-option label="正式党员" :value="1"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="党员状态：" prop="status">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.status">
-								<el-option label="停止党籍" :value="0"></el-option>
-								<el-option label="正常" :value="1"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-tooltip class="item" effect="dark" content="正式党员批准时间" placement="top-start">
-							<el-form-item label="入党时间：" prop="joinDateFormal">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_updatePartyUserForm.joinDateFormal"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="加入或批准入党时间">
-							    </el-date-picker>
+				<template v-if="partyUser_manager_updatePartyUserForm.isParty == 1">
+					<el-row :gutter="20">
+						<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+					</el-row>
+					
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="党员类型：" prop="type">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.type">
+									<el-option label="预备党员" :value="0"></el-option>
+									<el-option label="正式党员" :value="1"></el-option>
+								</el-select>
 							</el-form-item>
-						</el-tooltip>
-					</el-col>
-					<el-col :span="6">
-						<el-tooltip class="item" effect="dark" content="预备党员批准时间" placement="top-start">
-							<el-form-item label="入党时间：" prop="joinDateReserve">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_updatePartyUserForm.joinDateReserve"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="预备党员批准时间">
-							    </el-date-picker>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党员状态：" prop="status">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.status">
+									<el-option label="停止党籍" :value="0"></el-option>
+									<el-option label="正常" :value="1"></el-option>
+								</el-select>
 							</el-form-item>
-						</el-tooltip>
-					</el-col>
-				</el-row>
-				
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="工作单位：" prop="workUnit">
-							<el-input clearable v-model="partyUser_manager_updatePartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="工作性质：" prop="workNature">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.workNature" filterable placeholder="请选择工作性质">
-								<el-option
-									v-for="workNatureType in partyUser_manager_workNatureTypes"
-									:key="workNatureType.name"
-									:label="workNatureType.name"
-									:value="workNatureType.workNatureId">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="工作时间：" prop="joinWorkDate">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_updatePartyUserForm.joinWorkDate"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="选择开始工作时间">
-						    </el-date-picker>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="聘任时长" prop="appointmentTimeLength">
-							<el-input clearable v-model="partyUser_manager_updatePartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-tooltip class="item" effect="dark" content="加入党支部方式" placement="top-start">
-							<el-form-item label="加入方式：" prop="joinPartyBranchType">
-								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.joinPartyBranchType" filterable placeholder="请选择加入党支部方式">
+						</el-col>
+						<el-col :span="6">
+							<el-tooltip class="item" effect="dark" content="正式党员批准时间" placement="top-start">
+								<el-form-item label="入党时间：" prop="joinDateFormal">
+									<el-date-picker
+										clearable
+								    	v-model="partyUser_manager_updatePartyUserForm.joinDateFormal"
+								    	type="date" 
+								    	value-format="yyyy-MM-dd" 
+								    	placeholder="加入或批准入党时间">
+								    </el-date-picker>
+								</el-form-item>
+							</el-tooltip>
+						</el-col>
+						<el-col :span="6">
+							<el-tooltip class="item" effect="dark" content="预备党员批准时间" placement="top-start">
+								<el-form-item label="入党时间：" prop="joinDateReserve">
+									<el-date-picker
+										clearable
+								    	v-model="partyUser_manager_updatePartyUserForm.joinDateReserve"
+								    	type="date" 
+								    	value-format="yyyy-MM-dd" 
+								    	placeholder="预备党员批准时间">
+								    </el-date-picker>
+								</el-form-item>
+							</el-tooltip>
+						</el-col>
+					</el-row>
+					
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="工作单位：" prop="workUnit">
+								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="工作性质：" prop="workNature">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.workNature" filterable placeholder="请选择工作性质">
 									<el-option
-										v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes"
-										:key="joinPartyBranchType.joinType"
-										:label="joinPartyBranchType.joinType"
-										:value="joinPartyBranchType.jpbtId">
+										v-for="workNatureType in partyUser_manager_workNatureTypes"
+										:key="workNatureType.name"
+										:label="workNatureType.name"
+										:value="workNatureType.workNatureId">
 									</el-option>
 								</el-select>
 							</el-form-item>
-						</el-tooltip>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="一线情况：" prop="firstLineTypeName">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
-								<el-option
-									v-for="firstLineType in partyUser_manager_firstLineTypes"
-									:key="firstLineType.firstLineTypeName"
-									:label="firstLineType.firstLineTypeName"
-									:value="firstLineType.fltId">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="党务工作者：" prop="partyStaff">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.partyStaff">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="党代表：" prop="partyRepresentative">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.partyRepresentative">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="工作时间：" prop="joinWorkDate">
+								<el-date-picker
+									clearable
+							    	v-model="partyUser_manager_updatePartyUserForm.joinWorkDate"
+							    	type="date" 
+							    	value-format="yyyy-MM-dd" 
+							    	placeholder="选择开始工作时间">
+							    </el-date-picker>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="聘任时长" prop="appointmentTimeLength">
+								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="志愿者：" prop="volunteer">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.volunteer">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="困难党员：" prop="difficultUser">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.difficultUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="先进党员：" prop="advancedUser">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.advancedUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="积极党员：" prop="positiveUser">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.positiveUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-tooltip class="item" effect="dark" content="加入党支部方式" placement="top-start">
+								<el-form-item label="加入方式：" prop="joinPartyBranchType">
+									<el-select clearable v-model="partyUser_manager_updatePartyUserForm.joinPartyBranchType" filterable placeholder="请选择加入党支部方式">
+										<el-option
+											v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes"
+											:key="joinPartyBranchType.joinType"
+											:label="joinPartyBranchType.joinType"
+											:value="joinPartyBranchType.jpbtId">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-tooltip>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="一线情况：" prop="firstLineTypeName">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
+									<el-option
+										v-for="firstLineType in partyUser_manager_firstLineTypes"
+										:key="firstLineType.firstLineTypeName"
+										:label="firstLineType.firstLineTypeName"
+										:value="firstLineType.fltId">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党务工作者：" prop="partyStaff">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.partyStaff">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党代表：" prop="partyRepresentative">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.partyRepresentative">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="6">
-						<el-form-item label="发展党员：" prop="developUser">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.developUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6">
-						<el-form-item label="失联党员：" prop="missingUser">
-							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.missingUser">
-								<el-option label="是" :value="1"></el-option>
-								<el-option label="否" :value="0"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="志愿者：" prop="volunteer">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.volunteer">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="困难党员：" prop="difficultUser">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.difficultUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="先进党员：" prop="advancedUser">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.advancedUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="积极党员：" prop="positiveUser">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.positiveUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="发展党员：" prop="developUser">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.developUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="失联党员：" prop="missingUser">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.missingUser">
+									<el-option label="是" :value="1"></el-option>
+									<el-option label="否" :value="0"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 
-				<el-row :gutter="20">
-					<el-col :span="24">
-						<el-form-item label="简介：" prop="introduce">
-							<el-input
-							  	type="textarea"
-							 	:autosize="{ minRows: 4}"
-							 	placeholder="请输入内容"
-								v-model="partyUser_manager_updatePartyUserForm.introduce">
-							</el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
+					<el-row :gutter="20">
+						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
+					</el-row>
+
+					<el-row :gutter="20">
+						<el-col :span="24">
+							<el-form-item label="简介：" prop="introduce">
+								<el-input
+								  	type="textarea"
+								 	:autosize="{ minRows: 4}"
+								 	placeholder="请输入内容"
+									v-model="partyUser_manager_updatePartyUserForm.introduce">
+								</el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
+				</template>
 
 				<el-form-item>
 					<el-button type="primary" @click="partyUser_manager_updatePartyUser()">更新信息</el-button>
@@ -1289,7 +1323,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				list: []
 			},
 			partyUser_manager_queryPartyUserInfosCondition: {
-				name: null
+				name: null,
+				isParty: null
 			},
 			partyUser_manager_address_pca: pca,	/* 省市区三级联动数据 */
 			partyUser_manager_address_prop: {	/* 地址prop */
@@ -1301,7 +1336,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				birthDate:null,
 				nativePlace:null,
 				academicDegree: null,
-				education: null
+				education: null,
+				isParty: 0
 			},
 			partyUser_manager_updatePartyUserForm: {	 /*修改党员信息绑定 */
 				id: null,
@@ -1348,7 +1384,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				developUser: null,
 				missingUser: null,
 				introduce: null,
-				idPhotoImg: []	/*用户的当前头像*/
+				idPhotoImg: [],	/*用户的当前头像*/
+				isParty: 0
 			},
 			partyUser_manager_updatePartyUserRules: {	/*修改党员信息验证*/
 				name: [
@@ -1604,7 +1641,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				var t = {
 					pageNum: obj.partyUser_manager_pager.pageNum,
 					pageSize: obj.partyUser_manager_pager.pageSize,
-					name: obj.partyUser_manager_queryPartyUserInfosCondition.name
+					name: obj.partyUser_manager_queryPartyUserInfosCondition.name,
+					isParty: obj.partyUser_manager_queryPartyUserInfosCondition.isParty
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
@@ -1856,6 +1894,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				obj.partyUser_manager_updatePartyUserForm.developUser = row.developUser;
 				obj.partyUser_manager_updatePartyUserForm.missingUser = row.missingUser;
 				obj.partyUser_manager_updatePartyUserForm.introduce = row.introduce;
+				obj.partyUser_manager_updatePartyUserForm.isParty = row.isParty;
 				obj.partyUser_manager_updatePartyUserDialog = true;
 			},
 			partyUser_manager_insertPartyUser() {	/* 添加用户 */
@@ -1940,7 +1979,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		        ).then(function(){
 	        		var url = "/party/user/deletePartyUserInfo";
 					var t = {
-						partyUserId: row.id
+						baseUserId: row.id
 					}
 					$.post(url, t, function(data, status){
 						if (data.code == 200) {

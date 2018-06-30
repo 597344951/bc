@@ -37,7 +37,7 @@
         </el-row>
     </div>
     <div id="terminalDisplay">
-        <div v-if="dis_h_v">
+        <div v-show="dis_h_v">
             <table class="table terminal-table-dis table-hover">
                 <thead>
                     <th>屏幕截图</th>
@@ -183,7 +183,7 @@
                 </tbody>
             </table>
         </div>
-        <div v-if="!dis_h_v">
+        <div v-show="!dis_h_v">
             <template v-for="t in terminals">
                 <el-card class="termialDis" :class="t.online=='1' ? 'online':'termialDis-offline'" :body-style="{ padding: '0px' }">
                     <div class="deviceInfo">

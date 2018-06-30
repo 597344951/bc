@@ -327,9 +327,11 @@
 	  pui.positive_user positiveUser,
 	  pui.develop_user developUser,
 	  pui.missing_user missingUser,
-	  pui.introduce introduce
+	  pui.introduce introduce,
+	  bui.is_party isParty
 	from
-	  base_user_info bui inner join party_user_info pui 
+	  base_user_info bui 
+	  left join party_user_info pui on bui.base_user_id = pui.party_user_id
 	  left join nation_type nt on bui.nation = nt.nt_id 
 	  left join education_level el on bui.education = el.edu_level_eid 
 	  left join academic_degree_level adl on bui.academic_degree = adl.ad_d_aid 
@@ -337,8 +339,9 @@
 	  left join join_party_branch_type jpbt on pui.join_party_branch_type_id = jpbt.jpbt_id 
 	  left join first_line_type flt on pui.first_line_situation = flt.flt_id 
 	where
-	  bui.base_user_id = pui.party_user_id and
-	  bui.is_party = 1
+	  1 = 1
+	  <!-- bui.base_user_id = pui.party_user_id and
+	  bui.is_party = 1 -->
 	  <if test="id != null and id != ''"> and 
 		  bui.base_user_id = #{id}
 	  </if>
@@ -347,6 +350,9 @@
 	  </if>
 	  <if test="name != null and name != ''"> and 
 		  bui.name like CONCAT('%',#{name},'%')
+	  </if>
+	  <if test="isParty != null and isParty != ''"> and 
+		  bui.is_party = #{isParty}
 	  </if>
   </select>
 </mapper>

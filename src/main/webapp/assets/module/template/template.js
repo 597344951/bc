@@ -115,6 +115,13 @@ var appInstince = new Vue({
     
   },
   methods: {
+    card_hover(it){
+      it.showtoolbar = true;
+    },
+    card_leave(it){
+      it.showtoolbar = false;
+    },
+
     //查询模板
     searchTemplate(){
       this.currentCategory.name = '所有类别';
@@ -140,7 +147,7 @@ var appInstince = new Vue({
       let url = 'tp/listByType/' + this.tpager.current + '-' + this.tpager.size;
       data.keyword = this.keyword;
       ajax_json(url, "get", data, function (result) {
-        ins.tps = result.data;
+        ins.tps = ins.initData(result.data);
         ins.tpager.total = result.pager.total;
       });
     }, // 重新加载分类数据
@@ -155,6 +162,13 @@ var appInstince = new Vue({
         return null;
       }
       return node;
+    },
+    initData(data){
+      data.forEach(element => {
+        element.showtoolbar = false;
+        element.cfv = false;
+      });
+      return data;
     },
     // 增加模板类别
     addTemplateType: function () {

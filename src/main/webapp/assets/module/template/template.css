@@ -13,16 +13,15 @@
     line-height: 12px;
 }
 
-
-
 .box-card {
     width: 200px;
     float: left;
     margin-left: 20px;
     margin-top: 20px;
 }
-.box-card:hover{
-    width:205px;
+
+.box-card:hover {
+    width: 205px;
     box-shadow: 4px 4px 18px 8px #d4d4d4;
 }
 
@@ -30,10 +29,10 @@
 .el-header {
     padding: 0;
 }
-.el-main{
-    padding:0 20px;
-}
 
+.el-main {
+    padding: 0 20px;
+}
 
 /**页面预览**/
 
@@ -42,7 +41,7 @@
 }
 
 .editTp {
-    width:90%;
+    width: 90%;
 }
 
 .previewPic {
@@ -70,7 +69,7 @@
     margin: 0 auto;
     height: 170px;
     width: auto;
-    max-width:100%;
+    max-width: 100%;
 }
 
 .clearfix:before,
@@ -108,4 +107,40 @@
     width: 178px;
     height: 178px;
     display: block;
+}
+
+.passage-conver {
+    width: 200px;
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+    height: 255px;
+}
+
+.passage-conver:hover {
+    width: 205px;
+    box-shadow: 4px 4px 18px 8px #d4d4d4;
+}
+
+.passage-conver .background-img {
+    height: 255px;
+    background-size: 100% 100%;
+    position: absolute;
+    width: 205px;
+    background-color: #ebeef5;
+}
+
+.passage-conver .background-img .image {
+    width: 100%;
+    height: 100%;
+}
+
+.passage-conver .control {
+    padding: 15px 5px;
+    text-align: center;
+    position: absolute;
+    bottom: 0px;
+    background: hsla(0, 0%, 100%, 0.90);
+    border-top: solid 1px rgba(255, 255, 255);
+    width: 195px;
 }

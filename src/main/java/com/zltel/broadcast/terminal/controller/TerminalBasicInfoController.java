@@ -44,10 +44,9 @@ public class TerminalBasicInfoController extends BaseController {
     @GetMapping("/addup")
     public R queryMapInfo() {
         try {
-            R r=tbs.queryMapInfo();
-            return r;
+            return tbs.queryMapInfo();
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             return R.error().setMsg("查询地图信息失败");
         }
       

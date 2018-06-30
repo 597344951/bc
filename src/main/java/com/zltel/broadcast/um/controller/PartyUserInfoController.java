@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
-import com.zltel.broadcast.um.bean.PartyUserInfo;
+import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.service.PartyUserInfoService;
 
 import io.swagger.annotations.ApiOperation;
@@ -149,9 +149,9 @@ public class PartyUserInfoController extends BaseController  {
 	@LogPoint("批量删除党员用户")
 	@RequiresPermissions(value = {"party:user:delete"})
 	@ApiOperation(value = "批量删除党员用户")
-	public R deletePartyUserInfo(PartyUserInfo partyUserInfo) {
+	public R deletePartyUserInfo(BaseUserInfo baseUserInfo) {
 		try {
-			return partyUserInfoService.deletePartyUserInfo(partyUserInfo);
+			return partyUserInfoService.deletePartyUserInfo(baseUserInfo);
 		} catch (Exception e) {
 			return R.error().setMsg("删除党员失败。");
 		}
