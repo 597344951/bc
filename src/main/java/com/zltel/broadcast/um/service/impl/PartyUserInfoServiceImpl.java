@@ -248,6 +248,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	baseUserInfo.setPresentAddressDetail((String)partyUser.get("presentAddressDetail"));
     	baseUserInfo.setIsParty(StringUtil.isEmpty((String)partyUser.get("isParty")) ? 
     			null : Integer.parseInt((String)partyUser.get("isParty")));
+    	baseUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
+    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
     			null : Integer.parseInt((String)partyUser.get("type")));
@@ -275,8 +277,6 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("difficultUser")));
     	partyUserInfo.setAdvancedUser(StringUtil.isEmpty((String)partyUser.get("advancedUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("advancedUser")));
-    	partyUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
-    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	partyUserInfo.setDevelopUser(StringUtil.isEmpty((String)partyUser.get("developUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("developUser")));
     	partyUserInfo.setMissingUser(StringUtil.isEmpty((String)partyUser.get("missingUser")) ? 
@@ -369,6 +369,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	baseUserInfo.setPresentAddressDetail((String)partyUser.get("presentAddressDetail"));
     	baseUserInfo.setIsParty(StringUtil.isEmpty((String)partyUser.get("isParty")) ? 
     			null : Integer.parseInt((String)partyUser.get("isParty")));
+    	baseUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
+    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	
     	partyUserInfo.setPartyUserId(baseUserInfo.getBaseUserId());
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
@@ -397,8 +399,6 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("difficultUser")));
     	partyUserInfo.setAdvancedUser(StringUtil.isEmpty((String)partyUser.get("advancedUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("advancedUser")));
-    	partyUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
-    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	partyUserInfo.setDevelopUser(StringUtil.isEmpty((String)partyUser.get("developUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("developUser")));
     	partyUserInfo.setMissingUser(StringUtil.isEmpty((String)partyUser.get("missingUser")) ? 

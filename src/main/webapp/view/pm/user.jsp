@@ -37,13 +37,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		width: 400px;
 		height: 220px;
 		border-radius: 10px;
-		box-shadow: 0px 0px 10px 3px #ddd;
+		box-shadow: 3px 3px 10px #909090;
 		padding: 20px;
 		margin-bottom: 20px;
 		float:left;
 		margin-left: 20px;
 		background-image: url(/view/pm/img/peopleBg_red.png);
 		background-size: 100% 100%;
+	}
+	.box:hover {
+		box-shadow:10px 10px 10px #909090;
+		cursor: pointer;
 	}
 	.up{
 		height: 192px;
@@ -103,216 +107,236 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 </style>
 </head>
 <body>
-	<div id="app">
+	<div id="app" v-cloak>
 		<el-container>
 			<el-header>
-				<el-row class="toolbar" :gutter="20">
-					<el-button size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">
-						<i class="el-icon-circle-plus-outline"></i>
-						添加党员
-					</el-button>
-				  	<shiro:hasPermission name="party:user:insert">  
-				  		<el-popover class="margin-0-10"
-							placement="bottom" 
-						  	width="400" 
-						  	trigger="click" >
-						  	<el-button size="small" type="primary" slot="reference">
-						  		<i class="el-icon-upload"></i>
-						  		导入党员
-						  	</el-button>
-						  	<div>
-								<el-button type="text" @click="partyUser_manager_exportPartyUserInfosExcelExample">下载Excel模板</el-button>，按照模板填写
-						  		<el-upload
-						  			action="" 
-						 	   		:http-request="partyUser_manager_importPartyUserInfosExcel"
-						 	   		:multiple="true" 
-						 	   		:before-upload="partyUser_manager_validatePartyUserInfosExcel" >
-							      	<el-button type="text">点击上传excel文件</el-button>
-								</el-upload>
-								<el-button type="text" @click="partyUser_manager_showImportPartyUserExcelErrorMsgDialog">显示导入错误信息</el-button>
-						  	</div>
-						</el-popover>
-				  	</shiro:hasPermission>
-			  		<el-popover 
-						placement="bottom" 
-					  	width="200" 
-					  	trigger="hover" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索党员
-					  	</el-button>
-					  	<div>
-							<el-row>
-								<el-input size="small" clearable
-									@change="partyUser_manager_queryPartyUserInfos()"
-									v-model="partyUser_manager_queryPartyUserInfosCondition.name" placeholder="请输入用户名"></el-input>
-							</el-row>
-							<el-row>
-								<el-select @change="partyUser_manager_queryPartyUserInfos()" 
-										clearable v-model="partyUser_manager_queryPartyUserInfosCondition.isParty"
-										placeholder="是否党员">
-									<el-option label="否" :value="0"></el-option>
-									<el-option label="是" :value="1"></el-option>
-								</el-select>
-							</el-row>
-					  	</div>
-					</el-popover>
+				<el-row  >
+					<el-menu class="el-menu-demo" mode="horizontal">
+						<el-menu-item index="-1" class="normal-menu-item" disabled>
+							<el-button size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()" style="margin-top: 5px;">
+								<i class="el-icon-circle-plus-outline"></i>
+								添加党员
+							</el-button>
+							<shiro:hasPermission name="party:user:insert">
+								<el-popover class="margin-0-10" placement="bottom" width="400" trigger="click">
+									<el-button size="small" type="primary" slot="reference">
+										<i class="el-icon-upload"></i>
+										导入党员
+									</el-button>
+									<div>
+										<el-button type="text" @click="partyUser_manager_exportPartyUserInfosExcelExample">下载Excel模板</el-button>，按照模板填写
+										<el-upload action="" :http-request="partyUser_manager_importPartyUserInfosExcel" :multiple="true" :before-upload="partyUser_manager_validatePartyUserInfosExcel">
+											<el-button type="text">点击上传excel文件</el-button>
+										</el-upload>
+										<el-button type="text" @click="partyUser_manager_showImportPartyUserExcelErrorMsgDialog">显示导入错误信息</el-button>
+									</div>
+								</el-popover>
+							</shiro:hasPermission>
+							<el-popover placement="bottom" width="200" trigger="hover">
+								<el-button size="small" type="primary" slot="reference">
+									<i class="el-icon-search"></i>
+									搜索党员
+								</el-button>
+								<div>
+									<el-row>
+										<el-input size="small" clearable @change="partyUser_manager_queryPartyUserInfos()" v-model="partyUser_manager_queryPartyUserInfosCondition.name"
+										    placeholder="请输入用户名"></el-input>
+									</el-row>
+									<el-row>
+										<el-select @change="partyUser_manager_queryPartyUserInfos()" clearable v-model="partyUser_manager_queryPartyUserInfosCondition.isParty"
+										    placeholder="是否党员">
+											<el-option label="否" :value="0"></el-option>
+											<el-option label="是" :value="1"></el-option>
+										</el-select>
+									</el-row>
+								</div>
+							</el-popover>
+						</el-menu-item>
+						<el-menu-item index="-3" class="normal-menu-item" disabled>
+							<el-button-group class="control-button">
+								<el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
+								<el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
+							</el-button-group>
+						</el-menu-item>
+						<el-menu-item index="-2" class="normal-menu-item" :style="{'float':'right'}" disabled>
+							<el-pagination class="pagebar" id="partyUser_manager_pagesdididi" layout="total, prev, pager, next, jumper" @current-change="partyUser_manager_pagerCurrentChange"
+							    :current-page.sync="partyUser_manager_pager.pageNum" :page-size.sync="partyUser_manager_pager.pageSize" :total="partyUser_manager_pager.total">
+							</el-pagination>
+						</el-menu-item>
+					</el-menu>
 				</el-row>
 			</el-header>
 			<el-main>
-				<el-tabs type="border-card">
-					<el-tab-pane>
-				  		<span slot="label"><i class="el-icon-menu"></i>卡片</span>
-				  		<div class="box" v-for="item in partyUser_manager_pager.list">
-							<div class="up">
-								<div class="up-left">
-									<p><span class="title">姓名</span>  <span class="content">{{item.name}}</span></p>
-									<p><span class="title">性别</span>  <span class="nan">{{item.sex}}</span> <span class="title">民族</span> <span class="han">{{item.nation}}</span></p>
-									<p><span class="title">出生</span>  <span class="content">{{item.birthDate}}</span></p>
-									<p><span class="title">现住址</span>  
-										<span class="content">
-											{{item.presentAddressProvince}}&nbsp;&nbsp;
-											{{item.presentAddressCity}}&nbsp;&nbsp;
-											{{item.presentAddressArea}}&nbsp;&nbsp;
-											{{item.presentAddressDetail}}
-										</span>
-									</p>
-								</div>
-								<div class="up-right">
-									<img :src="getPath(item)">
-								</div>
+
+				<div v-show="!dis_h_v">
+					<div class="box" v-for="item in partyUser_manager_pager.list">
+						<div class="up">
+							<div class="up-left">
+								<p>
+									<span class="title">姓名</span>
+									<span class="content">{{item.name}}</span>
+								</p>
+								<p>
+									<span class="title">性别</span>
+									<span class="nan">{{item.sex}}</span>
+									<span class="title">民族</span>
+									<span class="han">{{item.nation}}</span>
+								</p>
+								<p>
+									<span class="title">出生</span>
+									<span class="content">{{item.birthDate}}</span>
+								</p>
+								<p>
+									<span class="title">现住址</span>
+									<span class="content">
+										{{item.presentAddressProvince}}&nbsp;&nbsp; {{item.presentAddressCity}}&nbsp;&nbsp; {{item.presentAddressArea}}&nbsp;&nbsp;
+										{{item.presentAddressDetail}}
+									</span>
+								</p>
 							</div>
-							<div class="down">
-								<p><span class="title">身份证号</span>  <span class="content">{{item.idCard}}</span></p>
+							<div class="up-right">
+								<img :src="getPath(item)">
 							</div>
 						</div>
-				  	</el-tab-pane>
-				  	<el-tab-pane>
-				  		<span slot="label"><i class="el-icon-tickets"></i>列表</span>
-				  		<template>
-							<el-table size="small" :data="partyUser_manager_pager.list" style="width: 100%">
-								<el-table-column id="partyUserDetailed" type="expand">
-									<template slot-scope="scope">
-										<el-row :gutter="20">
-											<el-col :span="0.1"><span class="partyUserTitleFont">个人照片：</span></el-col>
-											<el-col :span="4"><img :src="getPath(scope.row)" width="100" /></el-col>
-											<el-button size="small" @click="partyUser_manager_exportPartyUserInfo(scope.row)" type="primary">导出此党员信息</el-button>
-											<el-button size="small" @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="primary">信息修改</el-button>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="24">用户ID：{{scope.row.id}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="24"><span class="partyUserTitleFont">基本信息</span></el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="3">姓名：{{scope.row.name}}</el-col>
-											<el-col :span="3">性别：{{scope.row.sex}}</el-col>
-											<el-col :span="3">籍贯：{{scope.row.nativePlace}}</el-col>
-											<el-col :span="3">生日：{{scope.row.birthDate}}</el-col>
-											<el-col :span="3">年龄：{{scope.row.age}}</el-col>
-											<el-col :span="3">民族：{{scope.row.nation}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="6">身份证号码：{{scope.row.idCard}}</el-col>
-											<el-col :span="3">手机号码：{{scope.row.mobilePhone}}</el-col>
-											<el-col :span="6">电子邮箱：{{scope.row.email}}</el-col>
-											<el-col :span="6">QQ号：{{scope.row.qq}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="12">现住址：{{scope.row.presentAddressProvince}}&nbsp;&nbsp;{{scope.row.presentAddressCity}}&nbsp;&nbsp;{{scope.row.presentAddressArea}}&nbsp;&nbsp;{{scope.row.presentAddressDetail}}</el-col>
-											<el-col :span="12">家庭住址：{{scope.row.homeAddressProvince}}&nbsp;&nbsp;{{scope.row.homeAddressCity}}&nbsp;&nbsp;{{scope.row.homeAddressArea}}&nbsp;&nbsp;{{scope.row.homeAddressDetail}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="6">微信号：{{scope.row.wechat}}</el-col>
-											<el-col :span="6">学历：{{scope.row.education}}</el-col>
-											<el-col :span="6">学位：{{scope.row.academicDegree}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="6">入学时间：{{scope.row.enrolmentTime}}</el-col>
-											<el-col :span="6">毕业时间：{{scope.row.graduationTime}}</el-col>
-											<el-col :span="6">毕业学校：{{scope.row.graduationSchool}}</el-col>
-											<el-col :span="6">学习专业：{{scope.row.major}}</el-col>
-										</el-row>
-										<el-row :gutter="20">
-											<el-col :span="6">特长（文艺）：{{scope.row.specialityLiterature}}</el-col>
-											<el-col :span="6">特长（专业）：{{scope.row.specialityMajor}}</el-col>
-											<el-col :span="3">婚姻状况：{{scope.row.marriageStatus}}</el-col>
-											<el-col :span="6">子女状况：{{scope.row.childrenStatus}}</el-col>
-										</el-row>
-										<template v-if="scope.row.isParty == 1">
-											<el-row :gutter="20">
-												<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="3">党员类型：{{scope.row.typeName}}</el-col>
-												<el-col :span="3">党员状态：{{scope.row.statusName}}</el-col>
-												<el-col :span="6">加入或批准入党时间：{{scope.row.joinDateFormal}}</el-col>
-												<el-col :span="6">预备党员批准时间：{{scope.row.joinDateReserve}}</el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="6">工作单位：{{scope.row.workUnit}}</el-col>
-												<el-col :span="6">工作性质：{{scope.row.workNature}}</el-col>
-												<el-col :span="6">加入工作时间：{{scope.row.joinWorkDate}}</el-col>
-												<el-col :span="6">聘任时长：{{scope.row.appointmentTimeLength}} 年</el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="6">如何加入党支部：{{scope.row.joinPartyBranchType}}</el-col>
-												<el-col :span="6">一线情况：{{scope.row.firstLineTypeName}}</el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="3">是否党务工作者：{{scope.row.partyStaffName}}</el-col>
-												<el-col :span="3">是否党代表：{{scope.row.partyRepresentativeName}}</el-col>
-												<el-col :span="3">是否志愿者：{{scope.row.volunteerName}}</el-col>
-												<el-col :span="3">是否困难党员：{{scope.row.difficultUserName}}</el-col>
-												<el-col :span="3">是否先进党员：{{scope.row.advancedUserName}}</el-col>
-												<el-col :span="3">是否积极党员：{{scope.row.positiveUserName}}</el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="3">是否发展党员：{{scope.row.developUserName}}</el-col>
-												<el-col :span="3">是否失联党员：{{scope.row.missingUserName}}</el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
-											</el-row>
-											<el-row :gutter="20">
-												<el-col :span="22">{{scope.row.introduce}}</el-col>
-											</el-row>
-										</template>
-									</template>
-								</el-table-column>
-								<el-table-column label="姓名" prop="name" width=100></el-table-column>
-								<el-table-column label="性别" prop="sex" width=50></el-table-column>
-								<el-table-column label="电话" prop="mobilePhone"></el-table-column>
-								<el-table-column label="邮箱" prop="email"></el-table-column>
-								<el-table-column label="籍贯" prop="nativePlace"></el-table-column>
-								<el-table-column label="生日" prop="birthDate"></el-table-column>
-								<el-table-column fixed="right" label="操作" width=270>
-									<template slot-scope="scope">
-										<shiro:hasPermission name="party:user:delete">  
-											<el-button @click="partyUser_manager_deletePartyUserInfo(scope.row)" type="text" size="small">删除</el-button>
-										</shiro:hasPermission>
-										<shiro:hasPermission name="party:user:update">  
-											<el-button @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
-										</shiro:hasPermission>
-										<shiro:hasPermission name="org:relation:insert">  
-											<el-button @click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" type="text" size="small">加入组织</el-button>
-										</shiro:hasPermission>
-									</template>
-								</el-table-column>
-							</el-table>
-						</template>
-				  	</el-tab-pane>
+						<div class="down">
+							<p>
+								<span class="title">身份证号</span>
+								<span class="content">{{item.idCard}}</span>
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div v-show="dis_h_v">
+					<el-table size="small" :data="partyUser_manager_pager.list" style="width: 100%">
+						<el-table-column id="partyUserDetailed" type="expand">
+							<template slot-scope="scope">
+								<el-row :gutter="20">
+									<el-col :span="0.1">
+										<span class="partyUserTitleFont">个人照片：</span>
+									</el-col>
+									<el-col :span="4">
+										<img :src="getPath(scope.row)" width="100" />
+									</el-col>
+									<el-button size="small" @click="partyUser_manager_exportPartyUserInfo(scope.row)" type="primary">导出此党员信息</el-button>
+									<el-button size="small" @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="primary">信息修改</el-button>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="24">用户ID：{{scope.row.id}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="24">
+										<span class="partyUserTitleFont">基本信息</span>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="3">姓名：{{scope.row.name}}</el-col>
+									<el-col :span="3">性别：{{scope.row.sex}}</el-col>
+									<el-col :span="3">籍贯：{{scope.row.nativePlace}}</el-col>
+									<el-col :span="3">生日：{{scope.row.birthDate}}</el-col>
+									<el-col :span="3">年龄：{{scope.row.age}}</el-col>
+									<el-col :span="3">民族：{{scope.row.nation}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="6">身份证号码：{{scope.row.idCard}}</el-col>
+									<el-col :span="3">手机号码：{{scope.row.mobilePhone}}</el-col>
+									<el-col :span="6">电子邮箱：{{scope.row.email}}</el-col>
+									<el-col :span="6">QQ号：{{scope.row.qq}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="12">现住址：{{scope.row.presentAddressProvince}}&nbsp;&nbsp;{{scope.row.presentAddressCity}}&nbsp;&nbsp;{{scope.row.presentAddressArea}}&nbsp;&nbsp;{{scope.row.presentAddressDetail}}</el-col>
+									<el-col :span="12">家庭住址：{{scope.row.homeAddressProvince}}&nbsp;&nbsp;{{scope.row.homeAddressCity}}&nbsp;&nbsp;{{scope.row.homeAddressArea}}&nbsp;&nbsp;{{scope.row.homeAddressDetail}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="6">微信号：{{scope.row.wechat}}</el-col>
+									<el-col :span="6">学历：{{scope.row.education}}</el-col>
+									<el-col :span="6">学位：{{scope.row.academicDegree}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="6">入学时间：{{scope.row.enrolmentTime}}</el-col>
+									<el-col :span="6">毕业时间：{{scope.row.graduationTime}}</el-col>
+									<el-col :span="6">毕业学校：{{scope.row.graduationSchool}}</el-col>
+									<el-col :span="6">学习专业：{{scope.row.major}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="6">特长（文艺）：{{scope.row.specialityLiterature}}</el-col>
+									<el-col :span="6">特长（专业）：{{scope.row.specialityMajor}}</el-col>
+									<el-col :span="3">婚姻状况：{{scope.row.marriageStatus}}</el-col>
+									<el-col :span="6">子女状况：{{scope.row.childrenStatus}}</el-col>
+								</el-row>
+								<el-row :gutter="20">
+									<el-col :span="3">是否积极份子：{{scope.row.positiveUserName}}</el-col>
+								</el-row>
+								<template v-if="scope.row.isParty == 1">
+									<el-row :gutter="20">
+										<el-col :span="24">
+											<span class="partyUserTitleFont">党员信息</span>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="3">党员类型：{{scope.row.typeName}}</el-col>
+										<el-col :span="3">党员状态：{{scope.row.statusName}}</el-col>
+										<el-col :span="6">加入或批准入党时间：{{scope.row.joinDateFormal}}</el-col>
+										<el-col :span="6">预备党员批准时间：{{scope.row.joinDateReserve}}</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="6">工作单位：{{scope.row.workUnit}}</el-col>
+										<el-col :span="6">工作性质：{{scope.row.workNature}}</el-col>
+										<el-col :span="6">加入工作时间：{{scope.row.joinWorkDate}}</el-col>
+										<el-col :span="6">聘任时长：{{scope.row.appointmentTimeLength}} 年</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="6">如何加入党支部：{{scope.row.joinPartyBranchType}}</el-col>
+										<el-col :span="6">一线情况：{{scope.row.firstLineTypeName}}</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="3">是否党务工作者：{{scope.row.partyStaffName}}</el-col>
+										<el-col :span="3">是否党代表：{{scope.row.partyRepresentativeName}}</el-col>
+										<el-col :span="3">是否志愿者：{{scope.row.volunteerName}}</el-col>
+										<el-col :span="3">是否困难党员：{{scope.row.difficultUserName}}</el-col>
+										<el-col :span="3">是否先进党员：{{scope.row.advancedUserName}}</el-col>
+										<el-col :span="3">是否发展党员：{{scope.row.developUserName}}</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="3">是否失联党员：{{scope.row.missingUserName}}</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="24">
+											<span class="partyUserTitleFont">个人简介</span>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20">
+										<el-col :span="22">{{scope.row.introduce}}</el-col>
+									</el-row>
+								</template>
+							</template>
+						</el-table-column>
+						<el-table-column label="姓名" prop="name" width=100></el-table-column>
+						<el-table-column label="性别" prop="sex" width=50></el-table-column>
+						<el-table-column label="电话" prop="mobilePhone"></el-table-column>
+						<el-table-column label="邮箱" prop="email"></el-table-column>
+						<el-table-column label="籍贯" prop="nativePlace"></el-table-column>
+						<el-table-column label="生日" prop="birthDate"></el-table-column>
+						<el-table-column fixed="right" label="操作" width=270>
+							<template slot-scope="scope">
+								<shiro:hasPermission name="party:user:delete">
+									<el-button @click="partyUser_manager_deletePartyUserInfo(scope.row)" type="text" size="small">删除</el-button>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="party:user:update">
+									<el-button @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="org:relation:insert">
+									<el-button @click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" type="text" size="small">加入组织</el-button>
+								</shiro:hasPermission>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+				</el-tab-pane>
 				</el-tabs>
 			</el-main>
 			<el-footer>
-				<el-pagination id="partyUser_manager_pagesdididi" 
-				  	layout="total, prev, pager, next, jumper" 
-	      		 	@current-change="partyUser_manager_pagerCurrentChange"
-				  	:current-page.sync="partyUser_manager_pager.pageNum"
-				  	:page-size.sync="partyUser_manager_pager.pageSize"
-				  	:total="partyUser_manager_pager.total">
-				</el-pagination>
+
 			</el-footer>
 		</el-container>
 
@@ -328,57 +352,39 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				再次打开
 			</span>
 			<div style="margin: 0 15px">
-				<el-input 
-				  	type="textarea"
-				 	:autosize="{ minRows: 10, maxRows: 15}"
-				 	placeholder="导入党员信息失败时，对表格校验的错误信息将显示在这里"
-					v-model="partyUser_manager_importPartyUserExcelErrorMsg">
+				<el-input type="textarea" :autosize="{ minRows: 10, maxRows: 15}" placeholder="导入党员信息失败时，对表格校验的错误信息将显示在这里" v-model="partyUser_manager_importPartyUserExcelErrorMsg">
 				</el-input>
 			</div>
 		</el-dialog>
 
-		<el-dialog @close="partyUser_manager_resetJoinOrgInfoForm" title="加入组织" :visible.sync="partyUser_manager_joinOrgInfoDialog" width="50%">
-			<el-form class="partyUserForm" size="small" :model="partyUser_manager_joinOrgInfoForm" status-icon :rules="partyUser_manager_joinOrgInfoRules" 
-				ref="partyUser_manager_joinOrgInfoForm" label-width="100px">
+		<el-dialog @close="partyUser_manager_resetJoinOrgInfoForm" title="加入组织" :visible.sync="partyUser_manager_joinOrgInfoDialog"
+		    width="50%">
+			<el-form class="partyUserForm" size="small" :model="partyUser_manager_joinOrgInfoForm" status-icon :rules="partyUser_manager_joinOrgInfoRules"
+			    ref="partyUser_manager_joinOrgInfoForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="24">
 						<el-form-item label="加入时间">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_joinOrgInfoForm.joinTime"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="不选默认当前时间">
-						    </el-date-picker>
+							<el-date-picker clearable v-model="partyUser_manager_joinOrgInfoForm.joinTime" type="date" value-format="yyyy-MM-dd" placeholder="不选默认当前时间">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="24">
 						<el-form-item label="选择组织" prop="orgInfoId">
-						    <el-tree :expand-on-click-node="false" 
-						    	:highlight-current="true" 
-						    	:data="partyUser_manager_joinOrgInfoForm.orgInfoTreeOfJoinOrg" 
-						    	:props="partyUser_manager_joinOrgInfoFormProps" 
-						    	@node-click="partyUser_manager_setOrgInfoIdAndQueryOrgDuty">
-						  	</el-tree>
+							<el-tree :expand-on-click-node="false" :highlight-current="true" :data="partyUser_manager_joinOrgInfoForm.orgInfoTreeOfJoinOrg"
+							    :props="partyUser_manager_joinOrgInfoFormProps" @node-click="partyUser_manager_setOrgInfoIdAndQueryOrgDuty">
+							</el-tree>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="24">
 						<el-form-item label="对应职责" prop="orgRltDutyIds">
-						    <el-tree :default-expand-all="true" 
-						    	node-key="id" 
-						    	ref="partyUser_manager_joinOrgInfoTree"
-						    	show-checkbox 
-						    	:expand-on-click-node="false" 
-						    	:highlight-current="true" 
-						    	:default-checked-keys="partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo"
-						    	:data="partyUser_manager_joinOrgInfoForm.orgDutyTreesForOrgInfo" 
-						    	:props="partyUser_manager_joinOrgInfoOrgDutyTreesForOrgInfoProps" 
-						    	:check-strictly="true" >
-						  	</el-tree>
+							<el-tree :default-expand-all="true" node-key="id" ref="partyUser_manager_joinOrgInfoTree" show-checkbox :expand-on-click-node="false"
+							    :highlight-current="true" :default-checked-keys="partyUser_manager_joinOrgInfoForm.haveDutyForThisOrgInfo" :data="partyUser_manager_joinOrgInfoForm.orgDutyTreesForOrgInfo"
+							    :props="partyUser_manager_joinOrgInfoOrgDutyTreesForOrgInfoProps" :check-strictly="true">
+							</el-tree>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -393,17 +399,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 
 		<el-dialog title="添加党员" :fullscreen="true" :visible.sync="partyUser_manager_insertPartyUserDialog">
-			<el-form class="partyUserForm" size="small" :model="partyUser_manager_insertPartyUserForm" status-icon :rules="partyUser_manager_insertPartyUserRules" 
-				ref="partyUser_manager_insertPartyUserForm" label-width="100px">
+			<el-form class="partyUserForm" size="small" :model="partyUser_manager_insertPartyUserForm" status-icon :rules="partyUser_manager_insertPartyUserRules"
+			    ref="partyUser_manager_insertPartyUserForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="24">
 						<el-form-item label="个人照片" prop="idPhoto">
-							<el-upload 
-								action="" 
-								:http-request="partyUser_manager_savePartyUserIdPhoto"
-								:before-upload="partyUser_manager_validatePartyUserIdPhoto"
-								:limit="1"
-								list-type="picture-card" >
+							<el-upload action="" :http-request="partyUser_manager_savePartyUserIdPhoto" :before-upload="partyUser_manager_validatePartyUserIdPhoto"
+							    :limit="1" list-type="picture-card">
 								<div slot="tip" class="el-upload__tip">只能上传小于500kb的图片文件（jpg、jpeg或png格式）</div>
 							</el-upload>
 						</el-form-item>
@@ -411,7 +413,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 
 				<el-row :gutter="20">
-					<el-col :span="24"><span class="partyUserTitleFont">基本信息</span></el-col>
+					<el-col :span="24">
+						<span class="partyUserTitleFont">基本信息</span>
+					</el-col>
 				</el-row>
 
 				<el-row :gutter="20">
@@ -435,13 +439,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="生日：" prop="birthDate">
-							<el-date-picker class="partyUserDate"
-								clearable
-						    	v-model="partyUser_manager_insertPartyUserForm.birthDate"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="请输入身份证号码">
-						    </el-date-picker>
+							<el-date-picker class="partyUserDate" clearable v-model="partyUser_manager_insertPartyUserForm.birthDate" type="date" value-format="yyyy-MM-dd"
+							    placeholder="请输入身份证号码">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -450,11 +450,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-col :span="6">
 						<el-form-item label="民族：" prop="nation">
 							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.nation" filterable placeholder="请选择，可搜索">
-								<el-option
-									v-for="nationType in partyUser_manager_nationTypes"
-									:key="nationType.name"
-									:label="nationType.name"
-									:value="nationType.ntId">
+								<el-option v-for="nationType in partyUser_manager_nationTypes" :key="nationType.name" :label="nationType.name" :value="nationType.ntId">
 								</el-option>
 							</el-select>
 						</el-form-item>
@@ -490,50 +486,37 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-col :span="6">
 						<el-form-item label="教育水平：" prop="education">
 							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.education" filterable placeholder="请选择">
-								<el-option
-									v-for="educationLevel in partyUser_manager_educationLevels"
-									:key="educationLevel.name"
-									:label="educationLevel.name"
-									:value="educationLevel.eduLevelEid">
+								<el-option v-for="educationLevel in partyUser_manager_educationLevels" :key="educationLevel.name" :label="educationLevel.name"
+								    :value="educationLevel.eduLevelEid">
 								</el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="学位水平：" prop="academicDegree">
-							<el-select ref="partyUser_manager_academicDegree" clearable v-model="partyUser_manager_insertPartyUserForm.academicDegree" filterable placeholder="请选择">
-								<el-option
-									v-for="academicDegreeLevel in partyUser_manager_academicDegreeLevels"
-									:key="academicDegreeLevel.name"
-									:label="academicDegreeLevel.name"
-									:value="academicDegreeLevel.adDAid">
+							<el-select ref="partyUser_manager_academicDegree" clearable v-model="partyUser_manager_insertPartyUserForm.academicDegree"
+							    filterable placeholder="请选择">
+								<el-option v-for="academicDegreeLevel in partyUser_manager_academicDegreeLevels" :key="academicDegreeLevel.name" :label="academicDegreeLevel.name"
+								    :value="academicDegreeLevel.adDAid">
 								</el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
+
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="入学时间：" prop="enrolmentTime">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_insertPartyUserForm.enrolmentTime"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="选择入学日期">
-						    </el-date-picker>
+							<el-date-picker clearable v-model="partyUser_manager_insertPartyUserForm.enrolmentTime" type="date" value-format="yyyy-MM-dd"
+							    placeholder="选择入学日期">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="毕业时间：" prop="graduationTime">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_insertPartyUserForm.graduationTime"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="选择毕业日期">
-						    </el-date-picker>
+							<el-date-picker clearable v-model="partyUser_manager_insertPartyUserForm.graduationTime" type="date" value-format="yyyy-MM-dd"
+							    placeholder="选择毕业日期">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
@@ -547,7 +530,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
+
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="文艺特长：" prop="specialityLiterature">
@@ -574,12 +557,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="家庭住址：" prop="homeAddress_pca">
-							<el-cascader clearable :props="partyUser_manager_address_prop"
-								@change="partyUser_managet_getPartyUserNativePlace"
-								v-model="partyUser_manager_insertPartyUserForm.homeAddress_pca"
-								separator="/"
-								placeholder="可搜索地点" :options="partyUser_manager_address_pca" 
-								filterable >
+							<el-cascader clearable :props="partyUser_manager_address_prop" @change="partyUser_managet_getPartyUserNativePlace" v-model="partyUser_manager_insertPartyUserForm.homeAddress_pca"
+							    separator="/" placeholder="可搜索地点" :options="partyUser_manager_address_pca" filterable>
 							</el-cascader>
 						</el-form-item>
 					</el-col>
@@ -590,11 +569,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="现居住址：" prop="presentAddress_pca">
-							<el-cascader clearable :props="partyUser_manager_address_prop"
-								v-model="partyUser_manager_insertPartyUserForm.presentAddress_pca"
-								separator="/"
-								placeholder="可搜索地点" :options="partyUser_manager_address_pca" 
-								filterable >
+							<el-cascader clearable :props="partyUser_manager_address_prop" v-model="partyUser_manager_insertPartyUserForm.presentAddress_pca"
+							    separator="/" placeholder="可搜索地点" :options="partyUser_manager_address_pca" filterable>
 							</el-cascader>
 						</el-form-item>
 					</el-col>
@@ -606,6 +582,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="6">
+						<el-form-item label="积极份子：" prop="positiveUser">
+							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.positiveUser">
+								<el-option label="是" :value="1"></el-option>
+								<el-option label="否" :value="0"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="6">
 						<el-form-item label="是否党员：" prop="isParty">
 							<el-select v-model="partyUser_manager_insertPartyUserForm.isParty">
 								<el-option label="否" :value="0"></el-option>
@@ -614,12 +598,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
+
 				<template v-if="partyUser_manager_insertPartyUserForm.isParty == 1">
 					<el-row :gutter="20">
-						<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+						<el-col :span="24">
+							<span class="partyUserTitleFont">党员信息</span>
+						</el-col>
 					</el-row>
-					
+
 					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="党员类型：" prop="type">
@@ -640,31 +626,23 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-col :span="6">
 							<el-tooltip class="item" effect="dark" content="正式党员批准时间" placement="top-start">
 								<el-form-item label="入党时间：" prop="joinDateFormal">
-									<el-date-picker
-										clearable
-								    	v-model="partyUser_manager_insertPartyUserForm.joinDateFormal"
-								    	type="date" 
-								    	value-format="yyyy-MM-dd" 
-								    	placeholder="加入或批准入党时间">
-								    </el-date-picker>
+									<el-date-picker clearable v-model="partyUser_manager_insertPartyUserForm.joinDateFormal" type="date" value-format="yyyy-MM-dd"
+									    placeholder="加入或批准入党时间">
+									</el-date-picker>
 								</el-form-item>
 							</el-tooltip>
 						</el-col>
 						<el-col :span="6">
 							<el-tooltip class="item" effect="dark" content="预备党员批准时间" placement="top-start">
 								<el-form-item label="入党时间：" prop="joinDateReserve">
-									<el-date-picker
-										clearable
-								    	v-model="partyUser_manager_insertPartyUserForm.joinDateReserve"
-								    	type="date" 
-								    	value-format="yyyy-MM-dd" 
-								    	placeholder="预备党员批准时间">
-								    </el-date-picker>
+									<el-date-picker clearable v-model="partyUser_manager_insertPartyUserForm.joinDateReserve" type="date" value-format="yyyy-MM-dd"
+									    placeholder="预备党员批准时间">
+									</el-date-picker>
 								</el-form-item>
 							</el-tooltip>
 						</el-col>
 					</el-row>
-					
+
 					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="工作单位：" prop="workUnit">
@@ -674,24 +652,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-col :span="6">
 							<el-form-item label="工作性质：" prop="workNature">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.workNature" filterable placeholder="请选择工作性质">
-									<el-option
-										v-for="workNatureType in partyUser_manager_workNatureTypes"
-										:key="workNatureType.name"
-										:label="workNatureType.name"
-										:value="workNatureType.workNatureId">
+									<el-option v-for="workNatureType in partyUser_manager_workNatureTypes" :key="workNatureType.name" :label="workNatureType.name"
+									    :value="workNatureType.workNatureId">
 									</el-option>
 								</el-select>
 							</el-form-item>
 						</el-col>
 						<el-col :span="6">
 							<el-form-item label="工作时间：" prop="joinWorkDate">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_insertPartyUserForm.joinWorkDate"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="选择开始工作时间">
-							    </el-date-picker>
+								<el-date-picker clearable v-model="partyUser_manager_insertPartyUserForm.joinWorkDate" type="date" value-format="yyyy-MM-dd"
+								    placeholder="选择开始工作时间">
+								</el-date-picker>
 							</el-form-item>
 						</el-col>
 						<el-col :span="6">
@@ -706,11 +677,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							<el-tooltip class="item" effect="dark" content="加入党支部方式" placement="top-start">
 								<el-form-item label="加入方式：" prop="joinPartyBranchType">
 									<el-select clearable v-model="partyUser_manager_insertPartyUserForm.joinPartyBranchType" filterable placeholder="请选择加入党支部方式">
-										<el-option
-											v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes"
-											:key="joinPartyBranchType.joinType"
-											:label="joinPartyBranchType.joinType"
-											:value="joinPartyBranchType.jpbtId">
+										<el-option v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes" :key="joinPartyBranchType.joinType" :label="joinPartyBranchType.joinType"
+										    :value="joinPartyBranchType.jpbtId">
 										</el-option>
 									</el-select>
 								</el-form-item>
@@ -719,11 +687,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-col :span="6">
 							<el-form-item label="一线情况：" prop="firstLineTypeName">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
-									<el-option
-										v-for="firstLineType in partyUser_manager_firstLineTypes"
-										:key="firstLineType.firstLineTypeName"
-										:label="firstLineType.firstLineTypeName"
-										:value="firstLineType.fltId">
+									<el-option v-for="firstLineType in partyUser_manager_firstLineTypes" :key="firstLineType.firstLineTypeName" :label="firstLineType.firstLineTypeName"
+									    :value="firstLineType.fltId">
 									</el-option>
 								</el-select>
 							</el-form-item>
@@ -772,8 +737,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-form-item>
 						</el-col>
 						<el-col :span="6">
-							<el-form-item label="积极党员：" prop="positiveUser">
-								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.positiveUser">
+							<el-form-item label="发展党员：" prop="developUser">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.developUser">
 									<el-option label="是" :value="1"></el-option>
 									<el-option label="否" :value="0"></el-option>
 								</el-select>
@@ -782,14 +747,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-row>
 
 					<el-row :gutter="20">
-						<el-col :span="6">
-							<el-form-item label="发展党员：" prop="developUser">
-								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.developUser">
-									<el-option label="是" :value="1"></el-option>
-									<el-option label="否" :value="0"></el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
 						<el-col :span="6">
 							<el-form-item label="失联党员：" prop="missingUser">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.missingUser">
@@ -801,17 +758,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-row>
 
 					<el-row :gutter="20">
-						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
+						<el-col :span="24">
+							<span class="partyUserTitleFont">个人简介</span>
+						</el-col>
 					</el-row>
 
 					<el-row :gutter="20">
 						<el-col :span="24">
 							<el-form-item label="简介：" prop="introduce">
-								<el-input
-								  	type="textarea"
-								 	:autosize="{ minRows: 4}"
-								 	placeholder="请输入内容"
-									v-model="partyUser_manager_insertPartyUserForm.introduce">
+								<el-input type="textarea" :autosize="{ minRows: 4}" placeholder="请输入内容" v-model="partyUser_manager_insertPartyUserForm.introduce">
 								</el-input>
 							</el-form-item>
 						</el-col>
@@ -831,21 +786,16 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 
 		<el-dialog title="修改证件照" :visible.sync="partyUser_manager_updatePartyUserIdPhotoDialog" width="30%">
-			<el-upload 
-				action="" 
-				ref="updatePartyUserIdPhoto"
-				:before-upload="partyUser_manager_validatePartyUserIdPhoto"
-				:limit="1"
-				list-type="picture-card"
-				:auto-upload="false" >
+			<el-upload action="" ref="updatePartyUserIdPhoto" :before-upload="partyUser_manager_validatePartyUserIdPhoto" :limit="1"
+			    list-type="picture-card" :auto-upload="false">
 				<div slot="tip" class="el-upload__tip">只能上传小于500kb的图片文件（jpg、jpeg或png格式）</div>
 			</el-upload>
 			<el-button size="small" type="primary" @click="partyUser_manager_updatePartyUserIdPhoto">更改照片</el-button>
 		</el-dialog>
 
 		<el-dialog title="修改党员信息" :fullscreen="true" :visible.sync="partyUser_manager_updatePartyUserDialog">
-			<el-form class="partyUserForm" size="small" :model="partyUser_manager_updatePartyUserForm" status-icon :rules="partyUser_manager_updatePartyUserRules" 
-				ref="partyUser_manager_updatePartyUserForm" label-width="100px">
+			<el-form class="partyUserForm" size="small" :model="partyUser_manager_updatePartyUserForm" status-icon :rules="partyUser_manager_updatePartyUserRules"
+			    ref="partyUser_manager_updatePartyUserForm" label-width="100px">
 				<el-row>
 					<!-- <el-form-item label="个人照片" prop="idPhoto">
 						<el-upload 
@@ -866,7 +816,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 
 				<el-row :gutter="20">
-					<el-col :span="24"><span class="partyUserTitleFont">基本信息</span></el-col>
+					<el-col :span="24">
+						<span class="partyUserTitleFont">基本信息</span>
+					</el-col>
 				</el-row>
 
 				<el-row :gutter="20">
@@ -890,14 +842,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="生日：" prop="birthDate">
-							<el-date-picker
-								:disabled="true"
-								clearable
-						    	v-model="partyUser_manager_updatePartyUserForm.birthDate"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="请输入身份证号码">
-						    </el-date-picker>
+							<el-date-picker :disabled="true" clearable v-model="partyUser_manager_updatePartyUserForm.birthDate" type="date" value-format="yyyy-MM-dd"
+							    placeholder="请输入身份证号码">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -906,11 +853,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-col :span="6">
 						<el-form-item label="民族：" prop="nation">
 							<el-select :disabled="true" clearable v-model="partyUser_manager_updatePartyUserForm.nation" filterable placeholder="请选择，可搜索">
-								<el-option
-									v-for="nationType in partyUser_manager_nationTypes"
-									:key="nationType.name"
-									:label="nationType.name"
-									:value="nationType.ntId">
+								<el-option v-for="nationType in partyUser_manager_nationTypes" :key="nationType.name" :label="nationType.name" :value="nationType.ntId">
 								</el-option>
 							</el-select>
 						</el-form-item>
@@ -946,50 +889,37 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-col :span="6">
 						<el-form-item label="教育水平：" prop="education">
 							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.education" filterable placeholder="请选择">
-								<el-option
-									v-for="educationLevel in partyUser_manager_educationLevels"
-									:key="educationLevel.name"
-									:label="educationLevel.name"
-									:value="educationLevel.eduLevelEid">
+								<el-option v-for="educationLevel in partyUser_manager_educationLevels" :key="educationLevel.name" :label="educationLevel.name"
+								    :value="educationLevel.eduLevelEid">
 								</el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="学位水平：" prop="academicDegree">
-							<el-select ref="partyUser_manager_academicDegree" clearable v-model="partyUser_manager_updatePartyUserForm.academicDegree" filterable placeholder="请选择">
-								<el-option
-									v-for="academicDegreeLevel in partyUser_manager_academicDegreeLevels"
-									:key="academicDegreeLevel.name"
-									:label="academicDegreeLevel.name"
-									:value="academicDegreeLevel.adDAid">
+							<el-select ref="partyUser_manager_academicDegree" clearable v-model="partyUser_manager_updatePartyUserForm.academicDegree"
+							    filterable placeholder="请选择">
+								<el-option v-for="academicDegreeLevel in partyUser_manager_academicDegreeLevels" :key="academicDegreeLevel.name" :label="academicDegreeLevel.name"
+								    :value="academicDegreeLevel.adDAid">
 								</el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
+
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="入学时间：" prop="enrolmentTime">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_updatePartyUserForm.enrolmentTime"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="选择入学日期">
-						    </el-date-picker>
+							<el-date-picker clearable v-model="partyUser_manager_updatePartyUserForm.enrolmentTime" type="date" value-format="yyyy-MM-dd"
+							    placeholder="选择入学日期">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="毕业时间：" prop="graduationTime">
-							<el-date-picker
-								clearable
-						    	v-model="partyUser_manager_updatePartyUserForm.graduationTime"
-						    	type="date" 
-						    	value-format="yyyy-MM-dd" 
-						    	placeholder="选择毕业日期">
-						    </el-date-picker>
+							<el-date-picker clearable v-model="partyUser_manager_updatePartyUserForm.graduationTime" type="date" value-format="yyyy-MM-dd"
+							    placeholder="选择毕业日期">
+							</el-date-picker>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
@@ -1003,7 +933,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
+
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="文艺特长：" prop="specialityLiterature">
@@ -1030,12 +960,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="家庭住址：" prop="homeAddress_pca">
-							<el-cascader :disabled="true" clearable :props="partyUser_manager_address_prop"
-								@change="partyUser_managet_getPartyUserNativePlace"
-								v-model="partyUser_manager_updatePartyUserForm.homeAddress_pca"
-								separator="/"
-								placeholder="可搜索地点" :options="partyUser_manager_address_pca" 
-								filterable >
+							<el-cascader :disabled="true" clearable :props="partyUser_manager_address_prop" @change="partyUser_managet_getPartyUserNativePlace"
+							    v-model="partyUser_manager_updatePartyUserForm.homeAddress_pca" separator="/" placeholder="可搜索地点" :options="partyUser_manager_address_pca"
+							    filterable>
 							</el-cascader>
 						</el-form-item>
 					</el-col>
@@ -1046,11 +973,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="现居住址：" prop="presentAddress_pca">
-							<el-cascader clearable :props="partyUser_manager_address_prop"
-								v-model="partyUser_manager_updatePartyUserForm.presentAddress_pca"
-								separator="/"
-								placeholder="可搜索地点" :options="partyUser_manager_address_pca" 
-								filterable >
+							<el-cascader clearable :props="partyUser_manager_address_prop" v-model="partyUser_manager_updatePartyUserForm.presentAddress_pca"
+							    separator="/" placeholder="可搜索地点" :options="partyUser_manager_address_pca" filterable>
 							</el-cascader>
 						</el-form-item>
 					</el-col>
@@ -1062,6 +986,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="6">
+						<el-form-item label="积极份子：" prop="positiveUser">
+							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.positiveUser">
+								<el-option label="是" :value="1"></el-option>
+								<el-option label="否" :value="0"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="6">
 						<el-form-item label="是否党员：" prop="isParty">
 							<el-select v-model="partyUser_manager_updatePartyUserForm.isParty">
 								<el-option label="否" :value="0"></el-option>
@@ -1070,12 +1002,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-form-item>
 					</el-col>
 				</el-row>
-				
+
 				<template v-if="partyUser_manager_updatePartyUserForm.isParty == 1">
 					<el-row :gutter="20">
-						<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+						<el-col :span="24">
+							<span class="partyUserTitleFont">党员信息</span>
+						</el-col>
 					</el-row>
-					
+
 					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="党员类型：" prop="type">
@@ -1096,31 +1030,23 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-col :span="6">
 							<el-tooltip class="item" effect="dark" content="正式党员批准时间" placement="top-start">
 								<el-form-item label="入党时间：" prop="joinDateFormal">
-									<el-date-picker
-										clearable
-								    	v-model="partyUser_manager_updatePartyUserForm.joinDateFormal"
-								    	type="date" 
-								    	value-format="yyyy-MM-dd" 
-								    	placeholder="加入或批准入党时间">
-								    </el-date-picker>
+									<el-date-picker clearable v-model="partyUser_manager_updatePartyUserForm.joinDateFormal" type="date" value-format="yyyy-MM-dd"
+									    placeholder="加入或批准入党时间">
+									</el-date-picker>
 								</el-form-item>
 							</el-tooltip>
 						</el-col>
 						<el-col :span="6">
 							<el-tooltip class="item" effect="dark" content="预备党员批准时间" placement="top-start">
 								<el-form-item label="入党时间：" prop="joinDateReserve">
-									<el-date-picker
-										clearable
-								    	v-model="partyUser_manager_updatePartyUserForm.joinDateReserve"
-								    	type="date" 
-								    	value-format="yyyy-MM-dd" 
-								    	placeholder="预备党员批准时间">
-								    </el-date-picker>
+									<el-date-picker clearable v-model="partyUser_manager_updatePartyUserForm.joinDateReserve" type="date" value-format="yyyy-MM-dd"
+									    placeholder="预备党员批准时间">
+									</el-date-picker>
 								</el-form-item>
 							</el-tooltip>
 						</el-col>
 					</el-row>
-					
+
 					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="工作单位：" prop="workUnit">
@@ -1130,24 +1056,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-col :span="6">
 							<el-form-item label="工作性质：" prop="workNature">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.workNature" filterable placeholder="请选择工作性质">
-									<el-option
-										v-for="workNatureType in partyUser_manager_workNatureTypes"
-										:key="workNatureType.name"
-										:label="workNatureType.name"
-										:value="workNatureType.workNatureId">
+									<el-option v-for="workNatureType in partyUser_manager_workNatureTypes" :key="workNatureType.name" :label="workNatureType.name"
+									    :value="workNatureType.workNatureId">
 									</el-option>
 								</el-select>
 							</el-form-item>
 						</el-col>
 						<el-col :span="6">
 							<el-form-item label="工作时间：" prop="joinWorkDate">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_updatePartyUserForm.joinWorkDate"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="选择开始工作时间">
-							    </el-date-picker>
+								<el-date-picker clearable v-model="partyUser_manager_updatePartyUserForm.joinWorkDate" type="date" value-format="yyyy-MM-dd"
+								    placeholder="选择开始工作时间">
+								</el-date-picker>
 							</el-form-item>
 						</el-col>
 						<el-col :span="6">
@@ -1162,11 +1081,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							<el-tooltip class="item" effect="dark" content="加入党支部方式" placement="top-start">
 								<el-form-item label="加入方式：" prop="joinPartyBranchType">
 									<el-select clearable v-model="partyUser_manager_updatePartyUserForm.joinPartyBranchType" filterable placeholder="请选择加入党支部方式">
-										<el-option
-											v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes"
-											:key="joinPartyBranchType.joinType"
-											:label="joinPartyBranchType.joinType"
-											:value="joinPartyBranchType.jpbtId">
+										<el-option v-for="joinPartyBranchType in partyUser_manager_joinPartyBranchTypes" :key="joinPartyBranchType.joinType" :label="joinPartyBranchType.joinType"
+										    :value="joinPartyBranchType.jpbtId">
 										</el-option>
 									</el-select>
 								</el-form-item>
@@ -1175,11 +1091,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-col :span="6">
 							<el-form-item label="一线情况：" prop="firstLineTypeName">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
-									<el-option
-										v-for="firstLineType in partyUser_manager_firstLineTypes"
-										:key="firstLineType.firstLineTypeName"
-										:label="firstLineType.firstLineTypeName"
-										:value="firstLineType.fltId">
+									<el-option v-for="firstLineType in partyUser_manager_firstLineTypes" :key="firstLineType.firstLineTypeName" :label="firstLineType.firstLineTypeName"
+									    :value="firstLineType.fltId">
 									</el-option>
 								</el-select>
 							</el-form-item>
@@ -1228,8 +1141,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-form-item>
 						</el-col>
 						<el-col :span="6">
-							<el-form-item label="积极党员：" prop="positiveUser">
-								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.positiveUser">
+							<el-form-item label="发展党员：" prop="developUser">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.developUser">
 									<el-option label="是" :value="1"></el-option>
 									<el-option label="否" :value="0"></el-option>
 								</el-select>
@@ -1238,14 +1151,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-row>
 
 					<el-row :gutter="20">
-						<el-col :span="6">
-							<el-form-item label="发展党员：" prop="developUser">
-								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.developUser">
-									<el-option label="是" :value="1"></el-option>
-									<el-option label="否" :value="0"></el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
 						<el-col :span="6">
 							<el-form-item label="失联党员：" prop="missingUser">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.missingUser">
@@ -1257,17 +1162,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-row>
 
 					<el-row :gutter="20">
-						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
+						<el-col :span="24">
+							<span class="partyUserTitleFont">个人简介</span>
+						</el-col>
 					</el-row>
 
 					<el-row :gutter="20">
 						<el-col :span="24">
 							<el-form-item label="简介：" prop="introduce">
-								<el-input
-								  	type="textarea"
-								 	:autosize="{ minRows: 4}"
-								 	placeholder="请输入内容"
-									v-model="partyUser_manager_updatePartyUserForm.introduce">
+								<el-input type="textarea" :autosize="{ minRows: 4}" placeholder="请输入内容" v-model="partyUser_manager_updatePartyUserForm.introduce">
 								</el-input>
 							</el-form-item>
 						</el-col>
@@ -1287,6 +1190,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			dis_h_v:false,
 			partyUser_manager_importPartyUserExcelErrorMsg: null,	/*导入党员校验错误信息*/
 			partyUser_manager_joinOrgInfoForm: {
 				orgInfoTreeOfJoinOrg: [],

@@ -85,11 +85,11 @@
             </el-aside>
             <el-main>
                 <!--主体-->
-                <el-tabs class="mytab noselect" type="border-card" v-model="tab_index" closable @tab-remove="removeTab">
-                    <el-tab-pane class="full" v-for="(item, index) in openTabDatas" :key="item.menuId" :name="item.menuId +''">
+                <el-tabs class="mytab noselect" type="border-card" v-model="tab_index" @tab-remove="removeTab">
+                    <el-tab-pane class="full" v-for="(item, index) in openTabDatas" :key="item.menuId" :name="item.menuId +''" :closable="item.closable" >
                         <span slot="label">
                             <i :class="item.icon"></i> {{item.name}}</span>
-                        <iframe v-bind:src="item.url"></iframe>
+                        <iframe :id="item.menuId +'_iframe'" v-bind:src="item.url"></iframe>
                     </el-tab-pane>
                 </el-tabs>
                 <!--主体-->
@@ -113,8 +113,19 @@
     </el-container>
 </body>
 </html>
-
+<script>
+$(function(){
+	//检测当前页面是否和顶层一致
+	if(!checkLocationSame()){
+		top.location.href = window.location.href;
+	}
+});
+</script>
 <script type="module">
+    /**增加标签{menuId:'',name:'',url:'',closable:false}**/
+    window.addTab = function(target){
+        appInstince.addTab(target);
+    }
     var title_theme = '#'+('<shiro:principal property="theme"/>' || '20a0ff');
     var appInstince = new Vue({
         el: '#app',
@@ -151,6 +162,9 @@
             this.loadSetting();
         },
         methods: {
+            tabRemove(){
+                console.log(arguments)
+            },
             //
             initWS() {
                 //获取userid
@@ -210,6 +224,7 @@
             },
             //增加标签{menuId:'',name:'',url:''}
             addTab(target) {
+				if(target.closable !== false)target.closable = true;
                 var have = false;
                 this.openTabDatas.forEach((tab, index) => {
                     if (tab.menuId === target.menuId) {
@@ -231,6 +246,14 @@
             },
             //移除标签
             removeTab(target_index) {
+                let ifid = target_index+'_iframe';
+                console.debug('close ',ifid);
+                let callback = $('#'+ifid)[0].contentWindow.onclose;//页面的关闭回调函数
+                if(callback && !callback()){
+                    console.debug('不关闭标签');
+                    return;
+                }
+
                 let tabs = this.openTabDatas;
                 let action_index = this.tab_index;
                 this.openTabDatas.forEach((tab, index) => {
@@ -263,7 +286,10 @@
             loadSetting(){
                 let ck = this.getSettingKey();
                 let str = getCookie(ck);
-                if(!str)return;
+                if(!str || JSON.parse(str).openTabDatas.length == 0) {
+                    this.addTab({menuId: 0, name: '工作台', url: '/view/bench.jsp',closable:false});
+                    return;
+                }
                 let obj = JSON.parse(str);
                 this._openHideMenu(obj.showMenu);
                 this.openTabDatas = obj.openTabDatas || [];

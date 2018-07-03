@@ -11,6 +11,8 @@ import com.alibaba.fastjson.JSON;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.incision.sola.service.impl.SolaProgramServiceImpl;
+import com.zltel.broadcast.message.bean.Message;
+import com.zltel.broadcast.message.service.MessageService;
 import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.dao.PublishDao;
 import com.zltel.broadcast.publish.service.PublishService;
@@ -29,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * PublishServiceImpl class
  *
- * @author Touss
+ * @author ToussmoreEditCommit
  * @date 2018/5/7
  */
 @Service
@@ -45,6 +47,8 @@ public class PublishServiceImpl implements PublishService {
     private PublishDao publishDao;
     @Autowired
     private SolaProgramService solaProgramService;
+    @Autowired
+    private MessageService messageService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
@@ -180,7 +184,8 @@ public class PublishServiceImpl implements PublishService {
                     // 审核还在继续
                     verifyCompleted = false;
                     // 顺位审核
-                    // TODO: 2018/5/13 发出审核通知
+                    // TODO: 2018/5/13 添加审核待办
+                    messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) exu.get("user_id"), contentId);
                     break;
                 }
             }
@@ -197,13 +202,15 @@ public class PublishServiceImpl implements PublishService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public void changeProcess(int contentId, int processItemId) {
-        Map<String, Object> content = new HashMap<String, Object>();
+        Map<String, Object> content = getContent(contentId);
         Date update_date = new Date();
         Map<String, Object> queryParam = null;
         Map<Integer, List<Map<String, Object>>> processState = getProcessState(contentId);
         if (Constant.MORE_EDIT == processItemId) {
             if (processState.get(Constant.VERIFY) == null) {
                 // 通知所有编辑人员
+                // TODO: 2018/7/2 添加待办
+                messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, Message.USER_ALL, contentId);
             } else {
                 // 回退清除提交标记
                 List<Map<String, Object>> meUsers = getMoreEditUser(contentId);
@@ -213,6 +220,8 @@ public class PublishServiceImpl implements PublishService {
                     meUser.put("update_date", update_date);
                     queryParam.put("more_edit_user_id", meUser.get("more_edit_user_id"));
                     simpleDao.update("publish_more_edit_user", meUser, queryParam);
+                    // TODO: 2018/7/2 添加待办
+                    messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, (Integer) meUser.get("user_id"), contentId);
                 }
             }
 
@@ -220,25 +229,31 @@ public class PublishServiceImpl implements PublishService {
             // 重置状态
             List<Map<String, Object>> examineUser = getExamineUser(contentId);
             queryParam = new HashMap<String, Object>();
-            for (Map<String, Object> exu : examineUser) {
-                exu.put("state",
-                        processState.get(Constant.VERIFY) == null ? Constant.VERIFY_NOT_START : Constant.VERIFY_ONCE);
+            boolean isFirst = true;
+            for(int i=0; i<examineUser.size(); i++) {
+                Map<String, Object> exu = examineUser.get(i);
+                exu.put("state", processState.get(Constant.VERIFY) == null ? Constant.VERIFY_NOT_START : Constant.VERIFY_ONCE);
+                //一天时间审核
+                exu.put("deadline", new Date(System.currentTimeMillis() + (i+1) * 24 * 60 * 60 * 1000));
                 exu.put("update_date", update_date);
                 queryParam.put("examine_user_id", exu.get("examine_user_id"));
                 simpleDao.update("publish_examine_user", exu, queryParam);
+                // 通知顺序一
+                messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) content.get("user_id"), contentId);
             }
-            // 通知顺序一
+
         } else if (Constant.PUBLISHABLE == processItemId) {
             // 通知发起人
+            // TODO: 2018/7/2 添加待办
+            messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待发布", null, (Integer) content.get("user_id"), contentId);
         }
         // 更改状态
+        content = new HashMap<>();
         content.put("process_item_id", processItemId);
         content.put("update_date", update_date);
         queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         simpleDao.update("publish_content", content, queryParam);
-
-        // TODO: 2018/5/13 根据状态发出通知
     }
 
     /**
@@ -352,21 +367,20 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void verify(SysUser user, boolean isAdopt, String opinion, int contentId, int contentTypeId) {
+    public void verify(SysUser user, int operate, String opinion, int contentId, int contentTypeId) {
         Date add_date = new Date();
         Map<String, Object> examineUser = new HashMap<String, Object>();
-        if (isAdopt) {
+        boolean hasNext = true;
+        if (Constant.VERIFY_OPERATE_APPROVED == operate) {
             // 审核通过
             // 添加状态
-            addProcessState(contentId, user.getUserId(), Constant.VERIFY,
-                    Constant.MSG_CONTENT_VERIFY_PASS + user.getUsername(), null);
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_PASS + user.getUsername(), null);
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_PASS);
-        } else {
+        } else if(Constant.VERIFY_OPERATE_NOT_APPROVED == operate) {
             // 审核未通过
             // 添加状态
-            addProcessState(contentId, user.getUserId(), Constant.VERIFY,
-                    Constant.MSG_CONTENT_VERIFY_NOT_PASS + user.getUsername(), opinion);
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY,Constant.MSG_CONTENT_VERIFY_NOT_PASS + user.getUsername(), opinion);
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_NOT_PASS);
             // 返回到上一个状态
@@ -382,18 +396,38 @@ public class PublishServiceImpl implements PublishService {
                     } else {
                         // 废弃
                         changeProcess(contentId, Constant.DISCARD);
+                        hasNext = false;
                     }
 
                 }
             }
+        } else {
+            //放弃审核
+            // 添加状态
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_ABSTAIN + user.getUsername(), null);
+            // 更新审核人状态
+            examineUser.put("state", Constant.VERIFY_ABSTAIN);
+            List<Map<String, Object>> examineUsers = getExamineUser(contentId);
+            if(examineUsers.get(examineUsers.size()-1).get("user_id").equals(user.getUserId())) {
+                // 废弃
+                changeProcess(contentId, Constant.DISCARD);
+                hasNext = false;
+            }
+
         }
+        //消息处理
+        messageService.handleMessage(user, contentId);
+
         Map<String, Object> queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         queryParam.put("user_id", user.getUserId());
         examineUser.put("update_date", add_date);
         simpleDao.update("publish_examine_user", examineUser, queryParam);
         // 下一步
-        doNext(contentId);
+        if(hasNext) {
+            doNext(contentId);
+        }
+
     }
 
     @Override
@@ -434,6 +468,8 @@ public class PublishServiceImpl implements PublishService {
         // 添加状态记录
         addProcessState(contentId, user.getUserId(), Constant.MORE_EDIT,
                 Constant.MSG_CONTENT_MORE_EDIT_COMMIT + user.getUsername(), null);
+        //消息处理
+        messageService.handleMessage(user, contentId);
         // 下一步
         doNext(contentId);
     }
@@ -614,6 +650,7 @@ public class PublishServiceImpl implements PublishService {
                                     operate.put("verify", true);
                                 }
                             }
+                            break;
                         }
                     }
                 }
@@ -688,6 +725,9 @@ public class PublishServiceImpl implements PublishService {
         simpleDao.update("publish_content", updateData, queryParam);
         changeProcess(contentId, Constant.PUBLISHING);
         addProcessState(contentId, user.getUserId(), Constant.PUBLISHING, Constant.MSG_CONTENT_PUBLISHING + user.getUsername(), null);
+
+        //消息处理
+        messageService.handleMessage(user, contentId);
     }
 
     @Override
@@ -726,5 +766,62 @@ public class PublishServiceImpl implements PublishService {
     @Override
     public List<Map<String, Object>> queryPublishTerminal(int contentId) {
         return publishDao.queryPublishTerminal(contentId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void verifyTimeout() {
+        List<Map<String, Object>> users = publishDao.queryVerifyingUser();
+        Map<Integer, Object> contentVerifyingUsers = new HashMap<>();
+        int contentId;
+        List<Map<String, Object>> list;
+        //分组
+        for(Map<String, Object> user : users) {
+            contentId = (int) user.get("content_id");
+            list = (List<Map<String, Object>>) contentVerifyingUsers.get(contentId);
+            if(list == null) {
+                list = new ArrayList<>();
+                contentVerifyingUsers.put(contentId, list);
+            }
+            list.add(user);
+        }
+        //检查超时
+        Map<String, Object> user, state, queryParam;
+        Date deadline;
+        for(Integer key : contentVerifyingUsers.keySet()) {
+            list = (List<Map<String, Object>>) contentVerifyingUsers.get(key);
+            for(int i=0; i<list.size(); i++) {
+                user = list.get(i);
+                deadline = (Date) user.get("deadline");
+                if(deadline == null) {
+                    continue;
+                }
+                if(deadline.getTime() < System.currentTimeMillis()) {
+                    //超时
+                    state = new HashMap<>();
+                    state.put("state", Constant.VERIFY_ABSTAIN);
+                    queryParam = new HashMap<>();
+                    queryParam.put("examine_user_id", user.get("examine_user_id"));
+                    queryParam.put("update_date", user.get("update_date"));
+                    simpleDao.update("publish_examine_user", state, queryParam);
+                    addProcessState(key, (Integer) user.get("user_id"), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_ABSTAIN + user.get("username"), null);
+                    log.info("审核超时, 自动放弃审核.");
+                    if(list.size() <= 1) {
+                        //没有后续审核人, 内容废止
+                        Map<String, Object> content = publishDao.get(key);
+                        state = new HashMap<>();
+                        state.put("process_item_id", Constant.DISCARD);
+                        queryParam = new HashMap<>();
+                        queryParam.put("content_id", content.get("content_id"));
+                        queryParam.put("update_date", content.get("update_date"));
+                        simpleDao.update("publish_content", state, queryParam);
+                        addProcessState(key, (Integer) user.get("user_id"), Constant.VERIFY, Constant.MSG_CONTENT_DISCARD + user.get("username"), null);
+                        log.info("审核超时且无其他审核人, 内容废弃处理.");
+                    }
+
+
+                }
+            }
+        }
     }
 }

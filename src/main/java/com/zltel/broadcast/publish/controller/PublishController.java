@@ -141,11 +141,11 @@ public class PublishController extends BaseController{
 
     @RequestMapping(value = "/process/verify/{id}")
     @ResponseBody
-    public R verify(@PathVariable("id") int id, @RequestParam("type") int type, @RequestParam("opinion") String opinion, @RequestParam("isAdopt") boolean isAdopt) {
+    public R verify(@PathVariable("id") int id, @RequestParam("type") int type, @RequestParam("opinion") String opinion, @RequestParam("isAdopt") int operate) {
         R r;
         try {
             r = R.ok();
-            publishService.verify(getSysUser(), isAdopt, opinion, id, type);
+            publishService.verify(getSysUser(), operate, opinion, id, type);
         } catch (Exception e) {
             logout.error(e.getMessage(),e);
             r = R.error(e.toString());

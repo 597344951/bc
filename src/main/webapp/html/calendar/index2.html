@@ -1,0 +1,353 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- 引入样式 -->
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+
+    <!-- 先引入 Vue -->
+    <!--<script src="https://unpkg.com/vue/dist/vue.js"></script>-->
+    <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+    <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+    <!-- 引入组件库 -->
+    <!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+
+    <script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js" charset="utf-8"></script>
+
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+
+    <script src="https://cdn.bootcss.com/Mock.js/1.0.0/mock.js"></script>
+    <script src="/assets/debug/mock-url-proxy-calendar.js"></script>
+
+
+    <!--font-awsome-->
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!--ueditor-->
+    <script type="text/javascript" charset="utf-8" src="/assets/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/assets/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/assets/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+    <link href="./calendar.css" rel="stylesheet" charset="utf-8">
+    <script src="/assets/js/require.local.js"></script>
+    <script type="module" src="/components/main.js"></script>
+    <script type="module" src="/assets/js/vue-common.js"></script>
+    <link href="/assets/css/module-main.css" rel="stylesheet" charset="utf-8">
+    <link href="/assets/css/activity-group.css" rel="stylesheet" charset="utf-8">
+
+    <style>
+        .card-item {
+            height: 200px;
+            width: 340px;
+            margin: 1% 1%;
+            line-height: 36px;
+        }
+
+        .card-item:hover {
+            width: 340px;
+            box-shadow: 2px 2px 18px 2px #d4d4d4;
+        }
+
+        .suggest {
+            margin-bottom: 100px;
+        }
+
+        .festival-container {
+            margin: 10px;
+        }
+
+        .theme-festival .main {
+            width: 100%;
+            display: flex;
+            margin-top: 5px;
+        }
+
+        .theme-festival .suggest-type {
+            width: 100px;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .theme-festival .suggest-type>span {
+            font-size: 16px;
+        }
+
+        .theme-festival .main-content {
+            overflow: auto;
+            width: 100%;
+        }
+
+        .el-card__body .content {
+            width: 100%;
+            height: 100%;
+            background-image: url(/assets/img/1.png);
+            padding: 30px;
+            background-size: 100% 100%;
+            position: relative;
+        }
+
+        .el-card__body .content .shadow {
+            background-color: rgba(255, 255, 255, .7);
+            overflow: auto;
+            position: absolute;
+            left: 15px;
+            top: 32px;
+            width: 305px;
+            height: 143px;
+            padding-left: 15px;
+            padding-top: 12px;
+            border-radius: 6px;
+        }
+
+        .content .item {
+            margin-top: 5px;
+        }
+
+        .content .item>:nth-child(1) {
+            font-size: 15px;
+            width: 40%;
+            float: left;
+        }
+
+        .content .item>:nth-child(1)>i {
+            margin-right: 10px;
+        }
+
+        .content .item>:nth-child(2) {
+            font-size: 15px;
+            width: 60%;
+            float: left;
+        }
+
+        .el-card__body .bg-1 {
+            background-image: url(/assets/img/1.png);
+        }
+
+        .el-card__body .bg-2 {
+            background-image: url(/assets/img/2.png);
+        }
+
+        .el-card__body .bg-3 {
+            background-image: url(/assets/img/3.png);
+        }
+
+        .theme-festival {
+            width: 100%;
+            overflow: auto;
+            margin: 30px 0;
+            box-shadow: 1px 1px 1px 1px #c0c4cc;
+            border-radius: 20px;
+        }
+
+        .theme-festival .festival-title {
+            font-size: 17px;
+            font-weight: bolder;
+        }
+
+        .theme-festival>.shadow {
+            background-color: rgba(255, 255, 255, .90);
+            padding: 20px 0px 20px 20px;
+        }
+
+        .theme-jdj {
+            background-image: url(/assets/img/jdj1.png);
+            background-size: 100% auto;
+        }
+
+
+        .theme-jdj .festival-title {
+            color: black;
+        }
+
+        .theme-jdj .suggest-type {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-row style="display:flex;">
+            <el-col :span="4" style="min-width:260px;">
+                <div class="plane-chose">
+                    <h2>计划日历</h2>
+                </div>
+                <div>
+                    <vue-calendar :mark-date="markDate" v-on:changemonth="changeMonth"></vue-calendar>
+                </div>
+                <div class="plane-chose">
+                    <h3>展示计划类型</h3>
+                    <div class="item">
+                        <el-checkbox>历史年度计划</el-checkbox>
+                    </div>
+
+                    <div class="item">
+                        <el-checkbox>临时计划</el-checkbox>
+                    </div>
+                </div>
+                <div class="plane-chose">
+                    <h3>计划优先级</h3>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="紧急事件" placement="right">
+                                <span class="emergency-level-label">1</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="高优先等级" placement="right">
+                                <span class="high-level-label">2</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="普通优先等级" placement="right">
+                                <span class="normal-level-label">3</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>
+                            <el-tooltip class="item" effect="dark" content="低优先等级" placement="right">
+                                <span class="low-level-label">4</span>
+                            </el-tooltip>
+                        </el-checkbox>
+                    </div>
+                </div>
+                <div class="plane-chose">
+                    <h3>计划状态</h3>
+                    <div class="item">
+                        <el-checkbox>可创建</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>正在公示</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>正在进行</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>已结束</el-checkbox>
+                    </div>
+                    <div class="item">
+                        <el-checkbox>已关闭</el-checkbox>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="20">
+                <el-tabs v-model="activeMonth">
+                    <el-tab-pane v-for="sug in suggests" :label="sug.title" :name="sug.title">
+                        <div>
+                            <div class="festival-container">
+                                <h3>{{sug.title}}</h3>
+                                <template v-for=" data in sug.datas">
+                                    <div class="theme-festival theme-jdj">
+                                        <div class="shadow">
+                                            <span class="festival-title"> {{data.title}} ({{data.start}})</span>
+                                            <div class="main">
+                                                <div class="suggest-type">
+                                                    <span>主推活动</span>
+                                                </div>
+                                                <div class="main-content">
+                                                    <template v-for=" data in getActivities(data)">
+                                                        <div class="box" :class="data.className">
+                                                            <div class="box-up">
+                                                                <h3>
+                                                                    <i></i>{{data.title}}</h3>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+
+                                                            </div>
+                                                            <div class="box-down">
+                                                                <p>浙江省杭州市党委</p>
+                                                                <p>余杭区仓前街道党支部</p>
+                                                                <p></p>
+                                                            </div>
+                                                        </div>
+
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="main">
+                                                <div class="suggest-type">
+                                                    <span>辅推活动</span>
+                                                </div>
+                                                <div class="main-content">
+                                                    <template v-for=" data in getActivities(data)">
+                                                        <div class="box" :class="data.className">
+                                                            <div class="box-up">
+                                                                <h3>
+                                                                    <i></i>{{data.title}}</h3>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+                                                                <p>
+                                                                    <i></i>
+                                                                    <span class="title">发起人</span>
+                                                                    <span class="text">develop</span>
+                                                                </p>
+
+                                                            </div>
+                                                            <div class="box-down">
+                                                                <p>浙江省杭州市党委</p>
+                                                                <p>余杭区仓前街道党支部</p>
+                                                                <p></p>
+                                                            </div>
+                                                        </div>
+
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-col>
+        </el-row>
+    </div>
+</body>
+<script type="module" src="/html/calendar/index2.js"></script>
+
+</html>

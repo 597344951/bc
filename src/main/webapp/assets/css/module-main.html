@@ -24,13 +24,16 @@
 			padding: 10px;
 			background-color: #e4e7ed;
 		}
+		body{
+			padding: 0 20%;
+		}
 	</style>
 </head>
 
 <body>
 	<div id="app">
 		<h1>自定义模块样式</h1>
-		<h2>卡片布局</h2>
+		<h3>卡片布局</h3>
 		<div class="div-container">
 			<el-card class="card-item" :body-style="{ padding: '0px' }">
 				<div class="title">
@@ -73,7 +76,7 @@
 			</el-card>
 		</div>
 
-		<h2>大展示表格</h2>
+		<h3>大展示表格</h3>
 		<div class="div-container">
 			<div style="width: 500px;">
 				<table class="dis-info-big">
@@ -117,6 +120,22 @@
 				</table>
 			</div>
 		</div>
+
+		<h3>标签页 内页面关闭前检测</h3>
+		<p>多标签内页面关闭前，会调用其内部页面的onclose函数来确定是否能顺利关闭，如果返回false则不关闭标签。</p>
+		<p>避免误关闭标签</p>
+		<pre>
+//在子页面定义onclose方法
+window.onclose = function () {
+  //检测 是否符合关闭条件, 需要关闭返回true,否则false
+  var close = true;
+  if(!close){
+    return confirm('有未保存数据，是否关闭？');
+  }
+  return true;
+}
+		</pre>
+		 
 	</div>
 </body>
 <script>

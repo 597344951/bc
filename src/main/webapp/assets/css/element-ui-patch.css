@@ -23,3 +23,17 @@
 .no-title>.el-dialog__body {
 	padding: 5px 20px;
 }
+
+.el-button--primary>i {
+    color: white;
+}
+
+.el-button--primary>span>i {
+    color: white;
+}
+
+.el-button--small [class^=el-icon-]{
+	font-size: 12px;
+	margin:0;
+	width: auto;
+}

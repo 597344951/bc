@@ -1,4 +1,6 @@
+/**vue-calendar 样式**/
 
+@import url("/components/vue-calendar/vue-calendar.css");
 /**start of 卡片布局容器 **/
 
 .card-item {
@@ -27,8 +29,8 @@
 	font-weight: bolder;
 }
 
-.card-item .title .right{
-	float:right;
+.card-item .title .right {
+	float: right;
 }
 
 /**卡片预览图**/
@@ -108,6 +110,7 @@
 .dis-info-big>tbody>tr>td:nth-child(1) {
 	max-width: 100px;
 	width: 30%;
+	font-weight: bold;
 }
 
 .dis-info-big>tbody>tr>td:nth-child(2) {
@@ -121,16 +124,28 @@
 	padding: 5px;
 }
 
-
-.normal-menu-item{
-	cursor: auto !important;
-    opacity: 1 !important;
+.nav-menu {
+	margin-top: -5px;
 }
 
-.normal-menu-item>.el-pagination{
+.normal-menu-item {
+	cursor: auto !important;
+	opacity: 1 !important;
+}
+
+.normal-menu-item>.el-pagination {
 	margin-top: 15px;
 }
 
-.el-button--primary>i {
-    color: white;
+/**水平卡片**/
+
+.card-item-vertical {
+	width: 340px !important;
+	height: 200px !important;
+}
+
+/**垂直卡片**/
+
+.card-item-horizontal {
+
 }

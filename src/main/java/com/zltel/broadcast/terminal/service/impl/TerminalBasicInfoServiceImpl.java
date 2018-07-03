@@ -155,13 +155,25 @@ public class TerminalBasicInfoServiceImpl implements TerminalBasicInfoService {
     public R queryMapInfo() {
         List<TerminalBasicInfo> tbi = tbm.queryAll(); 
         List<MapInfo> m=new ArrayList<>();
+       
         if (tbi != null && tbi.size() > 0) { // 是否查询到数据
             for (TerminalBasicInfo t : tbi) {
+                if(null==t.getGis()||"".equals(t.getGis())) 
+                    continue;
+                List<String> c=new ArrayList<>();
                 MapInfo mi=new MapInfo();
-                mi.setTitle(t.getName()+"<span style=\"font-size:11px;color:#F00;\">"+t.getAddr()+"</span>");
-                mi.setIcon("https://vdata.amap.com/icons/b18/1/2.png");
-                mi.setPosition(t.getGis());
-                mi.setContent1("ip地址:"+t.getIp());
+                String online=t.getOnline().equals("1")?"在线":"离线";
+                String icon=t.getOnline().equals("1")?"/assets/icons/1.png":"/assets/icons/2.png";
+                mi.setTitle(t.getName()+"<span style=\"font-size:11px;color:#F00;\">"+online+"</span>");
+                mi.setIcon(icon);
+                mi.setPosition(t.getGis().split(","));
+                c.add("终端地址:"+t.getAddr());
+                c.add("屏幕尺寸:"+t.getSize());
+                c.add("屏幕分辨率:"+t.getRatio());
+                c.add("屏幕方向:"+t.getRev());
+                c.add("屏幕类型:"+t.getTyp());
+                c.add("联系电话"+t.getTel());
+                mi.setContent(c);
                 m.add(mi);
             }
             return R.ok().setData(m).setMsg("查询地图信息成功");

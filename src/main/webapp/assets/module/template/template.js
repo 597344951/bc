@@ -1,6 +1,24 @@
+window.onclose = function () {
+  let tp = appInstince.tp.data;
+  if(tp.title || _editor.hasContents()){
+    return confirm('有未保存数据，是否关闭？');
+  }
+  return true;
+}
+
 var appInstince = new Vue({
   el: "#app",
   data: {
+    resource_menu:[{
+          label: '素材管理',
+          children: [{
+            label: '视频(8)' 
+          },{
+            label: '音频(4)' 
+          },{
+            label: '图片(34)' 
+          }]
+        }],
     keyword: '',
     //当前目录
     currentCategory: {
@@ -16,6 +34,11 @@ var appInstince = new Vue({
       visiable: false
     },
     rules: {
+      programTemplate:[{
+        required: true,
+        message: "请选择节目模版",
+        trigger: "blur"
+      }],
       programTemplateName: [{
         required: true,
         message: "请选择节目模版",
@@ -80,8 +103,8 @@ var appInstince = new Vue({
       visible: false,
       update: false,
       data: {
-        title: "模板标题",
-        content: "模板正文",
+        title: "",
+        content: "",
         tpTypeIds: [1, 3],
         previewPicture: '',
         programTemplate: ''
@@ -153,7 +176,7 @@ var appInstince = new Vue({
     }, // 重新加载分类数据
     reloadTpTypeData: function () {
       var node = this.$refs.tree.getCurrentNode();
-      this.loadTpTypeData(node.data, this);
+      this.loadTpTypeData(node ? node.data:null, this);
     },
     checkTreeSelect: function () {
       var node = this.$refs.tree.getCurrentNode();
@@ -260,16 +283,24 @@ var appInstince = new Vue({
     },
     // 新增模板
     addTemplate: function () {
+      this.resetTemplate();
+
       this.tp.visible = true;
       this.tp.update = false;
       this.tp.title = "新增模板";
+      
+    },
+     //重置模板类别
+     resetTemplate(){
       this.tp.data = {
-        previewPicture: ''
+        previewPicture: '',
+        programTemplate: ''
       };
       _editor.setContent("");
     },
     // 修改模板
     updateTemplate: function (tp) {
+      this.resetTemplate();
       this.tp.visible = true;
       this.tp.update = true;
       this.tp.title = "修改模板";
@@ -315,6 +346,7 @@ var appInstince = new Vue({
               tp.visible = false;
               ins.loadTreeData();
               ins.reloadTpTypeData();
+              ins.resetTemplate();
             }
           });
         } else {
@@ -324,6 +356,7 @@ var appInstince = new Vue({
               tp.visible = false;
               ins.loadTreeData();
               ins.reloadTpTypeData();
+              ins.resetTemplate();
             }
           });
         }

@@ -100,7 +100,7 @@ let app = new Vue({
                 type: row.type,
                 isAdopt: isAdopt
             }
-            if(!isAdopt) {
+            if(isAdopt == 2) {
                 this.isVerify = true;
             } else {
                 this.verify();
@@ -134,8 +134,9 @@ let app = new Vue({
                         postJson(this.url, postData, reps => {
                             if(reps.status) {
                                 init()
-                                app.$message('发布成功 !')
-                                commitMessage()
+                                commitMessage(() => {
+                                    app.$message('发布成功 !')
+                                })
                             }
                         })
                     })

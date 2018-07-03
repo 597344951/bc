@@ -70,4 +70,10 @@ public interface PublishDao {
      * @return
      */
     public List<Map<String, Object>> queryPublishTerminal(@Param("contentId") int contendId);
+
+    /**
+     * 处于审核状态的人
+     * @return
+     */
+    public List<Map<String, Object>> queryVerifyingUser();
 }

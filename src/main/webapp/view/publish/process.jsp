@@ -12,8 +12,12 @@
         .period-input {
             width: 300px;
         }
-        .card-item{
-            min-height: 160px;
+        .card-item {
+            min-height: 200px;
+            width: 400px;
+        }
+        .card-item:hover {
+            width: 400px;
         }
     </style>
 </head>
@@ -99,8 +103,9 @@
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="startMoreEdit(pc)" v-if="pc.operate.more_edit_start">开始编辑</el-button>
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="moreEdit(pc)" v-if="pc.operate.more_edit">编辑</el-button>
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="preCommitMoreEdit(pc)" v-if="pc.operate.more_edit_commit">编辑提交</el-button>
-                                                    <el-button class="no-margin-padding" type="text" size="small" @click="preVerify(pc, true)" v-if="pc.operate.verify">审核（通过）</el-button>
-                                                    <el-button class="no-margin-padding" type="text" size="small" @click="preVerify(pc, false)" v-if="pc.operate.verify">审核（不通过）</el-button>
+                                                    <el-button class="no-margin-padding" type="text" size="small" @click="preVerify(pc, 1)" v-if="pc.operate.verify">审核通过</el-button>
+                                                    <el-button class="no-margin-padding" type="text" size="small" @click="preVerify(pc, 2)" v-if="pc.operate.verify">审核不通过</el-button>
+                                                    <el-button class="no-margin-padding" type="text" size="small" @click="preVerify(pc, 3)" v-if="pc.operate.verify">审核放弃</el-button>
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="openPublishPeriod(pc)" v-if="pc.operate.publish">发布</el-button>
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="discard(pc)" v-if="pc.operate.delete">移除</el-button>
                                                 </div>
@@ -121,7 +126,7 @@
                         <%-- <el-table-column prop="startDate" label="预定开始时间" width="120"></el-table-column>
                         <el-table-column prop="endDate" label="预定结束时间" width="120"></el-table-column>
                         <el-table-column prop="period" label="预定播放时段" width="120"></el-table-column> --%>
-                            <el-table-column prop="state" label="当前状态">
+                            <el-table-column prop="state" label="当前状态" width="100">
                                 <template slot-scope="scope">
                                     <el-tag>{{scope.row.state}}</el-tag>
                                 </template>
@@ -134,13 +139,14 @@
                                         <el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="operate" label="操作" width="200">
+                            <el-table-column prop="operate" label="操作" width="300">
                                 <template slot-scope="scope">
                                     <el-button type="text" size="small" @click="startMoreEdit(scope.row)" v-if="scope.row.operate.more_edit_start">开始编辑</el-button>
                                     <el-button type="text" size="small" @click="moreEdit(scope.row)" v-if="scope.row.operate.more_edit">编辑</el-button>
                                     <el-button type="text" size="small" @click="preCommitMoreEdit(scope.row)" v-if="scope.row.operate.more_edit_commit">编辑提交</el-button>
-                                    <el-button type="text" size="small" @click="preVerify(scope.row, true)" v-if="scope.row.operate.verify">审核（通过）</el-button>
-                                    <el-button type="text" size="small" @click="preVerify(scope.row, false)" v-if="scope.row.operate.verify">审核（不通过）</el-button>
+                                    <el-button type="text" size="small" @click="preVerify(scope.row, 1)" v-if="scope.row.operate.verify">审核通过</el-button>
+                                    <el-button type="text" size="small" @click="preVerify(scope.row, 2)" v-if="scope.row.operate.verify">审核不通过</el-button>
+                                    <el-button type="text" size="small" @click="preVerify(scope.row, 3)" v-if="scope.row.operate.verify">审核放弃</el-button>
                                     <el-button type="text" size="small" @click="openPublishPeriod(scope.row)" v-if="scope.row.operate.publish">发布</el-button>
                                     <el-button type="text" size="small" @click="discard(scope.row)" v-if="scope.row.operate.delete">移除</el-button>
                                 </template>

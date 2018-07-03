@@ -120,3 +120,10 @@
 
 </body>
 </html>
+<script>
+$(function(){
+	if(!checkLocationSame()){
+		top.location.href = window.location.href;
+	}
+});
+</script>

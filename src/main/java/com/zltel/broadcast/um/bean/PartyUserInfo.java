@@ -35,8 +35,6 @@ public class PartyUserInfo {
 
     private Integer advancedUser;
 
-    private Integer positiveUser;
-
     private Integer developUser;
 
     private Integer missingUser;
@@ -169,14 +167,6 @@ public class PartyUserInfo {
 
     public void setAdvancedUser(Integer advancedUser) {
         this.advancedUser = advancedUser;
-    }
-
-    public Integer getPositiveUser() {
-        return positiveUser;
-    }
-
-    public void setPositiveUser(Integer positiveUser) {
-        this.positiveUser = positiveUser;
     }
 
     public Integer getDevelopUser() {

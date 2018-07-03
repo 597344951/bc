@@ -31,8 +31,8 @@
                     </div>
                     <div   style="text-align: left;">
                         <el-form :inline="true" class="demo-form-inline">
-                            <el-form-item label="搜索模板">
-                                <el-input placeholder="搜索模板" v-model="keyword" style="width:300px;"></el-input>
+                            <el-form-item label="搜索 模板/素材">
+                                <el-input placeholder="搜索 模板/素材" v-model="keyword" style="width:300px;"></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="searchTemplate">搜索</el-button>
@@ -45,6 +45,9 @@
                 <el-aside width="200px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
                         @node-click="tptTreeClick"> </el-tree>
+                    <div style="margin-top:30px;">
+                        <el-tree ref="tree2" :data="resource_menu" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false" > </el-tree>
+                    </div>
                 </el-aside>
                 <el-main>
                     <div role="mainDis" v-show="!tp.visible" style="overflow: auto;">
@@ -109,7 +112,7 @@
                                         <el-form-item label="所属分类" prop="tpTypeIds">
                                             <el-cascader v-model="tp.data.tpTypeIds" :props="tpt_props" :options="tpt_data" :show-all-levels="false"></el-cascader>
                                         </el-form-item>
-                                        <el-form-item label="节目模版Id" prop="programTemplateName">
+                                        <el-form-item label="节目模版Id" prop="programTemplate">
                                             <el-row>
                                                 <el-col :span="5">
                                                     <el-input v-model="tp.data.programTemplate"></el-input>

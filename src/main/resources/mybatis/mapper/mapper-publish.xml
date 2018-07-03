@@ -82,4 +82,13 @@
         inner join terminal_basic_info t on t.id = pt.terminal_id
         where pt.content_id = #{contentId}
     </select>
+
+    <select id="queryVerifyingUser" resultType="java.util.Map">
+        select eu.*,
+        u.username
+        from publish_examine_user eu
+        inner join sys_user u on u.user_id = eu.user_id
+        where eu.state in(0, 3)
+        group by eu.content_id, eu.sort
+    </select>
 </mapper>

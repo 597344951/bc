@@ -16,44 +16,28 @@
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		<!-- 生成模型的包名和位置 -->
-		<javaModelGenerator targetPackage="com.sys.um.bean" targetProject="SpringMyBatisDemo/src/main/java">
+		<javaModelGenerator targetPackage="com.zltel.broadcast.message.bean" targetProject="broadcast/src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 		<!-- 生成映射文件的包名和位置 -->
-		<sqlMapGenerator targetPackage="mapper.um" targetProject="SpringMyBatisDemo/src/main/resources">
+		<sqlMapGenerator targetPackage="mybatis.mapper" targetProject="broadcast/src/main/resources">
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- 生成DAO的包名和位置 -->
-		<javaClientGenerator type="XMLMAPPER" targetPackage="com.sys.um.dao" targetProject="SpringMyBatisDemo/src/main/java">
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zltel.broadcast.message.dao" targetProject="broadcast/src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 
 		<!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名 -->
+		<!-- 
 		<table tableName="sys_dept" domainObjectName="SysDept" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
-		<table tableName="sys_log" domainObjectName="SysLog" enableCountByExample="false" enableUpdateByExample="false"
+		 -->
+		<table tableName="message" domainObjectName="Message" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
-		 
-		<table tableName="sys_menu" domainObjectName="SysMenu" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
-		<table tableName="sys_role" domainObjectName="SysRole" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
-		<table tableName="sys_role_dept" domainObjectName="SysRoleDept" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
-		<table tableName="sys_role_menu" domainObjectName="SysRoleMenu" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
-		<table tableName="sys_user" domainObjectName="SysUser" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
-		<table tableName="sys_user_role" domainObjectName="SysUserRole" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
+	 
 	</context>
 </generatorConfiguration>  

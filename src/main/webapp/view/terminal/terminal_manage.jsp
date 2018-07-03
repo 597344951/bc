@@ -15,7 +15,7 @@
     <div id="toolbar">
         <el-row>
             <el-col :span="24">
-                <el-menu :default-active="tqueryIf.online=='1'?'1':'2'" class="el-menu-demo" mode="horizontal">
+                <el-menu :default-active="tqueryIf.online=='1'?'1':'2'" class="nav-menu el-menu-demo" mode="horizontal">
                     <el-menu-item index="-1" class="t-title" disabled>终端情况: </el-menu-item>
                     <el-menu-item index="1" @click="changeSearch(1)">
                         <i class="el-icon-check online-icon"></i>正常 ({{onlineCount.online?onlineCount.online:0}})</el-menu-item>

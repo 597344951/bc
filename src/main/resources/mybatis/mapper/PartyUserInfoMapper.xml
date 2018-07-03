@@ -18,7 +18,6 @@
     <result column="volunteer" jdbcType="INTEGER" property="volunteer" />
     <result column="difficult_user" jdbcType="INTEGER" property="difficultUser" />
     <result column="advanced_user" jdbcType="INTEGER" property="advancedUser" />
-    <result column="positive_user" jdbcType="INTEGER" property="positiveUser" />
     <result column="develop_user" jdbcType="INTEGER" property="developUser" />
     <result column="missing_user" jdbcType="INTEGER" property="missingUser" />
     <result column="introduce" jdbcType="VARCHAR" property="introduce" />
@@ -26,7 +25,7 @@
   <sql id="Base_Column_List">
     party_user_id, type, join_date_formal, join_date_reserve, status, work_unit, work_nature, 
     join_work_date, appointment_time_length, join_party_branch_type_id, first_line_situation, 
-    party_staff, party_representative, volunteer, difficult_user, advanced_user, positive_user, 
+    party_staff, party_representative, volunteer, difficult_user, advanced_user, 
     develop_user, missing_user, introduce
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -45,7 +44,7 @@
       work_nature, join_work_date, appointment_time_length, 
       join_party_branch_type_id, first_line_situation, 
       party_staff, party_representative, volunteer, 
-      difficult_user, advanced_user, positive_user, 
+      difficult_user, advanced_user, 
       develop_user, missing_user, introduce
       )
     values (#{partyUserId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{joinDateFormal,jdbcType=TIMESTAMP}, 
@@ -53,7 +52,7 @@
       #{workNature,jdbcType=INTEGER}, #{joinWorkDate,jdbcType=TIMESTAMP}, #{appointmentTimeLength,jdbcType=INTEGER}, 
       #{joinPartyBranchTypeId,jdbcType=INTEGER}, #{firstLineSituation,jdbcType=INTEGER}, 
       #{partyStaff,jdbcType=INTEGER}, #{partyRepresentative,jdbcType=INTEGER}, #{volunteer,jdbcType=INTEGER}, 
-      #{difficultUser,jdbcType=INTEGER}, #{advancedUser,jdbcType=INTEGER}, #{positiveUser,jdbcType=INTEGER}, 
+      #{difficultUser,jdbcType=INTEGER}, #{advancedUser,jdbcType=INTEGER},  
       #{developUser,jdbcType=INTEGER}, #{missingUser,jdbcType=INTEGER}, #{introduce,jdbcType=VARCHAR}
       )
   </insert>
@@ -107,9 +106,6 @@
       </if>
       <if test="advancedUser != null">
         advanced_user,
-      </if>
-      <if test="positiveUser != null">
-        positive_user,
       </if>
       <if test="developUser != null">
         develop_user,
@@ -170,9 +166,6 @@
       <if test="advancedUser != null">
         #{advancedUser,jdbcType=INTEGER},
       </if>
-      <if test="positiveUser != null">
-        #{positiveUser,jdbcType=INTEGER},
-      </if>
       <if test="developUser != null">
         #{developUser,jdbcType=INTEGER},
       </if>
@@ -232,9 +225,6 @@
       <if test="advancedUser != null">
         advanced_user = #{advancedUser,jdbcType=INTEGER},
       </if>
-      <if test="positiveUser != null">
-        positive_user = #{positiveUser,jdbcType=INTEGER},
-      </if>
       <if test="developUser != null">
         develop_user = #{developUser,jdbcType=INTEGER},
       </if>
@@ -264,7 +254,6 @@
       volunteer = #{volunteer,jdbcType=INTEGER},
       difficult_user = #{difficultUser,jdbcType=INTEGER},
       advanced_user = #{advancedUser,jdbcType=INTEGER},
-      positive_user = #{positiveUser,jdbcType=INTEGER},
       develop_user = #{developUser,jdbcType=INTEGER},
       missing_user = #{missingUser,jdbcType=INTEGER},
       introduce = #{introduce,jdbcType=VARCHAR}
@@ -324,7 +313,7 @@
 	  pui.volunteer volunteer,
 	  pui.difficult_user difficultUser,
 	  pui.advanced_user advancedUser,
-	  pui.positive_user positiveUser,
+	  bui.positive_user positiveUser,
 	  pui.develop_user developUser,
 	  pui.missing_user missingUser,
 	  pui.introduce introduce,

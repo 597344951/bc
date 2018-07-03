@@ -20,9 +20,16 @@ public class PublishSchedule {
 
     @Autowired
     private PublishService publishService;
+
     @Scheduled(cron = "0 0 5 * * ?")
     public void offline() {
         int count = publishService.offline();
         log.info("节目过期下线处理：" + count);
+    }
+
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void verifyTimeout() {
+        publishService.verifyTimeout();
+        log.info("处理超时审核完成");
     }
 }
