@@ -19,6 +19,8 @@ public class TemplateType {
     private Boolean builtin;
     /** 对应文章数量 **/
     private Integer count;
+    
+    private String keyword;
 
     public Integer getTpTypeId() {
         return tpTypeId;
@@ -93,6 +95,14 @@ public class TemplateType {
      */
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
 

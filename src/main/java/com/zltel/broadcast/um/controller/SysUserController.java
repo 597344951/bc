@@ -40,7 +40,7 @@ public class SysUserController extends BaseController {
 		try {
 			return sysUserService.querySysUsers(sysUser, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询系统用户信息失败");
 		}
 	}
@@ -58,7 +58,7 @@ public class SysUserController extends BaseController {
 		try {
 			return sysUserService.querySysUsersNotPage(sysUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询系统用户信息失败");
 		}
 	}
@@ -76,7 +76,7 @@ public class SysUserController extends BaseController {
 		try {
 			return sysUserService.updateSysUser(sysUser);	//开始修改系统用户信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统用户信息修改出错。");
 		}
 	}
@@ -94,7 +94,7 @@ public class SysUserController extends BaseController {
 		try {
 			return sysUserService.updateSysUserPwd(sysUser);	//开始修改系统用户密码
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统用户密码修改出错。");
 		}
 	}
@@ -112,7 +112,7 @@ public class SysUserController extends BaseController {
 		try {
 			return sysUserService.deleteSysUser(sysUser);	//开始删除系统用户信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统用户删除失败。");
 		}
 	}
@@ -131,7 +131,7 @@ public class SysUserController extends BaseController {
 		try {
 			return sysUserService.insertSysUser(sysUser);	//开始添加系统用户信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("系统用户添加失败。");
 		}
 	}

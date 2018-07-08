@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -53,13 +52,13 @@ public class UserRealm extends AuthorizingRealm {
         // 系统管理员，拥有最高权限
         if (userId == Constant.SUPER_ADMIN) {
             List<SysMenu> menuList = sysMenuService.queryForList(null);
-            permsList = menuList.stream().map(sm -> sm.getPerms()).collect(Collectors.toList());
+            permsList = menuList.stream().map(SysMenu::getPerms).collect(Collectors.toList());
         } else {
             permsList = this.sysUserService.queryAllPerms(userId);
         }
         // 用户权限列表
         Set<String> permsSet =
-                permsList.stream().filter(s -> StringUtils.isNotBlank(s)).flatMap(s -> Arrays.stream(s.split(",")))// 多个权限描述字符串
+                permsList.stream().filter(StringUtils::isNotBlank).flatMap(s -> Arrays.stream(s.split(",")))// 多个权限描述字符串
                         .collect(Collectors.toSet());
 
 
@@ -72,12 +71,13 @@ public class UserRealm extends AuthorizingRealm {
     }
 
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
         logout.info("尝试使用 用户名/密码方式登陆");
+        SimpleAuthenticationInfo authenticationInfo = null;
         String username = (String) token.getPrincipal();
         SysUser user = this.sysUserService.selectByUserName(username);
         if (user == null) throw new UnknownAccountException();
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user, // 用户名
+        authenticationInfo = new SimpleAuthenticationInfo(user, // 用户名
                 user.getPassword(), // 密码
                 ByteSource.Util.bytes(user.getSalt()), // salt=username
                 getName() // realm name

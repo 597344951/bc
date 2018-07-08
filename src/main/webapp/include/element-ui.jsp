@@ -7,3 +7,5 @@
 <link href="${urls.getForLookupPath('/assets/css/element-ui-patch.css')}" rel="stylesheet">
 <link href="${urls.getForLookupPath('/assets/css/common.css')}" rel="stylesheet">
 <link href="${urls.getForLookupPath('/assets/css/module-main.css')}" rel="stylesheet">
+<link href="${urls.getForLookupPath('/assets/css/activity-group.css')}" rel="stylesheet">
+

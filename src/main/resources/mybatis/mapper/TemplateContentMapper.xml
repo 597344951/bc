@@ -218,6 +218,9 @@
 			<if test="uid != null">
 				AND uid = #{uid,jdbcType=INTEGER}
 			</if>
+			<if test="keyword != null and keyword !=''">
+				AND title like concat('%',#{keyword},'%')
+			</if>
 		</where>
 	</sql>
 	<select id="queryByType" parameterType="java.lang.Integer"

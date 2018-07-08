@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zltel.broadcast.common.annotation.LogPoint;
+import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
@@ -24,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RequestMapping(value = {"/terminal/basic"})
 @RestController
-public class TerminalBasicInfoController {
+public class TerminalBasicInfoController extends BaseController {
     @Autowired
     private TerminalBasicInfoService tbs;
 
@@ -34,11 +35,22 @@ public class TerminalBasicInfoController {
     public R queryBaiscInfo(@RequestBody TerminalBasicInfo tbi, @PathVariable("pageNum") int pageNum,
             @PathVariable("pageSize") int pageSize) {
         R r = tbs.queryBasicInfo(tbi, pageNum, pageSize);
-        Map<String,Integer> count = this.tbs.countOnlineTerminal();
+        Map<String, Integer> count = this.tbs.countOnlineTerminal();
         r.put("online", count);
         return r;
     }
-
+    
+    @ApiOperation(value="查询地图信息")
+    @GetMapping("/addup")
+    public R queryMapInfo() {
+        try {
+            return tbs.queryMapInfo();
+        } catch (Exception e) {
+            logout.error(e.getMessage(),e);
+            return R.error().setMsg("查询地图信息失败");
+        }
+      
+    }
     @ApiOperation(value = "删除终端基础信息")
     @DeleteMapping("/addup/{oid}")
     public R delete(@PathVariable("oid") Integer oid) {
@@ -51,11 +63,10 @@ public class TerminalBasicInfoController {
         }
     }
 
-    @ApiOperation(value = "新建终端基础信息")
+    @ApiOperation(value = "同步终端基础信息")
     @PostMapping(value = "/addup")
-    public R save(@RequestBody TerminalBasicInfo tbi) {
-        ValidatorUtils.validateEntity(tbi);
-        this.tbs.insert(tbi);
+    public R syn( ) {
+        this.tbs.synchronizTerminalInfo();
         return R.ok();
     }
 
@@ -73,9 +84,10 @@ public class TerminalBasicInfoController {
         try {
             return tbs.echarts(string);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             return R.error().setMsg("统计终端基础信息失败");
         }
     }
+    
 }
 

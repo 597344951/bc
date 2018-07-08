@@ -3,3 +3,5 @@
 <script src="https://cdn.bootcss.com/Mock.js/1.0.0/mock.js"></script>
 <script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy-calendar.js')}"></script>
 <script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy.js')}"></script>
+<script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy-terminal.js')}"></script>
+<script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy-template.js')}"></script>

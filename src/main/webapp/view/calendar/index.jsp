@@ -12,7 +12,7 @@
 <link href="${urls.getForLookupPath('/view/calendar/calendar.css')}" rel="stylesheet" charset="utf-8">
 
 <%@include file="/include/mock.jsp"%>
-<%@include file="/include/bmap.jsp"%>
+<%@include file="/include/map-baidu.jsp"%>
 <%@include file="/include/vcharts.jsp"%>
 <style>
 

@@ -6,9 +6,10 @@
     <result column="org_rlt_info_id" jdbcType="INTEGER" property="orgRltInfoId" />
     <result column="org_rlt_duty_id" jdbcType="INTEGER" property="orgRltDutyId" />
     <result column="org_rlt_user_id" jdbcType="INTEGER" property="orgRltUserId" />
+    <result column="org_rlt_join_time" jdbcType="TIMESTAMP" property="orgRltJoinTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    org_rlt_id, org_rlt_info_id, org_rlt_duty_id, org_rlt_user_id
+    org_rlt_id, org_rlt_info_id, org_rlt_duty_id, org_rlt_user_id, org_rlt_join_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -22,9 +23,9 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.OrganizationRelation">
     insert into organization_relation (org_rlt_id, org_rlt_info_id, org_rlt_duty_id, 
-      org_rlt_user_id)
+      org_rlt_user_id, org_rlt_join_time)
     values (#{orgRltId,jdbcType=INTEGER}, #{orgRltInfoId,jdbcType=INTEGER}, #{orgRltDutyId,jdbcType=INTEGER}, 
-      #{orgRltUserId,jdbcType=INTEGER})
+      #{orgRltUserId,jdbcType=INTEGER},  #{orgRltJoinTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationRelation">
     insert into organization_relation
@@ -41,6 +42,9 @@
       <if test="orgRltUserId != null">
         org_rlt_user_id,
       </if>
+      <if test="orgRltJoinTime != null">
+        org_rlt_join_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="orgRltId != null">
@@ -54,6 +58,9 @@
       </if>
       <if test="orgRltUserId != null">
         #{orgRltUserId,jdbcType=INTEGER},
+      </if>
+      <if test="orgRltJoinTime != null">
+        #{orgRltJoinTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -69,6 +76,9 @@
       <if test="orgRltUserId != null">
         org_rlt_user_id = #{orgRltUserId,jdbcType=INTEGER},
       </if>
+      <if test="orgRltJoinTime != null">
+        org_rlt_join_time = #{orgRltJoinTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where org_rlt_id = #{orgRltId,jdbcType=INTEGER}
   </update>
@@ -76,7 +86,8 @@
     update organization_relation
     set org_rlt_info_id = #{orgRltInfoId,jdbcType=INTEGER},
       org_rlt_duty_id = #{orgRltDutyId,jdbcType=INTEGER},
-      org_rlt_user_id = #{orgRltUserId,jdbcType=INTEGER}
+      org_rlt_user_id = #{orgRltUserId,jdbcType=INTEGER},
+      org_rlt_join_time = #{orgRltJoinTime,jdbcType=TIMESTAMP}
     where org_rlt_id = #{orgRltId,jdbcType=INTEGER}
   </update>
   
@@ -142,7 +153,8 @@
   		  pui.type partyType,
   		  pui.status partyStatus,
   		  bui.id_photo idPhoto,
-  		  bui.mobile_phone mobilePhone
+  		  bui.mobile_phone mobilePhone,
+  		  _or.org_rlt_join_time orgRltJoinTime
 		from
 		  organization_relation _or
 		  inner join organization_information oi on _or.org_rlt_info_id = oi.org_info_id 
@@ -167,6 +179,15 @@
 	      <if test="orgRltId != null and orgRltId != ''"> and 
 	        _or.org_rlt_id = #{orgRltId}
 	      </if>
+	      <if test="orgRltStartJoinTime != null"> and 
+			_or.org_rlt_join_time >= #{orgRltStartJoinTime}
+		  </if>
+		  <if test="orgRltEndJoinTime != null"> and 
+			_or.org_rlt_join_time &lt;= #{orgRltEndJoinTime}
+		  </if>
+	      <if test="sex != null and sex != ''"> and 
+	        bui.sex = #{sex}
+	      </if>
 	</select>
 	
 	<delete id="deleteOrgRelationByOrgInfoId" parameterType="java.lang.Integer">
@@ -188,11 +209,24 @@
 		select
 		  distinct _or.org_rlt_user_id orgRltUserId
 		from
-		  organization_relation _or
+		  organization_relation _or 
+		  inner join base_user_info bui on _or.org_rlt_user_id = bui.base_user_id
 		where
 		  1 = 1
 		  <if test="orgRltInfoId != null and orgRltInfoId != ''"> and 
 	        _or.org_rlt_info_id = #{orgRltInfoId}
+	      </if>
+	      <if test="orgRltStartJoinTime != null"> and 
+			_or.org_rlt_join_time >= #{orgRltStartJoinTime}
+		  </if>
+		  <if test="orgRltEndJoinTime != null"> and 
+			_or.org_rlt_join_time &lt;= #{orgRltEndJoinTime}
+		  </if>
+		  <if test="orgRltUserId != null and orgRltUserId != ''"> and 
+	        _or.org_rlt_user_id = #{orgRltUserId}
+	      </if>
+	      <if test="sex != null and sex != ''"> and 
+	        bui.sex = #{sex}
 	      </if>
 	</select>
 </mapper>

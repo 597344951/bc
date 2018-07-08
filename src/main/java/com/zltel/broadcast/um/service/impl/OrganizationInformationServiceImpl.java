@@ -92,6 +92,20 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	}
 	
 	/**
+	 * 得到用户数量
+	 * @param organizationInformation
+	 * @return
+	 */
+	public R queryOrgRelationsNewForUserId(Map<String, Object> organizationInformation) {
+		List<Map<String, Object>> orgMembers = organizationRelationMapper.queryOrgRelationsNewForUserId(organizationInformation);
+		if(orgMembers != null && orgMembers.size() > 0) {
+			return R.ok().setData(orgMembers);
+		} else {
+			return R.error().setMsg("没有查询到用户数量");
+		}
+	}
+	
+	/**
      * 根据条件查所有询组织信息
      * @param organizationInformation 条件
      * @return
@@ -106,12 +120,12 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 		if (organizationInformationsForPageInfo != null && organizationInformationsForPageInfo.getList() != null &&
 				organizationInformationsForPageInfo.getList().size() > 0) {
 			for (Map<String, Object> oiMap : organizationInformationsForPageInfo.getList()) {	//遍历组织查询组织相关信息
-				if (oiMap.get("orgInfoId") != null) {	//查询组织人员关系
+				if (oiMap.get("orgInfoId") != null) {
 					Map<String, Object> map = new HashMap<>();
 					map.put("orgRltInfoId", oiMap.get("orgInfoId"));
 					List<Map<String, Object>> orgMembers = new ArrayList<>();
 					orgMembers = organizationRelationMapper.queryOrgRelationsNewForUserId(map);
-					oiMap.put("orgMemberNum", orgMembers.size() == 0 ? 0 : orgMembers.size());	//组织人员
+					oiMap.put("orgMemberNum", orgMembers.size() == 0 ? 0 : orgMembers.size());	//组织人员数量
 					
 					map.put("orgInfoId", oiMap.get("orgInfoId"));
 					List<Map<String, Object>> orgChildrensAll = new ArrayList<>();
@@ -150,6 +164,51 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 						orgLevel2s.addAll(organizationRelationMapper.queryOrgRelationsNew(map));
 					}
 					oiMap.put("orgLevel2s", orgLevel2s);
+					
+					//查询当天加入组织的人员数量（如果在今天之前没有出现此人在此组织担任的角色，则此人是今天加入组织）
+					map.clear();
+					map.put("orgRltInfoId", oiMap.get("orgInfoId"));
+					Date date = new Date();
+					map.put("orgRltStartJoinTime", DateUtil.getDateOfStartTime(date));
+					map.put("orgRltEndJoinTime", DateUtil.getDateOfEndTime(date));
+					map.put("sex", "男");
+					List<Map<String, Object>> thisOrgNowTimeMans = organizationRelationMapper.queryOrgRelationsNewForUserId(map);
+					map.put("sex", "女");
+					List<Map<String, Object>> thisOrgNowTimeWoMans = organizationRelationMapper.queryOrgRelationsNewForUserId(map);
+					int thisOrgNowTimeManCounts = 0;
+					int thisOrgNowTimeWoManCounts = 0;
+					if (thisOrgNowTimeMans != null && thisOrgNowTimeMans.size() > 0) {
+						map.clear();
+						for (Map<String, Object> thisOrgNowTimeMan : thisOrgNowTimeMans) {
+							map.put("orgRltEndJoinTime", DateUtil.getDateOfStartTime(date));	//当天之前的时间
+							map.put("orgRltUserId", thisOrgNowTimeMan.get("orgRltUserId"));
+							map.put("orgRltInfoId", oiMap.get("orgInfoId"));
+							map.put("sex", "男");
+							List<Map<String, Object>> thisOrgBeforeTimeMans = organizationRelationMapper.queryOrgRelationsNewForUserId(map);
+							if (thisOrgBeforeTimeMans != null && thisOrgBeforeTimeMans.size() > 0) {
+								continue;
+							} else {
+								thisOrgNowTimeManCounts++;
+							}
+						}
+					}
+					if (thisOrgNowTimeWoMans != null && thisOrgNowTimeWoMans.size() > 0) {
+						map.clear();
+						for (Map<String, Object> thisOrgNowTimeWoMan : thisOrgNowTimeWoMans) {
+							map.put("orgRltEndJoinTime", DateUtil.getDateOfStartTime(date));	//当天之前的时间
+							map.put("orgRltUserId", thisOrgNowTimeWoMan.get("orgRltUserId"));
+							map.put("orgRltInfoId", oiMap.get("orgInfoId"));
+							map.put("sex", "女");
+							List<Map<String, Object>> thisOrgBeforeTimeWoMans = organizationRelationMapper.queryOrgRelationsNewForUserId(map);
+							if (thisOrgBeforeTimeWoMans != null && thisOrgBeforeTimeWoMans.size() > 0) {
+								continue;
+							} else {
+								thisOrgNowTimeWoManCounts++;
+							}
+						}
+					}
+					oiMap.put("thisOrgNowTimeManCounts", thisOrgNowTimeManCounts);
+					oiMap.put("thisOrgNowTimeWoManCounts", thisOrgNowTimeWoManCounts);
 				}
 				
 			}
@@ -325,6 +384,52 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 			return R.ok().setMsg("没有查询到组织上下级关系");
 		}
 		
+    }
+    
+    /**
+     * 根据条件查询组织信息并生成树
+     * @param orgInfoConditions
+     * @return
+     * @throws Exception
+     */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public R queryOrgInfosToTree(Map<String, Object> orgInfoConditions) {
+    	List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(orgInfoConditions);
+    	List<TreeNode<Map<String, Object>>> treeNodes = new ArrayList<>();
+    	if (orgInfoTrees != null && orgInfoTrees.size() > 0) {
+    		for (Map<String, Object> map : orgInfoTrees) {
+    			TreeNode<Map<String, Object>> treeNode = new TreeNode<Map<String, Object>>();
+    			treeNode.setData(map);
+    			treeNodes.add(treeNode);
+			}
+    		this.toTreeNodes(treeNodes);
+    	}
+    	return R.ok().setData(treeNodes);
+    }
+    
+    /**
+	 * 生成树
+	 * @param organizationInfo
+	 */
+    private void toTreeNodes(List<TreeNode<Map<String, Object>>> treeNodes) {
+    	if (treeNodes != null && treeNodes.size() > 0) {
+    		for (TreeNode<Map<String, Object>> treeNode : treeNodes) {
+    			Map<String, Object> condition = new HashMap<>();
+				condition.put("orgInfoParentId", treeNode.getData().get("orgInfoId"));
+				List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(condition);
+				List<TreeNode<Map<String, Object>>> treeNodes2 = new ArrayList<>();
+				if (orgInfoTrees != null && orgInfoTrees.size() > 0) {
+					for (Map<String, Object> map : orgInfoTrees) {
+						TreeNode<Map<String, Object>> treeNode2 = new TreeNode<Map<String, Object>>();
+		    			treeNode2.setData(map);
+		    			treeNodes2.add(treeNode2);
+					}
+				}
+				treeNode.setChildren(treeNodes2);
+				toTreeNodes(treeNode.getChildren());
+			}
+    	}
     }
     
     /**

@@ -21,6 +21,9 @@
         .el-badge__content.is-fixed {
             top: 10px;
         }
+        .el-card {
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+        }
         .el-card__header {
             font-weight: bold;
             font-size: 15px;
@@ -118,13 +121,13 @@
                 <el-tabs v-model="pending.active">
                     <el-tab-pane name="handle">
                         <template slot="label">
-                            <el-badge :value="pending.handling.count" class="item">待办理事项</el-badge>
+                            <el-badge :value="pending.handling.list.length" class="item">待办理事项</el-badge>
                         </template>
                         <a v-for="l in pending.handling.list" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
                     </el-tab-pane>
                     <el-tab-pane name="verify">
                         <template slot="label">
-                            <el-badge :value="pending.verifying.count" class="item">带审核内容</el-badge>
+                            <el-badge :value="pending.verifying.list.length" class="item">待审核内容</el-badge>
                         </template>
                         <a v-for="l in pending.verifying.list" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
                     </el-tab-pane>
@@ -148,7 +151,7 @@
                     <span>正在播放内容</span>
                     <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
                 </div>
-                <a v-for="l in notice" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+                <a v-for="l in playlist" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
             </el-card>
         </el-col>
     </el-row>
@@ -232,21 +235,13 @@
             pending: {
                 active: 'handle',
                 handling: {
-                    count: 2,
                     list: []
                 },
                 verifying: {
-                    count: 2,
                     list: []
                 }
             },
-            notice: [
-                {date: '2018-05-30', title: '本日下午2点召开党员生活会...', href: '#' },
-                {date: '2018-05-30', title: '本日下午2点召开党员生活会...', href: '#' },
-                {date: '2018-05-30', title: '本日下午2点召开党员生活会...', href: '#' },
-                {date: '2018-05-30', title: '本日下午2点召开党员生活会...', href: '#' },
-                {date: '2018-05-30', title: '本日下午2点召开党员生活会...', href: '#' },
-            ],
+            notice: [],
             playlist: [],
             partyMembers: {
                 constitute: {
@@ -298,32 +293,87 @@
             }
 
         },
-        methods: {
-            loadPending() {
-                this.pending.handling.list = [{
-                    date: '2018-05-30',
-                    title: '你有一个待办事项。。。。。。。。。。。。。。。。。。。。。。。。',
-                    href: '#'
-                }, {
-                    date: '2018-05-30',
-                    title: '你有一个待办事项。。。',
-                    href: '#'
-                }]
-
-                this.pending.verifying.list = [{
-                    date: '2018-05-30',
-                    title: '你有一个待审核事项。。。',
-                    href: '#'
-                }, {
-                    date: '2018-05-30',
-                    title: '你有一个待审核事项。。。',
-                    href: '#'
-                }]
-            }
-        }
+        methods: {}
     })
 
-    app.loadPending();
+    init()
+
+    function init() {
+        loadPending()
+        loadNotice()
+        loadNotice()
+    }
+
+    function loadPending() {
+        let url = '/message/pending'
+        get(url, reps => {
+            if(reps.status) {
+                app.pending.handling.list = []
+                app.pending.verifying.list = []
+                reps.data.list.forEach(item => {
+                    if(item.type == 1) {
+                        app.pending.verifying.list.push({
+                            date: new Date(item.updateDate).toLocaleString(),
+                            title: item.title,
+                            href: "#"
+                        })
+                    } else if(item.type == 2) {
+                        app.pending.handling.list.push({
+                            date: new Date(item.updateDate).toLocaleString(),
+                            title: item.title,
+                            href: "#"
+                        })
+                    }
+                })
+            }
+        })
+    }
+
+    function loadNotice() {
+        let url = '/message/notice/1/10'
+        get(url, reps => {
+            if(reps.status) {
+                app.notice = []
+                reps.data.list.forEach(item => {
+                    app.notice.push({
+                        date: item.updateDate,
+                        title: item.title,
+                        href: "#"
+                    })
+                })
+            }
+        })
+    }
+
+    function loadNotice() {
+        let url = '/publish/publishing/content/1/10'
+        get(url, reps => {
+            if(reps.status) {
+                app.playlist = []
+                reps.data.list.forEach(item => {
+                    app.playlist.push({
+                        date: item.end_date + ' 止',
+                        title: item.title,
+                        href: "#"
+                    })
+                })
+            }
+        })
+    }
+
+    function get(url, callback) {
+        $.ajax({
+            type:'GET',
+            url:url,
+            dataType:'json',
+            success: function(reps){
+                if(callback) callback(reps)
+            },
+            error: function (err) {
+                app.$message.error("系统错误.")
+            }
+        });
+    }
 </script>
 </body>
 </html>

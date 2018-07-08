@@ -45,12 +45,12 @@ public interface PublishService {
     /**
      * 审核
      * @param user 审核人
-     * @param isAdopt 是否通过审核
+     * @param operate 审核操作
      * @param contentId 待审核内容
      * @param contentTypeId 内容类型
      * @param opinion 意见
      */
-    public void verify(SysUser user, boolean isAdopt, String opinion, int contentId, int contentTypeId);
+    public void verify(SysUser user, int operate, String opinion, int contentId, int contentTypeId);
 
     /**
      * 在编辑提交
@@ -155,8 +155,9 @@ public interface PublishService {
      * 发布
      * @param user
      * @param contentId
+     * @param period
      */
-    public void publish(SysUser user, int contentId);
+    public void publish(SysUser user, int contentId, Map<String, Object> period);
 
     /**
      * 下架
@@ -181,8 +182,13 @@ public interface PublishService {
 
     /**
      * 预发布到终端
-     * @param contendId
+     * @param contentId
      * @return
      */
     public List<Map<String, Object>> queryPublishTerminal(int contentId);
+
+    /**
+     * 审核超时处理
+     */
+    public void verifyTimeout();
 }

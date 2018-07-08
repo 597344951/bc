@@ -39,7 +39,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.queryOrgDutys(organizationDuty, pageNum, pageSize);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织职责失败");
 		}
 	}
@@ -57,7 +57,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.queryOrgDutyForOrgInfoClick(organizationDuty);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织职责失败");
 		}
 	}
@@ -75,7 +75,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.queryOrgDutyTreeForOrgInfo(organizationDuty);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织职责失败");
 		}
 	}
@@ -93,7 +93,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.queryOrgDutysOfQueryRelations(null);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织职责失败");
 		}
 	}
@@ -111,7 +111,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.queryOrgDutysNotPage(organizationDuty);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织职责失败");
 		}
 	}
@@ -129,7 +129,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.updateOrgDuty(organizationDuty);	//开始修改职责
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织职责修改出错。");
 		}
 	}
@@ -147,7 +147,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.deleteOrgDuty(organizationDuty);	//开始删除组织职责
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织职责删除失败。");
 		}
 	}
@@ -166,7 +166,7 @@ public class OrganizationDutyController extends BaseController {
 		try {
 			return organizationDutyService.insertOrgDuty(organizationDuty);	//开始添加组织职责
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织职责添加失败。");
 		}
 	}

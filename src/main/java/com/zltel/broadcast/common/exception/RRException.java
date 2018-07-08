@@ -20,6 +20,10 @@ public class RRException extends RuntimeException {
         throw new RRException(msg);
     }
 
+    public static void makeThrow(Exception e) {
+        throw new RRException(e.getMessage());
+    }
+
     public RRException(String msg) {
         super(msg);
         this.msg = msg;

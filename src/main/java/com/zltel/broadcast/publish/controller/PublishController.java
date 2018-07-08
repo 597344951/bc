@@ -5,25 +5,25 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.publish.service.PublishService;
 import com.zltel.broadcast.um.bean.SysUser;
-
 import com.zltel.broadcast.um.service.SysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 
 /**
@@ -85,11 +85,12 @@ public class PublishController extends BaseController{
             SysUser user = getSysUser();
             //同步文件
             materialService.transferMaterial(user, (List<Map<String, Object>>) content.get("material"), uploadTempDir, uploadFileDir);
+            materialService.saveUeditorMaterial(user, content, ueditorDir, uploadFileDir);
             Map<String, Object> detail = publishService.create(user, content);
-            materialService.saveUeditorMaterial(user, detail, ueditorDir, uploadFileDir);
+
             r = R.ok();
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -103,7 +104,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             r.setData(publishService.queryProcessContent(getSysUser()));
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -118,7 +119,7 @@ public class PublishController extends BaseController{
             int editId = publishService.moreEditStart(getSysUser(), id);
             r.put("editId", editId);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -132,7 +133,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             publishService.moreEditCommit(getSysUser(), id, snapshot);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -140,27 +141,27 @@ public class PublishController extends BaseController{
 
     @RequestMapping(value = "/process/verify/{id}")
     @ResponseBody
-    public R verify(@PathVariable("id") int id, @RequestParam("type") int type, @RequestParam("opinion") String opinion, @RequestParam("isAdopt") boolean isAdopt) {
+    public R verify(@PathVariable("id") int id, @RequestParam("type") int type, @RequestParam("opinion") String opinion, @RequestParam("isAdopt") int operate) {
         R r;
         try {
             r = R.ok();
-            publishService.verify(getSysUser(), isAdopt, opinion, id, type);
+            publishService.verify(getSysUser(), operate, opinion, id, type);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
     }
 
-    @RequestMapping(value = "/process/publish/{id}")
+    @PostMapping(value = "/process/publish/{id}")
     @ResponseBody
-    public R publish(@PathVariable("id") int id) {
+    public R publish(@PathVariable("id") int id, @RequestBody Map<String, Object> postData) {
         R r;
         try {
             r = R.ok();
-            publishService.publish(getSysUser(), id);
+            publishService.publish(getSysUser(), id, postData);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -174,7 +175,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             publishService.offline(getSysUser(), id);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -188,7 +189,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             publishService.discard(getSysUser(), id);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -202,7 +203,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             r.setData(publishService.getShowProcessState(type, id));
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -218,7 +219,7 @@ public class PublishController extends BaseController{
             content.put("material", materialService.queryMaterial(id));
             r.setData(content);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -233,7 +234,7 @@ public class PublishController extends BaseController{
             PageInfo page = new PageInfo(publishService.queryPublishingContent(pageNum, pageSize));
             r.setData(page);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -248,7 +249,7 @@ public class PublishController extends BaseController{
             PageInfo page = new PageInfo(publishService.queryPublishedContent(pageNum, pageSize));
             r.setData(page);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -262,7 +263,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             r.setData(sysUserService.querySysUsersNotPage(null));
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;
@@ -276,7 +277,7 @@ public class PublishController extends BaseController{
             r = R.ok();
             r.setData(publishService.queryPublishTerminal(contentId));
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage(),e);
             r = R.error(e.toString());
         }
         return r;

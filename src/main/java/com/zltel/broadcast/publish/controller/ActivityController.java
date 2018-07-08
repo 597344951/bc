@@ -45,7 +45,8 @@ public class ActivityController extends BaseController {
             PageInfo page = new PageInfo(activityService.queryFinishedActivity(pageNum, pageSize));
             r.setData(page);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
+            
             r = R.error(e.toString());
         }
         return r;
@@ -59,7 +60,7 @@ public class ActivityController extends BaseController {
             r = R.ok();
             r.setData(activityService.getActivityAddition(contentId));
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             r = R.error(e.getMessage());
         }
         return r;
@@ -76,7 +77,7 @@ public class ActivityController extends BaseController {
             activityService.completeActivityAddition(user, addition);
             r = R.ok();
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             r = R.error(e.getMessage());
         }
         return r;
@@ -90,7 +91,7 @@ public class ActivityController extends BaseController {
             r = R.ok();
             r.setData(activityService.queryParticipant(contentId));
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             r = R.error(e.getMessage());
         }
         return r;
@@ -104,7 +105,7 @@ public class ActivityController extends BaseController {
             r = R.ok();
             activityService.participate(contentId, getSysUser());
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             r = R.error(e.getMessage());
         }
         return r;
@@ -118,7 +119,7 @@ public class ActivityController extends BaseController {
             r = R.ok();
             activityService.updateParticipantSequel(sequels);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             r = R.error(e.getMessage());
         }
         return r;

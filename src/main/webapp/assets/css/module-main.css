@@ -1,1 +1,151 @@
-@import url(/assets/module/terminal/terminal-control.css);
+/**vue-calendar 样式**/
+
+@import url("/components/vue-calendar/vue-calendar.css");
+/**start of 卡片布局容器 **/
+
+.card-item {
+	padding: 0px;
+	width: 260px;
+	margin: 15px;
+	text-align: center;
+	float: left;
+}
+
+/**鼠标交互**/
+
+.card-item:hover {
+	box-shadow: 4px 4px 18px 8px #d4d4d4;
+	width: 265px;
+}
+
+/**卡片标题**/
+
+.card-item .title {
+	text-align: left;
+	padding: 10px;
+}
+
+.card-item .title .bolder {
+	font-weight: bolder;
+}
+
+.card-item .title .right {
+	float: right;
+}
+
+/**卡片预览图**/
+
+.card-item .cover-image-container {
+	width: 100%;
+	height: 170px;
+	border: solid 1px #ddd;
+}
+
+/**横屏,默认 图片显示方式**/
+
+.card-item .cover-image-container .image,
+.card-item .cover-image-container .image-h {
+	height: 100%;
+	width: 100%;
+}
+
+/**竖屏图片**/
+
+.card-item .cover-image-container .image-v {
+	height: 100%;
+	width: auto;
+}
+
+.card-item .cover-image-container .descript {
+	position: relative;
+	top: -19px;
+	background-color: #ddd;
+	background: linear-gradient(white, #ccc);
+	color: #606266;
+}
+
+/**主题内容**/
+
+.card-item .content {
+	padding: 10px;
+	text-align: left;
+}
+
+/**底部工具条**/
+
+.card-item .bottom {
+	text-align: center;
+	margin: 0 10px 10px;
+}
+
+/**end of 卡片布局容器 **/
+
+/**小表格展示数据**/
+
+.dis-info-min {
+	width: 100%;
+}
+
+.dis-info-min>tbody>tr>td:nth-child(1) {
+	max-width: 100px;
+	width: 30%;
+}
+
+.dis-info-min>tbody>tr>td:nth-child(2) {
+	font-weight: bolder;
+	width: 5px;
+	text-align: center;
+}
+
+.dis-info-min>tbody>tr>td {
+	font-size: 14px;
+}
+
+/**大表格展示数据**/
+
+.dis-info-big {
+	width: 100%;
+}
+
+.dis-info-big>tbody>tr>td:nth-child(1) {
+	max-width: 100px;
+	width: 30%;
+	font-weight: bold;
+}
+
+.dis-info-big>tbody>tr>td:nth-child(2) {
+	font-weight: bolder;
+	width: 5px;
+	text-align: center;
+}
+
+.dis-info-big>tbody>tr>td {
+	font-size: 14px;
+	padding: 5px;
+}
+
+.nav-menu {
+	margin-top: -5px;
+}
+
+.normal-menu-item {
+	cursor: auto !important;
+	opacity: 1 !important;
+}
+
+.normal-menu-item>.el-pagination {
+	margin-top: 15px;
+}
+
+/**水平卡片**/
+
+.card-item-vertical {
+	width: 340px !important;
+	height: 200px !important;
+}
+
+/**垂直卡片**/
+
+.card-item-horizontal {
+
+}

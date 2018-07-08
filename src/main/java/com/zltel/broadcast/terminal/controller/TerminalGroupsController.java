@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zltel.broadcast.common.annotation.LogPoint;
+import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RequestMapping(value={"/terminal/group"})
 @RestController
-public class TerminalGroupsController {
+public class TerminalGroupsController extends BaseController{
     @Autowired
     private TerminalGroupsService tbs;
     @RequestMapping(value="/queryInfo/{pageNum}-{pageSize}", method=RequestMethod.POST)
@@ -34,7 +34,7 @@ public class TerminalGroupsController {
         try {
             return tbs.queryBasicGroup(tbi, pageNum, pageSize);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             return R.error().setMsg("查询终端分组信息失败");
         }
     }
@@ -45,7 +45,7 @@ public class TerminalGroupsController {
         try {
             return tbs.queryBasicInfo(record);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             return R.error().setMsg("查询终端基础信息失败");
         }
     }

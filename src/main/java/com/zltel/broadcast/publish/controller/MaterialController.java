@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.util.FileContentTypeUtil;
 import com.zltel.broadcast.common.util.FileUtil;
 import com.zltel.broadcast.common.util.UUID;
 import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.publish.utils.MaterialUtil;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -31,8 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 素材相关操作
- * MaterialController class
+ * 素材相关操作 MaterialController class
  *
  * @author Touss
  * @date 2018/5/10
@@ -51,13 +52,13 @@ public class MaterialController extends BaseController {
 
     @PostMapping("/uploadImage")
     @ResponseBody
-    public R uploadImage (@RequestParam("file") MultipartFile file) {
+    public R uploadImage(@RequestParam("file") MultipartFile file) {
         R r = new R();
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             try {
                 saveFile(file, r, Constant.MATERIAL_TYPE_PICTURE);
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 r.setStatus(false);
                 r.put("msg", "Upload failed.");
             }
@@ -67,13 +68,13 @@ public class MaterialController extends BaseController {
 
     @PostMapping("/uploadVideo")
     @ResponseBody
-    public R uploadVideo (@RequestParam("file") MultipartFile file) {
+    public R uploadVideo(@RequestParam("file") MultipartFile file) {
         R r = new R();
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             try {
                 saveFile(file, r, Constant.MATERIAL_TYPE_VIDEO);
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 r.setStatus(false);
                 r.put("msg", "Upload failed.");
             }
@@ -85,11 +86,11 @@ public class MaterialController extends BaseController {
     @ResponseBody
     public R uploadAudio(@RequestParam("file") MultipartFile file) {
         R r = new R();
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             try {
                 saveFile(file, r, Constant.MATERIAL_TYPE_AUDIO);
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 r.setStatus(false);
                 r.put("msg", "Upload failed.");
             }
@@ -99,13 +100,13 @@ public class MaterialController extends BaseController {
 
     @PostMapping("/uploadFile")
     @ResponseBody
-    public R uploadFile (@RequestParam("file") MultipartFile file) {
+    public R uploadFile(@RequestParam("file") MultipartFile file) {
         R r = new R();
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             try {
                 saveFile(file, r, MaterialUtil.getFileType(file.getOriginalFilename()));
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 r.setStatus(false);
                 r.put("msg", "Upload failed.");
             }
@@ -117,16 +118,16 @@ public class MaterialController extends BaseController {
     public void image(@PathVariable("name") String name, HttpServletResponse response) {
         int id = Integer.parseInt(name.split("\\.")[0]);
         Map<String, Object> material = materialService.getMaterial(id);
-        if(material == null || !Constant.MATERIAL_TYPE_PICTURE.equals(material.get("type"))) {
+        if (material == null || !Constant.MATERIAL_TYPE_PICTURE.equals(material.get("type"))) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
             try {
                 String url = (String) material.get("url");
                 String suffix = url.substring(url.lastIndexOf(".") + 1, url.length());
-                response.setContentType("image/"+suffix);
+                response.setContentType("image/" + suffix);
                 writeFile(uploadFileDir + url, response);
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
 
@@ -136,7 +137,7 @@ public class MaterialController extends BaseController {
     @GetMapping("/download/{id}")
     public void download(@PathVariable("id") int id, HttpServletResponse response) {
         Map<String, Object> material = materialService.getMaterial(id);
-        if(material == null || (material.get("url") == null)) {
+        if (material == null || (material.get("url") == null)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
             try {
@@ -145,37 +146,25 @@ public class MaterialController extends BaseController {
                 response.setHeader("Content-Disposition", "attachment;fileName=" + fileName);
                 writeFile(uploadFileDir + url, response);
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         }
     }
 
     private void writeFile(String file, HttpServletResponse response) {
-        ServletOutputStream out = null;
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
-            out = response.getOutputStream();
-            byte[] buffer = new byte[512];
-            int length;
-            while((length = is.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
+        try (InputStream in = new FileInputStream(file); ServletOutputStream out = response.getOutputStream();) {
+            String ct = FileContentTypeUtil.getContentType(file);
+            response.setContentType(ct);
+            if (ct.startsWith("application")) {
+                response.setHeader("Content-Disposition", "attachment; filename=" + file);
+            }else {
+                response.setDateHeader("Expires", System.currentTimeMillis()+60*60*1000);//缓存时间一小时
             }
+            IOUtils.copy(in, out);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } finally {
-            try {
-                if(out != null) {
-                    out.close();
-                }
-                if(is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            }
         }
     }
 
@@ -188,7 +177,7 @@ public class MaterialController extends BaseController {
         String savePath = saveDir + saveName;
         file.transferTo(new File(savePath));
         String url = relateDir + saveName;
-        
+
         r.put("url", url);
         r.put("name", fileName);
         r.put("type", type);
@@ -199,7 +188,7 @@ public class MaterialController extends BaseController {
     @ResponseBody
     public R commonUpload(@RequestParam("file") MultipartFile file) {
         R r = new R();
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             try {
                 String fileName = file.getOriginalFilename();
                 String relateDir = "/" + getSysUser().getUserId() + "/" + FileUtil.getYMD() + "/";
@@ -211,7 +200,7 @@ public class MaterialController extends BaseController {
                 String url = relateDir + saveName;
                 r.put("url", "/material/commonDownload/" + url.replaceAll("/", "_"));
             } catch (IOException e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
                 r.setStatus(false);
                 r.put("msg", "Upload failed.");
             }
@@ -224,7 +213,7 @@ public class MaterialController extends BaseController {
         try {
             writeFile(uploadLocalDir + path.replaceAll("_", "/"), response);
         } catch (Exception e) {
-            e.printStackTrace();
+            logout.error(e.getMessage());
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }

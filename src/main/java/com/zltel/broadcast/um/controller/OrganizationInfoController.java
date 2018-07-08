@@ -39,7 +39,7 @@ public class OrganizationInfoController extends BaseController {
 		try {
 			return organizationInfoService.queryOrgInfos(organizationInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息失败");
 		}
 	}
@@ -57,7 +57,7 @@ public class OrganizationInfoController extends BaseController {
 		try {
 			return organizationInfoService.queryOrgInfosToTree();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息失败");
 		}
 	}
@@ -75,7 +75,7 @@ public class OrganizationInfoController extends BaseController {
 		try {
 			return organizationInfoService.queryOrgInfosNotPage(organizationInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息失败");
 		}
 	}
@@ -93,7 +93,7 @@ public class OrganizationInfoController extends BaseController {
 		try {
 			return organizationInfoService.updateOrgInfo(organizationInfo);	//开始修改系统用户信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织信息修改出错。");
 		}
 	}
@@ -111,7 +111,7 @@ public class OrganizationInfoController extends BaseController {
 		try {
 			return organizationInfoService.deleteOrgInfo(organizationInfo);	//开始删除组织信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织信息删除失败。");
 		}
 	}
@@ -130,7 +130,7 @@ public class OrganizationInfoController extends BaseController {
 		try {
 			return organizationInfoService.insertOrgInfo(organizationInfo);	//开始添加组织信息
 		} catch (Exception e) {
-			e.printStackTrace();
+			logout.error(e.getMessage());
 			return R.error().setMsg("组织信息添加失败。");
 		}
 	}

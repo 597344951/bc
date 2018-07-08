@@ -1,5 +1,6 @@
 //1. 引入定义的组件
 import MessageNotice from '/components/common/message-notice.main.js';
+import VueCalendar from '/components/vue-calendar/vue-calendar.main.js';
 import TitleH1 from '/components/common/title-h1.main.js';
 import AddEvent from '/components/calendar/add-event.main.js';
 import EventToolTip from '/components/calendar/event-tooltip.main.js';
@@ -19,7 +20,7 @@ import ProgramTemplate from '/components/template/program-template.main.js';
 import ContextMenu from '/components/common/context-menu.main.js';
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
-export const comps = [MessageNotice, TitleH1, AddEvent, EventToolTip, CostPlan, PlanSuggest,
+export const comps = [MessageNotice,VueCalendar,AddEvent, EventToolTip, CostPlan, PlanSuggest,
     EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport ,
     ProgramTemplate,ContextMenu
 ];

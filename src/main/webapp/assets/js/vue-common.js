@@ -17,6 +17,13 @@ Vue.filter('datetime', function (value) {
 		return ''
 	return moment(value).format('YYYY-MM-DD HH:mm:ss')
 });
+/** 指定时间距离现在 过去多长时间 **/
+Vue.filter('time_ago', function (value) {
+	if (!value)
+		return '为止'
+	return timeAgo(new Date(value));
+});
+
 
 /** 覆盖Date toString **/
  

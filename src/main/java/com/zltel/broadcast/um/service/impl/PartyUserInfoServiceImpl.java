@@ -246,7 +246,10 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 		baseUserInfo.setPresentAddressCity((String)partyUser.get("presentAddressCity"));
 		baseUserInfo.setPresentAddressArea((String)partyUser.get("presentAddressArea"));
     	baseUserInfo.setPresentAddressDetail((String)partyUser.get("presentAddressDetail"));
-    	baseUserInfo.setIsParty(1);
+    	baseUserInfo.setIsParty(StringUtil.isEmpty((String)partyUser.get("isParty")) ? 
+    			null : Integer.parseInt((String)partyUser.get("isParty")));
+    	baseUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
+    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
     			null : Integer.parseInt((String)partyUser.get("type")));
@@ -274,8 +277,6 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("difficultUser")));
     	partyUserInfo.setAdvancedUser(StringUtil.isEmpty((String)partyUser.get("advancedUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("advancedUser")));
-    	partyUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
-    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	partyUserInfo.setDevelopUser(StringUtil.isEmpty((String)partyUser.get("developUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("developUser")));
     	partyUserInfo.setMissingUser(StringUtil.isEmpty((String)partyUser.get("missingUser")) ? 
@@ -296,10 +297,12 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	if (insertBaseUserInfoCount != 1 || baseUserInfos == null ? true : baseUserInfos.size() != 1 ? true : false) {	//插入失败，抛异常回滚
     		throw new Exception();
     	}
-    	partyUserInfo.setPartyUserId(baseUserInfos.get(0).getBaseUserId());	//设置id
-    	int insertPartyUserInfoCount = partyUserInfoMapper.insertSelective(partyUserInfo);	//保存党员信息
-    	if (insertPartyUserInfoCount != 1) {	//插入失败，抛异常回滚
-    		throw new Exception();
+    	if (baseUserInfo.getIsParty() == 1) {
+    		partyUserInfo.setPartyUserId(baseUserInfos.get(0).getBaseUserId());	//设置id
+        	int insertPartyUserInfoCount = partyUserInfoMapper.insertSelective(partyUserInfo);	//保存党员信息
+        	if (insertPartyUserInfoCount != 1) {	//插入失败，抛异常回滚
+        		throw new Exception();
+        	}
     	}
     	FileUtil.writeFile(new FileInputStream(new File(idPhotoPathTemp)), idPhotoPath, idPhotoName);	//保存证件照
     	return R.ok().setMsg("党员信息注册成功");
@@ -364,6 +367,10 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 		baseUserInfo.setPresentAddressCity((String)partyUser.get("presentAddressCity"));
 		baseUserInfo.setPresentAddressArea((String)partyUser.get("presentAddressArea"));
     	baseUserInfo.setPresentAddressDetail((String)partyUser.get("presentAddressDetail"));
+    	baseUserInfo.setIsParty(StringUtil.isEmpty((String)partyUser.get("isParty")) ? 
+    			null : Integer.parseInt((String)partyUser.get("isParty")));
+    	baseUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
+    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	
     	partyUserInfo.setPartyUserId(baseUserInfo.getBaseUserId());
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
@@ -392,8 +399,6 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("difficultUser")));
     	partyUserInfo.setAdvancedUser(StringUtil.isEmpty((String)partyUser.get("advancedUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("advancedUser")));
-    	partyUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
-    			null : Integer.parseInt((String)partyUser.get("positiveUser")));
     	partyUserInfo.setDevelopUser(StringUtil.isEmpty((String)partyUser.get("developUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("developUser")));
     	partyUserInfo.setMissingUser(StringUtil.isEmpty((String)partyUser.get("missingUser")) ? 
@@ -405,10 +410,22 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	if (insertBaseUserInfoCount != 1) {	//更新失败，抛异常回滚
     		throw new Exception();
     	}
-    	int insertPartyUserInfoCount = partyUserInfoMapper.updateByPrimaryKeySelective(partyUserInfo);	//更新党员信息
-    	if (insertPartyUserInfoCount != 1) {	//更新失败，抛异常回滚
-    		throw new Exception();
+    	if (baseUserInfo.getIsParty() == 1) {
+    		if (partyUserInfoMapper.selectByPrimaryKey(baseUserInfo.getBaseUserId()) == null) {
+    			int insertPartyUserInfoCount = partyUserInfoMapper.insertSelective(partyUserInfo);
+    			if (insertPartyUserInfoCount != 1) {	//更新失败，抛异常回滚
+            		throw new Exception();
+            	}
+    		} else {
+    			int updatePartyUserInfoCount = partyUserInfoMapper.updateByPrimaryKeySelective(partyUserInfo);	//更新党员信息
+            	if (updatePartyUserInfoCount != 1) {	//更新失败，抛异常回滚
+            		throw new Exception();
+            	}
+    		}
+    	} else {
+    		partyUserInfoMapper.deleteByPrimaryKey(baseUserInfo.getBaseUserId());
     	}
+    	
     	return R.ok().setMsg("党员信息更新成功");
     }
     
@@ -417,12 +434,12 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
      */
     @Override
     @Transactional(rollbackFor=java.lang.Exception.class)
-    public R deletePartyUserInfo(PartyUserInfo partyUserInfo) throws Exception {
-    	if(partyUserInfo != null) {
-			int countpui = this.deleteByPrimaryKey(partyUserInfo.getPartyUserId());	//开始删除党员用户信息
-			int countBui = baseUserInfoMapper.deleteByPrimaryKey(partyUserInfo.getPartyUserId()); //删除基础用户信息
+    public R deletePartyUserInfo(BaseUserInfo baseUserInfo) throws Exception {
+    	if(baseUserInfo != null) {
+			int countpui = this.deleteByPrimaryKey(baseUserInfo.getBaseUserId());	//开始删除党员用户信息
+			int countBui = baseUserInfoMapper.deleteByPrimaryKey(baseUserInfo.getBaseUserId()); //删除基础用户信息
 			OrganizationRelation or = new OrganizationRelation();
-			or.setOrgRltUserId(partyUserInfo.getPartyUserId());
+			or.setOrgRltUserId(baseUserInfo.getBaseUserId());
 			organizationRelationService.deleteOrgRelationByUserId(or).get("data");
 			
 			if (countpui == 1 && countBui == 1) {	//受影响的行数，判断是否全部删除

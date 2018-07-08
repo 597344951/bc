@@ -1,5 +1,7 @@
 package com.zltel.broadcast.terminal.bean;
 
+import java.util.Date;
+
 public class TerminalBasicInfo {
     private Integer oid;
 
@@ -42,6 +44,11 @@ public class TerminalBasicInfo {
     private String warranty;
     
     private String loc;
+    
+    /**屏幕截图**/
+    private String coverImage;
+    /**最后同步时间**/
+    private Date lastSynTime;
     
     
     public String getLoc() {
@@ -211,4 +218,21 @@ public class TerminalBasicInfo {
     public void setAddr(String addr) {
         this.addr = addr == null ? null : addr.trim();
     }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public Date getLastSynTime() {
+        return lastSynTime;
+    }
+
+    public void setLastSynTime(Date lastSynTime) {
+        this.lastSynTime = lastSynTime;
+    }
+    
 }

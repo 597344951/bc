@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,9 @@ import com.zltel.broadcast.um.service.SysMenuService;
 
 @Service
 public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuService {
+
+    private static final Logger logout = LoggerFactory.getLogger(SysMenuServiceImpl.class);
+
     @Resource
     private SysMenuMapper sysMenuMapper;
 
@@ -51,18 +56,19 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
      * @return 查询得到的菜单
      */
     @Override
-    @Transactional(rollbackFor=java.lang.Exception.class)
+    @Transactional(rollbackFor = java.lang.Exception.class)
     public R querySysMenus(SysMenu sysMenu, int pageNum, int pageSize) throws Exception {
-    	PageHelper.startPage(pageNum, pageSize);
+        PageHelper.startPage(pageNum, pageSize);
         List<SysMenu> sysMenus = sysMenuMapper.querySysMenus(sysMenu); // 开始查询，没有条件则查询所有菜单
         PageInfo<SysMenu> sysMenusForPageInfo = new PageInfo<>(sysMenus);
-        if (sysMenusForPageInfo != null && sysMenusForPageInfo.getList() != null && sysMenusForPageInfo.getList().size() > 0) { // 是否查询到数据
+        if (sysMenusForPageInfo != null && sysMenusForPageInfo.getList() != null
+                && sysMenusForPageInfo.getList().size() > 0) { // 是否查询到数据
             return R.ok().setData(sysMenusForPageInfo).setMsg("查询菜单成功");
         } else {
             return R.ok().setMsg("没有查询到菜单信息");
         }
     }
-    
+
     /**
      * 查询菜单
      * 
@@ -70,9 +76,9 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
      * @return 查询得到的菜单
      */
     @Override
-    @Transactional(rollbackFor=java.lang.Exception.class)
+    @Transactional(rollbackFor = java.lang.Exception.class)
     public R querySysMenusNotPage(SysMenu sysMenu) throws Exception {
-    	List<TreeNode<SysMenu>> sysMenus = this.queryTreeMenu(); // 开始查询，没有条件则查询所有菜单
+        List<TreeNode<SysMenu>> sysMenus = this.queryTreeMenu(); // 开始查询，没有条件则查询所有菜单
         if (sysMenus != null && sysMenus.size() > 0) { // 是否查询到数据
             return R.ok().setData(sysMenus).setMsg("查询菜单成功");
         } else {
@@ -85,8 +91,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         Subject subject = SecurityUtils.getSubject();
         SysUser user = (SysUser) subject.getPrincipal();
         List<SysMenu> datas = this.query(null, null);
-        Stream<SysMenu> streams =
-                datas.stream().filter(e -> e.getType() != Constant.MenuType.BUTTON.getValue());
+        Stream<SysMenu> streams = datas.stream().filter(e -> e.getType() != Constant.MenuType.BUTTON.getValue());
         if (!Constant.isSuperAdmin(user.getUserId())) {
             // 非超级用户 ，按照登陆用的权限字符串，过滤没有权限的菜单
             streams = streams.filter(it -> {
@@ -111,15 +116,14 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
     private List<SysMenuTreeNode> toTree(List<SysMenu> menus) {
         List<SysMenuTreeNode> result = new ArrayList<>();
         // 获取第一层
-        menus.stream().filter(e -> e.getType() == Constant.MenuType.CATALOG.getValue())
-                .forEach(n -> {
-                    try {
-                        SysMenuTreeNode tn = SysMenuTreeNode.from(n);
-                        result.add(tn);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+        menus.stream().filter(e -> e.getType() == Constant.MenuType.CATALOG.getValue()).forEach(n -> {
+            try {
+                SysMenuTreeNode tn = SysMenuTreeNode.from(n);
+                result.add(tn);
+            } catch (Exception e) {
+                logout.error(e.getMessage());
+            }
+        });
         // 递归遍历 子节点
         result.forEach(node -> {
             handleNextNode(node, menus);
@@ -137,7 +141,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
                 SysMenuTreeNode tn = SysMenuTreeNode.from(n);
                 childs.add(tn);
             } catch (Exception e) {
-                e.printStackTrace();
+                logout.error(e.getMessage());
             }
 
 
@@ -154,12 +158,11 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         List<SysMenu> datas = this.query(null, null);
         List<TreeNode<SysMenu>> result = new ArrayList<>();
         // 获取第一层
-        datas.stream().filter(e -> e.getType() == Constant.MenuType.CATALOG.getValue())
-                .forEach(n -> {
-                    TreeNode<SysMenu> tn = new TreeNode<SysMenu>();
-                    tn.setData(n);
-                    result.add(tn);
-                });
+        datas.stream().filter(e -> e.getType() == Constant.MenuType.CATALOG.getValue()).forEach(n -> {
+            TreeNode<SysMenu> tn = new TreeNode<SysMenu>();
+            tn.setData(n);
+            result.add(tn);
+        });
         // 递归遍历 子节点
         result.forEach(node -> {
             nextNode(node, datas);

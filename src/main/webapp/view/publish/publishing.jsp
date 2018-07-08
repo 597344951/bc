@@ -13,12 +13,79 @@
 	</style>
 </head>
 <body>
-	<div id="app">
-		<el-container>
-			<el-header>
-				<h3>正在发布中内容活动</h3>
-			</el-header>
-			<el-main>
+<div id="app">
+	<el-container>
+		<el-header>
+			<div id="toolbar">
+				<el-row>
+					<el-col :span="24">
+						<el-menu class="el-menu-demo" mode="horizontal">
+							<el-menu-item index="-1" class="normal-menu-item" disabled>正在发布中内容活动 </el-menu-item>
+							<el-menu-item index="-3" class="normal-menu-item" disabled>
+								<el-button-group class="control-button">
+									<el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
+									<el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
+								</el-button-group>
+							</el-menu-item>
+							<el-menu-item index="-2" :style="{'float':'right'}" class="normal-menu-item" disabled>
+								<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="publishingContent.pageNum"
+								    :page-sizes="pageSizes" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="publishingContent.total">
+								</el-pagination>
+							</el-menu-item>
+						</el-menu>
+					</el-col>
+				</el-row>
+			</div>
+		</el-header>
+		<el-main>
+			<div v-show="!dis_h_v">
+				<template v-for=" it in  publishingContent.list">
+					<el-card class="card-item" :body-style="{ padding: '0px' }">
+						<div class="title">
+							<span class="bolder"> {{it.title}} </span>
+							<span class="right">
+							</span>
+						</div>
+						<div class="content">
+							<table class="dis-info-min">
+								<tbody>
+									<tr>
+										<td>发起人</td>
+										<td>：</td>
+										<td>{{it.username}}</td>
+									</tr>
+									<tr>
+										<td>发布时间</td>
+										<td>：</td>
+										<td>{{it.add_date}}</td>
+									</tr>
+									<tr>
+										<td>开始时间</td>
+										<td>：</td>
+										<td>{{it.start_date}}</td>
+									</tr>
+									<tr>
+										<td>结束时间</td>
+										<td>：</td>
+										<td>{{it.end_date}}</td>
+									</tr>
+									<tr>
+										<td>播放时段</td>
+										<td>：</td>
+										<td>{{it.period}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="bottom clearfix">
+							<el-button type="text" size="small" @click="view(it)">节目预览</el-button>
+							<el-button type="text" size="small" @click="viewTerminal(it)">发布终端</el-button>
+							<el-button type="text" size="small" @click="offline(it)">从播放列表移除</el-button>
+						</div>
+					</el-card>
+				</template>
+			</div>
+			<div v-show="dis_h_v">
 				<el-table :data="publishingContent.list" border style="width: 100%">
 					<el-table-column prop="title" label="主题"></el-table-column>
 					<el-table-column prop="username" label="发起人" width="180"></el-table-column>
@@ -29,115 +96,30 @@
 					<el-table-column label="操作">
 						<template slot-scope="scope">
 							<%--<el-button type="text" size="small">查看终端</el-button>--%>
-							<el-button type="text" size="small" @click="view(scope.row)">节目预览</el-button>
-							<el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
-							<el-button type="text" size="small" @click="offline(scope.row)">从播放列表移除</el-button>
+								<el-button type="text" size="small" @click="view(scope.row)">节目预览</el-button>
+								<el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
+								<el-button type="text" size="small" @click="offline(scope.row)">从播放列表移除</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
-			</el-main>
-			<el-footer>
-				<el-pagination
-						@size-change="handleSizeChange"
-						@current-change="handleCurrentChange"
-						:current-page="publishingContent.pageNum"
-						:page-sizes="pageSizes"
-						:page-size="pageSize"
-						layout="total, sizes, prev, pager, next, jumper"
-						:total="publishingContent.total">
-				</el-pagination>
-			</el-footer>
-		</el-container>
+			</div>
+		</el-main>
+		<el-footer>
+		</el-footer>
+	</el-container>
 
-		<el-dialog title="终端列表" :visible.sync="publishTerminal.show" width="80%">
-            <el-table :data="publishTerminal.list" border>
-                <el-table-column prop="name" label="名称"></el-table-column>
-                <el-table-column prop="rev" label="横屏/竖屏"></el-table-column>
-                <el-table-column prop="typ" label="触摸类型"></el-table-column>
-                <el-table-column prop="size" label="尺寸"></el-table-column>
-                <el-table-column prop="ratio" label="分辨率"></el-table-column>
-                <el-table-column prop="ip" label="IP"></el-table-column>
-                <el-table-column prop="loc" label="位置"></el-table-column>
-            </el-table>
-        </el-dialog>
-	</div>
-	<script>
-		var app = new Vue({
-			el: '#app',
-			data: {
-                pageSizes: [10, 20, 50, 100],
-			    pageSize: 10,
-				publishingContent:{},
-                publishTerminal: {
-                    show: false,
-                    list: []
-                }
-			},
-            methods: {
-                handleSizeChange(pageSize) {
-                    load(1, pageSize)
-				},
-                handleCurrentChange(curPage) {
-					load(curPage, this.pageSize)
-				},
-				offline(row) {
-                    this.$confirm('确认移除？').then(()=>{
-                        get('/publish/process/offline/' + row.content_id, reps => {
-                            if(reps.status) {
-                                app.$message('下线成功 !');
-                                load(1, app.pageSize);
-                            } else {
-                                app.$message('下线失败 !');
-                            }
-                        })
-                    }).catch(()=>{});
-				},
-				view(row) {
-					if(!row.snapshot) {
-                        this.$message("预览失败...");
-                        return;
-                    }
-                    window.open ('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
-				},
-				viewTerminal(row) {
-                    let url = '/publish/publishTerminal/' + row.content_id
-                    get(url, reps => {
-                        this.publishTerminal.list = reps.data
-                        this.publishTerminal.show = true
-                    })
-                }
-			}
-		});
-		load(1, app.pageSize);
-
-		function load(pageNum, pageSize) {
-		    get('/publish/publishing/content/'+ pageNum+'/' + pageSize, reps => {
-				if(reps.status) {
-					app.publishingContent = reps.data;
-				} else {
-				    app.$message('没有数据...');
-				}
-			});
-			
-        }
-
-        function get(url, callback) {
-            $.ajax({
-                type:'GET',
-                url:url,
-                dataType:'json',
-                success: function(reps){
-                    callback(reps);
-                },
-                error: function (err) {
-                    app.$notify({
-                        title: 'ERROR',
-                        message: '系统错误...',
-                        type: 'error'
-                    });
-                }
-            });
-        }
-	</script>
+	<el-dialog title="终端列表" :visible.sync="publishTerminal.show" width="80%">
+		<el-table :data="publishTerminal.list" border>
+			<el-table-column prop="name" label="名称"></el-table-column>
+			<el-table-column prop="rev" label="横屏/竖屏"></el-table-column>
+			<el-table-column prop="typ" label="触摸类型"></el-table-column>
+			<el-table-column prop="size" label="尺寸"></el-table-column>
+			<el-table-column prop="ratio" label="分辨率"></el-table-column>
+			<el-table-column prop="ip" label="IP"></el-table-column>
+			<el-table-column prop="loc" label="位置"></el-table-column>
+		</el-table>
+	</el-dialog>
+</div>
 </body>
 </html>
+<script src="${urls.getForLookupPath('/assets/module/publish/publishing.js')}"></script>

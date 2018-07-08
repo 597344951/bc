@@ -10,11 +10,15 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
+import com.zltel.broadcast.incision.sola.service.impl.SolaProgramServiceImpl;
+import com.zltel.broadcast.message.bean.Message;
+import com.zltel.broadcast.message.service.MessageService;
 import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.dao.PublishDao;
 import com.zltel.broadcast.publish.service.PublishService;
 import com.zltel.broadcast.um.bean.SysUser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * PublishServiceImpl class
  *
- * @author Touss
+ * @author ToussmoreEditCommit
  * @date 2018/5/7
  */
 @Service
@@ -43,6 +47,8 @@ public class PublishServiceImpl implements PublishService {
     private PublishDao publishDao;
     @Autowired
     private SolaProgramService solaProgramService;
+    @Autowired
+    private MessageService messageService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
@@ -55,9 +61,9 @@ public class PublishServiceImpl implements PublishService {
         detail.put("content", content.get("templateText"));
         detail.put("content_type_id", contentTypeId);
         detail.put("user_id", user.getUserId());
-        detail.put("start_date", content.get("startDate"));
+        /*detail.put("start_date", content.get("startDate"));
         detail.put("end_date", content.get("endDate"));
-        detail.put("period", content.get("period"));
+        detail.put("period", content.get("period"));*/
         detail.put("relate_content_id", content.get("relateContent"));
         detail.put("add_date", add_date);
         detail.put("update_date", add_date);
@@ -95,20 +101,25 @@ public class PublishServiceImpl implements PublishService {
         // 添加素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         Map<String, Object> material;
+
         for (Map<String, Object> m : materials) {
-            material = new HashMap<String, Object>();
-            material.put("type", m.get("type"));
-            material.put("content", m.get("content"));
-            material.put("url", m.get("url"));
-            material.put("description", m.get("name"));
-            material.put("user_id", user.getUserId());
-            material.put("org_id", user.getOrgId());
-            material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
-            material.put("relate_content_id", detail.get("id"));
-            material.put("add_date", add_date);
-            material.put("update_date", add_date);
-            simpleDao.add("material", material);
-            m.put("id", material.get("id"));
+            boolean isFile = (boolean) m.get("isFile");
+            if(isFile) {
+                material = new HashMap<String, Object>();
+                material.put("type", m.get("type"));
+                material.put("name", m.get("name"));
+                material.put("content", m.get("content"));
+                material.put("url", m.get("url"));
+                material.put("description", m.get("name"));
+                material.put("user_id", user.getUserId());
+                material.put("org_id", user.getOrgId());
+                material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
+                material.put("relate_content_id", detail.get("id"));
+                material.put("add_date", add_date);
+                material.put("update_date", add_date);
+                simpleDao.add("material", material);
+                m.put("id", material.get("id"));
+            }
         }
 
         // 发布终端
@@ -173,7 +184,8 @@ public class PublishServiceImpl implements PublishService {
                     // 审核还在继续
                     verifyCompleted = false;
                     // 顺位审核
-                    // TODO: 2018/5/13 发出审核通知
+                    // TODO: 2018/5/13 添加审核待办
+                    messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) exu.get("user_id"), contentId);
                     break;
                 }
             }
@@ -190,13 +202,15 @@ public class PublishServiceImpl implements PublishService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public void changeProcess(int contentId, int processItemId) {
-        Map<String, Object> content = new HashMap<String, Object>();
+        Map<String, Object> content = getContent(contentId);
         Date update_date = new Date();
         Map<String, Object> queryParam = null;
         Map<Integer, List<Map<String, Object>>> processState = getProcessState(contentId);
         if (Constant.MORE_EDIT == processItemId) {
             if (processState.get(Constant.VERIFY) == null) {
                 // 通知所有编辑人员
+                // TODO: 2018/7/2 添加待办
+                messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, Message.USER_ALL, contentId);
             } else {
                 // 回退清除提交标记
                 List<Map<String, Object>> meUsers = getMoreEditUser(contentId);
@@ -206,6 +220,8 @@ public class PublishServiceImpl implements PublishService {
                     meUser.put("update_date", update_date);
                     queryParam.put("more_edit_user_id", meUser.get("more_edit_user_id"));
                     simpleDao.update("publish_more_edit_user", meUser, queryParam);
+                    // TODO: 2018/7/2 添加待办
+                    messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, (Integer) meUser.get("user_id"), contentId);
                 }
             }
 
@@ -213,25 +229,31 @@ public class PublishServiceImpl implements PublishService {
             // 重置状态
             List<Map<String, Object>> examineUser = getExamineUser(contentId);
             queryParam = new HashMap<String, Object>();
-            for (Map<String, Object> exu : examineUser) {
-                exu.put("state",
-                        processState.get(Constant.VERIFY) == null ? Constant.VERIFY_NOT_START : Constant.VERIFY_ONCE);
+            boolean isFirst = true;
+            for(int i=0; i<examineUser.size(); i++) {
+                Map<String, Object> exu = examineUser.get(i);
+                exu.put("state", processState.get(Constant.VERIFY) == null ? Constant.VERIFY_NOT_START : Constant.VERIFY_ONCE);
+                //一天时间审核
+                exu.put("deadline", new Date(System.currentTimeMillis() + (i+1) * 24 * 60 * 60 * 1000));
                 exu.put("update_date", update_date);
                 queryParam.put("examine_user_id", exu.get("examine_user_id"));
                 simpleDao.update("publish_examine_user", exu, queryParam);
+                // 通知顺序一
+                messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) content.get("user_id"), contentId);
             }
-            // 通知顺序一
+
         } else if (Constant.PUBLISHABLE == processItemId) {
             // 通知发起人
+            // TODO: 2018/7/2 添加待办
+            messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待发布", null, (Integer) content.get("user_id"), contentId);
         }
         // 更改状态
+        content = new HashMap<>();
         content.put("process_item_id", processItemId);
         content.put("update_date", update_date);
         queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         simpleDao.update("publish_content", content, queryParam);
-
-        // TODO: 2018/5/13 根据状态发出通知
     }
 
     /**
@@ -241,45 +263,70 @@ public class PublishServiceImpl implements PublishService {
      * @return
      */
     private int addToEditor(Map<String, Object> content) {
-        String modeltype = (String) content.get("screenType");
-        String playtime = (String) content.get("playLength");
-        String resolution = (String) content.get("resolution");
-        int resolutionw = Integer.parseInt(resolution.split("x")[0]);
-        int resolutionh = Integer.parseInt(resolution.split("x")[1]);
         Map<String, Object> program = new HashMap<String, Object>();
-        program.put("title", content.get("title"));
-        program.put("categoryId", 1);
-        program.put("modeltype", Integer.parseInt(modeltype));
-        program.put("resolutionw", resolutionw);
-        program.put("resolutionh", resolutionh);
-        program.put("playtime", Integer.parseInt(playtime));
-        program.put("des", content.get("title"));
+        String programTemplateId = (String) content.get("programTemplateId");
+        String programTemplateCategoryId = (String) content.get("programTemplateCategoryId");
+        int addType;
+        if(StringUtils.isNotEmpty(programTemplateId) && StringUtils.isNotEmpty(programTemplateCategoryId)) {
+            //使用模板添加节目
+            program.put("templetId", programTemplateId);
+            program.put("categoryId", programTemplateCategoryId);
+            addType = SolaProgramServiceImpl.ADD_PROGRAM_WITH_TEMPLATE;
+        } else {
+            //不适用模板添加节目
+            String modeltype = (String) content.get("screenType");
+            String playtime = (String) content.get("playLength");
+            String resolution = (String) content.get("resolution");
+            int resolutionw = Integer.parseInt(resolution.split("x")[0]);
+            int resolutionh = Integer.parseInt(resolution.split("x")[1]);
+            program.put("title", content.get("title"));
+            program.put("categoryId", 1);
+            program.put("modeltype", Integer.parseInt(modeltype));
+            program.put("resolutionw", resolutionw);
+            program.put("resolutionh", resolutionh);
+            program.put("playtime", Integer.parseInt(playtime));
+            program.put("des", content.get("title"));
+            addType = SolaProgramServiceImpl.ADD_PROGRAM_NO_TEMPLATE;
+        }
         // 素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         List<Map<String, Object>> resources = new ArrayList<>();
         for (Map<String, Object> material : materials) {
+            boolean isFile = (boolean) material.get("isFile");
             Map<String, Object> res = new HashMap<String, Object>();
             String type = (String) material.get("type");
             String name = (String) material.get("name");
-            String url = material.get("id") + name.substring(name.lastIndexOf("."), name.length());
+            String url;
+            if(isFile) {
+                url = material.get("id") + name.substring(name.lastIndexOf("."), name.length());
+            } else {
+                url = "";
+            }
+
             if (Constant.MATERIAL_TYPE_PICTURE.equals(type)) {
                 res.put("Type", 2);
                 res.put("Url", host + "/material/image/" + url);
                 res.put("Content", "");
-            } else if (Constant.MATERIAL_TYPE_AUDIO.equals(type) || Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
+            } else if (Constant.MATERIAL_TYPE_AUDIO.equals(type)) {
+                res.put("Type", 4);
+                res.put("Url", host + "/material/download/" + material.get("id"));
+                res.put("Content", "");
+            } else if(Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
                 res.put("Type", 3);
                 res.put("Url", host + "/material/download/" + material.get("id"));
                 res.put("Content", "");
-            } else {
+            } else if(Constant.MATERIAL_TYPE_TEXT.equals(type)) {
                 res.put("Type", 1);
                 res.put("Content", material.get("content"));
                 res.put("Url", "");
+            } else {
+                continue;
             }
             res.put("Name", name);
             resources.add(res);
         }
         program.put("resourcesJson", JSON.toJSONString(resources));
-        return solaProgramService.addProgram(program);
+        return solaProgramService.addProgram(program, addType);
     }
 
     /**
@@ -320,21 +367,20 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void verify(SysUser user, boolean isAdopt, String opinion, int contentId, int contentTypeId) {
+    public void verify(SysUser user, int operate, String opinion, int contentId, int contentTypeId) {
         Date add_date = new Date();
         Map<String, Object> examineUser = new HashMap<String, Object>();
-        if (isAdopt) {
+        boolean hasNext = true;
+        if (Constant.VERIFY_OPERATE_APPROVED == operate) {
             // 审核通过
             // 添加状态
-            addProcessState(contentId, user.getUserId(), Constant.VERIFY,
-                    Constant.MSG_CONTENT_VERIFY_PASS + user.getUsername(), null);
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_PASS + user.getUsername(), null);
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_PASS);
-        } else {
+        } else if(Constant.VERIFY_OPERATE_NOT_APPROVED == operate) {
             // 审核未通过
             // 添加状态
-            addProcessState(contentId, user.getUserId(), Constant.VERIFY,
-                    Constant.MSG_CONTENT_VERIFY_NOT_PASS + user.getUsername(), opinion);
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY,Constant.MSG_CONTENT_VERIFY_NOT_PASS + user.getUsername(), opinion);
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_NOT_PASS);
             // 返回到上一个状态
@@ -350,18 +396,38 @@ public class PublishServiceImpl implements PublishService {
                     } else {
                         // 废弃
                         changeProcess(contentId, Constant.DISCARD);
+                        hasNext = false;
                     }
 
                 }
             }
+        } else {
+            //放弃审核
+            // 添加状态
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_ABSTAIN + user.getUsername(), null);
+            // 更新审核人状态
+            examineUser.put("state", Constant.VERIFY_ABSTAIN);
+            List<Map<String, Object>> examineUsers = getExamineUser(contentId);
+            if(examineUsers.get(examineUsers.size()-1).get("user_id").equals(user.getUserId())) {
+                // 废弃
+                changeProcess(contentId, Constant.DISCARD);
+                hasNext = false;
+            }
+
         }
+        //消息处理
+        messageService.handleMessage(user, contentId);
+
         Map<String, Object> queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         queryParam.put("user_id", user.getUserId());
         examineUser.put("update_date", add_date);
         simpleDao.update("publish_examine_user", examineUser, queryParam);
         // 下一步
-        doNext(contentId);
+        if(hasNext) {
+            doNext(contentId);
+        }
+
     }
 
     @Override
@@ -402,6 +468,8 @@ public class PublishServiceImpl implements PublishService {
         // 添加状态记录
         addProcessState(contentId, user.getUserId(), Constant.MORE_EDIT,
                 Constant.MSG_CONTENT_MORE_EDIT_COMMIT + user.getUsername(), null);
+        //消息处理
+        messageService.handleMessage(user, contentId);
         // 下一步
         doNext(contentId);
     }
@@ -582,6 +650,7 @@ public class PublishServiceImpl implements PublishService {
                                     operate.put("verify", true);
                                 }
                             }
+                            break;
                         }
                     }
                 }
@@ -634,17 +703,31 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void publish(SysUser user, int contentId) {
+    public void publish(SysUser user, int contentId, Map<String, Object> period) {
         // 调用发布接口
         Map<String, Object> content = publishDao.get(contentId);
         Map<String, Object> queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         List<Map<String, Object>> terminals = simpleDao.query("publish_terminal", queryParam);
         content.put("terminals", terminals);
+        content.put("start_date", period.get("startDate"));
+        content.put("end_date", period.get("endDate"));
+        content.put("period", period.get("period"));
+        content.put("weeks", period.get("weeks"));
         solaProgramService.publish(content);
+        //更新播放时间内容
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("start_date", period.get("startDate"));
+        updateData.put("end_date", period.get("endDate"));
+        updateData.put("period", period.get("period"));
+        updateData.put("weeks", period.get("weeks"));
+        updateData.put("update_date", new Date());
+        simpleDao.update("publish_content", updateData, queryParam);
         changeProcess(contentId, Constant.PUBLISHING);
-        addProcessState(contentId, user.getUserId(), Constant.PUBLISHING,
-                Constant.MSG_CONTENT_PUBLISHING + user.getUsername(), null);
+        addProcessState(contentId, user.getUserId(), Constant.PUBLISHING, Constant.MSG_CONTENT_PUBLISHING + user.getUsername(), null);
+
+        //消息处理
+        messageService.handleMessage(user, contentId);
     }
 
     @Override
@@ -683,5 +766,62 @@ public class PublishServiceImpl implements PublishService {
     @Override
     public List<Map<String, Object>> queryPublishTerminal(int contentId) {
         return publishDao.queryPublishTerminal(contentId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void verifyTimeout() {
+        List<Map<String, Object>> users = publishDao.queryVerifyingUser();
+        Map<Integer, Object> contentVerifyingUsers = new HashMap<>();
+        int contentId;
+        List<Map<String, Object>> list;
+        //分组
+        for(Map<String, Object> user : users) {
+            contentId = (int) user.get("content_id");
+            list = (List<Map<String, Object>>) contentVerifyingUsers.get(contentId);
+            if(list == null) {
+                list = new ArrayList<>();
+                contentVerifyingUsers.put(contentId, list);
+            }
+            list.add(user);
+        }
+        //检查超时
+        Map<String, Object> user, state, queryParam;
+        Date deadline;
+        for(Integer key : contentVerifyingUsers.keySet()) {
+            list = (List<Map<String, Object>>) contentVerifyingUsers.get(key);
+            for(int i=0; i<list.size(); i++) {
+                user = list.get(i);
+                deadline = (Date) user.get("deadline");
+                if(deadline == null) {
+                    continue;
+                }
+                if(deadline.getTime() < System.currentTimeMillis()) {
+                    //超时
+                    state = new HashMap<>();
+                    state.put("state", Constant.VERIFY_ABSTAIN);
+                    queryParam = new HashMap<>();
+                    queryParam.put("examine_user_id", user.get("examine_user_id"));
+                    queryParam.put("update_date", user.get("update_date"));
+                    simpleDao.update("publish_examine_user", state, queryParam);
+                    addProcessState(key, (Integer) user.get("user_id"), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_ABSTAIN + user.get("username"), null);
+                    log.info("审核超时, 自动放弃审核.");
+                    if(list.size() <= 1) {
+                        //没有后续审核人, 内容废止
+                        Map<String, Object> content = publishDao.get(key);
+                        state = new HashMap<>();
+                        state.put("process_item_id", Constant.DISCARD);
+                        queryParam = new HashMap<>();
+                        queryParam.put("content_id", content.get("content_id"));
+                        queryParam.put("update_date", content.get("update_date"));
+                        simpleDao.update("publish_content", state, queryParam);
+                        addProcessState(key, (Integer) user.get("user_id"), Constant.VERIFY, Constant.MSG_CONTENT_DISCARD + user.get("username"), null);
+                        log.info("审核超时且无其他审核人, 内容废弃处理.");
+                    }
+
+
+                }
+            }
+        }
     }
 }

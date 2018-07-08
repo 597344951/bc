@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.template.bean.TemplateContent;
 import com.zltel.broadcast.template.service.TemplateContentService;
@@ -30,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/tp")
-public class TemplateContentController extends BaseController{
+public class TemplateContentController extends BaseController {
     public static final Logger logout = LoggerFactory.getLogger(TemplateContentController.class);
     @Resource
     private TemplateContentService templateContentService;
@@ -38,14 +39,25 @@ public class TemplateContentController extends BaseController{
     @ApiOperation(value = "查询分类模板列表", notes = "根据用户所在组织查询其指定模板类别下的模板信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tpTypeId", value = "分类id", required = true, dataType = "Integer", paramType = "query")})
-    @RequestMapping(value = "/listByType", method = {RequestMethod.GET})
-    public R listTpByType(TemplateContent tp) {
+    @RequestMapping(value = "/listByType/{pageIndex}-{limit}", method = {RequestMethod.GET})
+    public R listTpByType(TemplateContent tp,String keyword, @PathVariable("pageIndex") int pageIndex,
+            @PathVariable("limit") int limit) {
         TemplateContent record = new TemplateContent();
-        record.setOrgid(this.getSysUser().getOrgId()); // 后续动态获取
+        record.setOrgid(this.getSysUser().getOrgId());
         record.setTpTypeId(tp.getTpTypeId());
-
-        List<TemplateContent> result = this.templateContentService.queryByType(record);
-        return R.ok().setData(result);
+        record.setKeyword(keyword);
+        Pager prb = new Pager(pageIndex, limit);
+        List<TemplateContent> result = this.templateContentService.queryByType(record,prb);
+        return R.ok().setData(result).setPager(prb);
+    }
+    
+    @ApiOperation(value = "查询分类模板列表", notes = "根据用户所在组织查询其指定模板类别下的模板信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tpTypeId", value = "分类id", required = true, dataType = "Integer", paramType = "query")})
+    @RequestMapping(value = "/listByType", method = {RequestMethod.GET})
+    public R listTpByTypeWithoutPager(TemplateContent tp) {
+        Pager prb = Pager.DEFAULT_PAGER;
+        return this.listTpByType(tp,null, 1, prb.getLimit());
     }
 
     @ApiOperation(value = "获取指定模板信息")
@@ -57,7 +69,7 @@ public class TemplateContentController extends BaseController{
 
     @ApiOperation(value = "删除模板信息")
     @DeleteMapping("/template/{tpId}")
-    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="删除模版",template="删除模版id:${tpId}")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "删除模版", template = "删除模版id:${tpId}")
     public R delete(@PathVariable("tpId") Integer tpId) {
         TemplateContent tc = new TemplateContent();
         tc.setTpId(tpId);
@@ -72,13 +84,13 @@ public class TemplateContentController extends BaseController{
 
     @ApiOperation(value = "新增模板信息")
     @PostMapping("/template")
-    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="新增模版",template="新增模版:${tc.title}")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增模版", template = "新增模版:${tc.title}")
     public R save(@RequestBody TemplateContent tc) {
         ValidatorUtils.validateEntity(tc);
         SysUser sysUser = this.getSysUser();
         tc.setUid(sysUser.getUserId());
         tc.setOrgid(sysUser.getOrgId());
-        
+
         this.templateContentService.insert(tc);
         return R.ok();
     }

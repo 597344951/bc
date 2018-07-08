@@ -22,6 +22,7 @@ public class Constant {
     public static final int PUBLISHED = 6;
     /** 废置 **/
     public static final int DISCARD = 0;
+
     /** 未审核 **/
     public static final int VERIFY_NOT_START = 0;
     /** 审核通过 **/
@@ -30,6 +31,13 @@ public class Constant {
     public static final int VERIFY_NOT_PASS = 2;
     /** 再审核 **/
     public static final int VERIFY_ONCE = 3;
+    /** 跳过审核 **/
+    public static final int VERIFY_ABSTAIN = 4;
+    /** 审核操作 **/
+    public static final int VERIFY_OPERATE_APPROVED = 1;
+    public static final int VERIFY_OPERATE_NOT_APPROVED = 2;
+    public static final int VERIFY_OPERATE_ABSTAIN = 3;
+
     /** 为编辑 **/
     public static final int MORE_EDIT_NOT_EDIT = 0;
     /** 正在编辑 **/
@@ -38,6 +46,7 @@ public class Constant {
     public static final int MORE_EDIT_COMMIT = 2;
     /** 在编辑 **/
     public static final int MORE_EDIT_REEDITING = 3;
+
     /** 机能-内容发布 **/
     public static final String FEATURE_CONTENT_PUBLISH = "内容发布";
     public static final String FEATURE_CONTENT_MATERIAL = "素材管理";
@@ -48,6 +57,7 @@ public class Constant {
     public static final String MSG_CONTENT_MORE_EDIT_COMMIT = "提交编辑.提交人：";
     public static final String MSG_CONTENT_VERIFY_PASS = "审核通过.审核人：";
     public static final String MSG_CONTENT_VERIFY_NOT_PASS = "审核不通过.审核人：";
+    public static final String MSG_CONTENT_VERIFY_ABSTAIN = "审核放弃.审核人：";
     public static final String MSG_CONTENT_DISCARD = "废弃内容.废弃人：";
     public static final String MSG_CONTENT_PUBLISHING = "发布内容.发布人：";
     public static final String MSG_CONTENT_OFFLINE = "下架内容.下架人：";

@@ -18,9 +18,18 @@ public interface TerminalBasicInfoService {
 
     int updateByPrimaryKey(TerminalBasicInfo record);
 
-    public R queryBasicInfo(TerminalBasicInfo record, int pageNum, int pageSize) ;
-    
+    public R queryBasicInfo(TerminalBasicInfo record, int pageNum, int pageSize);
+
+    public R queryMapInfo();
+
     public R echarts(String string) throws Exception;
-    /**统计设备在线状态数**/
+
     public Map<String, Integer> countOnlineTerminal();
+
+    /**
+     * 同步终端信息
+     * 
+     * @junit {@link com.zltel.broadcast.terminal.service.TerminalBasicInfoServiceTest#testSynchronizTerminalInfo()}
+     */
+    public void synchronizTerminalInfo();
 }

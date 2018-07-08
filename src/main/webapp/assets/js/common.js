@@ -157,3 +157,12 @@ function timeAgo(dt) {
 	} //小于1年(365天),按月数
 	return parseInt(f / 31536e6) + '年' + bs; //大于365天,按年算
 }
+/**
+ * 检测 顶层url是否和当前页面一致
+ * @returns
+ */
+function checkLocationSame(){
+	return window.location.href == top.location.href;
+}
+
+

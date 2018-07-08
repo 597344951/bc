@@ -47,6 +47,8 @@ public class UeditorController {
             try (FileInputStream fis = new FileInputStream(file);) {
                 if (ct.startsWith("application")) {
                     response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+                }else {
+                    response.setDateHeader("Expires", System.currentTimeMillis()+60*60*1000);//缓存时间一小时
                 }
                 IOUtils.copy(fis, response.getOutputStream());
                 response.flushBuffer();

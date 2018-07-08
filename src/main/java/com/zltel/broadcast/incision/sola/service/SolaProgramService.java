@@ -6,11 +6,13 @@ import java.util.Map;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.incision.sola.bean.BreakingNews;
 import com.zltel.broadcast.incision.sola.bean.Category;
+import com.zltel.broadcast.incision.sola.bean.Command;
 import com.zltel.broadcast.incision.sola.bean.ExecuteLog;
 import com.zltel.broadcast.incision.sola.bean.OptLog;
 import com.zltel.broadcast.incision.sola.bean.ProgramTemp;
 import com.zltel.broadcast.incision.sola.bean.PubedProgram;
 import com.zltel.broadcast.incision.sola.bean.ResultStatus;
+import com.zltel.broadcast.incision.sola.bean.Screen;
 
 /**
  * 节目相关服务 SolaProgramService interface
@@ -24,9 +26,10 @@ public interface SolaProgramService {
      * 添加节目编辑
      * 
      * @param program
+     * @param type
      * @return
      */
-    public int addProgram(Map<String, Object> program);
+    public int addProgram(Map<String, Object> program, int type);
 
     /**
      * 发布节目内容
@@ -58,6 +61,15 @@ public interface SolaProgramService {
      */
     public List<Map<String, Object>> queryOrg();
 
+    /**
+     * 获取终端
+     * 
+     * @param categoryId 目录id ,0 :所有
+     * @param pager 分页对象
+     * @return
+     * @junit {@link com.zltel.broadcast.incision.sola.service.SolaProgramServiceTest#testGetScreenList()}
+     */
+    public List<Screen> getScreenList(int categoryId, Pager pager);
 
     /**
      * 终端操作
@@ -69,6 +81,12 @@ public interface SolaProgramService {
      * @return
      */
     public boolean terminalCommand(int tid, String label, String name, String code);
+    /**
+     * 执行终端操作
+     * @param cmd
+     * @return
+     */
+    public boolean terminalCommand(Command cmd);
 
     /**
      * 获取终端发布节目信息

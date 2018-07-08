@@ -4,8 +4,14 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** 包含节点信息的菜单树 **/
 public class SysMenuTreeNode extends SysMenu {
+    
+    private static final Logger log = LoggerFactory.getLogger(SysMenuTreeNode.class);
+
 
     private List<SysMenuTreeNode> children;
 
@@ -23,7 +29,7 @@ public class SysMenuTreeNode extends SysMenu {
                             target.invoke(st, v);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage());
                     }
                 });
 

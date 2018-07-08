@@ -64,6 +64,16 @@ public class BaseUserInfo {
     private String childrenStatus;
     
     private Integer isParty;
+    
+    private Integer positiveUser;
+    
+    public Integer getPositiveUser() {
+        return positiveUser;
+    }
+
+    public void setPositiveUser(Integer positiveUser) {
+        this.positiveUser = positiveUser;
+    }
 
     public Integer getIsParty() {
 		return isParty;

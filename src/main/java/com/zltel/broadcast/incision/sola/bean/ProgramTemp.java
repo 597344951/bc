@@ -1,8 +1,5 @@
 package com.zltel.broadcast.incision.sola.bean;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.zltel.broadcast.incision.sola.utils.ResExtractUtil;
 
 public class ProgramTemp {

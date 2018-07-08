@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>自定义模块预览</title>
+	<meta charset="UTF-8">
+	<link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+	<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+	<script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+	<!--font-awsome-->
+	<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="/assets/css/color-296FB8.css">
+	<link rel="stylesheet" href="/assets/css/element-ui-patch.css">
+	<link rel="stylesheet" href="/assets/css/common.css">
+	<link rel="stylesheet" href="/assets/css/module-main.css">
+	<style>
+		.div-container {
+			overflow: auto;
+			padding: 10px;
+			background-color: #e4e7ed;
+		}
+		body{
+			padding: 0 20%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<h1>自定义模块样式</h1>
+		<h3>卡片布局</h3>
+		<div class="div-container">
+			<el-card class="card-item" :body-style="{ padding: '0px' }">
+				<div class="title">
+					<span class="bolder"> 标题 </span>
+				</div>
+				<div class="cover-image-container">
+					<img src="/assets/img/program-test.jpg" class="image">
+					<div class="descript">描述文本</div>
+				</div>
+				<div class="content">
+					<table class="dis-info-min">
+						<tbody>
+							<tr>
+								<td>所属目录</td>
+								<td>：</td>
+								<td>10</td>
+							</tr>
+							<tr>
+								<td>播放时长</td>
+								<td>：</td>
+								<td>24</td>
+							</tr>
+							<tr>
+								<td>节目类型</td>
+								<td>：</td>
+								<td>非触摸类节目</td>
+							</tr>
+							<tr>
+								<td>创建时间</td>
+								<td>：</td>
+								<td>2018-06-29 13:31:19</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="bottom clearfix">
+					<el-button type="button" size="mini" class="button">预览</el-button>
+					<el-button type="primary" size="mini" class="button">选定</el-button>
+				</div>
+			</el-card>
+		</div>
+
+		<h3>大展示表格</h3>
+		<div class="div-container">
+			<div style="width: 500px;">
+				<table class="dis-info-big">
+					<tbody>
+						<tr>
+							<td>当前节目</td>
+							<td>：</td>
+							<td>暂无数据</td>
+						</tr>
+						<tr>
+							<td>操作系统</td>
+							<td>：</td>
+							<td>666666666</td>
+						</tr>
+						<tr>
+							<td>IP</td>
+							<td>：</td>
+							<td>192.168.1.42</td>
+						</tr>
+						<tr>
+							<td>MAC</td>
+							<td>：</td>
+							<td>1c:87:2c:78:4f:85</td>
+						</tr>
+						<tr>
+							<td>版本</td>
+							<td>：</td>
+							<td>V3.0.1.180619_B1161</td>
+						</tr>
+						<tr>
+							<td>心跳检测时间</td>
+							<td>：</td>
+							<td>10分钟前</td>
+						</tr>
+						<tr>
+							<td>最后同步时间</td>
+							<td>：</td>
+							<td>9分钟前</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<h3>标签页 内页面关闭前检测</h3>
+		<p>多标签内页面关闭前，会调用其内部页面的onclose函数来确定是否能顺利关闭，如果返回false则不关闭标签。</p>
+		<p>避免误关闭标签</p>
+		<pre>
+//在子页面定义onclose方法
+window.onclose = function () {
+  //检测 是否符合关闭条件, 需要关闭返回true,否则false
+  var close = true;
+  if(!close){
+    return confirm('有未保存数据，是否关闭？');
+  }
+  return true;
+}
+		</pre>
+		 
+	</div>
+</body>
+<script>
+	var ins = new Vue({
+		el: '#app'
+	});
+</script>
+
+</html>

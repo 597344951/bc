@@ -28,6 +28,9 @@ public class TemplateContent {
     @NotBlank(message="关联节目模版类别不能为空")
     private String categoryId;
     
+    /**查询关键字**/
+    private String keyword;
+    
     public Integer getTpId() {
         return tpId;
     }
@@ -106,6 +109,14 @@ public class TemplateContent {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
     
 }
