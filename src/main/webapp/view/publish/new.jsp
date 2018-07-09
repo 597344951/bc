@@ -519,28 +519,14 @@
 			<div style="text-align:center;"><span class="el-icon-loading"></span></div>
 		</el-dialog>
 
-<<<<<<< .mine
-		<resource-material-explorer :display.sync="materialExplorerShow" title="素材选择" @submit="materialSelected()"></resource-material-explorer>
-||||||| .r1015
-		<resource-material-explorer :visible.sync="materialExplorerShow" title="素材选择" @submit="materialSelected()"></resource-material-explorer>
-=======
 		<resource-material-explorer :display.sync="materialExplorerShow" title="素材选择" @submit="materialSelected"></resource-material-explorer>
->>>>>>> .r1027
 	</div>
 
 
-<<<<<<< .mine
-	<script type="module">
-		window.app = new Vue({
-||||||| .r1015
-	<script type="text/javascript" type="module">
-		const app = new Vue({
-=======
 	<script type="module">
 		import serverConfig from '/environment/resourceUploadConfig.jsp'
 
 		window.app = new Vue({
->>>>>>> .r1027
 			el: '#app',
 			data: {
 				programId: <%=programId%>,

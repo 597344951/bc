@@ -2,6 +2,7 @@
 
 @import url("/components/vue-calendar/vue-calendar.css");
 @import url("/assets/module/template/template.css");
+@import url("/components/common/context-menu.css");
 /**start of 卡片布局容器 **/
 
 .card-item {
