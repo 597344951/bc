@@ -31,8 +31,8 @@
                     </div>
                     <div   style="text-align: left;">
                         <el-form :inline="true" class="demo-form-inline">
-                            <el-form-item label="搜索 模板/素材">
-                                <el-input placeholder="搜索 模板/素材" v-model="keyword" style="width:300px;"></el-input>
+                            <el-form-item label="搜索模板">
+                                <el-input placeholder="搜索模板" v-model="keyword" ></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="searchTemplate">搜索</el-button>
@@ -44,13 +44,11 @@
             <el-container>
                 <el-aside width="200px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick"> </el-tree>
-                    <div style="margin-top:30px;">
-                        <el-tree ref="tree2" :data="resource_menu" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false" > </el-tree>
-                    </div>
+                        @node-click="tptTreeClick" class="menu-tree"> 
+                    </el-tree>
                 </el-aside>
                 <el-main>
-                    <div role="mainDis" v-show="!tp.visible" style="overflow: auto;">
+                    <div role="mainDis" v-show="!tp.visible" style="overflow: auto; padding-bottom:20px;">
                         <el-row>
                             <el-col :span="10">
                                 <!--查询-->
@@ -65,7 +63,7 @@
                             </el-col>
                         </el-row>
                         <template v-for="tp in tps">
-                            <el-card class="passage-conver" :body-style="{ padding: '0px' }" >
+                            <el-card class="passage-conver" :body-style="{ padding: '0px' }" shadow="never">
                                 <div class="background-img" :style="{'background-image':'url('+tp.previewPicture+')'}" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)">
                                     <!--<img src="tp.previewPicture" class="image">-->
                                     <div class="control ">

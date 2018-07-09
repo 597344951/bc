@@ -14,6 +14,9 @@
 			margin: 10px auto;
 			width: 95%;
 		}
+		.el-upload-list__item {
+			height: 25px;
+		}
 	</style>
 </head>
 <body>

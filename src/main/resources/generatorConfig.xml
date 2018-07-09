@@ -16,7 +16,7 @@
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		<!-- 生成模型的包名和位置 -->
-		<javaModelGenerator targetPackage="com.zltel.broadcast.message.bean" targetProject="broadcast/src/main/java">
+		<javaModelGenerator targetPackage="com.zltel.broadcast.eventplan.bean" targetProject="broadcast/src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
@@ -25,7 +25,7 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- 生成DAO的包名和位置 -->
-		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zltel.broadcast.message.dao" targetProject="broadcast/src/main/java">
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zltel.broadcast.eventplan.dao" targetProject="broadcast/src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 
@@ -35,7 +35,7 @@
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		 -->
-		<table tableName="message" domainObjectName="Message" enableCountByExample="false" enableUpdateByExample="false"
+		<table tableName="event_plan_info" domainObjectName="EventPlanInfo" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 	 

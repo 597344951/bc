@@ -28,7 +28,7 @@ public class RedisSessionDao extends EnterpriseCacheSessionDAO {
     protected Serializable doCreate(Session session) {
         Serializable sessionId = generateSessionId(session);
         assignSessionId(session, sessionId);
-        log.info("创建session:" + sessionId.toString());
+        log.info("创建session:{}",sessionId);
         redisTemplate.opsForValue().set(sessionId, session, session.getTimeout(),
                 TimeUnit.MILLISECONDS);
         return sessionId;
@@ -38,7 +38,7 @@ public class RedisSessionDao extends EnterpriseCacheSessionDAO {
     @Override
     protected Session doReadSession(Serializable sessionId) {
         Session session = redisTemplate.opsForValue().get(sessionId);
-        log.debug("读取redis session:" + session);
+        log.debug("读取redis session:{}",session);
         return session;
     }
 
@@ -52,7 +52,7 @@ public class RedisSessionDao extends EnterpriseCacheSessionDAO {
     // 删除session
     @Override
     protected void doDelete(Session session) {
-        log.debug("删除session:" + session);
+        log.debug("删除session:{}",session);
         redisTemplate.delete(session.getId());
         CacheUtil.clearLogCountCache(session);
     }

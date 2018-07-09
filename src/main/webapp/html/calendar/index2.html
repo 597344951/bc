@@ -38,10 +38,12 @@
 
     <link href="./calendar.css" rel="stylesheet" charset="utf-8">
     <script src="/assets/js/require.local.js"></script>
+    <script src="/assets/js/ajax_package.js"></script>
     <script type="module" src="/components/main.js"></script>
     <script type="module" src="/assets/js/vue-common.js"></script>
     <link href="/assets/css/module-main.css" rel="stylesheet" charset="utf-8">
     <link href="/assets/css/activity-group.css" rel="stylesheet" charset="utf-8">
+    <link href="/assets/css/element-ui-patch.css" rel="stylesheet" charset="utf-8">
 
     <style>
         .card-item {
@@ -170,19 +172,23 @@
         .theme-jdj .suggest-type {
             color: black;
         }
+       
     </style>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <el-row style="display:flex;">
             <el-col :span="4" style="min-width:260px;">
                 <div class="plane-chose">
                     <h2>计划日历</h2>
                 </div>
                 <div>
-                    <vue-calendar :mark-date="markDate" v-on:changemonth="changeMonth"></vue-calendar>
+                    <vue-calendar :mark-date="markDate" v-on:changemonth="changeMonth" @choseday="choseDay"></vue-calendar>
                 </div>
+                <div class="plane-chose">
+                        <el-button type="primary" @click="planGuide.visiable = true">宏观信息</el-button>
+                    </div>
                 <div class="plane-chose">
                     <h3>展示计划类型</h3>
                     <div class="item">
@@ -245,14 +251,19 @@
             </el-col>
             <el-col :span="20">
                 <el-tabs v-model="activeMonth">
-                    <el-tab-pane v-for="sug in suggests" :label="sug.title" :name="sug.title">
+                    <el-tab-pane v-for="mp in monthPlans" :label="mp.title" :name="mp.title">
                         <div>
                             <div class="festival-container">
-                                <h3>{{sug.title}}</h3>
-                                <template v-for=" data in sug.datas">
+                                <h3>{{mp.title}}</h3>
+                                <template v-for=" data in mp.datas">
                                     <div class="theme-festival theme-jdj">
                                         <div class="shadow">
-                                            <span class="festival-title"> {{data.title}} ({{data.start}})</span>
+                                            <span class="festival-title">
+                                                <span :class="getPriorityClass(data)">{{data.priority?data.priority:3}}</span>
+                                                {{data.title}} ({{data.start}})
+                                                <span style="margin-left:30px;">{{data.type=='CyclePlan'?'周期计划':'临时计划'}}
+                                                </span>
+                                            </span>
                                             <div class="main">
                                                 <div class="suggest-type">
                                                     <span>主推活动</span>
@@ -262,25 +273,27 @@
                                                         <div class="box" :class="data.className">
                                                             <div class="box-up">
                                                                 <h3>
-                                                                    <i></i>{{data.title}}</h3>
+                                                                    <i></i>{{data.title}}
+                                                                    <el-button class="btn" type="primary" icon="el-icon-edit" circle @click="showAddActivityPlan"> </el-button>
+                                                                </h3>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
-                                                                    <span class="text">develop</span>
+                                                                    <span class="title">参与人数: </span>
+                                                                    <span class="text">32人</span>
                                                                 </p>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
-                                                                    <span class="text">develop</span>
+                                                                    <span class="title">活动预算: </span>
+                                                                    <span class="text">1000元</span>
                                                                 </p>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
-                                                                    <span class="text">develop</span>
+                                                                    <span class="title">推荐指数: </span>
+                                                                    <span class="text">80</span>
                                                                 </p>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
+                                                                    <span class="title">策划人员: </span>
                                                                     <span class="text">develop</span>
                                                                 </p>
 
@@ -291,7 +304,6 @@
                                                                 <p></p>
                                                             </div>
                                                         </div>
-
                                                     </template>
                                                 </div>
                                             </div>
@@ -301,28 +313,32 @@
                                                 </div>
                                                 <div class="main-content">
                                                     <template v-for=" data in getActivities(data)">
-                                                        <div class="box" :class="data.className">
+                                                        <div class="box" :class="data.className" @click="showAddActivityPlan">
                                                             <div class="box-up">
                                                                 <h3>
-                                                                    <i></i>{{data.title}}</h3>
+                                                                    <i></i>{{data.title}}
+                                                                    <el-button class="btn" type="primary"
+                                                                        icon="el-icon-edit" circle @click="showAddActivityPlan">
+                                                                    </el-button>
+                                                                </h3>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
-                                                                    <span class="text">develop</span>
+                                                                    <span class="title">参与人数: </span>
+                                                                    <span class="text">32人</span>
                                                                 </p>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
-                                                                    <span class="text">develop</span>
+                                                                    <span class="title">活动预算: </span>
+                                                                    <span class="text">1000元</span>
                                                                 </p>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
-                                                                    <span class="text">develop</span>
+                                                                    <span class="title">推荐指数: </span>
+                                                                    <span class="text">80</span>
                                                                 </p>
                                                                 <p>
                                                                     <i></i>
-                                                                    <span class="title">发起人</span>
+                                                                    <span class="title">策划人员: </span>
                                                                     <span class="text">develop</span>
                                                                 </p>
 
@@ -333,7 +349,6 @@
                                                                 <p></p>
                                                             </div>
                                                         </div>
-
                                                     </template>
                                                 </div>
                                             </div>
@@ -346,6 +361,18 @@
                 </el-tabs>
             </el-col>
         </el-row>
+
+        <!--dialog-->
+        <el-dialog title="新增计划" :visible.sync="addEventDialog.visiable">
+            <add-event :add-event-dialog="addEventDialog" @added-data="addEventCallback"></add-event>
+        </el-dialog>
+        <el-dialog title="新建活动策划" :visible.sync="createActivityPlanDialog.visiable" :fullscreen="true" :modal="false">
+            <create-activity-plan :data="sugPlan" @submit="addActivityPlan"></create-activity-plan>
+        </el-dialog>
+        <el-dialog custom-class="no-title" :visible.sync="planGuide.visiable" :fullscreen="true" >
+                <load-report @save="createPlanGuidSave"></load-report>
+        </el-dialog>
+        <!--dialog-->
     </div>
 </body>
 <script type="module" src="/html/calendar/index2.js"></script>

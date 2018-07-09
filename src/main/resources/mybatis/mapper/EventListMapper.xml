@@ -205,7 +205,7 @@
 				AND status=#{status}
 			</if>
 			<if test="stime != null">
-				AND stime > #{stime}
+				AND stime >= #{stime}
 			</if>
 			<if test="etime != null">
 				AND stime <![CDATA[ < ]]>

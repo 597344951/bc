@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zltel.broadcast.common.exception.RRException;
+import com.zltel.broadcast.common.support.BaseDao;
+import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.eventplan.bean.CostPlan;
 import com.zltel.broadcast.eventplan.bean.EventPlanInfo;
@@ -18,7 +20,7 @@ import com.zltel.broadcast.eventplan.dao.EventPlanInfoMapper;
 import com.zltel.broadcast.eventplan.service.EventPlanService;
 
 @Service
-public class EventPlanServiceImpl implements EventPlanService {
+public class EventPlanServiceImpl extends BaseDaoImpl<EventPlanInfo> implements EventPlanService {
 
 
     private static final Logger logout = LoggerFactory.getLogger(EventPlanServiceImpl.class);
@@ -29,6 +31,11 @@ public class EventPlanServiceImpl implements EventPlanService {
 
     @Resource
     private CostPlanMapper costPlanMapper;
+
+    @Override
+    public BaseDao<EventPlanInfo> getInstince() {
+        return this.eventPlanInfoMapper;
+    }
 
     @Override
     @Transactional
@@ -48,5 +55,6 @@ public class EventPlanServiceImpl implements EventPlanService {
             });
         }
     }
+
 
 }

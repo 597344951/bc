@@ -43,7 +43,7 @@ public class MessageServiceImpl implements MessageService {
     public void handleMessage(SysUser user, Integer sourceId) {
         Message message = new Message();
         message.setState(Message.STATE_PROCESSED);
-        message.setUserId(user.getUserId());
+        message.setUserId(user == null ? Message.USER_ALL : user.getUserId());
         message.setSourceId(sourceId);
         messageMapper.updateStateBySource(message);
     }

@@ -125,7 +125,7 @@ export default {
                 }
                 let flag = !k.dayHide && k.otherMonth === 'nowMonth';
                 if (chooseDay && chooseDay === nowTime && flag) {
-                    this.$emit('choseDay', nowTime);
+                    this.$emit('choseday', nowTime);
                     this.historyChose.push(nowTime);
                     k.chooseDay = true;
                 } else if (

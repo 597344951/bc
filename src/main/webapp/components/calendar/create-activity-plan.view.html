@@ -1,0 +1,66 @@
+<div id="newPlane">
+    <div>
+        
+    </div>
+    <div>
+        <el-form ref="form" :model="planData" label-width="80px">
+            <el-form-item label="活动名称">
+                <el-col :span="5">
+                    <el-input v-model="planData.title"></el-input>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="活动时间">
+                <el-col :span="5">
+                    <el-date-picker type="date" v-model="planData.stime" placeholder="活动开始日期" style="width: 100%;"></el-date-picker>
+                </el-col>
+                <el-col class="line" :span="1" style="text-align: center;">-</el-col>
+                <el-col :span="5">
+                    <el-date-picker type="date" v-model="planData.etime" placeholder="活动结束日期" style="width: 100%;"></el-date-picker>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="策划模板">
+                <el-col :span="24">
+                    <el-radio @change="tpChoseChange" v-model="choseTemplate" :label="null" border>空模板</el-radio>
+                    <el-radio @change="tpChoseChange" v-for="tp in planeTemplates" v-model="choseTemplate" :label="tp" :key="tp.id" border>{{tp.name}}</el-radio>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="策划方案">
+                <el-col :span="24">
+                    <div id="editor">
+
+                    </div>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="费用计划">
+                    <el-row :gutter="20">
+                        <el-col :span="3">
+                            赞助金额:
+                            <el-tag type="success">{{sponsorship_fee}} 元</el-tag>
+                        </el-col>
+                        <el-col :span="3">
+                            支出金额:
+                            <el-tag type="warning">{{cost_fee}} 元</el-tag>
+                        </el-col>
+                        <el-col :span="3">
+                            总计结果:
+                            <el-tag type="info">{{total_fee}} 元</el-tag>
+                        </el-col>
+                        <el-col :span="3">
+                            <el-button size="small " type="primary" @click="costPlanDataDialog.visiable = true">更改计划</el-button>
+                        </el-col>
+                        <el-col :span="10" v-if="total_fee < 0">
+                            <p class="bg-warning" style="padding: 0 15;color: #f56c6c;">
+                                <i class="glyphicon glyphicon-warning-sign"></i>警告: 费用超过预算</p>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitPlane">立即创建</el-button>
+                <el-button @click="caclePlane">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+    <el-dialog title="费用计划编辑" :visible.sync="costPlanDataDialog.visiable" append-to-body>
+        <cost-plan :cost-plan-data="costPlanData" :cost-type-group="costTypeGroup"></cost-plan>
+    </el-dialog>
+</div>

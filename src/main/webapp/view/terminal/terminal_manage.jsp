@@ -185,7 +185,7 @@
         </div>
         <div v-show="!dis_h_v">
             <template v-for="t in terminals">
-                <el-card class="termialDis" :class="t.online=='1' ? 'online':'termialDis-offline'" :body-style="{ padding: '0px' }">
+                <el-card class="termialDis" :class="t.online=='1' ? 'online':'termialDis-offline'" :body-style="{ padding: '0px' }" shadow="never">
                     <div class="deviceInfo">
                         <span class="name">{{t.name}}</span>
                         <span class="size">{{t.size}}</span>
@@ -411,7 +411,7 @@
         </div>
         <div v-if="!prg_dis_h_v">
             <template v-for="t in tprograms">
-                <el-card class="termialDis" :body-style="{ padding: '0px' }">
+                <el-card class="termialDis" :body-style="{ padding: '0px' }" shadow="never">
                     <div class="deviceInfo">
                         <span class="name">{{t.name}}</span>
                     </div>

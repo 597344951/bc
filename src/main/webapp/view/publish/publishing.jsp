@@ -78,9 +78,10 @@
 							</table>
 						</div>
 						<div class="bottom clearfix">
-							<el-button type="text" size="small" @click="view(it)">节目预览</el-button>
-							<el-button type="text" size="small" @click="viewTerminal(it)">发布终端</el-button>
-							<el-button type="text" size="small" @click="offline(it)">从播放列表移除</el-button>
+							<el-button type="text" size="small" @click="view(it)">预览</el-button>
+							<el-button disabled type="text" size="small">编辑</el-button>
+							<el-button type="text" size="small" @click="viewTerminal(it)">终端</el-button>
+							<el-button type="text" size="small" @click="offline(it)">移除</el-button>
 						</div>
 					</el-card>
 				</template>
@@ -95,10 +96,10 @@
 					<el-table-column prop="period" label="预定播放时段" width="120"></el-table-column>
 					<el-table-column label="操作">
 						<template slot-scope="scope">
-							<%--<el-button type="text" size="small">查看终端</el-button>--%>
-								<el-button type="text" size="small" @click="view(scope.row)">节目预览</el-button>
-								<el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
-								<el-button type="text" size="small" @click="offline(scope.row)">从播放列表移除</el-button>
+								<el-button type="text" size="small" @click="view(scope.row)">预览</el-button>
+								<el-button disabled type="text" size="small">编辑</el-button>
+								<el-button type="text" size="small" @click="viewTerminal(scope.row)">终端</el-button>
+								<el-button type="text" size="small" @click="offline(scope.row)">移除</el-button>
 						</template>
 					</el-table-column>
 				</el-table>

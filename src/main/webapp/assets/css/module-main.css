@@ -1,21 +1,38 @@
 /**vue-calendar 样式**/
 
 @import url("/components/vue-calendar/vue-calendar.css");
+@import url("/assets/module/template/template.css");
 /**start of 卡片布局容器 **/
 
 .card-item {
 	padding: 0px;
-	width: 260px;
+	padding-top: 10px;
+	height: 200px;
+	width: 340px!important;
 	margin: 15px;
 	text-align: center;
 	float: left;
+	padding-left: 20px;
+	box-sizing:border-box;
+	transition: transform 0.2s,box-shadow 0.3s;
 }
-
+.card-item1{
+	background: url(../img/4.png) no-repeat;
+	background-size: cover;
+}
+.card-item2{
+	background: url(../img/5.png) no-repeat;
+	background-size: cover;
+}
+.card-item3{
+	background: url(../img/6.png) no-repeat;
+	background-size: cover;
+}
 /**鼠标交互**/
 
 .card-item:hover {
-	box-shadow: 4px 4px 18px 8px #d4d4d4;
-	width: 265px;
+	box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    transform:translateY(-5px);
 }
 
 /**卡片标题**/
@@ -31,6 +48,7 @@
 
 .card-item .title .right {
 	float: right;
+	/*font-weight: normal!important;*/
 }
 
 /**卡片预览图**/
@@ -91,6 +109,7 @@
 	width: 30%;
 }
 
+
 .dis-info-min>tbody>tr>td:nth-child(2) {
 	font-weight: bolder;
 	width: 5px;
@@ -99,6 +118,10 @@
 
 .dis-info-min>tbody>tr>td {
 	font-size: 14px;
+}
+.dis-info-min>tbody>tr>td>i{
+	margin-right: 8px;
+	font-weight: bold;
 }
 
 /**大表格展示数据**/
@@ -148,4 +171,41 @@
 
 .card-item-horizontal {
 
+}
+
+.el-dialog__footer > .foot-button-container{
+	text-align: center; margin-top: 30px;
+}
+/*icon颜色*/
+.el-icon-star-on{
+	color:#e81313;
+}
+.el-icon-setting{
+    color: cornflowerblue;
+}
+.el-icon-message{
+	color: brown;
+}
+.el-icon-time{
+    color: darkseagreen;
+}
+.el-icon-news{
+    color: orange;
+}
+.el-icon-date.date-start{
+	color:#17bdda;
+}
+.el-icon-date.date-finish{
+	color:#c70000;
+}
+.el-icon-upload{
+	color: #00abff;
+}
+.el-tag--small{
+	font-weight: normal!important;
+    color: #7b7b7b;
+    background: #fff;
+}
+.el-button--text:focus, .el-button--text:hover{
+    font-weight: bold;
 }

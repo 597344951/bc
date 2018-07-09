@@ -96,6 +96,13 @@ public class PublishController extends BaseController{
         return r;
     }
 
+    @PostMapping(value = "/reAdd")
+    @ResponseBody
+    public R contentReAdd(@RequestBody Map<String, Object> content) {
+        publishService.reCreate(getSysUser(), content);
+        return R.ok();
+    }
+
     @RequestMapping(value = "/process/content")
     @ResponseBody
     public R processContent() {

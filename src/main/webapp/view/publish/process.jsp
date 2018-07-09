@@ -12,13 +12,7 @@
         .period-input {
             width: 300px;
         }
-        .card-item {
-            min-height: 200px;
-            width: 400px;
-        }
-        .card-item:hover {
-            width: 400px;
-        }
+       
     </style>
 </head>
 <body>
@@ -49,11 +43,11 @@
             <el-main>
                 <div v-show="!dis_h_v">
                     <template v-for="pc in processContent">
-                        <el-card class="card-item" :body-style="{ padding: '0px' }">
+                        <el-card class="card-item card-item1" :body-style="{ padding: '0px'}" shadow="never">
                             <div class="title">
-                                <span class="bolder"> {{pc.title}} </span>
+                                <span class="bolder"> <i class="el-icon-star-on" style="font-size: 20px;"></i> {{pc.title}} </span>
                                 <span class="right">
-                                    <el-popover title="发布流程" placement="right" width="400" trigger="hover" @show="getProcessState(pc,false)">
+                                    <el-popover title="发布流程" placement="right"  trigger="hover" @show="getProcessState(pc,false)">
                                         <template>
                                             <el-steps :space="200" :active="processState.active" finish-status="success">
                                                 <el-step v-for="step in processState.steps" :title="step.title"></el-step>
@@ -68,13 +62,13 @@
                                 <table class="dis-info-min">
                                     <tbody>
                                         <tr>
-                                            <td>发起人</td>
-                                            <td>：</td>
+                                            <td> <i class="el-icon-news"></i>发起人</td>
+                                            <td></td>
                                             <td>{{pc.sponsor}}</td>
                                         </tr>
                                         <tr>
-                                            <td>时间</td>
-                                            <td>：</td>
+                                            <td> <i class="el-icon-time"></i>时间</td>
+                                            <td></td>
                                             <td>{{pc.date}}</td>
                                         </tr>
 
@@ -85,8 +79,8 @@
                                 <table class="dis-info-min">
                                     <tbody>
                                         <tr>
-                                            <td>查看</td>
-                                            <td>：</td>
+                                            <td><i class="el-icon-message"></i>查看</td>
+                                            <td></td>
                                             <td>
                                                 <div>
                                                     <el-button class="no-margin-padding" type="text" size="small" v-if="pc.operate.process" @click="getProcessState(pc)">进度</el-button>
@@ -96,8 +90,8 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>操作</td>
-                                            <td>：</td>
+                                            <td><i class="el-icon-setting"></i>操作</td>
+                                            <td></td>
                                             <td>
                                                 <div>
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="startMoreEdit(pc)" v-if="pc.operate.more_edit_start">开始编辑</el-button>

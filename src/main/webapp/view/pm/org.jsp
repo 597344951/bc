@@ -55,20 +55,20 @@
 	.zzcy,.xszz{
 		width: 45%;
 		height: 200px;
-		background-color: #fff;
+		background-color: #f3f2eb;
 		border-radius:10px;
 		margin: 10px;
 		float: left;
 		text-align: center;
 		overflow: hidden;
 		position: relative;
-		box-shadow:3px 3px 10px #909090;
+		transition: transform 0.2s,box-shadow 0.3s;
 	}
 	.zzcy{
 		margin-left: 0px;
 	}
 	.zzcy:hover,.xszz:hover{
-		box-shadow:10px 10px 10px #909090;
+		box-shadow: 0 8px 15px rgba(0,0,0,0.15);
 		cursor: pointer;
 		
 	}
@@ -148,12 +148,43 @@
 		margin: 10px;
 		float: left;
 	}
+	.box{
+		box-shadow:0px 0px 3px 0px #909090;
+		border-radius: 8px;
+		width: 340px;
+		height: 200px;
+		padding: 20px;
+		margin-bottom: 10px;
+		margin-left: 10px;
+		float:left;
+	}
+	.box-up p{
+		font-size: 12px;
+	}
+	.box:hover {
+		box-shadow:3px 3px 25px 2px #909090;
+		cursor: pointer;
+	}
+	.box-up{
+		width: 30%;
+		height: 100%;
+		border-right: 1px solid #ddd;
+		float: left;
+	}
+	.box-down{
+		width: 69%;
+		height: 100%;
+		float: left;
+	}
+	.el-carousel__item:nth-child(n) {
+	    background-color: #ebedef;
+	}
 </style>
 </head>
 <body>
 	<div id="app">
 		<el-container>
-			<el-header class="common">
+			<el-header>
 				<el-row class="toolbar" :gutter="20">
 			  		<shiro:hasPermission name="org:info:insert">  
 				 	    <el-button size="small" type="primary" @click="partyOrg_manager_openInsertOrgInfoDialog">
@@ -170,7 +201,7 @@
 					  		搜索组织
 					  	</el-button>
 					  	<div>
-							<el-row>
+							<el-row v-show="dis_h_v">
 								<el-select size="small" clearable 
 										@change="partyOrg_manager_queryOrgInfosForOrgType"
 										v-model="queryCondition.partyOrg_manager_orgInfoType" filterable placeholder="请选择组织类型">
@@ -182,7 +213,19 @@
 									</el-option>
 								</el-select>
 							</el-row>
-							<el-row>
+							<el-row v-show="dis_h_v">
+								<el-select size="small" clearable 
+										@change="partyOrg_manager_queryOrgInfosForOrgType"
+										v-model="queryCondition.partyOrg_manager_orgInfoNature" filterable placeholder="请选择组织性质">
+									<el-option
+										v-for="item in partyOrg_manager_orgInfoNatures"
+									    :key="item.value"
+									    :label="item.orgNatureName"
+									    :value="item.orgNatureId">
+									</el-option>
+								</el-select>
+							</el-row>
+							<el-row v-show="dis_h_v">
 								<el-select size="small" clearable 
 										@change="partyOrg_manager_queryOrgInfosForProvince"
 										@clear="resetCityAndArea"
@@ -195,7 +238,7 @@
 									</el-option>
 								</el-select>
 							</el-row>
-							<el-row>
+							<el-row v-show="dis_h_v">
 								<el-select size="small" clearable 
 										@change="partyOrg_manager_queryOrgInfosForCity"
 										@clear="resetArea"
@@ -208,7 +251,7 @@
 									</el-option>
 								</el-select>
 							</el-row>
-							<el-row>
+							<el-row v-show="dis_h_v">
 								<el-select size="small" clearable 
 										@change="partyOrg_manager_queryOrgInfosForArea"
 										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea" filterable placeholder="请选择组织所在区域">
@@ -220,18 +263,54 @@
 									</el-option>
 								</el-select>
 							</el-row>
-							<el-row>
+							<el-row v-show="dis_h_v">
 								<el-input size="small" clearable
 									@change="partyOrg_manager_queryOrgInfosForInfoName"
 									v-model="queryCondition.partyOrg_manager_orgInfoName" placeholder="请输入组织名"></el-input>
 							</el-row>
 					  	</div>
 					</el-popover>
+					<el-button-group>
+                        <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
+                        <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
+                    </el-button-group>
+                    <span style="float: right;" v-show="dis_h_v">
+	                    <el-pagination id="partyUser_manager_agesdididi" 
+						  	layout="total, prev, pager, next, jumper" 
+			      		 	@current-change="partyOrg_manager_pagerCurrentChange"
+						  	:current-page.sync="partyOrg_manager_orgInfoPages.pageNum"
+						  	:page-size.sync="partyOrg_manager_orgInfoPages.pageSize"
+						  	:total="partyOrg_manager_orgInfoPages.total">
+						</el-pagination>
+					</span>
 				</el-row>
 			</el-header>
 			<el-main>
-				<template>
-					<el-table @expand-change="setMap" size="small" :data="partyOrg_manager_orgInfoPages.list" style="width: 100%">
+				<div v-show="!dis_h_v">
+					<div style="text-align: center;">
+						<p style="margin-bottom: 20px; font-size: 20px; font-weight: bold;">党委结构一览</p>
+					</div>
+				  	<el-carousel :interval="5000" type="card" :height="partyOrg_manager_CarouselHeight">
+				    	<el-carousel-item :key="item.orgInfoId" v-for="item in partyOrg_manager_orgInfoTreesForZMD" :key="item">
+				      		<div style="text-align: center;">
+								<p style="margin-top: 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold;">{{item.data.orgInfoName}}</p>
+							</div>
+							<div onload="" :id="'orgInfoTree'+item.data.orgInfoId" style="width: 100%; height: 80%; text-align: center; overflow: auto;">
+								
+							</div>
+							{{getItaf(item)}}
+				    	</el-carousel-item>
+				  	</el-carousel>
+				</div>
+				<span v-show="dis_h_v">
+					<el-table  
+							row-key="orgInfoId" 
+							ref="partyOrg_manager_orgInfoDetailTables" 
+							:expand-row-keys="partyOrg_manager_jumpToOrgDetailInfoArray" 
+							@expand-change="setMap" 
+							size="small" 
+							:data="partyOrg_manager_orgInfoPages.list" 
+							style="width: 100%">
 						<el-table-column type="expand">
 							<template slot-scope="scope">
 								<div style="width: 60%; margin: 0 auto;">
@@ -302,7 +381,7 @@
 									<div :id="'container'+scope.row.orgInfoId"></div>	<!-- 地图信息 -->
 									<div class="zzcy">
 										<p class="title">组织成员 <span style="color: red;">{{scope.row.orgMemberNum}}</span> 人</p>
-										<p style="text-align: left; padding-left: 10px;">今日新增成员：</p>
+										<p style="text-align: left; padding-left: 10px; margin-bottom: 5px;">今日新增成员：</p>
 										<div class="woman">
 											<span class="woman-image"></span>
 											<span class="woman-data">
@@ -365,17 +444,8 @@
 							</template>
 						</el-table-column>
 					</el-table>
-				</template>
+				</span>
 			</el-main>
-			<el-footer>
-				<el-pagination id="partyUser_manager_agesdididi" 
-				  	layout="total, prev, pager, next, jumper" 
-	      		 	@current-change="partyOrg_manager_pagerCurrentChange"
-				  	:current-page.sync="partyOrg_manager_orgInfoPages.pageNum"
-				  	:page-size.sync="partyOrg_manager_orgInfoPages.pageSize"
-				  	:total="partyOrg_manager_orgInfoPages.total">
-				</el-pagination>
-			</el-footer>
 		</el-container>
 
 
@@ -386,7 +456,7 @@
 		</el-dialog>
 
 		<el-dialog @close="partyOrg_manager_resetOrgInfosChildren" title="下属组织关系图" :visible.sync="partyOrg_manager_showOrgInfosChildrenDialog" width="70%">
-			<div style="width: 90%; height: 500px; margin: 0 auto" id="childrensOrgChildren"></div>
+			<div style="width: 90%; height: 500px; margin: 0 auto; padding: 20px;" id="childrensOrgChildren"></div>
 		</el-dialog>
 
 		<el-dialog @close="" title="下属组织信息" :visible.sync="partyOrg_manager_showThisOrgChildrensDialog" width="82%">
@@ -528,7 +598,7 @@
 			<el-form label-width="120px" size="small" :model="partyOrg_manager_updateOrgInfoForm" status-icon :rules="partyOrg_manager_updateOrgInfoRules" 
 				ref="partyOrg_manager_updateOrgInfoForm" label-width="100px">
 				<el-row :gutter="20">
-					<el-col :span="12">
+					<el-col :span="8">
 						<el-form-item label="组织类型" prop="orgInfoTypeId">
 						    <el-select :disabled="true" clearable v-model="partyOrg_manager_updateOrgInfoForm.orgInfoTypeId" placeholder="请选择">
 							    <el-option
@@ -536,6 +606,18 @@
 							      :key="item.value"
 							      :label="item.orgTypeName"
 							      :value="item.orgTypeId">
+							    </el-option>
+						  	</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="16">
+						<el-form-item label="组织性质" prop="orgInfoNatureId">
+						    <el-select :disabled="true" clearable v-model="partyOrg_manager_updateOrgInfoForm.orgInfoNatureId" placeholder="请选择">
+							    <el-option
+							      v-for="item in partyOrg_manager_orgInfoNatures"
+							      :key="item.value"
+							      :label="item.orgNatureName"
+							      :value="item.orgNatureId">
 							    </el-option>
 						  	</el-select>
 						</el-form-item>
@@ -599,7 +681,7 @@
 			<el-form label-width="120px" size="small" :model="partyOrg_manager_insertOrgInfoForm" status-icon :rules="partyOrg_manager_insertOrgInfoRules" 
 				ref="partyOrg_manager_insertOrgInfoForm" label-width="100px">
 				<el-row :gutter="20">
-					<el-col :span="12">
+					<el-col :span="8">
 						<el-form-item label="组织类型" prop="orgInfoTypeId">
 						    <el-select clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoTypeId" placeholder="请选择">
 							    <el-option
@@ -607,6 +689,18 @@
 							      :key="item.value"
 							      :label="item.orgTypeName"
 							      :value="item.orgTypeId">
+							    </el-option>
+						  	</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="16">
+						<el-form-item label="组织性质" prop="orgInfoNatureId">
+						    <el-select clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoNatureId" placeholder="请选择">
+							    <el-option
+							      v-for="item in partyOrg_manager_orgInfoNatures"
+							      :key="item.value"
+							      :label="item.orgNatureName"
+							      :value="item.orgNatureId">
 							    </el-option>
 						  	</el-select>
 						</el-form-item>
@@ -685,6 +779,9 @@
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			partyOrg_manager_CarouselHeight: "500px",
+			partyOrg_manager_jumpToOrgDetailInfoArray: [], 	/*点击卡片跳转到详细信息，用于保存值，赋值给rowkey以便展开信息*/
+			dis_h_v: false,
 			partyOrg_manager_address_pca: pca,	/* 省市区三级联动数据 */
 			partyOrg_manager_address_prop: {	/* 地址prop */
 				value: "name",
@@ -719,7 +816,9 @@
 			},
 			queryCondition: {
 				partyOrg_manager_orgInfoType: null,	/*用于保存使用组织类型查询*/
-				partyOrg_manager_orgInfoName: null	/*用于保存使用组织名模糊查询*/
+				partyOrg_manager_orgInfoName: null,	/*用于保存使用组织名模糊查询*/
+				partyOrg_manager_orgInfoId: null,	/*用于保存使用组织id查询*/
+				partyOrg_manager_orgInfoNature: null	/*用于保存使用组织性质查询*/
 			},
 			partyOrg_manager_insertOrgInfoDialog: false,	/*添加组织信息*/
 			partyOrg_manager_updateOrgInfoDialog: false, 	/*修改组织信息*/
@@ -737,8 +836,10 @@
 	            }
 			},
 			partyOrg_manager_orgInfoTypes:[],	/*添加组织信息时选择组织类型*/
+			partyOrg_manager_orgInfoNatures: [],	/*组织性质选择下拉框*/
 			partyOrg_manager_insertOrgInfoForm: {	/*添加党员的信息*/
 				orgInfoTypeId: null,
+				orgInfoNatureId: null,
 				orgInfoName: null,
 				orgInfoCommittee_pca: null,
 				orgInfoCommitteeDetail: null,
@@ -753,6 +854,9 @@
 		    	orgInfoTypeId: [
 		    		{ required: true, message: '请选择组织类型!', trigger: 'blur' }
 		    	],
+		    	orgInfoNatureId: [
+		    		{ required: true, message: '请选择组织性质!', trigger: 'blur' }
+		    	],
 		    	orgInfoCommittee_pca: [
 		    		{ required: true, message: '请选择省市区!', trigger: 'blur' }
 		    	],
@@ -763,6 +867,7 @@
 			partyOrg_manager_updateOrgInfoForm: {	/*修改党员信息*/
 				orgInfoId: null,
 				orgInfoTypeId: null,
+				orgInfoNatureId: null,
 				orgInfoName: null,
 				orgInfoCommittee_pca: null,
 				orgInfoCommitteeProvince: null,
@@ -819,7 +924,8 @@
 			    	list: []
 				},
 				partyOrg_manager_orgInfosChildrenTree: []	/*组织关系树图*/
-			}
+			},
+			partyOrg_manager_orgInfoTreesForZMD: []	/*组织结构信息-走马灯页面*/
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -828,8 +934,26 @@
 			this.partyOrg_manager_queryOrgInfosForMap()	/*查询组织信息*/
 			this.partyOrg_manager_queryOrgInfosCommitteeProvince();
 			this.partyOrg_manager_getOrgInfoTypes();
+			this.partyOrg_manager_getOrgInfoNatures();
+			this.partyOrg_manager_getOrgInfoTreesForZMD();	/*走马灯*/
 		},
 		methods: {
+			partyOrg_manager_getOrgInfoTreesForZMD() {
+				var obj = this;
+
+				var url = "/org/ifmt/queryOrgInfosToTrees";
+				var t = {
+					orgInfoParentId: -1
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.partyOrg_manager_orgInfoTreesForZMD = data.data;
+						}
+					}
+
+				})
+			},
 			setMap(row, expandedRows) {
 				var obj = this;
 				setTimeout(()=>{
@@ -882,25 +1006,13 @@
 
 			getScreenHeightForPageSize() {	/*根据屏幕分辨率个性化每页数据记录数*/
 				var obj = this;
-				var height = window.screen.height;
-				if (height > 2000) {
-					obj.partyOrg_manager_orgInfoPages.pageSize = 25;
-				} else if (height > 1700) {
-					obj.partyOrg_manager_orgInfoPages.pageSize = 22;
-				} else if (height > 1400) {
-					obj.partyOrg_manager_orgInfoPages.pageSize = 19;
-				} else if (height > 1100) {
-					obj.partyOrg_manager_orgInfoPages.pageSize = 16;
-				} else if (height > 900) {
-					obj.partyOrg_manager_orgInfoPages.pageSize = 13;
-				} else {
-					obj.partyOrg_manager_orgInfoPages.pageSize = 9;
-				}
+				var height = window.innerHeight;
+				obj.partyOrg_manager_orgInfoPages.pageSize = parseInt((height - 100)/50)
+				obj.partyOrg_manager_CarouselHeight = height*0.75 + "px";
 			},
 			partyOrg_manager_initPager() {	/* 初始化页面数据 */
 				var obj = this;
 				obj.partyOrg_manager_orgInfoPages.pageNum = 1;
-				obj.partyOrg_manager_orgInfoPages.pageSize = 10;
 				obj.partyOrg_manager_orgInfoPages.total = 0;
 				obj.partyOrg_manager_orgInfoPages.list = new Array();
 			},
@@ -915,7 +1027,9 @@
 					pageNum: obj.partyOrg_manager_orgInfoPages.pageNum,
 					pageSize: obj.partyOrg_manager_orgInfoPages.pageSize,
 					orgInfoTypeId: obj.queryCondition.partyOrg_manager_orgInfoType,
+					orgInfoNatureId: obj.queryCondition.partyOrg_manager_orgInfoNature,
 					orgInfoName: obj.queryCondition.partyOrg_manager_orgInfoName,
+					orgInfoId: obj.queryCondition.partyOrg_manager_orgInfoId,
 					orgInfoCommitteeProvince: obj.partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvince,
 					orgInfoCommitteeCity: obj.partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCity,
 					orgInfoCommitteeArea: obj.partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea
@@ -1057,6 +1171,18 @@
 					
 				})
         	},
+        	partyOrg_manager_getOrgInfoNatures() {	/*组织性质*/
+        		var obj = this;
+        		url = "/org/nature/queryOrgNaturesNotPage";
+				var t = {
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.partyOrg_manager_orgInfoNatures = datas.data;
+					}
+					
+				})
+        	},
         	partyOrg_manager_setOrgInfoParentId(data) {	/*设置组织层级关系值*/
         		var obj = this;
 				obj.partyOrg_manager_insertOrgInfoForm.orgInfoParentId = data.data.orgInfoId;
@@ -1072,6 +1198,7 @@
         				var url = "/org/ifmt/insertOrgInfo";
         				var t = {
         					orgInfoTypeId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoTypeId,
+        					orgInfoNatureId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoNatureId,
         					orgInfoName: obj.partyOrg_manager_insertOrgInfoForm.orgInfoName,
         					orgInfoCommitteeProvince: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[0],
         					orgInfoCommitteeCity: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[1],
@@ -1098,6 +1225,7 @@
         		var obj = this;
         		obj.partyOrg_manager_updateOrgInfoForm.orgInfoId = row.orgInfoId;
         		obj.partyOrg_manager_updateOrgInfoForm.orgInfoTypeId = row.orgInfoTypeId;
+        		obj.partyOrg_manager_updateOrgInfoForm.orgInfoNatureId = row.orgInfoNatureId;
         		obj.partyOrg_manager_updateOrgInfoForm.orgInfoName = row.orgInfoName;
         		obj.partyOrg_manager_updateOrgInfoForm.orgInfoCommittee_pca = [row.orgInfoCommitteeProvince, row.orgInfoCommitteeCity, row.orgInfoCommitteeArea];
         		obj.partyOrg_manager_updateOrgInfoForm.orgInfoCommitteeDetail = row.orgInfoCommitteeDetail;
@@ -1409,7 +1537,7 @@
 							obj.partyOrg_manager_getOrgChildrensTree(obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree, trees);
 
 							setTimeout(()=>{
-								obj.partyOrg_manager_setChartForOrgChildrens(trees);
+								obj.partyOrg_manager_setChartForOrgChildrens(trees, "childrensOrgChildren", false);
 							},200)
 						}
 					}
@@ -1423,6 +1551,7 @@
 				if (orgInfosRelationTree != null && orgInfosRelationTree.length > 0) {
 					for (var i = 0; i < orgInfosRelationTree.length; i++) {
 						var tree = {name: null, children: null}
+						tree.id = orgInfosRelationTree[i].data.orgInfoId;
 						tree.name = orgInfosRelationTree[i].data.orgInfoName;
 						tree.children = new Array;
 						trees[i] = tree;
@@ -1430,8 +1559,9 @@
 					}
 				}
 			},
-			partyOrg_manager_setChartForOrgChildrens(orgInfosRelationTree) {
-				var Orgchildrens = echarts.init(document.getElementById("childrensOrgChildren"));
+			partyOrg_manager_setChartForOrgChildrens(orgInfosRelationTree, elementId, clickJump) {
+				var obj = this;
+				var Orgchildrens = echarts.init(document.getElementById(elementId));
 				Orgchildrens.setOption(
 					{
 				        tooltip: {
@@ -1445,9 +1575,11 @@
 				                data: orgInfosRelationTree,
 
 				                top: '1%',
-				                left: '7%',
+				                left: '10%',
 				                bottom: '1%',
-				                right: '20%',
+				                right: '10%',
+
+				                orient: 'vertical',
 
 				                symbolSize: 7,
 
@@ -1460,6 +1592,22 @@
 				                    }
 				                },
 
+				                lineStyle: {
+				                	width: 1,
+				                	color: {
+									    type: 'radial',
+									    x: 0.5,
+									    y: 0.5,
+									    r: 0.5,
+									    colorStops: [{
+									        offset: 0, color: 'red' // 0% 处的颜色
+									    }, {
+									        offset: 1, color: 'blue' // 100% 处的颜色
+									    }],
+									    globalCoord: false // 缺省为 false
+									}
+				                },
+
 				                leaves: {
 				                    label: {
 				                        normal: {
@@ -1470,13 +1618,29 @@
 				                    }
 				                },
 
-				                expandAndCollapse: true,
+				                expandAndCollapse: false,
 				                animationDuration: 550,
 				                animationDurationUpdate: 750
 				            }
 				        ]
 				    }
 				);
+				if (clickJump) {
+					Orgchildrens.on("click",function(params){
+						obj.queryCondition.partyOrg_manager_orgInfoType = null,
+						obj.queryCondition.partyOrg_manager_orgInfoNature = null,
+						obj.queryCondition.partyOrg_manager_orgInfoName = null,
+						obj.partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvince = null,
+						obj.partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCity = null,
+						obj.partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea = null
+
+						obj.queryCondition.partyOrg_manager_orgInfoId = params.data.id;
+						obj.partyOrg_manager_queryOrgInfosForMap();
+						obj.dis_h_v = true;
+						obj.queryCondition.partyOrg_manager_orgInfoId = null;
+					});
+				}
+				
 			},
 			partyOrg_manager_resetOrgInfosChildren() {
 				var obj = this;
@@ -1607,6 +1771,38 @@
 						    ]
 						}
 					);
+				},200)
+			},
+			getOrgTypeImg(item) {
+				if(item.orgTypeName == "党组织") {
+					return "/view/pm/img/party.jpg";
+				} else if(item.orgTypeName == "党支部") {
+					return "/view/pm/img/party_zhi.jpg";
+				} else if(item.orgTypeName == "国有企业") {
+					return "/view/pm/img/company_public.jpg";
+				} else if(item.orgTypeName == "私有企业") {
+					return "/view/pm/img/company_private.jpg";
+				} else if(item.orgTypeName == "公益组织") {
+					return "/view/pm/img/welfare.jpg";
+				} else if(item.orgTypeName == "学校") {
+					return "/view/pm/img/school.jpg";
+				} 
+			},
+			partyOrg_manager_jumpToOrgDetailInfo(item) {
+				var obj = this;
+				obj.dis_h_v = true;
+				obj.partyOrg_manager_jumpToOrgDetailInfoArray = [item.orgInfoId];
+				obj.setMap(item, null);
+			},
+			getItaf(item) {
+				var obj = this;
+				var trees = new Array;
+				var items = new Array;
+				items[0] = item;
+				obj.partyOrg_manager_getOrgChildrensTree(items, trees);
+
+				setTimeout(()=>{
+					obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true);
 				},200)
 			}
 		}

@@ -2,6 +2,7 @@ package com.zltel.broadcast.publish.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class MaterialController extends BaseController {
         R r = new R();
         if (!file.isEmpty()) {
             try {
-                saveFile(file, r, Constant.MATERIAL_TYPE_PICTURE);
+                saveFile(file, r, Constant.MATERIAL_TYPE_IMAGE);
             } catch (Exception e) {
                 logout.error(e.getMessage());
                 r.setStatus(false);
@@ -118,7 +119,7 @@ public class MaterialController extends BaseController {
     public void image(@PathVariable("name") String name, HttpServletResponse response) {
         int id = Integer.parseInt(name.split("\\.")[0]);
         Map<String, Object> material = materialService.getMaterial(id);
-        if (material == null || !Constant.MATERIAL_TYPE_PICTURE.equals(material.get("type"))) {
+        if (material == null || !Constant.MATERIAL_TYPE_IMAGE.equals(material.get("type"))) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
             try {
@@ -143,7 +144,7 @@ public class MaterialController extends BaseController {
             try {
                 String url = (String) material.get("url");
                 String fileName = url.substring(url.lastIndexOf("/"), url.length());
-                response.setHeader("Content-Disposition", "attachment;fileName=" + fileName);
+                // response.setHeader("Content-Disposition", "attachment;fileName=" + fileName);
                 writeFile(uploadFileDir + url, response);
             } catch (Exception e) {
                 logout.error(e.getMessage());
@@ -158,12 +159,14 @@ public class MaterialController extends BaseController {
             response.setContentType(ct);
             if (ct.startsWith("application")) {
                 response.setHeader("Content-Disposition", "attachment; filename=" + file);
-            }else {
-                response.setDateHeader("Expires", System.currentTimeMillis()+60*60*1000);//缓存时间一小时
+            } else {
+                response.setDateHeader("Expires", System.currentTimeMillis() + 60 * 60 * 1000);// 缓存时间一小时
             }
             IOUtils.copy(in, out);
+        } catch (FileNotFoundException ffe) {
+            logout.error(ffe.getMessage());
         } catch (Exception e) {
-            logout.error(e.getMessage());
+            logout.error(e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
@@ -199,6 +202,7 @@ public class MaterialController extends BaseController {
                 file.transferTo(new File(savePath));
                 String url = relateDir + saveName;
                 r.put("url", "/material/commonDownload/" + url.replaceAll("/", "_"));
+                r.put("path", url);
             } catch (IOException e) {
                 logout.error(e.getMessage());
                 r.setStatus(false);

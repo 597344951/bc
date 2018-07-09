@@ -61,13 +61,13 @@
 		<el-main>
 			<template>
 				<el-table :data="pager.list">
-					<el-table-column prop="name" label="分组名称" width="200"></el-table-column>
-					<el-table-column prop="count" label="终端数量" width="200"></el-table-column>
-					<el-table-column prop="addr" label="终端地址" width="300"></el-table-column>
-					<el-table-column prop="date" label="修改日期" width="400"></el-table-column>
-					<el-table-column prop="ps" label="备注" width="200"></el-table-column>
-					<el-table-column prop="oid" label="oid" width="200"></el-table-column>
-					<el-table-column label="操作" fixed="right" width="200">
+					<el-table-column prop="name" label="分组名称" ></el-table-column>
+					<el-table-column prop="count" label="终端数量" ></el-table-column>
+					<el-table-column prop="addr" label="终端地址" ></el-table-column>
+					<el-table-column prop="date" label="修改日期" ></el-table-column>
+					<el-table-column prop="ps" label="备注" ></el-table-column>
+					<el-table-column prop="oid" label="oid" ></el-table-column>
+					<el-table-column label="操作" fixed="right" >
 						<template slot-scope="scope">
 							<el-button size="mini" type="info" @click="updatetg(scope.row)">编辑</el-button>
 							<el-button size="mini" type="danger " @click="handleDelete(scope.row.oid) ">删除</el-button>

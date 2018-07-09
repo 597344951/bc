@@ -46,7 +46,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	@Transactional(rollbackFor=java.lang.Exception.class)
 	@Deprecated
     public R queryOrgInfos(OrganizationInformation organizationInformation) throws Exception {
-		//先查询自身数据，在递归查询所有的子集
+		/*//先查询自身数据，在递归查询所有的子集
 		//查询所有？把所有的父节点查询出在递归
 		//所有根节点都有一个虚拟的父节点，id为-1，点击查询所有传入父节点的id（-1），
 		//但虚拟父节点不存在，所以省略查虚拟父节点信息直接查询虚拟父节点的子节点，即全部数据
@@ -68,8 +68,8 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 			return R.ok().setData(organizationInformationsOfMengBi).setMsg("查询组织信息成功");
 		} else {
 			return R.ok().setMsg("没有查询到组织信息");
-		}
-		
+		}*/
+		return null;
     }
 	
 	
@@ -80,7 +80,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	@Deprecated
 	private void queryOrgInfosOfMengBi(List<OrganizationInformation> organizationInformations, 
 			OrganizationInformation organizationInformation, List<OrganizationInformation> organizationInformationsOfMengBi) {
-		if (organizationInformations != null && organizationInformations.size() > 0) {
+		/*if (organizationInformations != null && organizationInformations.size() > 0) {
 			for (OrganizationInformation organizationInformation2 : organizationInformations) {
 				organizationInformation.setOrgInfoParentId(organizationInformation2.getOrgInfoId());
 				organizationInformation.setOrgInfoId(null);
@@ -88,7 +88,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 				organizationInformationsOfMengBi.addAll(ois);
 				queryOrgInfosOfMengBi(ois, organizationInformation, organizationInformationsOfMengBi);
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 		if(orgMembers != null && orgMembers.size() > 0) {
 			return R.ok().setData(orgMembers);
 		} else {
-			return R.error().setMsg("没有查询到用户数量");
+			return R.ok().setMsg("没有查询到用户数量");
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	}
 	
 	/**
-	 * 查询当前组织下的所有子组织
+	 * 查询当前组织下的所有子组织（查询全部，在组织信息里调用此方法查看子组织的数量）
 	 * @param organizationInformation
 	 * @return
 	 */
@@ -257,7 +257,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	private int _index = 0;
 	
 	/**
-     * 查询当前组织下的所有子组织（分页查询）
+     * 查询当前组织下的所有子组织（分页查询，组织详细信息里点击弹窗调用此方法）
      * @param organizationInformation
      * @return
      * @throws Exception
@@ -283,7 +283,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     private boolean flag = true;
     
     /**
-     * 查询子组织
+     * 查询子组织（分页，递归查询）
      * @param organizationInformations	//查询到的当前子组织
      * @param organizationInformationsOfMengBi	//所有子组织
      * @param index 已经读取的个数
@@ -334,7 +334,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	@Transactional(rollbackFor=java.lang.Exception.class)
 	private void queryOrgInfosOfMengBiForMap(List<Map<String, Object>> organizationInformations, 
 			Map<String, Object> organizationInformation, List<Map<String, Object>> organizationInformationsOfMengBi) {
-		if (organizationInformations != null && organizationInformations.size() > 0) {
+		/*if (organizationInformations != null && organizationInformations.size() > 0) {
 			for (Map<String, Object> organizationInformation2 : organizationInformations) {
 				organizationInformation.put("orgInfoParentId", organizationInformation2.get("orgInfoId"));
 				organizationInformation.remove("orgInfoId");
@@ -353,7 +353,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 				organizationInformationsOfMengBi.addAll(ois);
 				queryOrgInfosOfMengBiForMap(ois, organizationInformation, organizationInformationsOfMengBi);
 			}
-		}
+		}*/
 	}
     
     /**

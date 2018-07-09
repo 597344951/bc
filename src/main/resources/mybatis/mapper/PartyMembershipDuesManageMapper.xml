@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.PartyMembershipDuesManageMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.PartyMembershipDuesManage">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="should_pay_money" jdbcType="DECIMAL" property="shouldPayMoney" />
+    <result column="should_pay_date_start" jdbcType="TIMESTAMP" property="shouldPayDateStart" />
+    <result column="should_pay_date_end" jdbcType="TIMESTAMP" property="shouldPayDateEnd" />
+    <result column="should_pay_describe" jdbcType="VARCHAR" property="shouldPayDescribe" />
+    <result column="paid_money" jdbcType="DECIMAL" property="paidMoney" />
+    <result column="paid_date" jdbcType="TIMESTAMP" property="paidDate" />
+    <result column="paid_describe" jdbcType="VARCHAR" property="paidDescribe" />
+    <result column="paid_way" jdbcType="INTEGER" property="paidWay" />
+    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, org_id, should_pay_money, should_pay_date_start, should_pay_date_end, 
+    should_pay_describe, paid_money, paid_date, paid_describe, paid_way, pay_status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from party_membership_dues_manage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from party_membership_dues_manage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.PartyMembershipDuesManage">
+    insert into party_membership_dues_manage (id, user_id, org_id, 
+      should_pay_money, should_pay_date_start, should_pay_date_end, 
+      should_pay_describe, paid_money, paid_date, 
+      paid_describe, paid_way, pay_status
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
+      #{shouldPayMoney,jdbcType=DECIMAL}, #{shouldPayDateStart,jdbcType=TIMESTAMP}, #{shouldPayDateEnd,jdbcType=TIMESTAMP}, 
+      #{shouldPayDescribe,jdbcType=VARCHAR}, #{paidMoney,jdbcType=DECIMAL}, #{paidDate,jdbcType=TIMESTAMP}, 
+      #{paidDescribe,jdbcType=VARCHAR}, #{paidWay,jdbcType=INTEGER}, #{payStatus,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.PartyMembershipDuesManage">
+    insert into party_membership_dues_manage
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="shouldPayMoney != null">
+        should_pay_money,
+      </if>
+      <if test="shouldPayDateStart != null">
+        should_pay_date_start,
+      </if>
+      <if test="shouldPayDateEnd != null">
+        should_pay_date_end,
+      </if>
+      <if test="shouldPayDescribe != null">
+        should_pay_describe,
+      </if>
+      <if test="paidMoney != null">
+        paid_money,
+      </if>
+      <if test="paidDate != null">
+        paid_date,
+      </if>
+      <if test="paidDescribe != null">
+        paid_describe,
+      </if>
+      <if test="paidWay != null">
+        paid_way,
+      </if>
+      <if test="payStatus != null">
+        pay_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="shouldPayMoney != null">
+        #{shouldPayMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="shouldPayDateStart != null">
+        #{shouldPayDateStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shouldPayDateEnd != null">
+        #{shouldPayDateEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shouldPayDescribe != null">
+        #{shouldPayDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="paidMoney != null">
+        #{paidMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="paidDate != null">
+        #{paidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paidDescribe != null">
+        #{paidDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="paidWay != null">
+        #{paidWay,jdbcType=INTEGER},
+      </if>
+      <if test="payStatus != null">
+        #{payStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.PartyMembershipDuesManage">
+    update party_membership_dues_manage
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="shouldPayMoney != null">
+        should_pay_money = #{shouldPayMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="shouldPayDateStart != null">
+        should_pay_date_start = #{shouldPayDateStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shouldPayDateEnd != null">
+        should_pay_date_end = #{shouldPayDateEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shouldPayDescribe != null">
+        should_pay_describe = #{shouldPayDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="paidMoney != null">
+        paid_money = #{paidMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="paidDate != null">
+        paid_date = #{paidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paidDescribe != null">
+        paid_describe = #{paidDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="paidWay != null">
+        paid_way = #{paidWay,jdbcType=INTEGER},
+      </if>
+      <if test="payStatus != null">
+        pay_status = #{payStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.PartyMembershipDuesManage">
+    update party_membership_dues_manage
+    set user_id = #{userId,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      should_pay_money = #{shouldPayMoney,jdbcType=DECIMAL},
+      should_pay_date_start = #{shouldPayDateStart,jdbcType=TIMESTAMP},
+      should_pay_date_end = #{shouldPayDateEnd,jdbcType=TIMESTAMP},
+      should_pay_describe = #{shouldPayDescribe,jdbcType=VARCHAR},
+      paid_money = #{paidMoney,jdbcType=DECIMAL},
+      paid_date = #{paidDate,jdbcType=TIMESTAMP},
+      paid_describe = #{paidDescribe,jdbcType=VARCHAR},
+      paid_way = #{paidWay,jdbcType=INTEGER},
+      pay_status = #{payStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryPartyMembershipDues" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+		pmdm.id id,
+		bui.name name,
+		_oi.org_info_name orgInfoName,
+		pmdm.should_pay_money shouldPayMoney,
+		pmdm.should_pay_date_start shouldPayDateStart,
+		pmdm.should_pay_date_end shouldPayDateEnd,
+		pmdm.should_pay_describe shouldPayDescribe,
+		pmdm.paid_money paidMoney,
+		pmdm.paid_date paidDate,
+		pmdm.paid_describe paidDescribe,
+		pmdpw.name paidWay,
+		pmdm.pay_status payStatus
+	from
+	  party_membership_dues_manage pmdm 
+	  inner join party_user_info pui on pmdm.user_id = pui.party_user_id 
+	  inner join base_user_info bui on pui.party_user_id = bui.base_user_id 
+	  inner join organization_information _oi on pmdm.org_id = _oi.org_info_id
+	  left join party_membership_dues_paid_way pmdpw on pmdm.paid_way = pmdpw.id
+	where
+	  1 = 1
+	  <if test="partyUserName != null and partyUserName != ''"> and
+          bui.name like CONCAT('%',#{partyUserName},'%')
+      </if>
+  </select>
+</mapper>

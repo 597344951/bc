@@ -1,15 +1,20 @@
 .box{
     border:1px solid #eee;
     border-radius: 8px;
-    width: 340px;
+    width: 30%;
+    min-width:300px;
     height: 200px;
     float: left;
     margin:15px 5px ;
     background-color: white;
+    transition: transform 0.2s,box-shadow 0.3s;
+
 }
 .box:hover{
     cursor: pointer;
-    box-shadow: 3px 6px 25px 2px #bdbdbd;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+	transform:translateY(-2px);
+
 }
 /**鲜血**/
 .xianxue{
@@ -17,7 +22,7 @@
     background-position: 205px 72px;
        background-size: 42%;
 }
-.xianxue h3 i{
+.xianxue h3>i{
     background-image: url(/assets/img/xianxue.png);
 }
 
@@ -88,7 +93,7 @@ h3{
     margin: 0;
     margin: 10px;
 }
-.box h3 i{
+.box h3>i{
     display: inline-block;
     width: 25px;
     height: 25px;
@@ -96,32 +101,35 @@ h3{
     vertical-align: middle;
     margin-right: 5px;
 }
+.box h3>.btn{
+    float:right;
+}
 
-.fanghong h3 i{
+.fanghong h3>i{
     background-image: url(/assets/img/fanghong.png);
 }
-.huanbaogongyi h3 i{
+.huanbaogongyi h3>i{
     background-image: url(/assets/img/huanbaogongyi.png);
 }
-.juankuanjuanwuxianaixin h3 i{
+.juankuanjuanwuxianaixin h3>i{
     background-image: url(/assets/img/juankuanjuanwuxianaixin.png);
 }
-.fangtaifeng h3 i{
+.fangtaifeng h3>i{
     background-image: url(/assets/img/fangtaifeng.png);
 }
-.sanhuiyike h3 i{
+.sanhuiyike h3>i{
     background-image: url(/assets/img/sanhuiyike.png);
 }
-.saoxue h3 i{
+.saoxue h3>i{
     background-image: url(/assets/img/saoxue.png);
 }
-.weiwen h3 i{
+.weiwen h3>i{
     background-image: url(/assets/img/weiwen.png);
 }
-.zhishu h3 i{
+.zhishu h3>i{
     background-image: url(/assets/img/zhishu.png);
 }
-.jienenghuanbao h3 i{
+.jienenghuanbao h3>i{
     background-image: url(/assets/img/jienenghuanbao.png);
 }
 .box-up p{

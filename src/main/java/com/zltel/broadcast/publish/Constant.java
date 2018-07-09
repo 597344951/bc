@@ -61,9 +61,10 @@ public class Constant {
     public static final String MSG_CONTENT_DISCARD = "废弃内容.废弃人：";
     public static final String MSG_CONTENT_PUBLISHING = "发布内容.发布人：";
     public static final String MSG_CONTENT_OFFLINE = "下架内容.下架人：";
+    public static final String MSG_CONTENT_REPUBLISH = "节目重新发布审核.发起人：";
 
     /** 素材类型 **/
-    public static final String MATERIAL_TYPE_PICTURE = "picture";
+    public static final String MATERIAL_TYPE_IMAGE = "image";
     public static final String MATERIAL_TYPE_VIDEO = "video";
     public static final String MATERIAL_TYPE_AUDIO = "audio";
     public static final String MATERIAL_TYPE_TEXT = "text";
@@ -79,6 +80,7 @@ public class Constant {
     public static final int CONTENT_TYPE_ACTIVITY = 3;
     public static final int CONTENT_TYPE_SHOW = 4;
     public static final int CONTENT_TYPE_EMEGENCY = 5;
+    public static final int CONTENT_TYPE_EXIST = 6;
 
 
 }

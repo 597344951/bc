@@ -8,11 +8,12 @@
     margin: 15px;
     text-align: center;
     float: left;
+    transition: transform 0.2s,box-shadow 0.3s;
 }
 
 .termialDis:hover {
-    box-shadow: 4px 4px 18px 8px #d4d4d4;
-    width: 265px;
+   box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    transform:translateY(-5px);
 }
 
 .termialDis>div>.screenshoot,

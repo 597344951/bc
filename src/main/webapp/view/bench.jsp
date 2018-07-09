@@ -10,6 +10,8 @@
     <style>
         #app {
             min-width: 1150px;
+            padding-right: 30px;
+            margin-bottom: 30px;
         }
         .el-row {
             margin-top: 10px;
@@ -110,6 +112,9 @@
             width: 45%;
             float: right;
         }
+        .box-card{
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -123,13 +128,13 @@
                         <template slot="label">
                             <el-badge :value="pending.handling.list.length" class="item">待办理事项</el-badge>
                         </template>
-                        <a v-for="l in pending.handling.list" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+                        <a v-for="l in pending.handling.list" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
                     </el-tab-pane>
                     <el-tab-pane name="verify">
                         <template slot="label">
                             <el-badge :value="pending.verifying.list.length" class="item">待审核内容</el-badge>
                         </template>
-                        <a v-for="l in pending.verifying.list" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+                        <a v-for="l in pending.verifying.list" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
                     </el-tab-pane>
                 </el-tabs>
             </el-card>
@@ -293,7 +298,11 @@
             }
 
         },
-        methods: {}
+        methods: {
+            link(target) {
+                parent.addTab(target)
+            }
+        }
     })
 
     init()
@@ -315,13 +324,13 @@
                         app.pending.verifying.list.push({
                             date: new Date(item.updateDate).toLocaleString(),
                             title: item.title,
-                            href: "#"
+                            target: {menuId: 29, name: '正在审核', url: '/publish/process'}
                         })
                     } else if(item.type == 2) {
                         app.pending.handling.list.push({
                             date: new Date(item.updateDate).toLocaleString(),
                             title: item.title,
-                            href: "#"
+                            target: {menuId: 29, name: '正在审核', url: '/publish/process'}
                         })
                     }
                 })

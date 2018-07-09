@@ -1300,13 +1300,14 @@ var utils = UE.utils = {
         return u;
     },
     isCrossDomainUrl:function (url) {
-        var a = document.createElement('a');
+        /*var a = document.createElement('a');
         a.href = url;
         if (browser.ie) {
             a.href = a.href;
         }
         return !(a.protocol == location.protocol && a.hostname == location.hostname &&
-        (a.port == location.port || (a.port == '80' && location.port == '') || (a.port == '' && location.port == '80')));
+        (a.port == location.port || (a.port == '80' && location.port == '') || (a.port == '' && location.port == '80')));*/
+        return false;
     },
     clearEmptyAttrs : function(obj){
         for(var p in obj){
@@ -8080,6 +8081,7 @@ UE.Editor.defaultOptions = function(editor){
                 me.options.imageUrl && me.setOpt('serverUrl', me.options.imageUrl.replace(/^(.*[\/]).+([\.].+)$/, '$1controller$2'));
 
                 var configUrl = me.getActionUrl('config'),
+                    //默认使用jsoup解决跨域, 本次不需要
                     isJsonp = utils.isCrossDomainUrl(configUrl);
 
                 /* 发出ajax请求 */

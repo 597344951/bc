@@ -3,6 +3,7 @@ package com.zltel.broadcast.publish.service;
 import com.zltel.broadcast.um.bean.SysUser;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,9 @@ public interface PublishService {
      * @param content
      * @return
      */
-    public Map<String, Object> create(SysUser user, Map<String, Object> content);
+    public Map<String, Object> create(SysUser user, Map<String, Object> content) throws UnsupportedEncodingException;
+
+    public void reCreate(SysUser user, Map<String, Object> content);
 
     /**
      * 流程进行

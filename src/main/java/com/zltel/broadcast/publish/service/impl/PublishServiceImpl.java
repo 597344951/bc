@@ -1,5 +1,7 @@
 package com.zltel.broadcast.publish.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -52,7 +54,7 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public Map<String, Object> create(SysUser user, Map<String, Object> content) {
+    public Map<String, Object> create(SysUser user, Map<String, Object> content) throws UnsupportedEncodingException {
         Date add_date = new Date();
         int contentTypeId = (int) content.get("type");
         // 添加内容
@@ -86,7 +88,7 @@ public class PublishServiceImpl implements PublishService {
         }
 
         // 添加审核人员
-        List<Map<String, Object>> examineUsers = (List<Map<String, Object>>) content.get("exUsers");
+        /*List<Map<String, Object>> examineUsers = (List<Map<String, Object>>) content.get("exUsers");
         Map<String, Object> examineUser;
         for (int i = 0; i < examineUsers.size(); i++) {
             examineUser = new HashMap<String, Object>();
@@ -97,7 +99,8 @@ public class PublishServiceImpl implements PublishService {
             examineUser.put("add_date", add_date);
             examineUser.put("update_date", add_date);
             simpleDao.add("publish_examine_user", examineUser);
-        }
+        }*/
+        addExamineUsers(detail, (List<Map<String, Object>>) content.get("exUsers"));
         // 添加素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         Map<String, Object> material;
@@ -123,7 +126,7 @@ public class PublishServiceImpl implements PublishService {
         }
 
         // 发布终端
-        List<Map<String, Object>> terminals = (List<Map<String, Object>>) content.get("terminals");
+        /*List<Map<String, Object>> terminals = (List<Map<String, Object>>) content.get("terminals");
         Map<String, Object> terminal;
         for (Map<String, Object> t : terminals) {
             terminal = new HashMap<String, Object>();
@@ -133,16 +136,20 @@ public class PublishServiceImpl implements PublishService {
             terminal.put("add_date", add_date);
             terminal.put("update_date", add_date);
             simpleDao.add("publish_terminal", terminal);
-        }
+        }*/
+
+        addTerminals(detail, (List<Map<String, Object>>) content.get("terminals"));
         // 添加进度（内容初稿发布完成）
-        Map<String, Object> processState = new HashMap<String, Object>();
+        /*Map<String, Object> processState = new HashMap<String, Object>();
         processState.put("content_id", detail.get("id"));
         processState.put("user_id", user.getUserId());
         processState.put("process_item_id", process.get(0).get("process_item_id"));
         processState.put("add_date", add_date);
         processState.put("update_date", add_date);
         processState.put("msg", Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername());
-        simpleDao.add("publish_process_state", processState);
+        simpleDao.add("publish_process_state", processState);*/
+
+        addProcessState(((Long)detail.get("id")).intValue(), user.getUserId(), (int)detail.get("process_item_id"), Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername(), null);
 
         // 添加节目到编辑器
         int editId = addToEditor(content);
@@ -153,6 +160,68 @@ public class PublishServiceImpl implements PublishService {
         return detail;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void reCreate(SysUser user, Map<String, Object> content) {
+        Date addDate = new Date();
+        Map<String, Object> detail = new HashMap<String, Object>();
+        detail.put("title", content.get("title"));
+        detail.put("content_type_id", Constant.CONTENT_TYPE_EXIST);
+        detail.put("user_id", user.getUserId());
+        detail.put("snapshot", content.get("programId"));
+        detail.put("add_date", addDate);
+        detail.put("update_date", addDate);
+        // 获取发布流程
+        List<Map<String, Object>> process = getProcess((int) Constant.CONTENT_TYPE_EXIST);
+        detail.put("process_item_id", process.get(0).get("process_item_id"));
+        simpleDao.add("publish_content", detail);
+        //添加审核人
+        addExamineUsers(detail, (List<Map<String, Object>>) content.get("exUsers"));
+        //添加终端
+        addTerminals(detail, (List<Map<String, Object>>) content.get("terminals"));
+        //更新状态
+        addProcessState(((Long)detail.get("id")).intValue(), user.getUserId(), (int)detail.get("process_item_id"), Constant.MSG_CONTENT_REPUBLISH + user.getUsername(), null);
+
+        doNext(((Long) detail.get("id")).intValue());
+
+    }
+
+    /**
+     * 关联审核人
+     * @param detail
+     * @param examineUsers
+     */
+    private void addExamineUsers(Map<String, Object> detail, List<Map<String, Object>> examineUsers) {
+        Map<String, Object> examineUser;
+        for (int i = 0; i < examineUsers.size(); i++) {
+            examineUser = new HashMap<String, Object>();
+            examineUser.put("user_id", examineUsers.get(i).get("id"));
+            examineUser.put("content_id", detail.get("id"));
+            examineUser.put("sort", i + 1);
+            examineUser.put("state", Constant.VERIFY_NOT_START);
+            examineUser.put("add_date", detail.get("add_date"));
+            examineUser.put("update_date", detail.get("add_date"));
+            simpleDao.add("publish_examine_user", examineUser);
+        }
+    }
+
+    /**
+     * 关联终端
+     * @param detail
+     * @param terminals
+     */
+    private void addTerminals(Map<String, Object> detail, List<Map<String, Object>> terminals) {
+        Map<String, Object> terminal;
+        for (Map<String, Object> t : terminals) {
+            terminal = new HashMap<String, Object>();
+            terminal.put("terminal_id", t.get("id"));
+            terminal.put("group_id", t.get("groupId"));
+            terminal.put("content_id", detail.get("id"));
+            terminal.put("add_date", detail.get("add_date"));
+            terminal.put("update_date", detail.get("add_date"));
+            simpleDao.add("publish_terminal", terminal);
+        }
+    }
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public void doNext(int contentId) {
@@ -262,7 +331,7 @@ public class PublishServiceImpl implements PublishService {
      * @param content
      * @return
      */
-    private int addToEditor(Map<String, Object> content) {
+    private int addToEditor(Map<String, Object> content) throws UnsupportedEncodingException {
         Map<String, Object> program = new HashMap<String, Object>();
         String programTemplateId = (String) content.get("programTemplateId");
         String programTemplateCategoryId = (String) content.get("programTemplateCategoryId");
@@ -291,33 +360,39 @@ public class PublishServiceImpl implements PublishService {
         // 素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         List<Map<String, Object>> resources = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("Name", "节目制作需求");
+        res.put("Type", 1);
+        res.put("Content", content.get("demand")==null ? "" : content.get("demand"));
+        res.put("Url", "");
+        resources.add(res);
         for (Map<String, Object> material : materials) {
             boolean isFile = (boolean) material.get("isFile");
-            Map<String, Object> res = new HashMap<String, Object>();
+            res = new HashMap<String, Object>();
             String type = (String) material.get("type");
             String name = (String) material.get("name");
             String url;
             if(isFile) {
-                url = material.get("id") + name.substring(name.lastIndexOf("."), name.length());
+                url = (String) material.get("url");
             } else {
                 url = "";
             }
 
-            if (Constant.MATERIAL_TYPE_PICTURE.equals(type)) {
+            if (Constant.MATERIAL_TYPE_IMAGE.equals(type)) {
                 res.put("Type", 2);
-                res.put("Url", host + "/material/image/" + url);
+                res.put("Url", url);
                 res.put("Content", "");
             } else if (Constant.MATERIAL_TYPE_AUDIO.equals(type)) {
                 res.put("Type", 4);
-                res.put("Url", host + "/material/download/" + material.get("id"));
+                res.put("Url", url);
                 res.put("Content", "");
             } else if(Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
                 res.put("Type", 3);
-                res.put("Url", host + "/material/download/" + material.get("id"));
+                res.put("Url", url);
                 res.put("Content", "");
             } else if(Constant.MATERIAL_TYPE_TEXT.equals(type)) {
                 res.put("Type", 1);
-                res.put("Content", material.get("content"));
+                res.put("Content", URLEncoder.encode((String) material.get("content"), "UTF-8"));
                 res.put("Url", "");
             } else {
                 continue;
@@ -388,7 +463,7 @@ public class PublishServiceImpl implements PublishService {
             int processItemId;
             for (int i = 0; i < process.size(); i++) {
                 processItemId = (int) process.get(i).get("process_item_id");
-                if (Constant.VERIFY == processItemId && i >= 1) {
+                /*if (Constant.VERIFY == processItemId && i >= 1) {
                     processItemId = (int) process.get(i - 1).get("process_item_id");
                     if (Constant.MORE_EDIT == processItemId) {
                         // 回退到在编辑
@@ -398,7 +473,26 @@ public class PublishServiceImpl implements PublishService {
                         changeProcess(contentId, Constant.DISCARD);
                         hasNext = false;
                     }
+                }*/
 
+                if(Constant.VERIFY == processItemId) {
+
+                    if(i > 0) {
+                        processItemId = (int) process.get(i - 1).get("process_item_id");
+                        if (Constant.MORE_EDIT == processItemId) {
+                            // 回退到在编辑
+                            changeProcess(contentId, Constant.MORE_EDIT);
+                        } else {
+                            // 废弃
+                            changeProcess(contentId, Constant.DISCARD);
+                            hasNext = false;
+                        }
+                    } else {
+                        // 废弃
+                        changeProcess(contentId, Constant.DISCARD);
+                        hasNext = false;
+                    }
+                    break;
                 }
             }
         } else {
@@ -491,6 +585,8 @@ public class PublishServiceImpl implements PublishService {
                 Constant.MSG_CONTENT_MORE_EDIT_START + user.getUsername(), null);
 
         Map<String, Object> content = publishDao.get(contentId);
+        //消息处理
+        messageService.handleMessage(null, contentId);
         // 下一步
         doNext(contentId);
 
@@ -818,8 +914,6 @@ public class PublishServiceImpl implements PublishService {
                         addProcessState(key, (Integer) user.get("user_id"), Constant.VERIFY, Constant.MSG_CONTENT_DISCARD + user.get("username"), null);
                         log.info("审核超时且无其他审核人, 内容废弃处理.");
                     }
-
-
                 }
             }
         }

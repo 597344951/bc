@@ -37,3 +37,31 @@
 	margin:0;
 	width: auto;
 }
+/**树 选中样式**/
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+    background-color: #eef1f6;
+}
+
+/**菜单树**/
+.menu-tree{
+	font-size: 14px;
+}
+
+.menu-tree .el-tree-node__content{
+	padding-top:5px;
+	padding-bottom:5px;
+}
+.menu-tree .custom-tree-node{
+	width:100%;
+}
+.menu-tree .custom-tree-node .icon{
+	font-size:15px;
+	padding-right:5px;
+}
+.menu-tree .custom-tree-node .left-label-group{
+	float: left;
+    margin-top: 5px;
+}
+.menu-tree .custom-tree-node .right-btn-group{
+	float:right;
+}

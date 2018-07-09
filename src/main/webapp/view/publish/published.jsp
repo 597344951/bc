@@ -20,7 +20,7 @@
 			height: 25px;
 		}
 		.card-item{
-            min-height: 200px;
+            /*min-height: 200px;*/
         }
 	</style>
 </head>
@@ -52,9 +52,9 @@
 		<el-main>
 			<div v-show="!dis_h_v">
 				<template v-for=" it in  publishingContent.list">
-					<el-card class="card-item" :body-style="{ padding: '0px' }">
+					<el-card class="card-item card-item2" :body-style="{ padding: '0px' }" shadow="never">
 						<div class="title">
-							<span class="bolder"> {{it.title}} </span>
+							<span class="bolder"> <i class="el-icon-star-on" style="font-size: 20px;"></i>  {{it.title}} </span>
 							<span class="right">
 							</span>
 						</div>
@@ -62,28 +62,28 @@
 							<table class="dis-info-min">
 								<tbody>
 									<tr>
-										<td>发起人</td>
-										<td>：</td>
+										<td> <i class="el-icon-news"></i>发起人</td>
+										<td></td>
 										<td>{{it.username}}</td>
 									</tr>
 									<tr>
-										<td>发布时间</td>
-										<td>：</td>
+										<td><i class="el-icon-time"></i>发布时间</td>
+										<td></td>
 										<td>{{it.add_date}}</td>
 									</tr>
 									<tr>
-										<td>开始时间</td>
-										<td>：</td>
+										<td><i class="el-icon-date date-start"></i>开始日期</td>
+										<td></td>
 										<td>{{it.start_date}}</td>
 									</tr>
 									<tr>
-										<td>结束时间</td>
-										<td>：</td>
+										<td><i class="el-icon-date date-finish"></i>结束日期</td>
+										<td></td>
 										<td>{{it.end_date}}</td>
 									</tr>
 									<tr>
-										<td>播放时段</td>
-										<td>：</td>
+										<td><i class="el-icon-upload"></i>播放时段</td>
+										<td></td>
 										<td>{{it.period}}</td>
 									</tr>
 								</tbody>
@@ -104,12 +104,12 @@
 					<el-table-column prop="start_date" label="预定开始时间" width="120"></el-table-column>
 					<el-table-column prop="end_date" label="预定结束时间" width="120"></el-table-column>
 					<el-table-column prop="period" label="预定播放时段" width="120"></el-table-column>
-					<el-table-column label="操作" width="200">
+					<%-- <el-table-column label="操作" width="200">
 						<template slot-scope="scope">
 							<el-button v-if="scope.row.content_type_id == 3" type="text" size="small" @click="loadAddition(scope.row)">完善活动信息</el-button>
 							<el-button v-if="scope.row.content_type_id == 3" type="text" size="small" @click="loadParticipant(scope.row)">参加人员</el-button>
 						</template>
-					</el-table-column>
+					</el-table-column> --%>
 				</el-table>
 			</div>
 		</el-main>

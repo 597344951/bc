@@ -6,6 +6,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 public class EventPlanInfo {
+     
+
     private Integer eventPlanId;
     @NotNull(message = "关联事件不能为空")
     private Integer eventId;
@@ -14,7 +16,7 @@ public class EventPlanInfo {
     @NotNull(message = "计划正文不能为空")
     private String content;
     
-    @NotNull(message = "开始时间不能为空")
+    @NotNull(message = "�?始时间不能为�?")
     private Date stime;
     @NotNull(message = "结束时间不能为空")
     private Date etime;
@@ -24,6 +26,9 @@ public class EventPlanInfo {
     private Integer userId;
 
     private List<CostPlan> costplans;
+    
+    private String pubTaskId;
+    private String status_label;
 
     public Integer getEventPlanId() {
         return eventPlanId;
@@ -127,6 +132,22 @@ public class EventPlanInfo {
      */
     public void setEtime(Date etime) {
         this.etime = etime;
+    }
+
+    public String getPubTaskId() {
+        return pubTaskId;
+    }
+
+    public void setPubTaskId(String pubTaskId) {
+        this.pubTaskId = pubTaskId;
+    }
+
+    public String getStatus_label() {
+        return status_label;
+    }
+
+    public void setStatus_label(String status_label) {
+        this.status_label = status_label;
     }
     
 }

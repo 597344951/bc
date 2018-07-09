@@ -119,6 +119,9 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 				Date birthDay = DateUtil.toDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("birthDate") == null || partyUserInfo.get("birthDate") == "" ?
 						null : partyUserInfo.get("birthDate").toString());
 				partyUserInfo.put("age", getPartyUserAge(birthDay));
+				Date joinDateFormal = DateUtil.toDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("joinDateFormal") == null || partyUserInfo.get("joinDateFormal") == "" ?
+						null : partyUserInfo.get("joinDateFormal").toString());
+				partyUserInfo.put("joinDateFormalAge", getPartyUserAge(joinDateFormal));
 			}
 			return R.ok().setData(partyUserInfosPageInfo).setMsg("查询党员信息成功");
 		} else {
@@ -144,7 +147,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
             if (StringUtil.isEmpty((String)partyUserInfos.get(0).get("idPhoto"))) {
             	bis = this.getClass().getResourceAsStream("/noFoundIdPhoto.jpg");
             } else {            	
-            	bis = new FileInputStream(new File((String)partyUserInfos.get(0).get("idPhoto")));
+            	bis = new FileInputStream(new File(uploadIdPhotoPath + File.separator + (String)partyUserInfos.get(0).get("idPhoto")));
             }
             try {
     		int i = bis.read(buff);
@@ -166,7 +169,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
      * @return
      */
     public static Integer getPartyUserAge(Date birthDay) throws Exception {
-    	if (birthDay == null) return null;
+    	if (birthDay == null) return 0;
     	Calendar cal = Calendar.getInstance();  
         int yearNow = cal.get(Calendar.YEAR);  
         int monthNow = cal.get(Calendar.MONTH);  
@@ -289,9 +292,9 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	}
     	
     	String idPhotoPathTemp = uploadIdPhotoTempPath + File.separator + partyUserIdPhotoTempFileName;	//临时照片全路径
-    	String idPhotoPath = uploadIdPhotoPath + File.separator + baseUserInfo.getIdCard();	//上传照片文件夹路径
-    	String idPhotoName = request.getSession().getAttribute("partyUserIdPhotoFileName").toString();	//上传照片文件名
-    	baseUserInfo.setIdPhoto(idPhotoPath + File.separator + idPhotoName);	//上传照片全路径
+    	String idPhotoPath = uploadIdPhotoPath;	//上传照片文件夹路径
+    	String idPhotoName = baseUserInfo.getIdCard() + File.separator + request.getSession().getAttribute("partyUserIdPhotoFileName").toString();	//上传照片文件名
+    	baseUserInfo.setIdPhoto(idPhotoName);	//上传照片全路径
     	int insertBaseUserInfoCount = baseUserInfoMapper.insertSelective(baseUserInfo);	//保存基础信息
     	List<BaseUserInfo> baseUserInfos = baseUserInfoMapper.queryBaseUserInfos(baseUserInfo);	//查询基础信息id
     	if (insertBaseUserInfoCount != 1 || baseUserInfos == null ? true : baseUserInfos.size() != 1 ? true : false) {	//插入失败，抛异常回滚
@@ -316,12 +319,12 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, Map<String, Object> partyUser) throws Exception {
     	List<Map<String, Object>> puiMaps = partyUserInfoMapper.queryPartyUserInfos(partyUser);
     	if (puiMaps != null && puiMaps.size() == 1) {
-    		String idPhotoPath = uploadIdPhotoPath + File.separator + puiMaps.get(0).get("idCard");	//上传照片文件夹路径
-    		String idPhotoName = file.getOriginalFilename();	//上传照片文件名
+    		String idPhotoPath = uploadIdPhotoPath;	//上传照片文件夹路径
+    		String idPhotoName = puiMaps.get(0).get("idCard") + File.separator + file.getOriginalFilename();	//上传照片文件名
     		FileUtil.writeFile(file.getInputStream(), idPhotoPath, idPhotoName);	//保存证件照
     		BaseUserInfo bui = new BaseUserInfo();
     		bui.setBaseUserId(Integer.parseInt(puiMaps.get(0).get("id").toString()));
-    		bui.setIdPhoto(idPhotoPath + File.separator + idPhotoName);
+    		bui.setIdPhoto(idPhotoName);
     		int updateBaseUserInfoCount = baseUserInfoMapper.updateByPrimaryKeySelective(bui);
     		if (updateBaseUserInfoCount != 1) {	//更新失败，抛异常回滚
         		throw new Exception();

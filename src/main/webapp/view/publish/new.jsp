@@ -1,5 +1,21 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<%@ page import="org.apache.shiro.SecurityUtils,org.apache.shiro.subject.Subject,com.zltel.broadcast.um.bean.SysUser" %>
+
+<%
+	String title = request.getParameter("title");
+	String programId = request.getParameter("programId");
+	String startStep = request.getParameter("startStep");
+	String reAdd = request.getParameter("reAdd");
+	title = title == null ? "" : title;
+	programId = programId == null ? "-1" : programId;
+	startStep = startStep == null ? "0" : startStep;
+	reAdd = reAdd == null ? "false" : reAdd;
+	Subject subject = SecurityUtils.getSubject();
+    SysUser user = (SysUser) subject.getPrincipal();
+    String userId = user == null ? "" : "" + user.getUserId();
+
+%>
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -59,17 +75,26 @@
             float: left;
 			position: relative;
 			border: 1px solid #ddd;
-			/* box-shadow: 0px 1px 16px 1px #7b7b7b; */
+			transition: transform 0.2s,box-shadow 0.3s;
         }
+
+		.image-box:hover{
+			cursor: pointer;
+			box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+			transform:translateY(-2px);
+		}
 		.image-box.active {
 			border-radius: 5px;
-			box-shadow: 2px 1px 16px 1px #7b7b7b;
+			box-shadow: 0 8px 15px rgba(0,178,255,.28);
+			border: 1px solid #00b2ff;
+			transform:translateY(-2px);
 		}
         .image {
             width: 100%;
             height: 175px;
 			background: white;
         }
+
         .bottom {
             padding: 5px 5px;
 			text-align: center;
@@ -91,18 +116,85 @@
 			height: 20px;
 			width: 20px;
 		}
+		.el-dialog {
+			border-radius: 7px;	
+
+		}
+		
+		.el-dialog__body{
+			padding: 0 15px 16px;
+			text-align:center;
+		}
+		.el-dialog__header {
+			padding: 20px 32px 10px;
+			font-weight: unset;
+			border-bottom: 1px solid #ddd;
+			margin-bottom: 12px;
+			text-align: center;
+		}
+		.el-tab-pane{
+			overflow: auto;
+			padding-bottom: 20px;
+		}
+
+		.material-box {
+			width: 150px;
+			height: 150px;
+			border-radius: 5px;
+			margin: 3px;
+			overflow: hidden;
+			display: inline-block;
+			position: relative;
+		}
+		.material-box img {
+			height: 100%;
+			width: 100%;
+		}
+		.material-add {
+			border: 1px dashed #c0ccda;
+			text-align: center;
+			cursor: pointer;
+		}
+		.material-add i {
+			font-size: 30px;
+			line-height: 140px;
+			color: #c0ccda;
+		}
+		.material-del {
+			height: 100%;
+			width: 100%;
+			background-color: rgba(0, 0, 0, 0.7);
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 100;
+			text-align: center;
+			color: white;
+			opacity: 0;
+			transition:opacity 0.5s;
+		}
+		.material-del:hover{
+			opacity: 1;
+		}
+		.material-del i {
+			line-height: 150px;
+			font-size: 18px;
+			cursor: pointer;
+		}
+
 	</style>
 </head>
 <body>
 	<div id="app">
 		<el-container>
 			<el-header>
-				<el-steps :active="step" finish-status="success" simple>
-					<el-step title="选择模板"></el-step>
+				<el-steps :active="curStep" finish-status="success" simple>
+					<el-step v-for="(s, index) in processSteps" :title="s" v-if="index >= startStep"></el-step>
+					<%-- <el-step title="选择模板"></el-step>
 					<el-step title="编辑内容"></el-step>
 					<el-step title="选择发布终端"></el-step>
 					<el-step title="编辑审核人"></el-step>
-					<el-step title="创建成功"></el-step>
+					<el-step title="提交完成"></el-step> --%>
 				</el-steps>
 			</el-header>
 			<el-main v-loading="loading">
@@ -163,7 +255,7 @@
 				<div v-show="step==1">
 					<h3>内容/活动简单编辑</h3>
 					<el-row :gutter="20">
-						<el-col :span="4"><h4>主题 [<el-button type="text" @click="additionDialogVisible = true">补充</el-button>]</h4></el-col>
+						<el-col :span="4"><h4>主题 <%-- [<el-button type="text" @click="additionDialogVisible = true">补充</el-button>] --%></h4></el-col>
 						<el-col :span="19"><el-input v-model="title" placeholder="发布内容主题"></el-input></el-col>
 					</el-row>
 					<%-- <el-row :gutter="20">
@@ -235,11 +327,34 @@
 							<div><script id="templateText" name="templateText" style="height:300px;" type="text/plain"></script></div>
 						</el-col>
 					</el-row>
-					<%--图片--%>
+					<%-- 编辑要求 --%>
 					<el-row :gutter="20">
+						<el-col :span="4"><h5>节目制作要求</h5></el-col>
+						<el-col :span="19">
+							<el-input type="textarea" :rows="4" placeholder="请在此处输入节目制作要求（列如：节目编辑要求、节目发布时间等等）" v-model="demand"></el-input>
+						</el-col>
+					</el-row>
+					<%-- 附加素材 --%>
+					<el-row :gutter="20">
+						<el-col :span="4"><h5>附加素材</h5></el-col>
+						<el-col :span="19">
+							<div class="material-box" v-for="m in material">
+								<img :src="m.coverUrl">
+								<div class="material-del">
+									<i class="el-icon-delete" @click="materialDelete(m.uid)"></i>
+								</div>
+							</div>
+							<div class="material-box material-add" @click="materialSelect">
+								<i class="el-icon-plus"></i>
+							</div>
+						</el-col>
+					</el-row>
+					<%--图片--%>
+					<%-- <el-row :gutter="20">
 						<el-col :span="4"><h5>素材提交（图片）</h5></el-col>
 						<el-col :span="19">
 							<el-upload
+									multiple
 									action="/material/uploadImage"
 									accept="image/*"
 									:on-success="handleUploadSuccess"
@@ -249,12 +364,13 @@
 								<i class="el-icon-plus" style="line-height:5"></i>
 							</el-upload>
 						</el-col>
-					</el-row>
+					</el-row> --%>
 					<%--视频--%>
-					<el-row :gutter="20">
+					<%-- <el-row :gutter="20">
 						<el-col :span="4"><h5>素材提交（视频）</h5></el-col>
 						<el-col :span="19">
 							<el-upload
+									multiple
 									action="/material/uploadVideo"
 									accept="video/*"
 									:on-remove="handleMaterialRemove"
@@ -264,12 +380,13 @@
 								<el-button size="small" type="primary">点击上传</el-button>
 							</el-upload>
 						</el-col>
-					</el-row>
+					</el-row> --%>
 					<%--音频--%>
-					<el-row :gutter="20">
+					<%-- <el-row :gutter="20">
 						<el-col :span="4"><h5>素材提交（音频）</h5></el-col>
 						<el-col :span="19">
 							<el-upload
+									multiple
 									action="/material/uploadAudio"
 									accept="audio/*"
 									:on-remove="handleMaterialRemove"
@@ -279,7 +396,7 @@
 								<el-button size="small" type="primary">点击上传</el-button>
 							</el-upload>
 						</el-col>
-					</el-row>
+					</el-row> --%>
 				</div>
 				<%--选择终端--%>
 				<div v-show="step==2">
@@ -322,13 +439,17 @@
 				</div>
 				<%-- 完成 --%>
 				<div v-show="step > 3">
-					<el-card class="box-card" shadow="never">
-						内容编辑完成.[<a :href="viewProcess">点击跳转查看进度...</a>]
+					<el-card style="height: 300px; width: 350px; margin: 50px auto; text-align: center;">
+						<%-- 内容编辑完成.[<a href="#" @click="viewProcess()">点击跳转查看进度...</a>] --%>
+
+						<span class="el-icon-success" style="font-size: 100px; color: green; margin: 50px auto; display: block;"></span>
+						<el-button round type="primary" @click="refresh()">继续添加内容</el-button>
+						<el-button round type="success" @click="viewProcess()">查看进度</el-button>
 					</el-card>
 				</div>
 			</el-main>
 			<el-footer style="text-align:right;margin-right:50px;" >
-				<el-button type="primary" @click="preStep" v-show="step > 0 && step <= 3">上一步</el-button>
+				<el-button type="primary" @click="preStep" v-show="step > startStep && step <= 3">上一步</el-button>
 				<el-button type="primary" @click="nextStep" v-show="step < 3">下一步</el-button>
 				<el-button type="primary" @click="commit" v-show="step == 3">提交</el-button>
 			</el-footer>
@@ -394,18 +515,41 @@
 		</el-dialog>
 
 		<el-dialog title="素材验证" :visible="commitMessage.show" :show-close="false" width="300px">
-			<p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
+			<p style="font-size: 13px; margin: 5px 20px; color: #2b2b2b" v-for="m in commitMessage.message">{{m}}</p>
+			<div style="text-align:center;"><span class="el-icon-loading"></span></div>
 		</el-dialog>
+
+<<<<<<< .mine
+		<resource-material-explorer :display.sync="materialExplorerShow" title="素材选择" @submit="materialSelected()"></resource-material-explorer>
+||||||| .r1015
+		<resource-material-explorer :visible.sync="materialExplorerShow" title="素材选择" @submit="materialSelected()"></resource-material-explorer>
+=======
+		<resource-material-explorer :display.sync="materialExplorerShow" title="素材选择" @submit="materialSelected"></resource-material-explorer>
+>>>>>>> .r1027
 	</div>
 
 
-	<script type="text/javascript">
+<<<<<<< .mine
+	<script type="module">
+		window.app = new Vue({
+||||||| .r1015
+	<script type="text/javascript" type="module">
 		const app = new Vue({
+=======
+	<script type="module">
+		import serverConfig from '/environment/resourceUploadConfig.jsp'
+
+		window.app = new Vue({
+>>>>>>> .r1027
 			el: '#app',
 			data: {
+				programId: <%=programId%>,
+				reAdd: <%=reAdd%>,
 				loading: true,
-			    step: 0,
-                viewProcess: '#',
+				processSteps: ['选择模板', '编辑内容', '选择发布终端', '编辑审核人', '创建成功'],
+				startStep: <%=startStep%>,
+				curStep: 0,
+			    step: <%=startStep%>,
                 templateDialogVisible: false,
                 additionDialogVisible: false,
                 commitCheckMsgVisible: true,
@@ -420,13 +564,13 @@
 				selectedTemplate: {},
 				selectedTemplatePreview: '',
 				type: 4,
-				title: '',
+				title: '<%=title%>',
 				startDate: '',
 				endDate:'',
 				time: '',
 				screenType: '0',
 				screenDirections: ['竖屏', '横屏'],
-				screenDirection: ['竖屏'],
+				screenDirection: ['竖屏', '横屏'],
 				playLength: '100',
 				resolution: '1920x1080',
 				week: '',
@@ -444,7 +588,9 @@
 				commitMessage: {
 					show: false,
 					message: [],
-				}
+				},
+				demand: '',
+				materialExplorerShow: false
 			},
             methods: {
 			    nextStep() {
@@ -473,11 +619,13 @@
 								}
 							})
 						}
-                        this.step ++;
+						this.step ++
+						this.curStep ++
 					}
 				},
 				preStep() {
-			        this.step --;
+					this.step --
+					this.curStep --
 				},
                 handleMaterialRemove(file, fileList) {
 					for(let i=0; i < this.material.length; i++) {
@@ -541,6 +689,9 @@
 									}
 								}
 							}
+							//节目要求
+							content.demand = this.demand
+							content.programId = this.programId
 							commit(content);
                         })
                         .catch(_ => {});
@@ -601,13 +752,49 @@
 					this.selectedTemplateId = id
 					this.selectedProgramTemplateId = programTemplateId
 					this.selectedProgramTemplateCategoryId = programTemplateCategoryId
+				},
+				viewProcess() {
+					if(parent.addTab) {
+						parent.addTab({menuId: 29, name: '正在审核', url: '/publish/process'})
+					} else {
+						window.location.href = '/publish/process'
+					}
+					
+				},
+				refresh() {
+					window.location.reload()
+				},
+				materialSelected(data) {
+					let coverUrl
+					data.forEach(item => {
+						coverUrl = item.coverUrl ? serverConfig.getUrl(item.coverUrl) : "/assets/img/timg.png"
+						this.material.push({
+							uid: item.materialId,
+							name: item.name,
+							type: item.type,
+							coverUrl: coverUrl,
+							url: serverConfig.getUrl(item.url),
+							isFile: item.type == 'text' ? false : true
+						})
+					})
+				},
+				materialSelect() {
+					this.materialExplorerShow = true
+				},
+				materialDelete(uid) {
+					for(var i in this.material) {
+						if(this.material[i].uid == uid) {
+							this.material.splice(i, 1)
+						}
+					}
 				}
 
 			}
 		});
 		//编辑器
         var ue = UE.getEditor('templateText',{
-            serverUrl: '/ueditor/controller.jsp',
+            //serverUrl: '/ueditor/controller.jsp',
+			serverUrl:'http://192.168.1.8:3000/ueditor',
             allowDivTransToP: false,
             wordCount: false,
             elementPathEnabled: false
@@ -624,34 +811,31 @@
 		}
 
         function commit(postData) {
+			let url
+			if(app.reAdd) {
+				url = '/publish/reAdd'
+			} else {
+				url = '/publish/add'
+			}
             $.ajax({
                 type:'POST',
-                url:'/publish/add',
+                url: url,
                 dataType:'json',
                 contentType: 'application/json',
                 data: JSON.stringify(postData),
                 success: function(reps){
                     if(reps.status) {
                         //app.step += 2;
-						//app.viewProcess = '/publish/process';
 						commitMessage(() => {
-							app.step += 2;
-							app.viewProcess = '/publish/process';
+							app.step += 2
+							app.curStep +=2
 						})
                     } else {
-                        app.$notify({
-                            title: 'ERROR',
-                            message: '提交失败,请检查输入.',
-                            type: 'error'
-                        });
+                        app.$message.error('添加失败...');
                     }
                 },
                 error: function (err) {
-                    app.$notify({
-                        title: 'ERROR',
-                        message: '提交失败.',
-                        type: 'error'
-                    });
+                    app.$message.error('系统错误.');
                 }
             });
         }
@@ -788,6 +972,7 @@
 			}
 			postJson('/terminal/basic/queryInfo/1-10000', {}, reps => {
 				app.terminals = []
+				app.showTerminals = []
 				app.terminalGroup = {
 					size: [],
 					direction: [],
@@ -815,6 +1000,25 @@
 						status: item.online == 1 ? '在线' : '离线',
 						address: item.addr
 					})
+					if(item.online == 1) {
+						app.showTerminals.push({
+						id: item.id,
+						name: item.name,
+						code: item.code,
+						size: item.size,
+						direction: item.rev,
+						interaction: item.typ,
+						screenType: screenType[item.typeId],
+						position: item.loc,
+						resolution: item.ratio,
+						ip: item.ip,
+						mac: item.mac,
+						regDate: item.resTime,
+						version: item.ver,
+						status: '在线',
+						address: item.addr
+					})
+					}
 					size = item.size
 					addFilterItem(app.terminalGroup.size, size, "size:" + size)
 					direction = item.rev
@@ -856,18 +1060,20 @@
 							label: item.username + '('+ item.mobile +')'
 						})
 					})
-					app.selectedExUser = [${userId}]
+					app.selectedExUser = [<%=userId%>]
 				}
 			})
 		}
 		
 		function commitMessage(callback) {
 			app.commitMessage.show = true
-			message = [
+			let message = [
 						'敏感词检测...',
 						'完成, 未发现敏感词',
 						'提取素材文件MD5...',
 						'素材文件MD5提取完成',
+						'MD5校验...',
+						'校验完成',
 						'正在提交...',
 						'提交完成.'
 					]
@@ -885,7 +1091,7 @@
 					}
 					
 				}
-			}, 2*1000);
+			}, 1000);
 		}
 	</script>
 </body>

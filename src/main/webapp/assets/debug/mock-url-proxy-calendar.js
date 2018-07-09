@@ -19,6 +19,7 @@ var data = {
   }
 }
 Mock.mock("calendar/list", "get", {
+  code: 200,
   status: true,
   msg: "success",
   //https://fullcalendar.io/docs/event-object

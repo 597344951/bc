@@ -84,6 +84,16 @@ public class R extends HashMap<String, Object> {
         this.put("pager", v);
         return this;
     }
+    /**
+     * 设置数据
+     * @param key 
+     * @param data
+     * @return
+     */
+    public R set(String key,Object data) {
+        this.put(key, data);
+        return this;
+    }
 
 
 }

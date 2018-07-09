@@ -73,18 +73,19 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Override
     public void saveUeditorMaterial(SysUser user, Map<String, Object> content, String srcDir, String descDir) {
-        try {
-            List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
-            Document doc = Jsoup.parse((String) content.get("templateText"));
-            //图片
-            Elements imgs = doc.getElementsByTag("img");
-            String src, fileName, alt;
-            String srcFile, descFile, descFileUrl;
-            Map<String, Object> material;
-            Date addDate = new Date();
-            for (Element img : imgs) {
-                src = img.attr("src");
-                alt = img.attr("alt");
+
+        List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
+        Document doc = Jsoup.parse((String) content.get("templateText"));
+        //图片
+        Elements imgs = doc.getElementsByTag("img");
+        String src, fileName, alt;
+        String srcFile, descFile, descFileUrl;
+        Map<String, Object> material;
+        Date addDate = new Date();
+        for (Element img : imgs) {
+            src = img.attr("src");
+            alt = img.attr("alt");
+            /*try {
                 fileName = src.substring(src.lastIndexOf("/") + 1, src.length());
                 alt = StringUtils.isNotEmpty(alt) ? alt : fileName;
                 srcFile = srcDir + src;
@@ -92,45 +93,36 @@ public class MaterialServiceImpl implements MaterialService {
                 descFile = descDir + descFileUrl;
                 FileUtil.copy(srcFile, descFile, true);
 
-                // 添加记录
-                material = new HashMap<String, Object>();
-                material.put("isFile", true);
-                material.put("type", Constant.MATERIAL_TYPE_PICTURE);
-                material.put("name", alt);
-                material.put("url", descFileUrl);
-
-                /*material.put("description", alt);
-                material.put("user_id", user.getUserId());
-                material.put("org_id", user.getOrgId());
-                material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_MAKE);
-                material.put("relate_content_id", content.get("id"));
-                material.put("add_date", addDate);
-                material.put("update_date", addDate);
-                simpleDao.add("material", material);
-
-                // 替换模板中的url
-                img.attr("src", "/material/image/" + material.get("id"));*/
-                //回填到素材
-                materials.add(material);
-            }
-            /*publishDao.updateTemplate(doc.body().html(), ((Long) content.get("id")).intValue());*/
-            //文字
-            Elements ps = doc.getElementsByTag("p");
-            for (int i=0; i<ps.size(); i++) {
-                Element p = ps.get(i);
-                String name = p.attr("id");
-                String inner = p.html();
-                material = new HashMap<String, Object>();
-                material.put("isFile", false);
-                material.put("type", Constant.MATERIAL_TYPE_TEXT);
-                material.put("name", StringUtils.isNotEmpty(name) ? name : "段落" + i);
-                material.put("content", inner);
-                materials.add(material);
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            log.warn("保存Ueditor素材失败!!!");
+            } catch (IOException e) {
+                descFileUrl = src;
+            }*/
+            fileName = src.substring(src.lastIndexOf("/") + 1, src.length());
+            alt = StringUtils.isNotEmpty(alt) ? alt : fileName;
+            // 添加记录
+            material = new HashMap<String, Object>();
+            material.put("isFile", true);
+            material.put("type", Constant.MATERIAL_TYPE_IMAGE);
+            material.put("name", alt);
+            material.put("url", src);
+            material.put("coverUrl", src);
+            //回填到素材
+            materials.add(material);
         }
-
+        //文字
+        Elements ps = doc.getElementsByTag("p");
+        for (int i = 0; i < ps.size(); i++) {
+            Element p = ps.get(i);
+            String name = p.attr("id");
+            if(StringUtils.isEmpty(name)) {
+                continue;
+            }
+            String inner = p.html();
+            material = new HashMap<String, Object>();
+            material.put("isFile", false);
+            material.put("type", Constant.MATERIAL_TYPE_TEXT);
+            material.put("name", StringUtils.isNotEmpty(name) ? name : "段落" + i);
+            material.put("content", inner);
+            materials.add(material);
+        }
     }
 }

@@ -1,157 +1,256 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zltel.broadcast.eventplan.dao.EventPlanInfoMapper">
-  <resultMap id="BaseResultMap" type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    <id column="event_plan_id" jdbcType="INTEGER" property="eventPlanId" />
-    <result column="event_id" jdbcType="INTEGER" property="eventId" />
-    <result column="org_id" jdbcType="INTEGER" property="orgId" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="title" jdbcType="VARCHAR" property="title" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="stime" jdbcType="DATE" property="stime" />
-	<result column="etime" jdbcType="DATE" property="etime" />
-    
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    <result column="content" jdbcType="LONGVARCHAR" property="content" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    event_plan_id, event_id, org_id, status, title, user_id,stime , etime
-  </sql>
-  <sql id="Blob_Column_List">
-    content
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from event_plan_info
-    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from event_plan_info
-    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" useGeneratedKeys="true"  keyProperty="eventPlanId" keyColumn="event_plan_id" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    insert into event_plan_info (event_plan_id, event_id, org_id, 
-      status, title, user_id, 
-      content,stime,etime)
-    values (#{eventPlanId,jdbcType=INTEGER}, #{eventId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
-      #{content,jdbcType=LONGVARCHAR},
-      #{stime},#{etime})
-  </insert>
-  <insert id="insertSelective"  useGeneratedKeys="true"  keyProperty="eventPlanId"  keyColumn="event_plan_id" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    insert into event_plan_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="eventPlanId != null">
-        event_plan_id,
-      </if>
-      <if test="eventId != null">
-        event_id,
-      </if>
-      <if test="orgId != null">
-        org_id,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-      <if test="title != null">
-        title,
-      </if>
-      <if test="userId != null">
-        user_id,
-      </if>
-      <if test="content != null">
-        content,
-      </if>
-       <if test="stime != null">
-        stime,
-      </if>
-       <if test="etime != null">
-        etime,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="eventPlanId != null">
-        #{eventPlanId,jdbcType=INTEGER},
-      </if>
-      <if test="eventId != null">
-        #{eventId,jdbcType=INTEGER},
-      </if>
-      <if test="orgId != null">
-        #{orgId,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=INTEGER},
-      </if>
-      <if test="title != null">
-        #{title,jdbcType=VARCHAR},
-      </if>
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="content != null">
-        #{content,jdbcType=LONGVARCHAR},
-      </if>
-       <if test="stime != null">
-        #{stime},
-      </if>
-       <if test="etime != null">
-        #{etime},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    update event_plan_info
-    <set>
-      <if test="eventId != null">
-        event_id = #{eventId,jdbcType=INTEGER},
-      </if>
-      <if test="orgId != null">
-        org_id = #{orgId,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="title != null">
-        title = #{title,jdbcType=VARCHAR},
-      </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="content != null">
-        content = #{content,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="stime != null">
-       	stime = #{stime},
-      </if>
-       <if test="etime != null">
-       	etime = #{etime},
-      </if>
-    </set>
-    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    update event_plan_info
-    set event_id = #{eventId,jdbcType=INTEGER},
-      org_id = #{orgId,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
-      title = #{title,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=INTEGER},
-      content = #{content,jdbcType=LONGVARCHAR},
-      stime = #{stime},etime = #{etime}
-    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-    update event_plan_info
-    set event_id = #{eventId,jdbcType=INTEGER},
-      org_id = #{orgId,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
-      title = #{title,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=INTEGER},
-      stime = #{stime},etime = #{etime}
-    where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
-  </update>
+<mapper
+	namespace="com.zltel.broadcast.eventplan.dao.EventPlanInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		<id column="event_plan_id" jdbcType="INTEGER"
+			property="eventPlanId" />
+		<result column="event_id" jdbcType="INTEGER" property="eventId" />
+		<result column="org_id" jdbcType="INTEGER" property="orgId" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="title" jdbcType="VARCHAR" property="title" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="stime" jdbcType="TIMESTAMP" property="stime" />
+		<result column="etime" jdbcType="TIMESTAMP" property="etime" />
+		<result column="pub_task_id" jdbcType="VARCHAR"
+			property="pubTaskId" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		<result column="content" jdbcType="LONGVARCHAR"
+			property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		event_plan_id, event_id, org_id, status, title, user_id,
+		stime, etime, pub_task_id
+	</sql>
+	<sql id="Blob_Column_List">
+		content
+	</sql>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from event_plan_info
+		where event_plan_id =
+		#{eventPlanId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from event_plan_info
+		where event_plan_id =
+		#{eventPlanId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		insert into event_plan_info (event_plan_id, event_id,
+		org_id,
+		status, title, user_id,
+		stime, etime, pub_task_id,
+		content)
+		values (#{eventPlanId,jdbcType=INTEGER}, #{eventId,jdbcType=INTEGER},
+		#{orgId,jdbcType=INTEGER},
+		#{status,jdbcType=INTEGER},
+		#{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+		#{stime,jdbcType=TIMESTAMP}, #{etime,jdbcType=TIMESTAMP},
+		#{pubTaskId,jdbcType=VARCHAR},
+		#{content,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		insert into event_plan_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="eventPlanId != null">
+				event_plan_id,
+			</if>
+			<if test="eventId != null">
+				event_id,
+			</if>
+			<if test="orgId != null">
+				org_id,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="stime != null">
+				stime,
+			</if>
+			<if test="etime != null">
+				etime,
+			</if>
+			<if test="pubTaskId != null">
+				pub_task_id,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="eventPlanId != null">
+				#{eventPlanId,jdbcType=INTEGER},
+			</if>
+			<if test="eventId != null">
+				#{eventId,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null">
+				#{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="stime != null">
+				#{stime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="etime != null">
+				#{etime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="pubTaskId != null">
+				#{pubTaskId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		update event_plan_info
+		<set>
+			<if test="eventId != null">
+				event_id = #{eventId,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null">
+				org_id = #{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="stime != null">
+				stime = #{stime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="etime != null">
+				etime = #{etime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="pubTaskId != null">
+				pub_task_id = #{pubTaskId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		update event_plan_info
+		set event_id =
+		#{eventId,jdbcType=INTEGER},
+		org_id = #{orgId,jdbcType=INTEGER},
+		status
+		= #{status,jdbcType=INTEGER},
+		title = #{title,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		stime =
+		#{stime,jdbcType=TIMESTAMP},
+		etime = #{etime,jdbcType=TIMESTAMP},
+		pub_task_id = #{pubTaskId,jdbcType=VARCHAR},
+		content =
+		#{content,jdbcType=LONGVARCHAR}
+		where event_plan_id =
+		#{eventPlanId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		update event_plan_info
+		set event_id =
+		#{eventId,jdbcType=INTEGER},
+		org_id = #{orgId,jdbcType=INTEGER},
+		status
+		= #{status,jdbcType=INTEGER},
+		title = #{title,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		stime =
+		#{stime,jdbcType=TIMESTAMP},
+		etime = #{etime,jdbcType=TIMESTAMP},
+		pub_task_id = #{pubTaskId,jdbcType=VARCHAR}
+		where event_plan_id =
+		#{eventPlanId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询 EventPlanInfo -->
+	<select id="query"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo"
+		resultMap="ResultMapWithBLOBs">
+		select * from event_plan_info
+		<include refid="EventPlanInfoWhere" />
+	</select>
+	<select id="queryForList"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo"
+		resultMap="ResultMapWithBLOBs">
+		select * from event_plan_info
+	</select>
+
+	<!-- 查询条件 EventPlanInfo -->
+	<sql id="EventPlanInfoWhere">
+		<where>
+			<if test="eventId != null">
+				AND event_id=#{eventId}
+			</if>
+			<if test="status_label != null">
+				AND status_label=#{status_label}
+			</if>
+			<if test="eventPlanId != null">
+				AND event_plan_id=#{eventPlanId}
+			</if>
+			<if test="etime != null">
+				AND etime=#{etime}
+			</if>
+			<if test="costplans != null">
+				AND costplans=#{costplans}
+			</if>
+			<if test="stime != null">
+				AND stime=#{stime}
+			</if>
+			<if test="title != null">
+				AND title=#{title}
+			</if>
+			<if test="userId != null">
+				AND user_id=#{userId}
+			</if>
+			<if test="pubTaskId != null">
+				AND pub_task_id=#{pubTaskId}
+			</if>
+			<if test="content != null">
+				AND content=#{content}
+			</if>
+			<if test="orgId != null">
+				AND org_id=#{orgId}
+			</if>
+			<if test="status != null">
+				AND status=#{status}
+			</if>
+		</where>
+	</sql>
+
 </mapper>

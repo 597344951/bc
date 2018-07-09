@@ -128,7 +128,7 @@
 				visible: false,
 				update: false, // 是否是更新
 				search: false,
-				test:false,
+				style:false,
 				data: {
 					oid: "",
 					name: "",
@@ -158,6 +158,8 @@
 		},
 		created: function () {
 			this.queryTerminals(1, 12); //这里定义这个方法，vue实例之后运行到这里就调用这个函数
+			this.mapThings();
+
 		},
 		methods: {
 			pagerCurrentChange(pageNum, pageSize) { /* 页码改变时 */
@@ -198,7 +200,7 @@
 					this.tbi.visible = false,
 					this.tbi.update = false,
 					this.tbi.search = false,
-					this.tbi.test=false,
+					this.tbi.style=false,
 					this.tbi.data.oid = "",
 					this.tbi.data.name = "",
 					this.tbi.data.id = "",
@@ -247,9 +249,9 @@
 				});
 
 			},
-			test(){				
+			mapThings(){				
 				var tbi = this.tbi;
-				tbi.test = true;
+				tbi.style = true;
 				setTimeout(()=>{this.drawmap()}, 200);
 						
 			},

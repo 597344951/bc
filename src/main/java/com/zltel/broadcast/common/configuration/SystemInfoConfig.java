@@ -19,6 +19,8 @@ public class SystemInfoConfig {
     private String appname = "新党建平台";
     @Value("${zltel.version}")
     private String version = "1.0";
+    @Value("${zltel.mediaserve}")
+    private String mediaserve;
 
     public String getAppname() throws UnsupportedEncodingException {
         //properties 中文需要转换编码
@@ -37,6 +39,18 @@ public class SystemInfoConfig {
 
     public static final SystemInfoConfig getInstince() {
         return SpringContextUtils.getBean(SystemInfoConfig.class);
+    }
+
+    public String getMediaserve() {
+        return mediaserve;
+    }
+
+    public void setMediaserve(String mediaserve) {
+        this.mediaserve = mediaserve;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
     }
 
 }

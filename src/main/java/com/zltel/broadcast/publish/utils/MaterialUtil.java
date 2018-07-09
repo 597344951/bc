@@ -21,7 +21,7 @@ public class MaterialUtil {
         String suffix = file.substring(file.lastIndexOf(".") + 1, file.length());
         for(String type : IMAGE) {
             if(type.equals(suffix)) {
-                return Constant.MATERIAL_TYPE_PICTURE;
+                return Constant.MATERIAL_TYPE_IMAGE;
             }
         }
         for(String type : VIDEO) {

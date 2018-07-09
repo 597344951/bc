@@ -78,4 +78,10 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
         return this.getInstince().queryForList(prb);
     }
 
+    @Override
+    public int delete(T record) {
+        return this.getInstince().delete(record);
+    }
+
+
 }

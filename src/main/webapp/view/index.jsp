@@ -88,7 +88,7 @@
                 <el-tabs class="mytab noselect" type="border-card" v-model="tab_index" @tab-remove="removeTab">
                     <el-tab-pane class="full" v-for="(item, index) in openTabDatas" :key="item.menuId" :name="item.menuId +''" :closable="item.closable" >
                         <span slot="label">
-                            <i :class="item.icon"></i> {{item.name}}</span>
+                            <i :class="item.icon"></i>{{item.name}}</span>
                         <iframe :id="item.menuId +'_iframe'" v-bind:src="item.url"></iframe>
                     </el-tab-pane>
                 </el-tabs>
@@ -122,7 +122,7 @@ $(function(){
 });
 </script>
 <script type="module">
-    /**增加标签{menuId:'',name:'',url:'',closable:false}**/
+    /**增加标签{menuId:'',name:'',url:'',closable:false,icon:''}**/
     window.addTab = function(target){
         appInstince.addTab(target);
     }
@@ -248,11 +248,13 @@ $(function(){
             removeTab(target_index) {
                 let ifid = target_index+'_iframe';
                 console.debug('close ',ifid);
-                let callback = $('#'+ifid)[0].contentWindow.onclose;//页面的关闭回调函数
-                if(callback && !callback()){
-                    console.debug('不关闭标签');
-                    return;
-                }
+                try{
+                    let callback = $('#'+ifid)[0].contentWindow.onclose;//页面的关闭回调函数
+                    if(callback && !callback()){
+                        console.debug('不关闭标签');
+                        return;
+                    }
+                }catch(e){}
 
                 let tabs = this.openTabDatas;
                 let action_index = this.tab_index;
@@ -287,7 +289,7 @@ $(function(){
                 let ck = this.getSettingKey();
                 let str = getCookie(ck);
                 if(!str || JSON.parse(str).openTabDatas.length == 0) {
-                    this.addTab({menuId: 0, name: '工作台', url: '/view/bench.jsp',closable:false});
+                    this.addTab({menuId: 0, name: '工作台', url: '/view/bench.jsp',closable:false,icon:'fa fa-briefcase'});
                     return;
                 }
                 let obj = JSON.parse(str);

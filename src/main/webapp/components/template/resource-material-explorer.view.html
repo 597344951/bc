@@ -1,0 +1,67 @@
+<el-dialog :title="title" :visible.sync="config.visiable" :fullscreen="config.fullscreen" :width="config.width">
+    <div slot="title">
+        <span class="el-dialog__title"> {{title}}</span>
+        <el-button-group style="margin-left:30px;">
+            <el-button size="small" icon="el-icon-rank" @click="setFullscreen" title="最大"></el-button>
+        </el-button-group>
+    </div>
+    <div slot="footer" class="foot-button-container">
+        <el-button type="primary" @click="submit">确定</el-button>
+        <el-button @click="close">关闭</el-button>
+    </div>
+    <el-container>
+        <el-aside width="300px">
+            <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
+                @node-click="tptTreeClick" class="menu-tree">
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                        <span class="left-label-group">
+                            <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i> {{ node.label }}</span>
+                    </span>
+            </el-tree>
+        </el-aside>
+        <el-main>
+            <div role="mainDis" style="overflow: auto;">
+                <el-row style="display:flex;">
+                    <el-col :span="4" style="width:100px;">
+                        <!--查询-->
+                        <span style="font-size:18px;font-weight:bolder;">{{currentCategory.name}}</span>
+                    </el-col>
+                    <el-col :span="20" style="text-align: right;">
+                        <!--分页-->
+                        <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size"
+                            layout="total, sizes, prev, pager, next, jumper" :total="tpager.total" @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+                <template v-for="tp in tps">
+                    <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }">
+                        <div class="background-img" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)" @click="chose(tp)">
+                            <span v-show="tp.chose" class="active-icon" style="display: block;width: 20px;height: 20px;border-radius: 50%;background-color: #fff;position: absolute;right: 10px;top:3px;background:url(../../assets/img/active-icon.png)"></span>
+                            <template v-if="tp.type == 'image' || tp.type == 'text'">
+                                <!--图片-->
+                                <img :src="getResUrl(tp.coverUrl) " class="image">
+                            </template>
+                            <template v-if="tp.type == 'audio'">
+                                <!--音频-->
+                                <span class="audio-icon"></span>
+                            </template>
+                            <template v-if="tp.type == 'video'">
+                                <!--视频-->
+                                <img :src="getResUrl(tp.coverUrl) " class="image">
+                                <span class="video-icon"></span>
+                            </template>
+                            <div class="control ">
+                                <span class="title">{{tp.name}}</span>
+                                <div v-show="tp.showtoolbar" class="bottom clearfix">
+                                    <p class="descript">{{tp.description}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </el-card>
+                </template>
+
+            </div>
+        </el-main>
+    </el-container>
+</el-dialog>

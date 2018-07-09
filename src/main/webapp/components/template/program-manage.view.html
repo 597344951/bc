@@ -1,0 +1,63 @@
+<div>
+    <el-container>
+        <el-aside width="200px">
+            <el-tree :data="catelogTreeData" :props="defaultProps" :default-expand-all="true" :expand-on-click-node="false"  @node-click="selectCatelog"></el-tree>
+        </el-aside>
+        <el-main style="padding:0 20px;">
+            <el-row>
+                <el-col :span="10">
+                    <!--查询-->
+                    <span style="font-size:18px;font-weight:bolder;">{{curCate.name}}</span>
+                </el-col>
+                <el-col :span="14" style="text-align: right;">
+                    <!--分页-->
+                    <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
+                                :total="tpager.total" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+                            </el-pagination>
+                </el-col>
+            </el-row>
+            <div v-loading.fullscreen.lock="loading">
+                <template v-for="t in programTemplates">
+                    <el-card class="card-item" :body-style="{ padding: '0px' }">
+                        <div class="title">
+                            <span class="bolder">
+                                {{t.name}}
+                            </span>
+                        </div>
+                        <div class="cover-image-container">
+                            <img :src="t.coverImageUrl" class="image">
+                            <div class="descript">{{t.resolution}}</div>
+                        </div>
+                        <div class="content">
+                            <table class="dis-info-min">
+                                <tbody>
+                                <tr>
+                                    <td>所属目录</td> <td>：</td>
+                                    <td>{{t.categoryId}}</td>
+                                </tr>
+                                <tr>
+                                    <td>播放时长</td> <td>：</td>
+                                    <td>{{t.playTime}}</td>
+                                </tr>
+                                <tr>
+                                    <td>节目类型</td> <td>：</td>
+                                    <td>{{t.modelTypeName}}</td>
+                                </tr>
+                                <tr>
+                                    <td>创建时间</td> <td>：</td>
+                                    <td>{{t.createTime}}</td>
+                                </tr></tbody>
+                            </table>
+                        </div>
+                        <div class="bottom clearfix">
+                                <el-button type="button" size="mini" class="button" @click="openProgramView(t)">预览</el-button>
+                                <el-button type="primary" size="mini" class="button" @click="editProgram(t)">编辑</el-button>
+                                <el-button type="success" size="mini" class="button" @click="pubProgram(t)">发布</el-button>
+                            </div>
+                    </el-card>
+                </template>
+            </div>
+        </el-main>
+    </el-container>
+
+</div>

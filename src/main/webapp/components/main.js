@@ -16,12 +16,15 @@ import FestivalInfo from '/components/loadAnimation/festival-info.main.js';
 import HotNews from '/components/loadAnimation/hot-news.main.js';
 import LoadReport from '/components/loadAnimation/load-report.main.js';
 import ProgramTemplate from '/components/template/program-template.main.js';
+import ProgramManage from '/components/template/program-manage.main.js';
+import ResourceMaterialExplorer from '/components/template/resource-material-explorer.main.js';
+import CreateActivityPlan from '/components/calendar/create-activity-plan.main.js';
 
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
-export const comps = [MessageNotice,VueCalendar,AddEvent, EventToolTip, CostPlan, PlanSuggest,
-    EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport ,
-    ProgramTemplate
+export const comps = [MessageNotice, VueCalendar, AddEvent, EventToolTip, CostPlan, PlanSuggest,
+    EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport,
+    ProgramManage, ProgramTemplate, CreateActivityPlan, ResourceMaterialExplorer
 ];
 comps.map((comp) => {
     if (checkModuleName(comp))

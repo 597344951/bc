@@ -41,6 +41,8 @@ public class ShiroConfig {
     /** hash计算次数 **/
     private static int hashiterations = 2;
     
+    private int account_max_session = 1;
+    
     private static final int SESSION_VALIDATION_INTERVAL = 30 * 60000;
     private static final int GLOBAL_SESSION_TIMEOUT = 30 * 60 * 1000;
 
@@ -50,6 +52,14 @@ public class ShiroConfig {
 
     public static String getName() {
         return name;
+    }
+
+    public int getAccount_max_session() {
+        return account_max_session;
+    }
+
+    public void setAccount_max_session(int account_max_session) {
+        this.account_max_session = account_max_session;
     }
 
     public static void setName(String nm) {
@@ -163,7 +173,7 @@ public class ShiroConfig {
         filter.setCacheManager(cacheManager);
         filter.setSessionManager(sessionManager);
         filter.setKickoutAfter(false);// true:剔除后登陸的，false:剔除前面登陸的
-        filter.setMaxSession(1);// 一个账户最多多少个人登陆
+        filter.setMaxSession(account_max_session);// 一个账户最多多少个人登陆
         log.debug("KickoutSessionControlFilter bean 已创建");
         return filter;
     }

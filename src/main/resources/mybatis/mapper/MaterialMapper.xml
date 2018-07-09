@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.zltel.broadcast.resource.dao.MaterialMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.resource.bean.Material">
+		<id column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="type" jdbcType="VARCHAR" property="type" />
+		<result column="url" jdbcType="VARCHAR" property="url" />
+		<result column="description" jdbcType="VARCHAR"
+			property="description" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="org_id" jdbcType="INTEGER" property="orgId" />
+		<result column="upload_reason" jdbcType="INTEGER"
+			property="uploadReason" />
+		<result column="relate_content_id" jdbcType="INTEGER"
+			property="relateContentId" />
+		<result column="limit_content_id" jdbcType="INTEGER"
+			property="limitContentId" />
+		<result column="examine_state" jdbcType="INTEGER"
+			property="examineState" />
+		<result column="add_date" jdbcType="TIMESTAMP"
+			property="addDate" />
+		<result column="update_date" jdbcType="TIMESTAMP"
+			property="updateDate" />
+		<result column="album_id" jdbcType="INTEGER" property="albumId" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.resource.bean.Material">
+		<result column="content" jdbcType="LONGVARCHAR"
+			property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		material_id, name, type, url, description, user_id, org_id,
+		upload_reason,
+		relate_content_id,
+		limit_content_id, examine_state,
+		add_date, update_date, album_id
+	</sql>
+	<sql id="Blob_Column_List">
+		content
+	</sql>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from material
+		where material_id = #{materialId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from material
+		where material_id =
+		#{materialId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.zltel.broadcast.resource.bean.Material">
+		insert into material (material_id, name, type,
+		url,
+		description, user_id,
+		org_id, upload_reason, relate_content_id,
+		limit_content_id, examine_state, add_date,
+		update_date, album_id,
+		content
+		)
+		values (#{materialId,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+		#{userId,jdbcType=INTEGER},
+		#{orgId,jdbcType=INTEGER},
+		#{uploadReason,jdbcType=INTEGER},
+		#{relateContentId,jdbcType=INTEGER},
+		#{limitContentId,jdbcType=INTEGER}, #{examineState,jdbcType=INTEGER},
+		#{addDate,jdbcType=TIMESTAMP},
+		#{updateDate,jdbcType=TIMESTAMP},
+		#{albumId,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.resource.bean.Material">
+		insert into material
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="materialId != null">
+				material_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="orgId != null">
+				org_id,
+			</if>
+			<if test="uploadReason != null">
+				upload_reason,
+			</if>
+			<if test="relateContentId != null">
+				relate_content_id,
+			</if>
+			<if test="limitContentId != null">
+				limit_content_id,
+			</if>
+			<if test="examineState != null">
+				examine_state,
+			</if>
+			<if test="addDate != null">
+				add_date,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="albumId != null">
+				album_id,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="materialId != null">
+				#{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null">
+				#{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="uploadReason != null">
+				#{uploadReason,jdbcType=INTEGER},
+			</if>
+			<if test="relateContentId != null">
+				#{relateContentId,jdbcType=INTEGER},
+			</if>
+			<if test="limitContentId != null">
+				#{limitContentId,jdbcType=INTEGER},
+			</if>
+			<if test="examineState != null">
+				#{examineState,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null">
+				#{addDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="albumId != null">
+				#{albumId,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.resource.bean.Material">
+		update material
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null">
+				org_id = #{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="uploadReason != null">
+				upload_reason = #{uploadReason,jdbcType=INTEGER},
+			</if>
+			<if test="relateContentId != null">
+				relate_content_id = #{relateContentId,jdbcType=INTEGER},
+			</if>
+			<if test="limitContentId != null">
+				limit_content_id = #{limitContentId,jdbcType=INTEGER},
+			</if>
+			<if test="examineState != null">
+				examine_state = #{examineState,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null">
+				add_date = #{addDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="albumId != null">
+				album_id = #{albumId,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where material_id = #{materialId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.resource.bean.Material">
+		update material
+		set name = #{name,jdbcType=VARCHAR},
+		type
+		= #{type,jdbcType=VARCHAR},
+		url = #{url,jdbcType=VARCHAR},
+		description =
+		#{description,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		org_id = #{orgId,jdbcType=INTEGER},
+		upload_reason =
+		#{uploadReason,jdbcType=INTEGER},
+		relate_content_id =
+		#{relateContentId,jdbcType=INTEGER},
+		limit_content_id =
+		#{limitContentId,jdbcType=INTEGER},
+		examine_state =
+		#{examineState,jdbcType=INTEGER},
+		add_date =
+		#{addDate,jdbcType=TIMESTAMP},
+		update_date =
+		#{updateDate,jdbcType=TIMESTAMP},
+		album_id =
+		#{albumId,jdbcType=INTEGER},
+		content = #{content,jdbcType=LONGVARCHAR}
+		where material_id = #{materialId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.resource.bean.Material">
+		update material
+		set name = #{name,jdbcType=VARCHAR},
+		type
+		= #{type,jdbcType=VARCHAR},
+		url = #{url,jdbcType=VARCHAR},
+		description =
+		#{description,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		org_id = #{orgId,jdbcType=INTEGER},
+		upload_reason =
+		#{uploadReason,jdbcType=INTEGER},
+		relate_content_id =
+		#{relateContentId,jdbcType=INTEGER},
+		limit_content_id =
+		#{limitContentId,jdbcType=INTEGER},
+		examine_state =
+		#{examineState,jdbcType=INTEGER},
+		add_date =
+		#{addDate,jdbcType=TIMESTAMP},
+		update_date =
+		#{updateDate,jdbcType=TIMESTAMP},
+		album_id =
+		#{albumId,jdbcType=INTEGER}
+		where material_id =
+		#{materialId,jdbcType=INTEGER}
+	</update>
+
+	<sql id="MaterialWhere">
+		<where>
+			<if test="updateDate != null">
+				AND update_date=#{updateDate}
+			</if>
+			<if test="description != null">
+				AND description=#{description}
+			</if>
+			<if test="albumId != null">
+				AND album_id=#{albumId}
+			</if>
+			<if test="materialId != null">
+				AND material_id=#{materialId}
+			</if>
+			<if test="type != null">
+				AND type=#{type}
+			</if>
+			<if test="userId != null">
+				AND user_id=#{userId}
+			</if>
+			<if test="limitContentId != null">
+				AND limit_content_id=#{limitContentId}
+			</if>
+			<if test="addDate != null">
+				AND add_date=#{addDate}
+			</if>
+			<if test="url != null">
+				AND url=#{url}
+			</if>
+			<if test="orgId != null">
+				AND org_id=#{orgId}
+			</if>
+			<if test="relateContentId != null">
+				AND relate_content_id=#{relateContentId}
+			</if>
+			<if test="content != null">
+				AND content=#{content}
+			</if>
+			<if test="uploadReason != null">
+				AND upload_reason=#{uploadReason}
+			</if>
+			<if test="name != null">
+				AND name=#{name}
+			</if>
+			<if test="examineState != null">
+				AND examine_state=#{examineState}
+			</if>
+			<if test="keyword != null and keyword !=''">
+				AND  name like concat('%',#{keyword},'%')
+			</if>
+		</where>
+	</sql>
+
+	<select id="query"
+		parameterType="com.zltel.broadcast.resource.bean.Material"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from Material m
+		<include refid="MaterialWhere" />
+		order by m.add_date desc
+	</select>
+
+	<delete id="delete"
+		parameterType="com.zltel.broadcast.resource.bean.Material">
+		delete from material
+		<include refid="MaterialWhere" />
+	</delete>
+
+</mapper>

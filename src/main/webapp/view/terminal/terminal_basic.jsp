@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+ <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,9 +11,16 @@
 	<%@include file="/include/map-gaode.jsp"%>
 
 <style>
+	html,body{
+		width:100% ;
+		height: 100%;
+	}
+	#app,.el-container,.el-main{
+		height:100%;
+	}
 	#container {
-		width: 815px;
-		height: 640px;
+		width: 98%;
+		height: 96%;
 	}
 
 	.info-tip {
@@ -119,8 +126,11 @@
 							<el-button type="primary" size="small" icon="el-icon-search" slot="reference" class="margin-0-10">搜索设备</el-button>
 						</el-popover>
 						<el-button type="primary" size="small" icon="el-icon-refresh" @click="syn()">同步数据</el-button>
-						<el-button size="small" icon="el-icon-info" @click="statistic()">统计图表</el-button>
-						<el-button size="small" icon="el-icon-location" @click="test()">地图呈现</el-button>
+						<el-button type="primary" size="small" icon="el-icon-info" @click="statistic()">统计图表</el-button>
+						<el-button-group class="control-button">
+							<el-button size="small" :type="tbi.style?'primary':''" icon="el-icon-location" @click="mapThings()"></el-button>
+                            <el-button size="small" :type="!tbi.style?'primary':''"  icon="el-icon-menu" @click="tbi.style=false"></el-button>                           
+                        </el-button-group>
 
 					</div>
 				</div>
@@ -129,9 +139,9 @@
 
 			<!--表格主体-->
 			<el-main>
-				<el-dialog title="地图呈现" :visible.sync="tbi.test">
+				<div v-show="tbi.style" style="height:100%;">
 					<div id="container">
-
+			
 					</div>
 					<div class="button-group">
 						<input id="setFitView" class="button" type="button" value="地图自适应显示" />
@@ -140,171 +150,174 @@
 						<div id="centerCoord"></div>
 						<div id="tips"></div>
 					</div>
-				</el-dialog>
-
-				<template>
-					<el-table :data="pager.list" style="width:100%">
-						<el-table-column type="expand">
-							<template slot-scope="props">
-								<el-form abel-position="left" inline class="demo-table-expand">
-									<table style="width: 100%">
-										<thead>
-											<tr>
-												<th>硬件信息</th>
-												<th> 软件信息 </th>
-												<th>地理位置信息</th>
-											</tr>
-										</thead>
-										<tbody>
-											<td>
-												<table class="dis-info-big">
-													<tr>
-														<td>屏幕尺寸</td>
-														<td> </td>
-														<td>{{props.row.size}}</td>
-													</tr>
-													<tr>
-														<td>屏幕分辨率</td>
-														<td> </td>
-														<td>{{props.row.ratio}}</td>
-													</tr>
-													<tr>
-														<td>屏幕方向</td>
-														<td> </td>
-														<td>{{props.row.rev}}</td>
-													</tr>
-													<tr>
-														<td>终端类型</td>
-														<td> </td>
-														<td>{{props.row.typ}}</td>
-													</tr>
-													<tr>
-														<td>标识ID</td>
-														<td> </td>
-														<td>{{props.row.id}}</td>
-													</tr>
-													<tr>
-														<td>标识code</td>
-														<td> </td>
-														<td>{{props.row.code}}</td>
-													</tr>
-													<tr>
-														<td>在线状态</td>
-														<td> </td>
-														<td>{{props.row.online=='1'?'在线':'离线'}}</td>
-													</tr>
-												</table>
-											</td>
-											<td>
-												<table class="dis-info-big">
-													<tr>
-														<td>系统</td>
-														<td> </td>
-														<td>{{props.row.sys}}</td>
-													</tr>
-													<tr>
-														<td>软件版本</td>
-														<td> </td>
-														<td>{{props.row.ver}}</td>
-													</tr>
-													<tr>
-														<td>ip地址</td>
-														<td> </td>
-														<td>{{props.row.ip}}</td>
-													</tr>
-													<tr>
-														<td>mac地址</td>
-														<td> </td>
-														<td>{{props.row.mac}}</td>
-													</tr>
-													<tr>
-														<td>注册时间</td>
-														<td> </td>
-														<td>{{props.row.resTime}}</td>
-													</tr>
-													<tr>
-														<td>心跳检测时间</td>
-														<td> </td>
-														<td>
-															<el-tooltip class="item" effect="dark" :content="props.row.lastTime | datetime" placement="top-start">
-																<span>{{props.row.lastTime|time_ago}}</span>
-															</el-tooltip>
-														</td>
-													</tr>
-													<tr>
-														<td>最后同步时间</td>
-														<td> </td>
-														<td>
-															<el-tooltip class="item" effect="dark" :content="props.row.lastSynTime | datetime" placement="top-start">
-																<span>{{props.row.lastSynTime|time_ago}}</span>
-															</el-tooltip>
-														</td>
-													</tr>
-												</table>
-											</td>
-											<td>
-												<table class="dis-info-big">
-													<tr>
-														<td>终端名称</td>
-														<td> </td>
-														<td>{{props.row.name}}</td>
-													</tr>
-													<tr>
-														<td>所属地区</td>
-														<td> </td>
-														<td>{{props.row.loc}}</td>
-													</tr>
-													<tr>
-														<td>终端地址</td>
-														<td> </td>
-														<td>{{props.row.addr}}</td>
-													</tr>
-													<tr>
-														<td>联系电话</td>
-														<td> </td>
-														<td>{{props.row.tel}}</td>
-													</tr>
-													<tr>
-														<td>GIS信息</td>
-														<td> </td>
-														<td>{{props.row.gis}}</td>
-													</tr>
-													<tr>
-														<td>保修信息</td>
-														<td> </td>
-														<td>{{props.row.warranty}}</td>
-													</tr>
-													<tr>
-														<td>其他</td>
-														<td> </td>
-														<td></td>
-													</tr>
-												</table>
-											</td>
-										</tbody>
-									</table>
-								</el-form>
-							</template>
-						</el-table-column>
-						<el-table-column prop="name" label="终端名称"></el-table-column>
-						<el-table-column prop="loc" label="所属地区"></el-table-column>
-						<el-table-column prop="tel" label="联系电话"></el-table-column>
-						<el-table-column prop="addr" label="终端地址"></el-table-column>
-						<el-table-column prop="ip" label="ip地址"></el-table-column>
-
-						<el-table-column label="操作" fixed="right" width="200">
-							<template slot-scope="scope">
-								<el-button size="mini" icon="el-icon-edit" type="warning" @click="updateTbi(scope.row)">编辑</el-button>
-							</template>
-						</el-table-column>
-					</el-table>
-				</template>
+				</div>
+				<div v-show="!tbi.style">
+					<template>
+						<el-table :data="pager.list" style="width:100%">
+							<el-table-column type="expand">
+								<template slot-scope="props">
+									<el-form abel-position="left" inline class="demo-table-expand">
+										<table style="width: 100%">
+											<thead>
+												<tr>
+													<th>硬件信息</th>
+													<th> 软件信息 </th>
+													<th>地理位置信息</th>
+												</tr>
+											</thead>
+											<tbody>
+												<td>
+													<table class="dis-info-big">
+														<tr>
+															<td>屏幕尺寸</td>
+															<td> </td>
+															<td>{{props.row.size}}</td>
+														</tr>
+														<tr>
+															<td>屏幕分辨率</td>
+															<td> </td>
+															<td>{{props.row.ratio}}</td>
+														</tr>
+														<tr>
+															<td>屏幕方向</td>
+															<td> </td>
+															<td>{{props.row.rev}}</td>
+														</tr>
+														<tr>
+															<td>终端类型</td>
+															<td> </td>
+															<td>{{props.row.typ}}</td>
+														</tr>
+														<tr>
+															<td>标识ID</td>
+															<td> </td>
+															<td>{{props.row.id}}</td>
+														</tr>
+														<tr>
+															<td>标识code</td>
+															<td> </td>
+															<td>{{props.row.code}}</td>
+														</tr>
+														<tr>
+															<td>在线状态</td>
+															<td> </td>
+															<td>{{props.row.online=='1'?'在线':'离线'}}</td>
+														</tr>
+													</table>
+												</td>
+												<td>
+													<table class="dis-info-big">
+														<tr>
+															<td>系统</td>
+															<td> </td>
+															<td>{{props.row.sys}}</td>
+														</tr>
+														<tr>
+															<td>软件版本</td>
+															<td> </td>
+															<td>{{props.row.ver}}</td>
+														</tr>
+														<tr>
+															<td>ip地址</td>
+															<td> </td>
+															<td>{{props.row.ip}}</td>
+														</tr>
+														<tr>
+															<td>mac地址</td>
+															<td> </td>
+															<td>{{props.row.mac}}</td>
+														</tr>
+														<tr>
+															<td>注册时间</td>
+															<td> </td>
+															<td>{{props.row.resTime}}</td>
+														</tr>
+														<tr>
+															<td>心跳检测时间</td>
+															<td> </td>
+															<td>
+																<el-tooltip class="item" effect="dark" :content="props.row.lastTime | datetime" placement="top-start">
+																	<span>{{props.row.lastTime|time_ago}}</span>
+																</el-tooltip>
+															</td>
+														</tr>
+														<tr>
+															<td>最后同步时间</td>
+															<td> </td>
+															<td>
+																<el-tooltip class="item" effect="dark" :content="props.row.lastSynTime | datetime" placement="top-start">
+																	<span>{{props.row.lastSynTime|time_ago}}</span>
+																</el-tooltip>
+															</td>
+														</tr>
+													</table>
+												</td>
+												<td>
+													<table class="dis-info-big">
+														<tr>
+															<td>终端名称</td>
+															<td> </td>
+															<td>{{props.row.name}}</td>
+														</tr>
+														<tr>
+															<td>所属地区</td>
+															<td> </td>
+															<td>{{props.row.loc}}</td>
+														</tr>
+														<tr>
+															<td>终端地址</td>
+															<td> </td>
+															<td>{{props.row.addr}}</td>
+														</tr>
+														<tr>
+															<td>联系电话</td>
+															<td> </td>
+															<td>{{props.row.tel}}</td>
+														</tr>
+														<tr>
+															<td>GIS信息</td>
+															<td> </td>
+															<td>{{props.row.gis}}</td>
+														</tr>
+														<tr>
+															<td>保修信息</td>
+															<td> </td>
+															<td>{{props.row.warranty}}</td>
+														</tr>
+														<tr>
+															<td>其他</td>
+															<td> </td>
+															<td></td>
+														</tr>
+													</table>
+												</td>
+											</tbody>
+										</table>
+									</el-form>
+								</template>
+							</el-table-column>
+							<el-table-column prop="name" label="终端名称"></el-table-column>
+							<el-table-column prop="loc" label="所属地区"></el-table-column>
+							<el-table-column prop="tel" label="联系电话"></el-table-column>
+							<el-table-column prop="addr" label="终端地址"></el-table-column>
+							<el-table-column prop="ip" label="ip地址"></el-table-column>
+			
+							<el-table-column label="操作" fixed="right" width="200">
+								<template slot-scope="scope">
+									<el-button size="mini" icon="el-icon-edit" type="warning" @click="updateTbi(scope.row)">编辑</el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</template>
+				</div>
 			</el-main>
+			
 			<el-footer>
 				<el-pagination id="pagesdididi " layout="total, prev, pager, next, jumper " @current-change="pagerCurrentChange(pager.pageNum,
 									    pager.pageSize) " :current-page.sync="pager.pageNum " :page-size.sync="pager.pageSize " :total="pager.total ">
 				</el-pagination>
 			</el-footer>
+			
 		</el-container>
 
 

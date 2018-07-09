@@ -1,0 +1,201 @@
+let CreateActivityPlan = {
+    info: {
+        name: 'create-activity-plan',
+        template_url: '/components/calendar/create-activity-plan.view.html',
+        author: 'Wangch',
+        descript: '创建活动策划方案'
+    },
+    data: function () {
+        return {
+            planData: {},
+            planeTemplates: [],
+            //选中模板
+            choseTemplate: {},
+            costPlanDataDialog: {
+                visiable: false
+            },
+            costPlanData: [],
+            costTypeGroup: [{
+                    "data": {
+                        "costType": 1,
+                        "name": "进项金额",
+                        "type": 1,
+                        "parent": 0
+                    },
+                    "children": [{
+                            "data": {
+                                "costType": 3,
+                                "name": "企业赞助",
+                                "type": 1,
+                                "parent": 1
+                            },
+                            "children": null
+                        },
+                        {
+                            "data": {
+                                "costType": 4,
+                                "name": "个人赞助",
+                                "type": 1,
+                                "parent": 1
+                            },
+                            "children": null
+                        }
+                    ]
+                },
+                {
+                    "data": {
+                        "costType": 2,
+                        "name": "活动花费",
+                        "type": -1,
+                        "parent": 0
+                    },
+                    "children": [{
+                            "data": {
+                                "costType": 5,
+                                "name": "场地",
+                                "type": -1,
+                                "parent": 2
+                            },
+                            "children": null
+                        },
+                        {
+                            "data": {
+                                "costType": 6,
+                                "name": "服装/道具",
+                                "type": -1,
+                                "parent": 2
+                            },
+                            "children": null
+                        },
+                        {
+                            "data": {
+                                "costType": 7,
+                                "name": "人工",
+                                "type": -1,
+                                "parent": 2
+                            },
+                            "children": null
+                        },
+                        {
+                            "data": {
+                                "costType": 8,
+                                "name": "门票花费",
+                                "type": -1,
+                                "parent": 2
+                            },
+                            "children": null
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    mounted() {
+        let me = this;
+        this.loadTemplate();
+
+        var editor = UE.getEditor('editor', {
+            allowDivTransToP: false
+        });
+        //事件 回填属性
+        editor.addListener("contentChange", function () {
+            me.planData.content = editor.getContent();
+        });
+        this.$refs['ueditor'] = editor;
+    },
+    computed: {
+
+        //转换花费数据
+        costValues() {
+            const values = this.costPlanData.map(item => {
+                if (item.$CostType) {
+                    return item.$CostType.type * item.value;
+                }
+                return 0;
+            });
+            return values;
+        },
+        //赞助费用
+        sponsorship_fee() {
+            const values = this.costValues;
+            let in_sum = 0;
+            var ay1 = values.filter(i => i > 0);
+            if (ay1.length > 0) in_sum = ay1.reduce((a, b) => a + b);
+            return in_sum;
+        },
+        //花费费用
+        cost_fee() {
+            const values = this.costValues;
+            let minus_sum = 0;
+            let ay2 = values.filter(i => i < 0);
+            if (ay2.length > 0) minus_sum = ay2.reduce((a, b) => a + b);
+            return minus_sum;
+        },
+        //总计费用
+        total_fee() {
+            return this.sponsorship_fee + this.cost_fee;
+        }
+    },
+    methods: {
+        caclePlane() {
+
+        },
+        //加载对应的模版信息
+        loadTemplate() {
+            var ins = this;
+            $.ajax({
+                type: "post",
+                url: "/plan/templates",
+                async: true,
+                success: function (data) {
+                    ins.planeTemplates = data.data;
+                }
+            });
+        },
+        //模板选择改变
+        tpChoseChange() {
+            if (this.choseTemplate) {
+                this.$refs.ueditor.setContent(this.choseTemplate.content);
+                this.planData.title = this.choseTemplate.title;
+                this.loadCostPlan();
+            } else {
+                this.$refs.ueditor.setContent("");
+                this.planData.title = "";
+                this.costPlanData = [];
+            }
+
+        },
+        loadCostPlan() {
+            var ins = this;
+            $.ajax({
+                type: "post",
+                url: "/plan/costplan",
+                async: true,
+                success: function (data) {
+                    var idata = data
+                    ins.costPlanData = ins.initCostType(idata.data);
+                }
+            });
+        },
+        //加载花费数据 类型
+        initCostType(rows) {
+            rows.forEach(row => {
+                let tv = row.costType;
+                this.costTypeGroup.forEach(e1 => {
+                    e1.children.forEach(e2 => {
+                        if (e2.data.costType == tv) {
+                            row.$CostType = e2.data;
+                        }
+                    })
+                });
+            });
+            return rows;
+        },
+        submitPlane() {
+            this.$emit("submit", this.planData,this.costPlanData)
+        }
+
+    }
+}
+
+export default CreateActivityPlan;
