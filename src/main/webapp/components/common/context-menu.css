@@ -1,0 +1,13 @@
+.context-menu {
+    transform-origin: center bottom 0px;
+    z-index: 2228;
+    padding:0px;
+}
+
+.context-menu>li {
+    padding: 0px 20px 0px 10px;
+}
+
+.context-menu>li .menuItem>i {
+    margin-right: 5px;
+}
