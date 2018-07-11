@@ -18,9 +18,9 @@
             </el-row>
             <div v-loading.fullscreen.lock="loading">
                 <template v-for="t in programTemplates">
-                    <el-card class="card-item" :body-style="{ padding: '0px' }">
+                    <el-card class="card-item card-item-program" :body-style="{ padding: '0px' }">
                         <div class="title">
-                            <span class="bolder">
+                            <span class="bolder"><i class="el-icon-star-on" style="font-size: 20px;"></i> 
                                 {{t.name}}
                             </span>
                         </div>
@@ -32,19 +32,19 @@
                             <table class="dis-info-min">
                                 <tbody>
                                 <tr>
-                                    <td>所属目录</td> <td>：</td>
+                                    <td> <i class="el-icon-news"></i>所属目录</td> <td></td>
                                     <td>{{t.categoryId}}</td>
                                 </tr>
                                 <tr>
-                                    <td>播放时长</td> <td>：</td>
+                                    <td> <i class="el-icon-time"></i>播放时长</td> <td></td>
                                     <td>{{t.playTime}}</td>
                                 </tr>
                                 <tr>
-                                    <td>节目类型</td> <td>：</td>
+                                    <td> <i class="el-icon-tickets"></i>节目类型</td> <td></td>
                                     <td>{{t.modelTypeName}}</td>
                                 </tr>
                                 <tr>
-                                    <td>创建时间</td> <td>：</td>
+                                    <td> <i class="el-icon-date"></i>创建时间</td> <td></td>
                                     <td>{{t.createTime}}</td>
                                 </tr></tbody>
                             </table>

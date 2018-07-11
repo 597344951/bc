@@ -11,19 +11,17 @@ var ContextMenu = {
             type: Array,
             default: () => {
                 return [{
-                    label: '测试菜单1',
-                    icon: 'el-icon-edit'
+                    label: '增加',
+                    icon: 'el-icon-plus',
+                    type: 'success'
                 }, {
-                    label: '测试菜单2',
-                    icon: 'el-icon-delete'
+                    label: '修改',
+                    icon: 'el-icon-edit',
+                    type: 'primary'
                 }, {
-                    label: '测试菜单3',
+                    label: '删除',
                     icon: 'el-icon-delete',
-                    disable: true
-                }, {
-                    label: '测试菜单4',
-                    icon: 'el-icon-delete',
-                    divided: true
+                    type: 'danger'
                 }];
             }
         },
@@ -53,19 +51,32 @@ var ContextMenu = {
     data() {
         return {
             closeTimer: null,
-            position:{x:333,y:444}
+            position: {
+                x: 333,
+                y: 444
+            }
         };
     },
-    watch:{
-        mouseEvent(val,oldVal){
-             this.position.x = val.x - 10;
-             this.position.y = val.y - 10;
-             console.log('change',this.position);
-        }  
+    watch: {
+        mouseEvent(val, oldVal) {
+            this.position.x = val.x - 10;
+            this.position.y = val.y - 10;
+            console.log('change', this.position);
+        }
+    },
+    computed: {
     },
     methods: {
-        //定时器 延时5秒关闭菜单
+        getTypeClass(type) {
+            if (type == 'primary') return 'el-button--primary';
+            if (type == 'danger') return 'el-button--danger';
+            if (type == 'success') return 'el-button--success';
+            if (type == 'info') return 'el-button--info';
+            if (type == 'warning') return 'el-button--warning';
 
+            return ' el-select-dropdown__item';
+        },
+        //定时器 延时5秒关闭菜单
         mouseleave() {
             console.debug('mouse leave, 创建倒计时关闭定时器', arguments);
             let me = this;
@@ -98,7 +109,7 @@ var ContextMenu = {
             this.clearTimer();
             this.$emit('close');
             this.$emit('update:visiable', false);
-        } 
+        }
     }
 }
 

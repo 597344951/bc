@@ -238,3 +238,7 @@ iframe {
 .el-popover {
 	padding: 0px;
 }
+
+.tab-label-padding{
+	padding:12px 0;
+}

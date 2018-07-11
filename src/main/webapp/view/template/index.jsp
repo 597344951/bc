@@ -44,7 +44,7 @@
             <el-container>
                 <el-aside width="200px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree"> 
+                        @node-click="tptTreeClick" class="menu-tree"  @node-contextmenu="treeContextmenu"> 
                     </el-tree>
                 </el-aside>
                 <el-main>
@@ -52,7 +52,12 @@
                         <el-row>
                             <el-col :span="10">
                                 <!--查询-->
-                                <span style="font-size:18px;font-weight:bolder;">{{currentCategory.name}}</span>
+                                <el-breadcrumb separator="/" style="margin-top: 10px;">
+                                    <el-breadcrumb-item>所有类别</el-breadcrumb-item>
+                                    <template v-for="item in breadcrumbData">
+                                        <el-breadcrumb-item ><a @click="breadPathClick(item)">{{item.name}}</a></el-breadcrumb-item>
+                                    </template>
+                                </el-breadcrumb>
                             </el-col>
                             <el-col :span="14" style="text-align: right;">
                                 <!--分页-->
@@ -64,24 +69,26 @@
                         </el-row>
                         <template v-for="tp in tps">
                             <el-card class="passage-conver" :body-style="{ padding: '0px' }" shadow="never">
-                                <div class="background-img" :style="{'background-image':'url('+tp.previewPicture+')'}" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)">
+                                <div class="background-img" :style="{'background-image':'url('+getResUrl(tp.previewPicture)+')'}" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)">
                                     <!--<img src="tp.previewPicture" class="image">-->
                                     <div class="control ">
                                             <span class="title">{{tp.title}}</span>
-                                            <div v-show="tp.showtoolbar"  class="bottom clearfix">
-                                                <el-button-group>
-                                                    <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
-                                                    <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
-                                                    <el-popover placement="top" width="160" v-model="tp.cfv">
-                                                        <p>是否删除这个模板?</p>
-                                                        <div style="text-align: right; margin: 0">
-                                                            <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
-                                                            <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
-                                                        </div>
-                                                        <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
-                                                    </el-popover>
-                                                </el-button-group>
-                                            </div>
+                                            <el-collapse-transition>
+                                                <div v-show="tp.showtoolbar"  class="bottom clearfix">
+                                                    <el-button-group>
+                                                        <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
+                                                        <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
+                                                        <el-popover placement="top" width="160" v-model="tp.cfv">
+                                                            <p>是否删除这个模板?</p>
+                                                            <div style="text-align: right; margin: 0">
+                                                                <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
+                                                                <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
+                                                            </div>
+                                                            <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
+                                                        </el-popover>
+                                                    </el-button-group>
+                                                </div>
+                                            </el-collapse-transition>
                                         </div>
                                 </div>
                             </el-card>
@@ -121,9 +128,9 @@
                                             </el-row>
                                         </el-form-item>
                                         <el-form-item label="封面图片" prop="tpTypeIds">
-                                            <el-upload class="avatar-uploader" action="/material/commonUpload" :show-file-list="false" :on-success="handleAvatarSuccess"
+                                            <el-upload class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
                                                 :before-upload="beforeAvatarUpload">
-                                                <img v-if="tp.data.previewPicture" :src="tp.data.previewPicture" class="avatar">
+                                                <img v-if="tp.data.previewPicture" :src="getResUrl(tp.data.previewPicture)" class="avatar">
                                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                             </el-upload>
                                         </el-form-item>
@@ -168,8 +175,10 @@
             <program-template @chose="choseProgramTemplate"></program-template>
         </el-dialog>
         <!--节目模版选择-->
-
+        <!--Tree 右键菜单-->
+        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
+        <!--Tree 右键菜单-->
     </div>
 </body>
 </html>
-<script type="text/javascript" charset="utf-8" src="${urls.getForLookupPath('/assets/module/template/template.js')}"></script>
+<script type="module" charset="utf-8" src="${urls.getForLookupPath('/assets/module/template/template.js')}"></script>

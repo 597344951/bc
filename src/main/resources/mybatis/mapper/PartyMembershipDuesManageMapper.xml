@@ -188,17 +188,52 @@
 		pmdm.paid_date paidDate,
 		pmdm.paid_describe paidDescribe,
 		pmdpw.name paidWay,
-		pmdm.pay_status payStatus
+		pmds.name payStatus
 	from
 	  party_membership_dues_manage pmdm 
 	  inner join party_user_info pui on pmdm.user_id = pui.party_user_id 
 	  inner join base_user_info bui on pui.party_user_id = bui.base_user_id 
 	  inner join organization_information _oi on pmdm.org_id = _oi.org_info_id
 	  left join party_membership_dues_paid_way pmdpw on pmdm.paid_way = pmdpw.id
+	  left join party_membership_dues_status pmds on pmdm.pay_status = pmds.id
 	where
 	  1 = 1
 	  <if test="partyUserName != null and partyUserName != ''"> and
           bui.name like CONCAT('%',#{partyUserName},'%')
+      </if>
+      <if test="idCard != null and idCard != ''"> and
+          bui.id_card = #{idCard}
+      </if>
+      <if test="payStatus != null and payStatus != ''"> and
+          pmdm.pay_status = #{payStatus}
+      </if>
+      <if test="shouldPayDateStart != null"> and 
+		  pmdm.should_pay_date_start >= #{shouldPayDateStart}
+	  </if>
+	  <if test="shouldPayDateEnd != null"> and 
+		  pmdm.should_pay_date_end &lt;= #{shouldPayDateEnd}
+	  </if>
+	  <if test="paidWay != null and paidWay != ''"> and
+          pmdm.paid_way = #{paidWay}
+      </if>
+      <if test="orgInfoId != null and orgInfoId != ''"> and
+          pmdm.org_id = #{orgInfoId}
+      </if>
+	order by
+	  pmdm.should_pay_date_end desc
+  </select>
+  
+  <select id="queryOrgInfoOfPMDM" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  distinct org_id orgId,
+	  _oi.org_info_name orgInfoName
+	from
+	  party_membership_dues_manage pmdm 
+	  inner join organization_information _oi on pmdm.org_id = _oi.org_info_id
+	where
+	  1 = 1
+	  <if test="orgInfoName != null and orgInfoName != ''"> and
+          _oi.org_info_name like CONCAT('%',#{orgInfoName},'%')
       </if>
   </select>
 </mapper>

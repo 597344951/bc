@@ -44,6 +44,8 @@ public class ResourceMaterialController extends BaseController {
         ResourceMaterial nm = new ResourceMaterial(user);
         nm.setKeyword(rm.getKeyword());
         nm.setAlbumId(rm.getAlbumId());
+        nm.setType(rm.getType());
+        nm.setContentType(rm.getContentType());
 
         Pager pager = new Pager(pageIndex, limit);
         List<ResourceMaterial> data = this.materialService.query(nm, pager);
@@ -51,9 +53,25 @@ public class ResourceMaterialController extends BaseController {
         return R.ok().setData(data).setPager(pager);
     }
 
+    @ApiOperation(value = "批量导入资源")
+    @PostMapping(value = "/Materials")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "导入资源", template = "批量导入资源")
+    public R saveList(@RequestBody List<ResourceMaterial> rms) {
+        for (ResourceMaterial rm : rms) {
+            ValidatorUtils.validateEntity(rm);
+            SysUser user = this.getSysUser();
+            rm.setOrgId(user.getOrgId());
+            rm.setUserId(user.getUserId());
+            rm.setAddDate(new Date());
+        }
+        
+        this.materialService.inserts(rms);
+        return R.ok();
+    }
+
     @ApiOperation(value = "新建资源内容")
     @PostMapping(value = "/Material")
-    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源专辑分类", template = "新增资源分类:${m.description}")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源", template = "新增资源:${m.name}")
     public R save(@RequestBody ResourceMaterial rm) {
         ValidatorUtils.validateEntity(rm);
         SysUser user = this.getSysUser();

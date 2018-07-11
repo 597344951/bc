@@ -25,4 +25,11 @@ public interface PartyMembershipDuesManageMapper extends BaseDao<PartyMembership
      * @return
      */
     public List<Map<String, Object>> queryPartyMembershipDues(Map<String, Object> conditionMaps);
+    
+    /**
+     * 查询党费缴纳记录里的党组织
+     * @param conditionMaps
+     * @return
+     */
+    public List<Map<String, Object>> queryOrgInfoOfPMDM(Map<String, Object> conditionMaps);
 }

@@ -187,7 +187,7 @@
             <template v-for="t in terminals">
                 <el-card class="termialDis" :class="t.online=='1' ? 'online':'termialDis-offline'" :body-style="{ padding: '0px' }" shadow="never">
                     <div class="deviceInfo">
-                        <span class="name">{{t.name}}</span>
+                        <span class="name"><i class="el-icon-star-on"></i> {{t.name}}</span>
                         <span class="size">{{t.size}}</span>
                     </div>
                     <div :class="t.rev == '横屏' ? 'screenshoot-h':'screenshoot-v'">
@@ -197,18 +197,18 @@
                     <div class="control" style="">
                         <table class="disInfo">
                             <tr>
-                                <td>当前节目</td>
-                                <td>：</td>
+                                <td><i class="el-icon-document"></i> 当前节目</td>
+                                <td></td>
                                 <td>暂无数据</td>
                             </tr>
                             <tr>
-                                <td>屏幕类型</td>
-                                <td>：</td>
+                                <td><i class="el-icon-mobile-phone"></i> 屏幕类型</td>
+                                <td></td>
                                 <td>{{t.rev}}</td>
                             </tr>
                             <tr>
-                                <td>所在位置</td>
-                                <td>：</td>
+                                <td><i class="el-icon-location-outline"></i> 所在位置</td>
+                                <td></td>
                                 <td>
                                     <el-tooltip class="item" effect="dark" :content="t.addr" placement="top-start">
                                         <p class="disInfo-overflow">{{t.addr}}</p>
@@ -413,7 +413,7 @@
             <template v-for="t in tprograms">
                 <el-card class="termialDis" :body-style="{ padding: '0px' }" shadow="never">
                     <div class="deviceInfo">
-                        <span class="name">{{t.name}}</span>
+                        <span class="name"> <i class="el-icon-star-on"></i> {{t.name}}</span>
                     </div>
                     <div class="screenshoot">
                         <img :src="t.coverImageUrl" class="image">
@@ -422,20 +422,20 @@
                     <div class="control">
                         <table class="disInfo">
                             <tr>
-                                <td>发布类型 </td>
-                                <td>：</td>
+                                <td><i class="el-icon-tickets"></i> 发布类型 </td>
+                                <td></td>
                                 <td>
                                     <span v-html="t.publishTypeStr"></span>
                                 </td>
                             </tr>
                             <tr>
-                                <td>发布人 </td>
-                                <td>：</td>
+                                <td><i class="el-icon-news"></i> 发布人 </td>
+                                <td></td>
                                 <td>{{t.userName}}</td>
                             </tr>
                             <tr>
-                                <td>发布时间</td>
-                                <td>：</td>
+                                <td><i class="el-icon-time"></i> 发布时间</td>
+                                <td></td>
                                 <td>{{t.createTime}}</td>
                             </tr>
                         </table>

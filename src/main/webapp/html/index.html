@@ -77,7 +77,7 @@
 
                     <!--菜单 -->
                     <el-menu :collapse="app.isCollapse" default-active="2" @open="handleOpen" @close="handleClose" :background-color="app.colors.menu_bg"
-                        :text-color="app.colors.menu_txt" :active-text-color="app.colors.menu_act_txt">
+                        :text-color="app.colors.menu_txt" :active-text-color="app.colors.menu_act_txt" accordion>
 
                         <el-submenu v-for="menu in menuDatas" :index="menu.index" :key="menu.index">
                             <template slot="title">

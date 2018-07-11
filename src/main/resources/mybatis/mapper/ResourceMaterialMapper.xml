@@ -72,6 +72,32 @@
 		#{orgId,jdbcType=INTEGER}, #{albumId,jdbcType=INTEGER},
 		#{addDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
 	</insert>
+	<insert id="inserts" parameterType="ArrayList">
+		insert into resource_material (material_id, name, type,
+		description,
+		url, cover_url,
+		size, content_type, time_length,
+		user_id,
+		org_id,
+		album_id,
+		add_date, content)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.materialId,jdbcType=INTEGER},
+			#{item.name,jdbcType=VARCHAR},
+			#{item.type,jdbcType=VARCHAR},
+			#{item.description,jdbcType=VARCHAR},
+			#{item.url,jdbcType=VARCHAR}, #{item.coverUrl,jdbcType=VARCHAR},
+			#{item.size,jdbcType=VARCHAR}, #{item.contentType,jdbcType=VARCHAR},
+			#{item.timeLength,jdbcType=VARCHAR},
+			#{item.userId,jdbcType=INTEGER},
+			#{item.orgId,jdbcType=INTEGER}, #{item.albumId,jdbcType=INTEGER},
+			#{item.addDate,jdbcType=TIMESTAMP},
+			#{item.content,jdbcType=LONGVARCHAR})
+		</foreach>
+	</insert>
+
 	<insert id="insertSelective"
 		parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
 		insert into resource_material
@@ -301,7 +327,7 @@
 				AND name=#{name}
 			</if>
 			<if test="keyword != null and keyword !=''">
-				AND  name like concat('%',#{keyword},'%')
+				AND name like concat('%',#{keyword},'%')
 			</if>
 			<if test="contentType != null">
 				AND content_type=#{contentType}

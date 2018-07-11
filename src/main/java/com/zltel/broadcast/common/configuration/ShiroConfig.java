@@ -8,17 +8,22 @@ import javax.servlet.Filter;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -40,9 +45,11 @@ public class ShiroConfig {
     private static String hashalgorithmname = "md5";
     /** hash计算次数 **/
     private static int hashiterations = 2;
-    
-    private int account_max_session = 1;
-    
+    /** 账户最大支持session数 **/
+    private int accountMaxSession = 1;
+    /** 启用redis支持 **/
+    private boolean useRedis = true;
+
     private static final int SESSION_VALIDATION_INTERVAL = 30 * 60000;
     private static final int GLOBAL_SESSION_TIMEOUT = 30 * 60 * 1000;
 
@@ -54,13 +61,6 @@ public class ShiroConfig {
         return name;
     }
 
-    public int getAccount_max_session() {
-        return account_max_session;
-    }
-
-    public void setAccount_max_session(int account_max_session) {
-        this.account_max_session = account_max_session;
-    }
 
     public static void setName(String nm) {
         name = nm;
@@ -83,7 +83,27 @@ public class ShiroConfig {
         hashiterations = hi;
         PasswordHelper.setHashIterations(hashiterations);
     }
+
+    public int getAccountMaxSession() {
+        return accountMaxSession;
+    }
+
+
+    public void setAccountMaxSession(int accountMaxSession) {
+        this.accountMaxSession = accountMaxSession;
+    }
+
+    public boolean isUseRedis() {
+        return useRedis;
+    }
+
+
+    public void setUseRedis(boolean useRedis) {
+        this.useRedis = useRedis;
+    }
+
     // ----------------setter----------------
+
 
 
     /** 会话ID生成器 **/
@@ -106,10 +126,15 @@ public class ShiroConfig {
     /** 会话DAO **/
     @Bean
     public SessionDAO sessionDAO(SessionIdGenerator sessionIdGenerator) {
-
-        RedisSessionDao dao = new RedisSessionDao();
-        dao.setSessionIdGenerator(sessionIdGenerator);
-
+        EnterpriseCacheSessionDAO dao = null;
+        if (useRedis) {
+            dao = new RedisSessionDao();
+            dao.setSessionIdGenerator(sessionIdGenerator);
+            return dao;
+        } else {
+            dao = new EnterpriseCacheSessionDAO();
+            dao.setActiveSessionsCacheName("shiro-activeSessionCache");
+        }
         return dao;
     }
 
@@ -122,7 +147,7 @@ public class ShiroConfig {
 
         userRealm.setAuthenticationCachingEnabled(true);
         userRealm.setAuthenticationCacheName("authenticationCache_up");
-        
+
         userRealm.setAuthorizationCachingEnabled(true);
         userRealm.setAuthorizationCacheName("authorizationCache");
         log.debug("UserRealm bean 已创建");
@@ -136,7 +161,7 @@ public class ShiroConfig {
 
         userRealm.setAuthenticationCachingEnabled(true);
         userRealm.setAuthenticationCacheName("authenticationCache_token");
-        
+
         userRealm.setAuthorizationCachingEnabled(true);
         userRealm.setAuthorizationCacheName("authorizationCache");
         log.debug("TokenRealm bean 已创建");
@@ -156,8 +181,7 @@ public class ShiroConfig {
     /** 凭证管理器 **/
     @Bean
     public CredentialsMatcher credentialsMatcher(CacheManager cacheManager) {
-        RetryLimitHashedCredentialsMatcher credential =
-                new RetryLimitHashedCredentialsMatcher(cacheManager);
+        RetryLimitHashedCredentialsMatcher credential = new RetryLimitHashedCredentialsMatcher(cacheManager);
         credential.setHashAlgorithmName(hashalgorithmname);
         credential.setHashIterations(hashiterations);
         credential.setStoredCredentialsHexEncoded(true);
@@ -173,7 +197,7 @@ public class ShiroConfig {
         filter.setCacheManager(cacheManager);
         filter.setSessionManager(sessionManager);
         filter.setKickoutAfter(false);// true:剔除后登陸的，false:剔除前面登陸的
-        filter.setMaxSession(account_max_session);// 一个账户最多多少个人登陆
+        filter.setMaxSession(accountMaxSession);// 一个账户最多多少个人登陆
         log.debug("KickoutSessionControlFilter bean 已创建");
         return filter;
     }
@@ -181,7 +205,7 @@ public class ShiroConfig {
 
     /** 过滤器 **/
     @Bean("shiroFilter")
-    public ShiroFilterFactoryBean shiroFilter(org.apache.shiro.mgt.SecurityManager securityManager,
+    public ShiroFilterFactoryBean shiroFilter(SessionsSecurityManager securityManager,
             KickoutSessionControlFilter kickfilter) {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager);
@@ -237,7 +261,7 @@ public class ShiroConfig {
         return sessionManager;
     }
 
-
+    /** 创建Filter注入SecurityManager **/
     @Bean
     public FilterRegistrationBean<Filter> delegatingFilterProxy() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
@@ -246,6 +270,26 @@ public class ShiroConfig {
         proxy.setTargetBeanName("shiroFilter");
         filterRegistrationBean.setFilter(proxy);
         return filterRegistrationBean;
+    }
+
+    @Bean("lifecycleBeanPostProcessor")
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+
+    @Bean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator proxyCreator = new DefaultAdvisorAutoProxyCreator();
+        proxyCreator.setProxyTargetClass(true);
+        return proxyCreator;
+    }
+
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(
+            SessionsSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
     }
 
 

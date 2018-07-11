@@ -24,4 +24,18 @@ public interface PartyMembershipDuesManageService {
      * @return
      */
     public R queryPartyMembershipDues(Map<String, Object> conditionMaps, int pageNum, int pageSize);
+    
+    /**
+     * 查询党费缴纳记录里的党组织
+     * @param conditionMaps
+     * @return
+     */
+    public R queryOrgInfoOfPMDM(Map<String, Object> conditionMaps, int pageNum, int pageSize);
+    
+    /**
+     * 查询此组织的缴费统计
+     * @param conditionMaps
+     * @return
+     */
+    public R queryPMDMChartForOrgInfo(Map<String, Object> conditionMaps);
 }

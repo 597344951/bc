@@ -2,6 +2,11 @@ package com.zltel.broadcast.common.util;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 
+/**
+ * 密码加密工具类
+ * @author wangch
+ * @junit {@link com.zltel.broadcast.common.util.PasswordHelperTest#testEncryptPassword()}
+ */
 public class PasswordHelper {
     private PasswordHelper() {}
 

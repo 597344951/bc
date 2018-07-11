@@ -10,6 +10,10 @@
 		.el-table thead,.el-table__row {
 			font-size: 14px;
 		}
+		.card-item .title{
+			padding: 0;
+			padding-left: 10px;
+		}
 	</style>
 </head>
 <body>
@@ -40,9 +44,9 @@
 		<el-main>
 			<div v-show="!dis_h_v">
 				<template v-for=" it in  publishingContent.list">
-					<el-card class="card-item" :body-style="{ padding: '0px' }">
+					<el-card class="card-item card-item4" :body-style="{ padding: '0px' }">
 						<div class="title">
-							<span class="bolder"> {{it.title}} </span>
+							<span class="bolder"><i class="el-icon-star-on"></i> {{it.title}} </span>
 							<span class="right">
 							</span>
 						</div>
@@ -50,28 +54,28 @@
 							<table class="dis-info-min">
 								<tbody>
 									<tr>
-										<td>发起人</td>
-										<td>：</td>
+										<td><i class="el-icon-news"></i>发起人</td>
+										<td></td>
 										<td>{{it.username}}</td>
 									</tr>
 									<tr>
-										<td>发布时间</td>
-										<td>：</td>
+										<td><i class="el-icon-time"></i>发布时间</td>
+										<td></td>
 										<td>{{it.add_date}}</td>
 									</tr>
 									<tr>
-										<td>开始时间</td>
-										<td>：</td>
+										<td><i class="el-icon-date date-start"></i>开始日期</td>
+										<td></td>
 										<td>{{it.start_date}}</td>
 									</tr>
 									<tr>
-										<td>结束时间</td>
-										<td>：</td>
+										<td><i class="el-icon-date date-finish"></i>结束日期</td>
+										<td></td>
 										<td>{{it.end_date}}</td>
 									</tr>
 									<tr>
-										<td>播放时段</td>
-										<td>：</td>
+										<td><i class="el-icon-upload"></i>播放时段</td>
+										<td></td>
 										<td>{{it.period}}</td>
 									</tr>
 								</tbody>

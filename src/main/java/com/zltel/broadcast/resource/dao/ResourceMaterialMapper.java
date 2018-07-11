@@ -1,5 +1,7 @@
 package com.zltel.broadcast.resource.dao;
 
+import java.util.List;
+
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.resource.bean.ResourceMaterial;
 
@@ -17,4 +19,6 @@ public interface ResourceMaterialMapper extends BaseDao<ResourceMaterial> {
     int updateByPrimaryKeyWithBLOBs(ResourceMaterial record);
 
     int updateByPrimaryKey(ResourceMaterial record);
+
+    void inserts(List<ResourceMaterial> records);
 }

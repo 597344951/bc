@@ -4,29 +4,46 @@
         <el-button-group style="margin-left:30px;">
             <el-button size="small" icon="el-icon-rank" @click="setFullscreen" title="最大"></el-button>
         </el-button-group>
+        <el-input placeholder="请输入内容" v-model="config.keyword" class="input-with-select" style="margin-left:10%;width:500px">
+            <el-select v-model="config.type" slot="prepend" placeholder="资源类型" style="width:80px;"> 
+                <el-option label="所有" value=""></el-option>
+                <el-option label="图片" value="image"></el-option>
+                <el-option label="视频" value="video"></el-option>
+                <el-option label="音频" value="audio"></el-option>
+                <el-option label="文字" value="text"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+        </el-input>
     </div>
     <div slot="footer" class="foot-button-container">
         <el-button type="primary" @click="submit">确定</el-button>
         <el-button @click="close">关闭</el-button>
     </div>
     <el-container>
-        <el-aside width="300px">
+        <el-aside width="200px">
             <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
                 @node-click="tptTreeClick" class="menu-tree">
                 <span class="custom-tree-node" slot-scope="{ node, data }">
-                        <span class="left-label-group">
-                            <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i> {{ node.label }}</span>
-                    </span>
+                    <span class="left-label-group">
+                        <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i> {{ node.label }}</span>
+                </span>
             </el-tree>
         </el-aside>
         <el-main>
             <div role="mainDis" style="overflow: auto;">
                 <el-row style="display:flex;">
-                    <el-col :span="4" style="width:100px;">
+                    <el-col :span="10">
                         <!--查询-->
-                        <span style="font-size:18px;font-weight:bolder;">{{currentCategory.name}}</span>
+                        <el-breadcrumb separator="/" style="margin-top: 10px;">
+                            <el-breadcrumb-item>所有类别</el-breadcrumb-item>
+                            <template v-for="item in breadcrumbData">
+                                <el-breadcrumb-item>
+                                    <a @click="breadPathClick(item)">{{item.name}}</a>
+                                </el-breadcrumb-item>
+                            </template>
+                        </el-breadcrumb>
                     </el-col>
-                    <el-col :span="20" style="text-align: right;">
+                    <el-col :span="14" style="text-align: right;">
                         <!--分页-->
                         <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size"
                             layout="total, sizes, prev, pager, next, jumper" :total="tpager.total" @size-change="handleSizeChange"
@@ -35,30 +52,50 @@
                     </el-col>
                 </el-row>
                 <template v-for="tp in tps">
-                    <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }">
-                        <div class="background-img" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)" @click="chose(tp)">
-                            <span v-show="tp.chose" class="active-icon" style="display: block;width: 20px;height: 20px;border-radius: 50%;background-color: #fff;position: absolute;right: 10px;top:3px;background:url(../../assets/img/active-icon.png)"></span>
-                            <template v-if="tp.type == 'image' || tp.type == 'text'">
-                                <!--图片-->
-                                <img :src="getResUrl(tp.coverUrl) " class="image">
-                            </template>
-                            <template v-if="tp.type == 'audio'">
-                                <!--音频-->
-                                <span class="audio-icon"></span>
-                            </template>
-                            <template v-if="tp.type == 'video'">
-                                <!--视频-->
-                                <img :src="getResUrl(tp.coverUrl) " class="image">
-                                <span class="video-icon"></span>
-                            </template>
-                            <div class="control ">
-                                <span class="title">{{tp.name}}</span>
-                                <div v-show="tp.showtoolbar" class="bottom clearfix">
-                                    <p class="descript">{{tp.description}}</p>
+                    <el-popover placement="right-start" width="280" trigger="click">
+                        <div>
+                            <p>
+                                <span class="right-start-icon">
+                                    <i class="el-icon-document"></i> 文件类型:</span> {{tp.contentType}}</p>
+                            <p>
+                                <span class="right-start-icon">
+                                    <i class="el-icon-goods"></i> 文件大小:</span> {{tp.size | byteToSize}}</p>
+                            <p>
+                                <span class="right-start-icon">
+                                    <i class="el-icon-printer"></i> 文件长度:</span> {{tp.timeLength | secToMin}}</p>
+                            <p>
+                                <span class="right-start-icon">
+                                    <i class="el-icon-edit-outline"></i> 文件描述: </span>
+                            </p>
+                            <p>
+                                <span class="right-start-icon"> {{tp.description}}</span>
+                            </p>
+                        </div>
+                        <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }" slot="reference">
+                            <div class="background-img" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)" @click="chose(tp)">
+                                <span v-show="tp.chose" class="active-icon" style="display: block;width: 20px;height: 20px;border-radius: 50%;background-color: #fff;position: absolute;right: 10px;top:3px;background:url(../../assets/img/active-icon.png)"></span>
+                                <template v-if="tp.type == 'image' || tp.type == 'text'">
+                                    <!--图片-->
+                                    <img :src="getResUrl(tp.coverUrl) " class="image">
+                                </template>
+                                <template v-if="tp.type == 'audio'">
+                                    <!--音频-->
+                                    <span class="audio-icon"></span>
+                                </template>
+                                <template v-if="tp.type == 'video'">
+                                    <!--视频-->
+                                    <img :src="getResUrl(tp.coverUrl) " class="image">
+                                    <span class="video-icon"></span>
+                                </template>
+                                <div class="control ">
+                                    <span class="title">{{tp.name}}</span>
+                                    <div v-show="tp.showtoolbar" class="bottom clearfix">
+                                        <p class="descript">{{tp.description}}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </el-card>
+                        </el-card>
+                    </el-popover>
                 </template>
 
             </div>

@@ -11,6 +11,30 @@ window.onclose = function () {
 window.appInstince = new Vue({
   el: "#app",
   data: {
+    resourceView: {
+      title: '',
+      visible: false
+    },
+    //右键 节点的数据
+    curContextData: null,
+    contextMenu: {
+      visiable: false,
+      event: null
+    },
+    //菜单数据
+    contextMenuData: [{
+      label: '增加分类',
+      icon: 'el-icon-plus',
+      type: 'success'
+    }, {
+      label: '修改分类',
+      icon: 'el-icon-edit',
+      type: 'primary'
+    }, {
+      label: '删除分类',
+      icon: 'el-icon-delete',
+      type: 'danger'
+    }],
     resource_server_url: '',
     resource_menu: [{
       label: '素材管理',
@@ -136,6 +160,16 @@ window.appInstince = new Vue({
         parent: 0
       }
     },
+    importResource: {
+      title: "导入资源",
+      visiable: false,
+      nameType: 'fileName',
+      commitOnUpload: false,
+      fileList: [],
+      data: {
+        albumIds: []
+      }
+    },
     currentDate: new Date(),
     props: {
       children: 'children',
@@ -156,7 +190,10 @@ window.appInstince = new Vue({
     this.loadTpTypeData(null, this);
   },
   computed: {
-
+    breadcrumbData() {
+      let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
+      return bp;
+    }
   },
   watch: {
     "tp.data.type": function (val, old) {
@@ -164,10 +201,119 @@ window.appInstince = new Vue({
     }
   },
   methods: {
-    currentChange(node,data){
-      node.data.showtoolbar = true;
-      console.log(arguments)
+    breadPathClick(item) {
+      let cc = this.currentCategory;
+      if (cc.albumId == item.albumId) return;
+      this.currentCategory = item;
+      this.loadTpTypeData(item);
     },
+    getUploadUrl(type) {
+      return serverConfig.getUploadUrl(type);
+    },
+    submitUpload() {
+      this.$refs.upload.submit();
+    },
+    clearChose() {
+      console.log('清空选中文件');
+      this.$refs.upload.clearFiles();
+      this.importResource.fileList = [];
+    },
+    handleSuccess(response, file, fileList) {
+      console.log('文件上传成功', arguments);
+      this.importResource.fileList.push(response);
+      if (fileList.length == this.importResource.fileList.length) {
+        console.log('所有文件上传完成');
+        if (this.importResource.commitOnUpload) this.saveResources();
+      }
+    },
+    handleRemove(file, fileList) {
+      console.log('remove file ', arguments);
+      this.importResource.fileList = this.importResource.fileList.filter(item => file.name != item.original);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    saveResources() {
+      let me = this;
+      if (this.importResource.nameType == 'fileName') {
+        this.importResource.data.name = "占位符"
+      }
+      if (this.importResource.fileList.length == 0) {
+        $message('请选择上传的文件!', 'warning', this);
+        return;
+      }
+      this.$refs.importResForm.validate(function (valid) {
+        if (!valid) {
+          return false;
+        }
+
+        let array = [];
+        me.importResource.fileList.forEach(item => {
+          let obj = {
+            description: me.importResource.data.description,
+            url: item.url,
+            contentType: item.type,
+            type: item.type.split('/')[0],
+            size: item.size,
+            timeLength: item.length
+          };
+
+          if (obj.type == 'image') {
+            obj.coverUrl = item.thumbnail ? item.thumbnail : item.url;
+          } else {
+            obj.coverUrl = item.screenshot;
+          }
+
+          if (me.importResource.nameType == 'fileName') {
+            obj.name = item.original;
+          } else {
+            obj.name = me.importResource.data.name;
+          }
+          let ids = me.importResource.data.albumIds
+          obj.albumId = ids[ids.length - 1];
+          array.push(obj);
+        });
+        console.log(array);
+        ajax_json("/resource/Materials", "post", array, function (result) {
+          if (result.status) {
+            me.importResource.visiable = false
+            me.loadTreeData();
+            me.reloadTpTypeData();
+            me.resetImport();
+          }
+        });
+
+      });
+    },
+    importResources() {
+      this.importResource.visiable = true;
+    },
+    resetImport() {
+      this.clearChose();
+      this.importResource.data.name = '';
+      this.importResource.data.description = '';
+      this.importResource.data.albumIds = [];
+    },
+    treeContextmenu(event, data, node, ins) {
+      console.log('right click', arguments);
+      this.contextMenu.visiable = true;
+      this.contextMenu.event = event;
+      this.curContextData = data.data;
+    },
+    contextMenuClick(menuItem) {
+      console.log('菜单点击事件', menuItem);
+      if (menuItem.label == '增加分类') {
+        this.addTemplateType();
+      }
+      if (menuItem.label == '修改分类') {
+        this.updateTemplateType();
+      }
+      if (menuItem.label == '删除分类') {
+        this.deleteTemplateType();
+      }
+      this.curContextData = null;
+    },
+
     card_hover(it) {
       it.showtoolbar = true;
     },
@@ -192,7 +338,7 @@ window.appInstince = new Vue({
         ins.tpt_data_normal = ins.toNormalData(result.data);
       });
     },
-    init_tpt_data(data){
+    init_tpt_data(data) {
       data.forEach(item => {
         item.data.showtoolbar = false;
       })
@@ -243,13 +389,14 @@ window.appInstince = new Vue({
       var node = this.$refs.tree.getCurrentNode();
       this.loadTpTypeData(node ? node.data : null, this);
     },
-    checkTreeSelect: function () {
+    //获取选中树节点数据
+    checkTreeSelectData: function () {
       var node = this.$refs.tree.getCurrentNode();
-      if (!node) {
+      if (!node && !this.curContextData) {
         $message("请先选择要操作的位置", "warning", this)
         return null;
       }
-      return node;
+      return this.curContextData ? this.curContextData : node.data;
     },
     initData(data) {
       data.forEach(element => {
@@ -260,29 +407,29 @@ window.appInstince = new Vue({
     },
     // 增加模板类别
     addTemplateType: function () {
-      var node = this.checkTreeSelect();
-      if (!node) return;
+      var nodedata = this.checkTreeSelectData();
+      if (!nodedata) return;
 
       var tpt = this.tpt;
       tpt.update = false;
       tpt.title = "新增分类类别";
       tpt.visible = true;
       tpt.data = {
-        parent: node.data.albumId,
-        parentLabel: node.data.name,
+        parent: nodedata.albumId,
+        parentLabel: nodedata.name,
         orderNum: 0
       };
     },
     // 修改模板类别
     updateTemplateType: function () {
-      var node = this.checkTreeSelect();
-      if (!node) return;
+      var nodedata = this.checkTreeSelectData();
+      if (!nodedata) return;
 
       var tpt = this.tpt;
       tpt.title = "修改分类类别";
       tpt.update = true;
       tpt.visible = true;
-      tpt.data = node.data;
+      tpt.data = nodedata;
     },
     // 保存或者更新数据
     saveOrUpdateTemplateType: function () {
@@ -314,10 +461,9 @@ window.appInstince = new Vue({
     deleteTemplateType: function () {
       var ins = this;
       var tpt = this.tpt;
-      var node = this.checkTreeSelect();
-      if (!node) return;
-      var data = node.data;
-      if (node.children && node.children.length > 0) {
+      var nodedata = this.checkTreeSelectData();
+      if (!nodedata) return;
+      if (nodedata.children && nodedata.children.length > 0) {
         $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
@@ -325,7 +471,7 @@ window.appInstince = new Vue({
         type: "warning"
       }).then(function () {
         // 删除数据
-        ajax_json("/MaterialAlbum/Album/" + data.albumId, "delete", null, function (
+        ajax_json("/MaterialAlbum/Album/" + nodedata.albumId, "delete", null, function (
           result
         ) {
           if (result.status) {
@@ -343,8 +489,15 @@ window.appInstince = new Vue({
     },
     //预览模板
     viewTemplate: function (tp) {
-      _editor.setContent(tp.content);
-      _editor.execCommand("preview");
+      this.resourceView.type = tp.type;
+      if (tp.type == 'text') {
+        _editor.setContent(tp.content);
+        _editor.execCommand("preview");
+      }else{
+        this.resourceView.url = tp.url;
+        this.resourceView.title=tp.name;
+        this.resourceView.visible = true;
+      }
     },
     // 新增模板
     addTemplate: function () {
@@ -379,8 +532,7 @@ window.appInstince = new Vue({
       this.tp.title = "修改素材";
       this.tp.data = tp;
       tp.typeDisable = true;
-
-      _editor.setContent(tp.content);
+      if (tp.content) _editor.setContent(tp.content);
       var ids = getTpTypeIds(this.tp.data, this.tpt_data);
       this.tp.data.albumIds = ids;
     },
@@ -455,7 +607,7 @@ window.appInstince = new Vue({
         this.tp.data.coverUrl = res.thumbnail ? res.thumbnail : res.url;
         this.tp.data.url = null;
       }
-      if(res_type == 'audio'){
+      if (res_type == 'audio') {
         this.tp.data.coverUrl = '/assets/img/timg.png';
       }
     },

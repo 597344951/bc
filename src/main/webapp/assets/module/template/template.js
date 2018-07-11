@@ -1,3 +1,5 @@
+import serverConfig from '/environment/resourceUploadConfig.jsp';
+
 window.onclose = function () {
   let tp = appInstince.tp.data;
   if(tp.title || _editor.hasContents()){
@@ -9,6 +11,26 @@ window.onclose = function () {
 var appInstince = new Vue({
   el: "#app",
   data: {
+    //右键 节点的数据
+    curContextData: null,
+    contextMenu: {
+      visiable: false,
+      event: null
+    },
+    //菜单数据
+    contextMenuData: [{
+      label: '增加分类',
+      icon: 'el-icon-plus',
+      type: 'success'
+    }, {
+      label: '修改分类',
+      icon: 'el-icon-edit',
+      type: 'primary'
+    }, {
+      label: '删除分类',
+      icon: 'el-icon-delete',
+      type: 'danger'
+    }],
     resource_menu:[{
           label: '素材管理',
           children: [{
@@ -128,16 +150,46 @@ var appInstince = new Vue({
       children: "children"
     },
     tpt_data: [],
-    tps: []
+    tps: [],
+    resource_server_url:serverConfig.getUploadUrl('image')
   },
   mounted() {
     this.loadTreeData();
     this.loadTpTypeData(null, this);
   },
   computed: {
-    
+    breadcrumbData() {
+      let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.tpTypeId, item => item.data);
+      return bp;
+    }
   },
   methods: {
+    breadPathClick(item) {
+      let cc = this.currentCategory;
+      if (cc.tpTypeId == item.tpTypeId) return;
+      this.currentCategory = item;
+      this.loadTpTypeData(item);
+    },
+    treeContextmenu(event, data, node, ins) {
+      console.log('right click', arguments);
+      this.contextMenu.visiable = true;
+      this.contextMenu.event = event;
+      this.curContextData = data.data;
+    },
+    contextMenuClick(menuItem) {
+      console.log('菜单点击事件', menuItem);
+      if (menuItem.label == '增加分类') {
+        this.addTemplateType();
+      }
+      if (menuItem.label == '修改分类') {
+        this.updateTemplateType();
+      }
+      if (menuItem.label == '删除分类') {
+        this.deleteTemplateType();
+      }
+      this.curContextData = null;
+    },
+
     card_hover(it){
       it.showtoolbar = true;
     },
@@ -178,13 +230,13 @@ var appInstince = new Vue({
       var node = this.$refs.tree.getCurrentNode();
       this.loadTpTypeData(node ? node.data:null, this);
     },
-    checkTreeSelect: function () {
+    checkTreeSelectData: function () {
       var node = this.$refs.tree.getCurrentNode();
-      if (!node) {
+      if (!node && !this.curContextData) {
         $message("请先选择要操作的位置", "warning", this)
         return null;
       }
-      return node;
+      return this.curContextData ? this.curContextData : node.data;
     },
     initData(data){
       data.forEach(element => {
@@ -195,29 +247,29 @@ var appInstince = new Vue({
     },
     // 增加模板类别
     addTemplateType: function () {
-      var node = this.checkTreeSelect();
-      if (!node) return;
+      var nodedata = this.checkTreeSelectData();
+      if (!nodedata) return;
 
       var tpt = this.tpt;
       tpt.update = false;
       tpt.title = "新增模板类别";
       tpt.visible = true;
       tpt.data = {
-        parent: node.data.tpTypeId,
-        parentLabel: node.data.name,
+        parent: nodedata.tpTypeId,
+        parentLabel: nodedata.name,
         orderNum: 0
       };
     },
     // 修改模板类别
     updateTemplateType: function () {
-      var node = this.checkTreeSelect();
-      if (!node) return;
+      var nodedata = this.checkTreeSelectData();
+      if (!nodedata) return;
 
       var tpt = this.tpt;
       tpt.title = "修改模板类别";
       tpt.update = true;
       tpt.visible = true;
-      tpt.data = node.data;
+      tpt.data = nodedata;
     },
     // 保存或者更新数据
     saveOrUpdateTemplateType: function () {
@@ -249,10 +301,10 @@ var appInstince = new Vue({
     deleteTemplateType: function () {
       var ins = this;
       var tpt = this.tpt;
-      var node = this.checkTreeSelect();
-      if (!node) return;
-      var data = node.data;
-      if (node.children && node.children.length > 0) {
+      var nodedata = this.checkTreeSelectData();
+      if (!nodedata) return;
+      var data = nodedata;
+      if (nodedata.children && nodedata.children.length > 0) {
         $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
@@ -392,6 +444,8 @@ var appInstince = new Vue({
     handleCurrentChange(val) {
       this.tpager.current = val;
       this.loadTpTypeData();
+    },getResUrl(url) {
+      return serverConfig.getUrl(url);
     }
   }
 });

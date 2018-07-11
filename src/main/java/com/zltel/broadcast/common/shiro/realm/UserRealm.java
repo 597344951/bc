@@ -20,6 +20,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.springframework.context.annotation.Lazy;
 
 import com.zltel.broadcast.common.util.Constant;
 import com.zltel.broadcast.um.bean.SysMenu;
@@ -35,10 +36,10 @@ public class UserRealm extends AuthorizingRealm {
 
     public static final String REALM_NAME = "UserPassWordRealm";
 
-    @Resource
+    @Resource@Lazy
     private SysUserService sysUserService;
 
-    @Resource
+    @Resource@Lazy
     private SysMenuService sysMenuService;
 
 

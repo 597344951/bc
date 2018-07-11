@@ -1,13 +1,50 @@
 .context-menu {
     transform-origin: center bottom 0px;
     z-index: 2228;
-    padding:0px;
+    padding: 0px;
+    min-width: 120px;
 }
 
 .context-menu>li {
     padding: 0px 20px 0px 10px;
+    list-style: none;
+    line-height: 36px;
+    margin: 0;
+    font-size: 14px;
+    cursor: pointer;
+    outline: 0;
 }
 
 .context-menu>li .menuItem>i {
     margin-right: 5px;
+}
+
+.context-menu>li.danger {
+    color: #fff;
+    background-color: #f56c6c;
+}
+
+.context-menu>li.danger:hover {
+    background: #f78989;
+    color: #fff;
+}
+
+.context-menu>li.success {
+    color: #fff;
+    background-color: #67c23a;
+}
+
+.context-menu>li.success:hover {
+    background: #85ce61;
+    color: #fff;
+}
+
+.context-menu>li.warning {
+    color: #fff;
+    background-color: #e6a23c;
+}
+
+.context-menu>li.warning:hover {
+    background: #ebb563;
+    color: #fff;
 }

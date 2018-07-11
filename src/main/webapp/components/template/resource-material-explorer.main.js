@@ -34,7 +34,11 @@ let ResourceMaterialExplorer = {
             config: {
                 visiable: this.display,
                 fullscreen: false,
-                width: '70%'
+                width: '70%',
+                //提交后清除数据
+                clearOnSubmit: true,
+                type: this.type,
+                keyword:this.keyword
             }
         }
     },
@@ -46,29 +50,61 @@ let ResourceMaterialExplorer = {
         title: {
             type: String,
             default: '素材浏览'
+        },
+        //关键词
+        keyword: {
+            type: String,
+            default: ''
+        },
+        type:{
+            type: String,
+            default: ''
         }
     },
     mounted() {
         this.loadTreeData();
         this.loadTpTypeData(null, this);
-        console.debug('加载数据:',this.config.visiable);
+        console.debug('加载数据:', this.config.visiable);
+    },
+    computed: {
+        breadcrumbData() {
+            let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
+            return bp;
+        }
     },
     watch: {
+        type(val, oldVal){
+            this.config.type = val;
+        },
+        keyword(val, oldVal){
+            this.config.keyword = val;
+        },
         display(val, oldVal) {
             console.debug('外部visiable change:', val, oldVal);
             this.config.visiable = val;
         },
         "config.visiable": function (val, oldVal) {
             console.debug('内部visiable change:', val, oldVal);
-            if (!val){
-                this.$emit('close'); 
-                this.$emit('update:display',false);//触发更新
-            } 
-             
+            if (!val) {
+                this.$emit('close');
+                this.$emit('update:display', false); //触发更新
+            }else{
+                this.loadTreeData();
+                this.loadTpTypeData(null, this);
+                console.debug('加载数据:', this.config.visiable);
+            }
         }
     },
     methods: {
-
+        search(){
+            this.loadTpTypeData();
+        },
+        breadPathClick(item) {
+            let cc = this.currentCategory;
+            if (cc.albumId == item.albumId) return;
+            this.currentCategory = item;
+            this.loadTpTypeData(item);
+        },
         getResUrl(url) {
             return serverConfig.getUrl(url);
         },
@@ -90,7 +126,8 @@ let ResourceMaterialExplorer = {
                 data = {};
             }
             let url = '/resource/Material/' + this.tpager.current + '-' + this.tpager.size;
-            data.keyword = this.keyword;
+            data.keyword = this.config.keyword?this.config.keyword:null;
+            data.type = this.config.type?this.config.type:null;
             ajax_json(url, "post", data, function (result) {
                 ins.tps = ins.initData(result.data);
                 ins.tpager.total = result.pager.total;
@@ -103,7 +140,8 @@ let ResourceMaterialExplorer = {
         loadTreeData: function () {
             var ins = this;
             let data = {
-                keyword: this.keyword
+                keyword: this.config.keyword?this.config.keyword:null,
+                type:this.config.type?this.config.type:null
             };
             ajax("/MaterialAlbum/Album", "get", data, function (result) {
                 ins.tpt_data = result.data;
@@ -174,6 +212,9 @@ let ResourceMaterialExplorer = {
             console.debug('提交选择素材', this.choseResource);
             this.$emit('submit', this.choseResource);
             this.config.visiable = false;
+            if (clearOnSubmit) {
+                this.choseResource = [];
+            }
         }
     }
 }

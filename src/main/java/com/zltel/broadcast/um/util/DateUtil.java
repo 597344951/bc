@@ -68,4 +68,21 @@ public class DateUtil {
         todayEnd.set(Calendar.MILLISECOND, 999);    
         return todayEnd.getTime();  
     }
+    
+    /**
+     * 在基础日期上增加制定月份
+     * @param date
+     * @return
+     */
+    public static Date getMonthEnd(Date date) {
+    	Calendar today = Calendar.getInstance();    
+    	today.setTime(date);
+    	today.add(Calendar.MONTH, 1);
+    	today.add(Calendar.DAY_OF_MONTH, -1);
+    	today.set(Calendar.HOUR_OF_DAY, 23);    
+    	today.set(Calendar.MINUTE, 59);    
+    	today.set(Calendar.SECOND, 59);    
+    	today.set(Calendar.MILLISECOND, 999);    
+        return today.getTime();  
+    }
 }

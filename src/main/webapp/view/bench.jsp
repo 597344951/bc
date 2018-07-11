@@ -3,6 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <%-- <meta http-equiv="refresh" content="30" /> --%>
     <title>工作台</title>
     <%@include file="/include/base.jsp" %>
     <%@include file="/include/element-ui.jsp" %>
@@ -14,7 +15,7 @@
             margin-bottom: 30px;
         }
         .el-row {
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .el-tabs__item {
             font-weight: bold;
@@ -115,6 +116,52 @@
         .box-card{
             width: 100%;
         }
+        .list-left-box{
+            line-height: 23px;
+            text-align: center;
+            float: right;
+            width: 72px;
+        }
+        .icon-box{
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #eee;
+            margin: 0 auto;
+        }
+        .icon-activity {
+            background-image: url(../assets/icons/solution_icon4.png);
+            background-size: cover;
+        }
+        .icon-learn {
+            background-image: url(../assets/icons/culture.png);
+            background-size: cover;
+        }
+        .icon-experience {
+            background-image: url(../assets/icons/solution_icon7.png);
+            background-size: cover;
+        }
+        .icon-standardization {
+            background-image: url(../assets/icons/solution_icon3.png);
+            background-size: cover;
+        }
+        .data-box{
+            display: inline-block;
+            font-size: 12px;
+            text-align: center;
+        }
+        .data-box-total{
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .data-box-total1{
+            color:#00af47;
+        }
+        .data-box-total2{
+            color:#ff8300;
+        }
+
     </style>
 </head>
 <body>
@@ -122,7 +169,7 @@
     <el-row :gutter="10">
         <%--待办待审--%>
         <el-col :span="8">
-            <el-card class="box-card" shadow="never" :body-style="{height: '308px', padding: '15px'}">
+            <el-card class="box-card" shadow="never" :body-style="{height: '258px', padding: '15px'}">
                 <el-tabs v-model="pending.active">
                     <el-tab-pane name="handle">
                         <template slot="label">
@@ -141,7 +188,7 @@
         </el-col>
         <%--通告--%>
         <el-col :span="8">
-            <el-card class="box-card" shadow="never" :body-style="{height: '250px', padding: '15px'}">
+            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>通知告示</span>
                     <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
@@ -151,7 +198,7 @@
         </el-col>
 
         <el-col :span="8">
-            <el-card class="box-card" shadow="never" :body-style="{height: '250px', padding: '15px'}">
+            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>正在播放内容</span>
                     <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
@@ -162,7 +209,7 @@
     </el-row>
     <el-row :gutter="10">
         <el-col :span="16">
-            <el-card class="box-card" shadow="never" :body-style="{height: '250px', padding: '15px'}">
+            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>党员发展</span>
                     <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
@@ -171,28 +218,70 @@
                     <ve-pie :data="partyMembers.constitute" :settings="pieChartSettings"></ve-pie>
                 </div>
                 <div class="line-chart-3">
-                    <ve-line :data="partyMembers.trend" width="300px" height="250px"></ve-line>
+                    <%-- <ve-line :data="partyMembers.trend" width="300px" height="250px"></ve-line> --%>
+                    <ve-pie :data="partyMembers.dues" :settings="pieChartSettings"></ve-pie>
                 </div>
                 <div class="party-change-list">
-                    <a v-for="l in partyMembers.items" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+
+                   <!--  <a v-for="l in partyMembers.items" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a> -->
+                    <el-row :gutter="10">
+                        <el-col :span="12">
+                            <div class="list-left-box">
+                                <div class="icon-box icon-activity"></div>
+                                <div class="data-box">
+                                    <label>党建活动</label><br>
+                                    <label for=""><span class="data-box-total data-box-total1">10</span><span>次</span></label>
+                                </div>
+                            </div>
+                        </el-col>
+                        <el-col :span="12">
+                            <div class="list-left-box">
+                                <div class="icon-box icon-learn"></div>
+                                <div class="data-box">
+                                    <label>教育学习</label><br>
+                                    <label for=""><span class="data-box-total data-box-total2">50</span><span>次</span></label>
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="10">
+                        <el-col :span="12">
+                            <div class="list-left-box">
+                                <div class="icon-box icon-experience"></div>
+                                <div class="data-box">
+                                    <label>心得体会数</label><br>
+                                    <label for=""><span class="data-box-total data-box-total1">60</span>篇<span></span></span></label>
+                                </div>
+                            </div>
+                        </el-col>
+                        <el-col :span="12">
+                            <div class="list-left-box">
+                                <div class="icon-box icon-standardization"></div>
+                                <div class="data-box">
+                                    <label>思想汇报数</label><br>
+                                    <label for=""><span class="data-box-total data-box-total2">10</span><span>篇</span></label>
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
                 </div>
             </el-card>
         </el-col>
         <el-col :span="8">
-            <el-card class="box-card" shadow="never" :body-style="{height: '250px', padding: '15px'}">
+            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>便捷入口</span>
                 </div>
                 <div class="shortcuts">
-                    <div class="shortcut">
+                    <div class="shortcut" v-for="shortcut in shortcuts" @click="link(shortcut.target)">
                         <span class="el-icon-setting shortcut-icon"></span>
-                        <span class="shortcut-label">快速创建欢迎节目</span>
+                        <span class="shortcut-label">{{shortcut.title}}</span>
                     </div>
                 </div>
             </el-card>
         </el-col>
     </el-row>
-    <el-row :gutter="10">
+    <%-- <el-row :gutter="10">
         <el-col :span="12">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
@@ -226,14 +315,14 @@
                 </div>
             </el-card>
         </el-col>
-    </el-row>
+    </el-row> --%>
 </div>
 <script>
     const app = new Vue({
         el: '#app',
         data: {
             pieChartSettings: {
-                roseType: 'radius',
+                /* roseType: 'radius', */
                 radius: 70,
                 offsetY: 120
             },
@@ -267,6 +356,13 @@
                         {'日期': '5月', '党员': 20, '预备党员': 15, '积极份子': 30},
                     ]
                 },
+                dues: {
+                    columns: ['类型', '比列'],
+                    rows: [
+                        {'类型': '已缴纳', '比列': 90},
+                        {'类型': '未缴纳', '比列': 10}
+                    ]
+                },
                 items: [
                     { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
                     { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
@@ -295,12 +391,31 @@
                     { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
                     { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' }
                 ]
-            }
+            },
+            shortcuts: [
+                {
+                    title: '制作节目',
+                    target: {menuId: 28, name: '内容制作', url: '/publish/new'}
+                },
+                {
+                    title: '困难党员帮扶',
+                    target: {menuId: 111, name: '活动策划', url: '/view/calendar/index.jsp'}
+                },
+                {
+                    title: '素材提交',
+                    target: {menuId: 125, name: '素材管理', url: '/view/template/material.jsp'}
+                }
+            ]
 
         },
         methods: {
             link(target) {
-                parent.addTab(target)
+                if(parent.addTab) {
+                    parent.addTab(target)
+                } else {
+                    window.location.href = target.url
+                }
+                
             }
         }
     })
@@ -383,6 +498,10 @@
             }
         });
     }
+
+    setInterval(() => {
+        init()
+    }, 30*1000)
 </script>
 </body>
 </html>

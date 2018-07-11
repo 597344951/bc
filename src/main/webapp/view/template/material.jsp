@@ -28,12 +28,13 @@
                             <el-button type="primary" icon="el-icon-edit" @click="updateTemplateType" size="small">修改分类</el-button>
                             <el-button type="danger" icon="el-icon-delete" @click="deleteTemplateType" size="small">删除分类</el-button>
                             <el-button type="success" icon="el-icon-plus" @click="addTemplate" size="small">上传素材</el-button>
+                            <el-button type="success" icon="el-icon-upload" @click="importResources" size="small">导入素材</el-button>
                         </div>
                     </div>
-                    <div style="text-align: left;">
+                    <div style="text-align: left;margin-left: 30px;">
                         <el-form :inline="true" class="demo-form-inline">
-                            <el-form-item label="搜索模板">
-                                <el-input placeholder="搜索模板" v-model="keyword"></el-input>
+                            <el-form-item label="搜索素材">
+                                <el-input placeholder="搜索素材" v-model="keyword"></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="searchTemplate">搜索</el-button>
@@ -45,18 +46,18 @@
             <el-container>
                 <el-aside width="300px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree" @current-change="currentChange">
+                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu">
                         <span class="custom-tree-node" slot-scope="{ node, data }">
                             <span class="left-label-group">
-                                <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i> 
+                                <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
                                 {{ node.label }}</span>
                             <span class="right-btn-group" v-show="node.showtoolbar">
                                 <!---->
-                                    <el-button-group>
-                                        <el-button type="primary" size="mini" icon="el-icon-edit"></el-button>
-                                        <el-button type="primary" size="mini" icon="el-icon-share"></el-button>
-                                        <el-button type="primary" size="mini" icon="el-icon-delete"></el-button>
-                                    </el-button-group>
+                                <el-button-group>
+                                    <el-button type="primary" size="mini" icon="el-icon-edit"></el-button>
+                                    <el-button type="primary" size="mini" icon="el-icon-share"></el-button>
+                                    <el-button type="primary" size="mini" icon="el-icon-delete"></el-button>
+                                </el-button-group>
                             </span>
                         </span>
                     </el-tree>
@@ -66,7 +67,12 @@
                         <el-row>
                             <el-col :span="10">
                                 <!--查询-->
-                                <span style="font-size:18px;font-weight:bolder;">{{currentCategory.name}}</span>
+                                <el-breadcrumb separator="/" style="margin-top: 10px;">
+                                        <el-breadcrumb-item>所有类别</el-breadcrumb-item>
+                                        <template v-for="item in breadcrumbData">
+                                            <el-breadcrumb-item ><a @click="breadPathClick(item)">{{item.name}}</a></el-breadcrumb-item>
+                                        </template>
+                                </el-breadcrumb>
                             </el-col>
                             <el-col :span="14" style="text-align: right;">
                                 <!--分页-->
@@ -94,13 +100,11 @@
                                     </template>
                                     <div class="control ">
                                         <span class="title">{{tp.name}}</span>
-                                        <transition name="el-fade-in">
+                                        <el-collapse-transition name="el-fade-in">
                                             <div v-show="tp.showtoolbar" class="bottom clearfix">
                                                 <p class="descript">{{tp.description}}</p>
                                                 <el-button-group>
-                                                    <template v-if="tp.type == 'text'">
-                                                        <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
-                                                    </template>
+                                                    <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
                                                     <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
                                                     <el-popover placement="top" width="160" v-model="tp.cfv">
                                                         <p>是否删除这个素材?</p>
@@ -112,7 +116,7 @@
                                                     </el-popover>
                                                 </el-button-group>
                                             </div>
-                                        </transition>
+                                        </el-collapse-transition>
                                     </div>
                                 </div>
                             </el-card>
@@ -206,7 +210,59 @@
             </div>
         </el-dialog>
         <!--模板类别 管理对话框-->
+        <!--导入资源-->
+        <el-dialog :title="importResource.title" :visible.sync="importResource.visiable" >
+            <el-form ref="importResForm" :model="importResource.data" :rules="rules" label-width="120px">
+                <el-form-item label="名称来源">
+                    <el-radio v-model="importResource.nameType" label="fileName" @change="importResource.data.name=''">文件名</el-radio>
+                    <el-radio v-model="importResource.nameType" label="input"  @change="importResource.data.name=''">用户输入</el-radio>
+                </el-form-item>
+                <el-form-item label="素材标题" prop="name" v-if="importResource.nameType == 'input'">
+                    <el-input v-model="importResource.data.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="素材描述" >
+                    <el-input type="textarea" :rows="3" v-model="importResource.data.description" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="所属分类" prop="albumIds">
+                    <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
+                </el-form-item>
+                <el-form-item label="选取文件">
+                    <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" 
+                    :on-preview="handlePreview"
+                    :on-success="handleSuccess"
+                        :on-remove="handleRemove"  :auto-upload="false" :multiple="true">
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="danger" @click="clearChose">清空文件</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>
+                        <el-checkbox style="margin-left: 10px;" v-model="importResource.commitOnUpload">上传完成后自动提交</el-checkbox>
+                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                    </el-upload>
+                </el-form-item>
+            </el-form>
+            <div class="dialog-footer" slot="footer">
+                <el-button @click="importResource.visiable = false">取 消</el-button>
+                <el-button type="primary" @click="saveResources">确 定</el-button>
+            </div>
+        </el-dialog>
+        <!--导入资源-->
 
+        <!--Tree 右键菜单-->
+        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
+        <!--Tree 右键菜单-->
+        <el-dialog class="resourceView" :title="resourceView.title" :visible.sync="resourceView.visible" >
+            <template v-if="resourceView.type == 'video'">
+                <video :src="getResUrl(resourceView.url)" controls="controls" class="videoView"></video>
+            </template>
+            <template v-if="resourceView.type == 'audio'">
+                <audio :src="getResUrl(resourceView.url)" controls="controls" class="audioView">
+                    Your browser does not support the audio element.
+                </audio>
+            </template>
+            <template v-if="resourceView.type == 'image'">
+                <img :src="getResUrl(resourceView.url) " class="imageView">
+            </template>
+            
+        </el-dialog>
     </div>
 </body>
 

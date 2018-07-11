@@ -3,7 +3,16 @@
  */
 
 let config = {
+
     themeName: 'customed', //主题名
+    label:{
+    	color:"#fff",
+    },
+  
+    barWidth:'40',
+    textStyle: {
+        color: '#fff',
+    },
     //工具箱配置
     toolbox: {
         show: true,
@@ -24,7 +33,10 @@ let config = {
     legend: {
         x: 'center', // 'center' | 'left' | {number},
         y: 'bottom', // 'center' | 'bottom' | {number}
-        test: ''
+        test: '',
+        	textStyle:{
+        		color:'#fff',
+        },
     }
 }
 export default config;

@@ -1,7 +1,7 @@
 <ul @mouseleave="mouseleave" @mouseenter="mouseenter" v-show="visiable" :style="{top:position.y+'px',left:position.x+'px'}" class="el-dropdown-menu el-popper context-menu">
     <template v-for="item in data">
         <!--分隔符-->
-        <li class="el-dropdown-menu__item" :class="item.divided?'el-dropdown-menu__item--divided':''">
+        <li class="" :class="getTypeClass(item.type)" >
             <div class="menuItem" @click="menuItemClick(item)">
                 <i :class="item.icon"></i>
                 <span>{{item.label}}</span>

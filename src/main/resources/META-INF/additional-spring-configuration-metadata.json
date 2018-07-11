@@ -80,8 +80,8 @@
     "description": "A description for 'sola.url'"
   },
   {
-    "name": "shiro.config.account_max_session",
-    "type": "java.lang.String",
-    "description": "A description for 'shiro.config.account_max_session'"
+    "name": "shiro.config.accountMaxSession",
+    "type": "java.lang.Integer",
+    "description": "A description for 'shiro.config.accountMaxSession'"
   }
 ]}

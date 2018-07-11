@@ -40,17 +40,6 @@ public class ResourceMaterial {
     /** 关键词 **/
     private String keyword;
 
-    private String viewUrl;
-
-
-    public String getViewUrl() {
-        if (TYPE_PICTURE.equals(type)) {
-            viewUrl = "/material/image/" + this.materialId;
-        } else {
-            viewUrl = "/material/download/" + this.materialId;
-        }
-        return this.viewUrl;
-    }
 
     public ResourceMaterial() {}
 
@@ -178,11 +167,6 @@ public class ResourceMaterial {
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
-
-    public void setViewUrl(String viewUrl) {
-        this.viewUrl = viewUrl;
-    }
-
     public String getContent() {
         return content;
     }

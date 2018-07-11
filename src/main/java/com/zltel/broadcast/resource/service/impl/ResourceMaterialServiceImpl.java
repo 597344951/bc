@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.support.BaseDao;
@@ -32,6 +33,13 @@ public class ResourceMaterialServiceImpl extends BaseDaoImpl<ResourceMaterial> i
     @Override
     public int delete(ResourceMaterial m) {
         return this.mapper.delete(m);
+    }
+
+    @Override
+    @Transactional
+    public void inserts(List<ResourceMaterial> records) {
+        
+          this.mapper.inserts(records);
     }
 
 

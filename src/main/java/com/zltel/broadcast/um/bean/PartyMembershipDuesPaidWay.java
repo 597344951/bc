@@ -5,7 +5,7 @@ public class PartyMembershipDuesPaidWay {
 
     private String name;
 
-    private String describe;
+    private String describes;
 
     public Integer getId() {
         return id;
@@ -23,11 +23,11 @@ public class PartyMembershipDuesPaidWay {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getdescribes() {
+        return describes;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe == null ? null : describe.trim();
+    public void setdescribes(String describes) {
+        this.describes = describes == null ? null : describes.trim();
     }
 }

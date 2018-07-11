@@ -25,6 +25,7 @@
     max-width: 258px;
     border: solid 1px #eee;
     margin: 0 auto;
+    position: relative;
 }
 
 .termialDis-table>td>.screenshoot>img,
@@ -61,6 +62,7 @@
     border: solid 1px #eee;
     text-align: center;
     margin: auto 0;
+    
 }
 
 .terminal-table-dis>tbody>tr>td>.screenshoot-h>.image {
@@ -84,10 +86,13 @@
 }
 
 .termialDis>div>div>.ratio {
-    position: relative;
-    top: -19px;
-    background-color: #ddd;
-    background: linear-gradient(white, #ccc);
+    position: absolute;
+    bottom:0px;
+    background: rgba(0,0,0,.4);
+    color: #fff;
+    font-size: 12px;
+    width: 100%;
+    padding: 5px 0;
 }
 
 .termialDis>div>.control {
@@ -183,7 +188,7 @@
 .disInfo>tbody>tr>td:nth-child(1),
 .terminal-disInfo-big>tbody>tr>td:nth-child(1) {
     max-width: 100px;
-    width: 30%;
+    width: 40%;
 }
 
 .disInfo>tbody>tr>td:nth-child(2) {
@@ -220,3 +225,42 @@
     overflow: hidden;
     margin: 0;
 }
+
+.el-card .el-icon-star-on{
+    color: #e81313;;
+    font-weight: bold;
+}
+.el-card .el-icon-time{
+    color: darkseagreen;
+    font-weight: bold;
+}
+.el-card .el-icon-document{
+    color: #fd863e;
+    font-weight: bold;
+}
+.el-card .el-icon-mobile-phone{
+    color: #8873d8;
+    font-weight: bold;
+}
+.el-card .el-icon-location-outline{
+    color: #8ed011;
+    font-weight: bold;
+}
+.el-card .el-icon-tickets{
+    color: darkseagreen;
+    font-weight: bold;
+}
+.el-card .el-icon-news{
+    color: orange;
+    font-weight: bold;
+}
+.termialDis-offline .el-icon-star-on{
+    color:#666;
+}
+.termialDis-offline .el-icon-document,
+.termialDis-offline .el-icon-mobile-phone,
+.termialDis-offline .el-icon-location-outline{
+    color:#666;
+}
+
+

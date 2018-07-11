@@ -41,4 +41,36 @@ public class PartyMembershipDuesManageController {
 			return R.error().setMsg("查询党费缴纳记录失败");
 		}
 	}
+	
+	/**
+	 * 查询党费缴纳记录里的党组织
+	 * @param conditionMaps 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgInfoOfPMDM", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"party:pmdm:query"})
+	@ApiOperation(value = "查询党费缴纳记录里的党组织")
+	public R queryOrgInfoOfPMDM(@RequestParam Map<String, Object> conditionMaps, int pageNum, int pageSize) {
+		try {
+			return partyMembershipDuesManageService.queryOrgInfoOfPMDM(conditionMaps, pageNum, pageSize);
+		} catch (Exception e) {
+			return R.error().setMsg("查询党费缴纳记录里的党组织失败");
+		}
+	}
+	
+	/**
+	 * 查询此组织的缴费统计
+	 * @param conditionMaps 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryPMDMChartForOrgInfo", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"party:pmdm:query"})
+	@ApiOperation(value = "查询此组织的缴费统计")
+	public R queryPMDMChartForOrgInfo(@RequestParam Map<String, Object> conditionMaps) {
+		try {
+			return partyMembershipDuesManageService.queryPMDMChartForOrgInfo(conditionMaps);
+		} catch (Exception e) {
+			return R.error().setMsg("查询此组织的缴费统计失败");
+		}
+	}
 }

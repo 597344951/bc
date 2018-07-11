@@ -175,3 +175,46 @@ function openwindow(url, name, iWidth, iHeight) {
 	var iLeft = (window.screen.width - 10 - iWidth) / 2; //获得窗口的水平位置;  
 	window.open(url, name, 'height=' + iHeight + ',,innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',toolbar=no,menubar=no,scrollbars=auto,resizeable=no,location=no,status=no');
 }
+
+function breadPath(target, datas, getChild, getParentId, getSelfId,getSelf) {
+	// 深度遍历路径
+	function pathScan(ay, target, datas) {
+		if(getParentId(target) == 0){
+			ay.push(target);
+			return ay;
+		}
+		
+		var pid = getSelfId(target);
+		for (var i = 0; i < datas.length; i++) {
+			var v = datas[i];
+			let chi = getChild(v);
+			if (chi) {
+				pathScan(ay, target, chi);
+				if (ay.length > 0) {
+					var cn = ay[ay.length - 1];
+					let self = getSelf(v);
+					if (getSelfId(self) == getParentId(cn)) {
+						ay.push(self);
+					}
+				}
+			} else {
+				if (ay.length == 0) {
+					let self = getSelf(v);
+					// 找到了位置
+					if (getSelfId(self) == pid) {
+						ay.push(self);
+					}
+				} else {
+					var cn = ay[ay.length - 1];
+					let self = getSelf(v);
+					if (getSelfId(self) == getParentId(cn)) {
+						ay.push(self);
+					}
+				}
+			}
+		}
+	}
+	var ay = [];
+	pathScan(ay, target, datas);
+	return ay.reverse();
+}

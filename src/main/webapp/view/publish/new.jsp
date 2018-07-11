@@ -177,9 +177,10 @@
 			opacity: 1;
 		}
 		.material-del i {
-			line-height: 150px;
-			font-size: 18px;
+		    margin: 60px auto;
+			font-size: 20px;
 			cursor: pointer;
+			color:#fff;
 		}
 
 	</style>
@@ -532,7 +533,7 @@
 				programId: <%=programId%>,
 				reAdd: <%=reAdd%>,
 				loading: true,
-				processSteps: ['选择模板', '编辑内容', '选择发布终端', '编辑审核人', '创建成功'],
+				processSteps: ['选择模板', '编辑内容', '选择发布终端', '编辑审核人', '创建提交'],
 				startStep: <%=startStep%>,
 				curStep: 0,
 			    step: <%=startStep%>,
@@ -780,7 +781,7 @@
 		//编辑器
         var ue = UE.getEditor('templateText',{
             //serverUrl: '/ueditor/controller.jsp',
-			serverUrl:'http://192.168.1.8:3000/ueditor',
+			serverUrl: serverConfig.getUrl('/ueditor'),
             allowDivTransToP: false,
             wordCount: false,
             elementPathEnabled: false

@@ -16,6 +16,7 @@
 	padding-left: 20px;
 	box-sizing:border-box;
 	transition: transform 0.2s,box-shadow 0.3s;
+	border-radius: 6px;
 }
 .card-item1{
 	background: url(../img/4.png) no-repeat;
@@ -29,6 +30,20 @@
 	background: url(../img/6.png) no-repeat;
 	background-size: cover;
 }
+.card-item4{
+	background: url(../img/7.png) no-repeat;
+	background-size: cover;
+}
+.card-item-program{
+    width: 326px!important;
+    height: 368px!important;
+    background: #f6f6f6;
+    padding: 0 10px;
+}
+.el-card.is-always-shadow{
+	/*box-shadow: none;*/
+}
+
 /**鼠标交互**/
 
 .card-item:hover {
@@ -74,13 +89,19 @@
 	height: 100%;
 	width: auto;
 }
+.card-item  .cover-image-container{
+	position: relative;
+}
 
 .card-item .cover-image-container .descript {
-	position: relative;
-	top: -19px;
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	padding: 5px 0;
 	background-color: #ddd;
-	background: linear-gradient(white, #ccc);
-	color: #606266;
+	background: rgba(0,0,0,.4);
+	color: #fff;
+	font-size: 12px;
 }
 
 /**主题内容**/
@@ -178,35 +199,75 @@
 	text-align: center; margin-top: 30px;
 }
 /*icon颜色*/
-.el-icon-star-on{
+.card-item .el-icon-star-on{
 	color:#e81313;
 }
-.el-icon-setting{
+.card-item .el-icon-setting{
     color: cornflowerblue;
 }
-.el-icon-message{
+.card-item .el-icon-message{
 	color: brown;
 }
-.el-icon-time{
+.card-item .el-icon-time{
     color: darkseagreen;
 }
-.el-icon-news{
+.card-item .el-icon-news{
     color: orange;
 }
-.el-icon-date.date-start{
+.card-item .el-icon-date.date-start{
 	color:#17bdda;
 }
-.el-icon-date.date-finish{
+.card-item .el-icon-date.date-finish{
 	color:#c70000;
 }
-.el-icon-upload{
+.card-item .el-icon-upload{
 	color: #00abff;
 }
-.el-tag--small{
+.card-item .el-tag--small{
 	font-weight: normal!important;
     color: #7b7b7b;
     background: #fff;
 }
-.el-button--text:focus, .el-button--text:hover{
+.card-item .el-button--text:focus, .card-item .el-button--text:hover{
     font-weight: bold;
+}
+.card-item .el-icon-warning{
+	color:#a181ff;
+}
+.card-item .el-icon-edit-outline{
+	color:#5ac781;
+}
+.card-item .el-icon-document{
+	color:#fd863e;
+}
+.card-item .el-icon-tickets{
+	color:#9cb1ff;
+}
+.card-item .el-dropdown-link{
+	color:#00d439
+}
+.card-item .el-dropdown-link:hover{
+	font-weight: bold;
+    color: #809aff;
+}
+.card-item .el-icon-date{
+	color:#ff9266;
+}
+.el-step.is-horizontal .el-step__main .el-step__title{
+	font-size: 12px;
+}
+.el-popover{
+	width: 250px;
+}
+/*right-start*/
+.right-start{
+	background-color: rgba(0,0,0,.5);
+	color:#fff;
+}
+.right-start-icon{
+	font-weight: bold;
+	font-size: 13px;
+}
+.right-start-icon i{
+	font-weight: bold;
 }
