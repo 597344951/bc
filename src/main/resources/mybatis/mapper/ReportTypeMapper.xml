@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.zltel.broadcast.report.dao.ReportTypeMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.report.bean.ReportType">
+		<id column="type_id" jdbcType="INTEGER" property="typeId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="orgid" jdbcType="INTEGER" property="orgid" />
+		<result column="parent" jdbcType="INTEGER" property="parent" />
+		<result column="order_num" jdbcType="INTEGER"
+			property="orderNum" />
+		<result column="builtin" jdbcType="BIT" property="builtin" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		type_id, name, remark, orgid, parent, order_num, builtin
+	</sql>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from report_type
+		where type_id = #{typeId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from report_type
+		where type_id =
+		#{typeId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.zltel.broadcast.report.bean.ReportType">
+		insert into report_type (type_id, name, remark,
+		orgid,
+		parent, order_num,
+		builtin)
+		values (#{typeId,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{orgid,jdbcType=INTEGER}, #{parent,jdbcType=INTEGER},
+		#{orderNum,jdbcType=INTEGER},
+		#{builtin,jdbcType=BIT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.report.bean.ReportType">
+		insert into report_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="typeId != null">
+				type_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="orgid != null">
+				orgid,
+			</if>
+			<if test="parent != null">
+				parent,
+			</if>
+			<if test="orderNum != null">
+				order_num,
+			</if>
+			<if test="builtin != null">
+				builtin,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="orgid != null">
+				#{orgid,jdbcType=INTEGER},
+			</if>
+			<if test="parent != null">
+				#{parent,jdbcType=INTEGER},
+			</if>
+			<if test="orderNum != null">
+				#{orderNum,jdbcType=INTEGER},
+			</if>
+			<if test="builtin != null">
+				#{builtin,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.report.bean.ReportType">
+		update report_type
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="orgid != null">
+				orgid = #{orgid,jdbcType=INTEGER},
+			</if>
+			<if test="parent != null">
+				parent = #{parent,jdbcType=INTEGER},
+			</if>
+			<if test="orderNum != null">
+				order_num = #{orderNum,jdbcType=INTEGER},
+			</if>
+			<if test="builtin != null">
+				builtin = #{builtin,jdbcType=BIT},
+			</if>
+		</set>
+		where type_id = #{typeId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.report.bean.ReportType">
+		update report_type
+		set name = #{name,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		orgid = #{orgid,jdbcType=INTEGER},
+		parent = #{parent,jdbcType=INTEGER},
+		order_num =
+		#{orderNum,jdbcType=INTEGER},
+		builtin = #{builtin,jdbcType=BIT}
+		where
+		type_id = #{typeId,jdbcType=INTEGER}
+	</update>
+
+	<select id="queryForList" resultMap="BaseResultMap">
+		select * from report_type
+	</select>
+
+	<select id="query"
+		parameterType="com.zltel.broadcast.report.bean.ReportType"
+		resultMap="BaseResultMap">
+		select * from report_type
+		<include refid="QUERY_WHERE" />
+	</select>
+
+	<select id="queryReportTemplateCount"
+		parameterType="com.zltel.broadcast.report.bean.ReportType"
+		resultMap="BaseResultMap">
+		select ma.*
+		, CASE WHEN COUNT IS NULL THEN 0 ELSE COUNT END count
+		from
+		report_type ma
+		LEFT JOIN(
+		select m.type_id,count(1) COUNT from
+		report_template m
+		where (m.orgid=#{orgid} OR m.orgid = 0)
+		<if test="keyword != null and keyword !=''">
+			AND m.title like concat('%',#{keyword},'%')
+		</if>
+		group by m.type_id
+
+		) t ON ma.type_id = t.type_id
+		<include refid="QUERY_WHERE" />
+	</select>
+	<sql id="QUERY_WHERE">
+		<where>
+			1=1
+			<include refid="BASE_WHERE_PARAMS" />
+			<!-- 查询内置 -->
+			OR orgid = 0
+		</where>
+	</sql>
+
+	<!-- 查询条件 ReportType -->
+	<sql id="BASE_WHERE_PARAMS">
+		<if test="parent != null">
+			AND parent=#{parent}
+		</if>
+		<if test="builtin != null">
+			AND builtin=#{builtin}
+		</if>
+		<if test="name != null">
+			AND name=#{name}
+		</if>
+		<if test="count != null">
+			AND count=#{count}
+		</if>
+		<if test="orderNum != null">
+			AND order_num=#{orderNum}
+		</if>
+		<if test="typeId != null">
+			AND type_id=#{typeId}
+		</if>
+		<if test="remark != null">
+			AND remark=#{remark}
+		</if>
+		<if test="orgid != null">
+			AND orgid=#{orgid}
+		</if>
+	</sql>
+
+
+</mapper>

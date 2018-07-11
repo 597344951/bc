@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.zltel.broadcast.report.dao.ReportTemplateMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.report.bean.ReportTemplate">
+		<id column="tp_id" jdbcType="INTEGER" property="tpId" />
+		<result column="type_id" jdbcType="INTEGER" property="typeId" />
+		<result column="orgid" jdbcType="INTEGER" property="orgid" />
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="title" jdbcType="VARCHAR" property="title" />
+		<result column="createtime" jdbcType="TIMESTAMP"
+			property="createtime" />
+		<result column="preview_picture" jdbcType="VARCHAR"
+			property="previewPicture" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.report.bean.ReportTemplate">
+		<result column="content" jdbcType="LONGVARCHAR"
+			property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		tp_id, type_id, orgid, uid, title, createtime,
+		preview_picture
+	</sql>
+	<sql id="Blob_Column_List">
+		content
+	</sql>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from report_template
+		where tp_id = #{tpId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from report_template
+		where tp_id =
+		#{tpId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
+		insert into report_template (tp_id, type_id, orgid,
+		uid,
+		title, createtime,
+		preview_picture, content)
+		values
+		(#{tpId,jdbcType=INTEGER}, #{typeId,jdbcType=INTEGER},
+		#{orgid,jdbcType=INTEGER},
+		#{uid,jdbcType=INTEGER},
+		#{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
+		#{previewPicture,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
+		insert into report_template
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="tpId != null">
+				tp_id,
+			</if>
+			<if test="typeId != null">
+				type_id,
+			</if>
+			<if test="orgid != null">
+				orgid,
+			</if>
+			<if test="uid != null">
+				uid,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+			<if test="previewPicture != null">
+				preview_picture,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tpId != null">
+				#{tpId,jdbcType=INTEGER},
+			</if>
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="orgid != null">
+				#{orgid,jdbcType=INTEGER},
+			</if>
+			<if test="uid != null">
+				#{uid,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="previewPicture != null">
+				#{previewPicture,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
+		update report_template
+		<set>
+			<if test="typeId != null">
+				type_id = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="orgid != null">
+				orgid = #{orgid,jdbcType=INTEGER},
+			</if>
+			<if test="uid != null">
+				uid = #{uid,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				createtime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="previewPicture != null">
+				preview_picture = #{previewPicture,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where tp_id = #{tpId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
+		update report_template
+		set type_id =
+		#{typeId,jdbcType=INTEGER},
+		orgid = #{orgid,jdbcType=INTEGER},
+		uid =
+		#{uid,jdbcType=INTEGER},
+		title = #{title,jdbcType=VARCHAR},
+		createtime =
+		#{createtime,jdbcType=TIMESTAMP},
+		preview_picture =
+		#{previewPicture,jdbcType=VARCHAR},
+		content =
+		#{content,jdbcType=LONGVARCHAR}
+		where tp_id = #{tpId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
+		update report_template
+		set type_id =
+		#{typeId,jdbcType=INTEGER},
+		orgid = #{orgid,jdbcType=INTEGER},
+		uid =
+		#{uid,jdbcType=INTEGER},
+		title = #{title,jdbcType=VARCHAR},
+		createtime =
+		#{createtime,jdbcType=TIMESTAMP},
+		preview_picture =
+		#{previewPicture,jdbcType=VARCHAR}
+		where tp_id =
+		#{tpId,jdbcType=INTEGER}
+	</update>
+
+	<select id="queryForList"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate"
+		resultMap="ResultMapWithBLOBs">
+		select * from report_template
+	</select>
+
+	<!-- 查询 ReportTemplate -->
+	<select id="query"
+		parameterType="com.zltel.broadcast.report.bean.ReportTemplate"
+		resultMap="ResultMapWithBLOBs">
+		select * from report_template
+		<include refid="ReportTemplateWhere" />
+	</select>
+	<delete id="delete" parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
+		delete from report_template
+		<include refid="ReportTemplateWhere" />
+	</delete>
+	<!-- 查询条件 ReportTemplate -->
+	<sql id="ReportTemplateWhere">
+		<where>
+			<if test="tpId != null">
+				AND tp_id=#{tpId}
+			</if>
+			<if test="uid != null">
+				AND uid=#{uid}
+			</if>
+			<if test="createtime != null">
+				AND createtime=#{createtime}
+			</if>
+			<if test="previewPicture != null">
+				AND preview_picture=#{previewPicture}
+			</if>
+			<if test="typeId != null">
+				AND type_id=#{typeId}
+			</if>
+			<if test="title != null">
+				AND title=#{title}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND title like concat('%',#{keyword},'%')
+			</if>
+			<if test="orgid != null">
+				AND orgid=#{orgid}
+			</if>
+			<if test="content != null">
+				AND content=#{content}
+			</if>
+		</where>
+	</sql>
+</mapper>

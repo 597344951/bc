@@ -231,3 +231,11 @@
     max-width:100%;
     height:auto;
 }
+
+.templateView .el-dialog__body{
+    padding:30px 20px;
+    background-color: #fafafa;
+}
+.submitReport .el-dialog__body{
+    padding:10px 20px 30px 20px;
+}
