@@ -9,8 +9,8 @@ public class ResourceMaterial {
     public static final String TYPE_PICTURE = "image";
     public static final String TYPE_AUDIO = "audio";
     public static final String TYPE_TEXT = "text";
-    
-    
+
+
     private Integer materialId;
 
     private String name;
@@ -24,7 +24,7 @@ public class ResourceMaterial {
     private String coverUrl;
 
     private String size;
-
+    private String content;
     private String contentType;
 
     private String timeLength;
@@ -36,10 +36,42 @@ public class ResourceMaterial {
     private Integer albumId;
 
     private Date addDate;
-    
+
+    private Boolean verify;
+    private Date verifyDate;
+
     /** 关键词 **/
     private String keyword;
 
+    /** 未审核 **/
+    private Boolean noVerify;
+
+    /** 日志展示信息 **/
+    /** 用户名 **/
+    private String userName;
+    /** 组织名 **/
+    private String orgName;
+    /** 专辑名 **/
+    private String albumName;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("素材信息 [");
+        builder.append("素材名称 ：").append(name).append(", ");
+        builder.append("类型 ：").append(type).append(", ");
+        builder.append("上传用户 ：").append(userName).append(", ");
+        builder.append("上传组织 ：").append(orgName).append(", ");
+        builder.append("所属专辑 ：").append(albumName).append(", ");
+
+        builder.append("]").append("\n");
+        return builder.toString();
+    }
 
     public ResourceMaterial() {}
 
@@ -54,7 +86,7 @@ public class ResourceMaterial {
         this.userId = user.getUserId();
         this.orgId = user.getOrgId();
     }
-    private String content;
+
 
     public Integer getMaterialId() {
         return materialId;
@@ -167,6 +199,7 @@ public class ResourceMaterial {
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
+
     public String getContent() {
         return content;
     }
@@ -174,4 +207,73 @@ public class ResourceMaterial {
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
     }
+
+
+
+    public Boolean getVerify() {
+        return verify;
+    }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
+    }
+
+    public Date getVerifyDate() {
+        return verifyDate;
+    }
+
+    public void setVerifyDate(Date verifyDate) {
+        this.verifyDate = verifyDate;
+    }
+
+    public Boolean getNoVerify() {
+        return noVerify;
+    }
+
+    public void setNoVerify(Boolean noVerify) {
+        this.noVerify = noVerify;
+    }
+
+    /**
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * @return the orgName
+     */
+    public String getOrgName() {
+        return orgName;
+    }
+
+    /**
+     * @param orgName the orgName to set
+     */
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    /**
+     * @return the albumName
+     */
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    /**
+     * @param albumName the albumName to set
+     */
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
+    }
+
 }

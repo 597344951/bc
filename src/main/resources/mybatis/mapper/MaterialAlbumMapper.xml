@@ -162,9 +162,21 @@
 		from resource_material_album ma
 		LEFT JOIN(
 			select m.album_id,count(1) COUNT from resource_material m 
-			where m.org_id=#{orgid} and m.user_id = #{uid} 
+			where 1=1
+			<if test="orgid != null and orgid !=''">
+				and m.org_id=#{orgid} 
+			</if>
+			<if test="uid != null and uid !=''">
+				and m.user_id = #{uid} 
+			</if>
 			<if test="keyword != null and keyword !=''">
 				AND m.name like concat('%',#{keyword},'%')
+			</if>
+			<if test="verify != null">
+				AND m.verify =#{verify} 
+			</if>
+			<if test="noVerify != null">
+			    AND isNull(m.verify)
 			</if>
 			group by m.album_id
 		 

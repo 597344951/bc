@@ -22,7 +22,8 @@ function EVAL(str) {
  *            cookie名
  * @param CKvalue
  *            值
- * @param duration 1:一天
+ * @param duration
+ *            1:一天
  * @param CKpath
  * @param CKdomain
  */
@@ -132,33 +133,36 @@ function exitFullScreen(_ins) {
 }
 /**
  * 指定时间据当前过去了多长时间
- * @param {*} dt 
+ * 
+ * @param {*}
+ *            dt
  */
 function timeAgo(dt) {
 	var n = new Date().getTime();
 	var f = n - dt.getTime();
-	var bs = (f >= 0 ? '前' : '后'); //判断时间点是在当前时间的 之前 还是 之后
+	var bs = (f >= 0 ? '前' : '后'); // 判断时间点是在当前时间的 之前 还是 之后
 	f = Math.abs(f);
 	// return f;
 	if (f < 6e4) {
 		return '刚刚'
-	} //小于60秒,刚刚
+	} // 小于60秒,刚刚
 	if (f < 36e5) {
 		return parseInt(f / 6e4) + '分钟' + bs
-	} //小于1小时,按分钟
+	} // 小于1小时,按分钟
 	if (f < 864e5) {
 		return parseInt(f / 36e5) + '小时' + bs
-	} //小于1天按小时
+	} // 小于1天按小时
 	if (f < 2592e6) {
 		return parseInt(f / 864e5) + '天' + bs
-	} //小于1个月(30天),按天数
+	} // 小于1个月(30天),按天数
 	if (f < 31536e6) {
 		return parseInt(f / 2592e6) + '个月' + bs
-	} //小于1年(365天),按月数
-	return parseInt(f / 31536e6) + '年' + bs; //大于365天,按年算
+	} // 小于1年(365天),按月数
+	return parseInt(f / 31536e6) + '年' + bs; // 大于365天,按年算
 }
 /**
  * 检测 顶层url是否和当前页面一致
+ * 
  * @returns
  */
 function checkLocationSame() {
@@ -166,13 +170,13 @@ function checkLocationSame() {
 }
 
 function openwindow(url, name, iWidth, iHeight) {
-	// url 转向网页的地址  
-	// name 网页名称，可为空  
-	// iWidth 弹出窗口的宽度  
-	// iHeight 弹出窗口的高度  
-	//window.screen.height获得屏幕的高，window.screen.width获得屏幕的宽  
-	var iTop = (window.screen.height - 30 - iHeight) / 2; //获得窗口的垂直位置;  
-	var iLeft = (window.screen.width - 10 - iWidth) / 2; //获得窗口的水平位置;  
+	// url 转向网页的地址
+	// name 网页名称，可为空
+	// iWidth 弹出窗口的宽度
+	// iHeight 弹出窗口的高度
+	// window.screen.height获得屏幕的高，window.screen.width获得屏幕的宽
+	var iTop = (window.screen.height - 30 - iHeight) / 2; // 获得窗口的垂直位置;
+	var iLeft = (window.screen.width - 10 - iWidth) / 2; // 获得窗口的水平位置;
 	window.open(url, name, 'height=' + iHeight + ',,innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',toolbar=no,menubar=no,scrollbars=auto,resizeable=no,location=no,status=no');
 }
 
@@ -217,4 +221,8 @@ function breadPath(target, datas, getChild, getParentId, getSelfId,getSelf) {
 	var ay = [];
 	pathScan(ay, target, datas);
 	return ay.reverse();
+}
+/** 复制对象* */
+function clone(obj){
+	return JSON.parse(JSON.stringify(obj));
 }

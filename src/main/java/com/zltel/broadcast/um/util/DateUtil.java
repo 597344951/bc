@@ -70,6 +70,38 @@ public class DateUtil {
     }
     
     /**
+     * 得到本月开始时间
+     * @param date
+     * @return
+     */
+    public static Date getDateOfMonthStartDayTime(Date date) {
+    	Calendar ca = Calendar.getInstance();
+    	ca.setTime(date);
+    	ca.set(Calendar.DAY_OF_MONTH, 1);
+    	ca.set(Calendar.HOUR_OF_DAY, 0);    
+    	ca.set(Calendar.MINUTE, 0);    
+    	ca.set(Calendar.SECOND, 0);    
+    	ca.set(Calendar.MILLISECOND, 0);    
+        return ca.getTime();   
+    }
+    
+    /**
+     * 得到本月结束时间
+     * @param date
+     * @return
+     */
+    public static Date getDateOfMonthEndDayTime(Date date) {
+    	Calendar ca = Calendar.getInstance();    
+    	ca.setTime(date);
+    	ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+    	ca.set(Calendar.HOUR_OF_DAY, 23);    
+    	ca.set(Calendar.MINUTE, 59);    
+    	ca.set(Calendar.SECOND, 59);    
+    	ca.set(Calendar.MILLISECOND, 999);    
+        return ca.getTime();  
+    }
+    
+    /**
      * 在基础日期上增加制定月份
      * @param date
      * @return

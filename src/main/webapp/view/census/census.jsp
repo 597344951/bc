@@ -12,32 +12,47 @@
 
 
 					<style>
+					html,body{
+						width: 100%;
+						height: 100%;
+						overflow: hidden;
+					}
 						.height_full{
 							width:100%;
-							height:100%;/*
-							margin-top: -20px;
-							padding-top: 20px;*/
+							height:100%;
 							background-color: #0d2256;
 						}
 						.height_full *{
 							color:#cccdff;
 						}
-						.height_full .el-row{
+						.height_full .up-box>.el-row{
 							display:flex;
+							height: 100%;
 						}
 						h1{
 							font-size: 24px;
 							padding-left: 20px;
 							font-weight: bold;
-							/*margin: 45px 0 20px;*/
+							margin: 0;
 							text-align: center;
-							height:5%;
+							height:10%;
+							line-height: 10%;
+							line-height: 4;
+						}
+						.height_full .el-button{
+							float: right;
+							margin-right: 10px;
+							margin-top: 20px;
+						}
+						.height_full .el-button i,
+						.height_full .el-button span{
+							color: #fff;
 						}
 						.height_full .el-col{
 							padding: 5px;
 						}
 						.up-box{
-							height: 65%;
+							height: 60%;
 						}
 						.down-box{
 							height: 30%;
@@ -47,13 +62,13 @@
 							/*height:500px;*/
 						}
 						.up-left-up{
-							/*height: 200px;*/
+							height: 48%;
 							border:1px solid #195bff;
 							box-shadow:inset 0px 0px 30px 0px #2624ff;
 							margin: 10px;
 						}
 						.up-left-down{
-							/*height:300px;*/
+							height:50%;
 							border:1px solid #195bff;
 							box-shadow:inset 0px 0px 30px 0px #2624ff;
 							margin: 10px;
@@ -71,7 +86,7 @@
 							display:block;
 						}
 						.part-title{
-							font-size: 15px;
+							font-size: 12px;
 							text-align: center;
 						}
 						.part-total{
@@ -84,12 +99,11 @@
 							/*width:480px!important;*/
 						}
 						.part-icon{
-							width:50px;
-							height: 50px;
+							width:36px;
+							height: 36px;
 							border-radius: 50%;
 							background:#eee;
 							display: inline-block;
-							vertical-align: bottom;
     						margin-top: -5px;
 							margin-right: 10px;
 						} 
@@ -137,7 +151,7 @@
 						/**************** up-center-box ***************/
 						.height_full .up-center-box .img1{
 							margin:10px 5px 0; 
-							height:510px;
+							height:100%;
 							border:1px solid #195bff;
 							box-shadow:inset 0px 0px 30px 0px #2624ff;
 						}
@@ -148,7 +162,7 @@
 						/**************** up-right-box ***************/
 						.height_full .up-right-box>.el-row{
 							margin:10px; 
-							height:510px;
+							height:100%;
 							/* padding-bottom: 10px; */
 							border:1px solid #195bff;
 							box-shadow:inset 0px 0px 30px 0px #2624ff;
@@ -156,8 +170,8 @@
 						}
 						.up-right-box .up-right-left .party-part,
 						.up-right-box .up-right-right .party-part{
-							padding-top: 20px;
-							height: 100px;
+							padding-top: 10px;
+							/*height: 100px;*/
 						}
 						.up-right-right .el-row{
 							text-align: center;
@@ -182,10 +196,10 @@
 
 	<body>
 		<div id="app" class="height_full" v-cloak>
-
-						<h1>党建数据统计</h1>
-		
-			
+			<h1>
+				<el-button round type="success" icon="el-icon-view" name="FullScreen"  onclick="window.open(document.location, 'big', 'fullscreen=yes');"	>全屏显示</el-button>
+				党建数据统计
+			</h1>
 			<div class="up-box">
 				<el-row>
 					<el-col :span="8" class="up-left-box">
@@ -195,17 +209,17 @@
 								  <el-col :span="24" class="party-part"> 
 									<i class="part-icon part-icon1"></i>
 									<div class="part-icon-box">
-										<span class="party-part-1">党组织</span> <br><span class="party-part-2">1688</span>
+										<span class="party-part-1">党组织</span><br><span class="party-part-2">1688</span>
 									</div>
 								</el-col>
 								</el-row>
 								<el-row>
-								  <el-col :span="12"><span class="part-title">党委数</span> <span class="part-total">688</span></el-col>
-								  <el-col :span="12"><span class="part-title">党总支数</span> <span class="part-total">544</span></el-col>
+								  <el-col :span="12"><span class="part-title">党委数</span><span class="part-total">688</span></el-col>
+								  <el-col :span="12"><span class="part-title">党总支数</span><span class="part-total">544</span></el-col>
 								</el-row>
 								<el-row>
-								  <el-col :span="12"><span class="part-title">党支部数</span>  <span class="part-total">325</span></el-col>
-								  <el-col :span="12"><span class="part-title">联合党支部数</span>  <span class="part-total">128</span></el-col>
+								  <el-col :span="12"><span class="part-title">党支部数</span><span class="part-total">325</span></el-col>
+								  <el-col :span="12"><span class="part-title">联合党支部数</span><span class="part-total">128</span></el-col>
 								</el-row>
 						  </el-col>
 						  <el-col :span="12">
@@ -213,24 +227,24 @@
 									<el-col :span="24" class="party-part">
 										<i class="part-icon part-icon2"></i>
 										<div class="part-icon-box">
-											<span class="party-part-1">党员数 </span> <br><span class="party-part-3">1688</span>
+											<span class="party-part-1">党员数 </span><br><span class="party-part-3">1688</span>
 										</div>
 									</el-col>
 									</el-row>
 									<el-row>
-									<el-col :span="12"><span class="part-title">正式党员数</span> <span class="part-total">869</span></el-col>
-									<el-col :span="12"><span class="part-title">预备党员数</span>  <span class="part-total">6555</span></el-col>
+									<el-col :span="12"><span class="part-title">正式党员数</span><span class="part-total">869</span></el-col>
+									<el-col :span="12"><span class="part-title">预备党员数</span><span class="part-total">6555</span></el-col>
 									</el-row>
 									<el-row>
-									<el-col :span="12"><span class="part-title">党支部数</span> <span class="part-total"> 688</span></el-col>
-									<el-col :span="12"><span class="part-title">联合党支部数</span> <span class="part-total">128</span></el-col>
+									<el-col :span="12"><span class="part-title">党支部数</span><span class="part-total"> 688</span></el-col>
+									<el-col :span="12"><span class="part-title">联合党支部数</span><span class="part-total">128</span></el-col>
 									</el-row>
 						  </el-col>
 						</el-row>
 						<el-row class="up-left-down">
 						  <el-col :span="24">
 									<template>
-										<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="oneData" :settings="oneSettings" :text-style="chartConfig.textStyle"  :legend-visible="false"></ve-pie>
+										<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="oneData" :settings="oneSettings" :text-style="chartConfig.textStyle"  :legend-visible="false" ></ve-pie>
 									</template>
 						  </el-col>
 						</el-row>

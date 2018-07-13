@@ -1,44 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="com.zltel.broadcast.resource.dao.ResourceMaterialMapper">
-	<resultMap id="BaseResultMap"
-		type="com.zltel.broadcast.resource.bean.ResourceMaterial">
+<mapper namespace="com.zltel.broadcast.resource.dao.ResourceMaterialMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.resource.bean.ResourceMaterial">
 		<id column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="type" jdbcType="VARCHAR" property="type" />
-		<result column="description" jdbcType="VARCHAR"
-			property="description" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
 		<result column="url" jdbcType="VARCHAR" property="url" />
-		<result column="cover_url" jdbcType="VARCHAR"
-			property="coverUrl" />
+		<result column="cover_url" jdbcType="VARCHAR" property="coverUrl" />
 		<result column="size" jdbcType="VARCHAR" property="size" />
-		<result column="content_type" jdbcType="VARCHAR"
-			property="contentType" />
-		<result column="time_length" jdbcType="VARCHAR"
-			property="timeLength" />
+		<result column="content_type" jdbcType="VARCHAR" property="contentType" />
+		<result column="time_length" jdbcType="VARCHAR" property="timeLength" />
 		<result column="user_id" jdbcType="INTEGER" property="userId" />
 		<result column="org_id" jdbcType="INTEGER" property="orgId" />
 		<result column="album_id" jdbcType="INTEGER" property="albumId" />
-		<result column="add_date" jdbcType="TIMESTAMP"
-			property="addDate" />
+		<result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+		<result column="verify" jdbcType="TINYINT" property="verify" />
+		<result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
 	</resultMap>
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+
 		type="com.zltel.broadcast.resource.bean.ResourceMaterial">
-		<result column="content" jdbcType="LONGVARCHAR"
-			property="content" />
+		<result column="content" jdbcType="LONGVARCHAR" property="content" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		material_id, name, type, description, url, cover_url, size,
 		content_type,
 		time_length,
-		user_id, org_id, album_id, add_date
+		user_id, org_id, album_id, add_date,verify,verify_date
 	</sql>
 	<sql id="Blob_Column_List">
 		content
 	</sql>
-	<select id="selectByPrimaryKey"
-		parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
 		select
 		<include refid="Base_Column_List" />
 		,
@@ -47,54 +42,60 @@
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</select>
-	<delete id="deleteByPrimaryKey"
-		parameterType="java.lang.Integer">
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from resource_material
-		where material_id =
+		where material_id
+		=
 		#{materialId,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert"
-		parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
+	<insert id="insert" parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
 		insert into resource_material (material_id, name, type,
-		description, url, cover_url,
-		size, content_type, time_length,
-		user_id,
-		org_id, album_id,
-		add_date, content)
+		description, url, cover_url, size, content_type, time_length, user_id, org_id, album_id, add_date,
+		content,verify,verify_date)
 		values
 		(#{materialId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
 		#{type,jdbcType=VARCHAR},
 		#{description,jdbcType=VARCHAR},
-		#{url,jdbcType=VARCHAR}, #{coverUrl,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR},
+		#{coverUrl,jdbcType=VARCHAR},
 		#{size,jdbcType=VARCHAR}, #{contentType,jdbcType=VARCHAR},
 		#{timeLength,jdbcType=VARCHAR},
 		#{userId,jdbcType=INTEGER},
-		#{orgId,jdbcType=INTEGER}, #{albumId,jdbcType=INTEGER},
-		#{addDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
+		#{orgId,jdbcType=INTEGER},
+		#{albumId,jdbcType=INTEGER},
+		#{addDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR},
+		#{verify,jdbcType=TINYINT},
+		#{verifyDate,jdbcType=TIMESTAMP}
+		)
 	</insert>
 	<insert id="inserts" parameterType="ArrayList">
 		insert into resource_material (material_id, name, type,
 		description,
 		url, cover_url,
-		size, content_type, time_length,
+		size,
+		content_type, time_length,
 		user_id,
 		org_id,
 		album_id,
-		add_date, content)
+		add_date, content,verify,verify_date)
 		values
-		<foreach collection="list" item="item" index="index"
-			separator=",">
+		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.materialId,jdbcType=INTEGER},
 			#{item.name,jdbcType=VARCHAR},
 			#{item.type,jdbcType=VARCHAR},
 			#{item.description,jdbcType=VARCHAR},
-			#{item.url,jdbcType=VARCHAR}, #{item.coverUrl,jdbcType=VARCHAR},
-			#{item.size,jdbcType=VARCHAR}, #{item.contentType,jdbcType=VARCHAR},
+			#{item.url,jdbcType=VARCHAR},
+			#{item.coverUrl,jdbcType=VARCHAR},
+			#{item.size,jdbcType=VARCHAR},
+			#{item.contentType,jdbcType=VARCHAR},
 			#{item.timeLength,jdbcType=VARCHAR},
 			#{item.userId,jdbcType=INTEGER},
 			#{item.orgId,jdbcType=INTEGER}, #{item.albumId,jdbcType=INTEGER},
 			#{item.addDate,jdbcType=TIMESTAMP},
-			#{item.content,jdbcType=LONGVARCHAR})
+			#{item.content,jdbcType=LONGVARCHAR},
+			#{item.content.verify,jdbcType=TINYINT},
+			#{item.content.verifyDate,jdbcType=TIMESTAMP}
+			)
 		</foreach>
 	</insert>
 
@@ -144,6 +145,12 @@
 			<if test="content != null">
 				content,
 			</if>
+			<if test="verify != null">
+				verify,
+			</if>
+			<if test="verifyDate != null">
+				verify_date,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="materialId != null">
@@ -187,6 +194,12 @@
 			</if>
 			<if test="content != null">
 				#{content,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="verify != null">
+				#{verify,jdbcType=TINYINT},
+			</if>
+			<if test="verifyDate != null">
+				#{verifyDate,jdbcType=TIMESTAMP},
 			</if>
 		</trim>
 	</insert>
@@ -233,6 +246,12 @@
 			<if test="content != null">
 				content = #{content,jdbcType=LONGVARCHAR},
 			</if>
+			<if test="verify != null">
+				verify = #{verify,jdbcType=TINYINT},
+			</if>
+			<if test="verifyDate != null">
+				verify_date = #{verifyDate,jdbcType=TIMESTAMP},  
+			</if>
 		</set>
 		where material_id = #{materialId,jdbcType=INTEGER}
 	</update>
@@ -241,10 +260,12 @@
 		update resource_material
 		set name =
 		#{name,jdbcType=VARCHAR},
-		type = #{type,jdbcType=VARCHAR},
+		type =
+		#{type,jdbcType=VARCHAR},
 		description =
 		#{description,jdbcType=VARCHAR},
-		url = #{url,jdbcType=VARCHAR},
+		url =
+		#{url,jdbcType=VARCHAR},
 		cover_url = #{coverUrl,jdbcType=VARCHAR},
 		size =
 		#{size,jdbcType=VARCHAR},
@@ -252,12 +273,16 @@
 		#{contentType,jdbcType=VARCHAR},
 		time_length =
 		#{timeLength,jdbcType=VARCHAR},
-		user_id = #{userId,jdbcType=INTEGER},
+		user_id
+		= #{userId,jdbcType=INTEGER},
 		org_id = #{orgId,jdbcType=INTEGER},
 		album_id =
 		#{albumId,jdbcType=INTEGER},
 		add_date = #{addDate,jdbcType=TIMESTAMP},
-		content = #{content,jdbcType=LONGVARCHAR}
+		content =
+		#{content,jdbcType=LONGVARCHAR},
+		verify = #{verify,jdbcType=TINYINT},
+		verify_date = #{verifyDate,jdbcType=TIMESTAMP} 
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</update>
@@ -266,10 +291,12 @@
 		update resource_material
 		set name =
 		#{name,jdbcType=VARCHAR},
-		type = #{type,jdbcType=VARCHAR},
+		type =
+		#{type,jdbcType=VARCHAR},
 		description =
 		#{description,jdbcType=VARCHAR},
-		url = #{url,jdbcType=VARCHAR},
+		url =
+		#{url,jdbcType=VARCHAR},
 		cover_url = #{coverUrl,jdbcType=VARCHAR},
 		size =
 		#{size,jdbcType=VARCHAR},
@@ -277,12 +304,16 @@
 		#{contentType,jdbcType=VARCHAR},
 		time_length =
 		#{timeLength,jdbcType=VARCHAR},
-		user_id = #{userId,jdbcType=INTEGER},
+		user_id
+		= #{userId,jdbcType=INTEGER},
 		org_id = #{orgId,jdbcType=INTEGER},
 		album_id =
 		#{albumId,jdbcType=INTEGER},
-		add_date = #{addDate,jdbcType=TIMESTAMP}
-		where material_id = #{materialId,jdbcType=INTEGER}
+		add_date = #{addDate,jdbcType=TIMESTAMP},
+		verify = #{verify,jdbcType=TINYINT},
+		verify_date = #{verifyDate,jdbcType=TIMESTAMP} 
+		where material_id =
+		#{materialId,jdbcType=INTEGER}
 	</update>
 
 	<sql id="ResourceMaterialWhere">
@@ -332,11 +363,16 @@
 			<if test="contentType != null">
 				AND content_type=#{contentType}
 			</if>
+			<if test="verify != null">
+				AND verify=#{verify,jdbcType=TINYINT}
+			</if>
+			<if test="noVerify != null">
+				AND isNull(verify)
+			</if>
 		</where>
 	</sql>
 
-	<select id="query"
-		parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial"
+	<select id="query" parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial"
 		resultMap="ResultMapWithBLOBs">
 		select
 		<include refid="Base_Column_List" />
@@ -347,8 +383,7 @@
 		order by m.add_date desc
 	</select>
 
-	<delete id="delete"
-		parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
+	<delete id="delete" parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
 		delete from resource_material
 		<include refid="ResourceMaterialWhere" />
 	</delete>

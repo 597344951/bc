@@ -128,6 +128,7 @@ let ResourceMaterialExplorer = {
             let url = '/resource/Material/' + this.tpager.current + '-' + this.tpager.size;
             data.keyword = this.config.keyword?this.config.keyword:null;
             data.type = this.config.type?this.config.type:null;
+            data.verify = true;
             ajax_json(url, "post", data, function (result) {
                 ins.tps = ins.initData(result.data);
                 ins.tpager.total = result.pager.total;
@@ -141,7 +142,8 @@ let ResourceMaterialExplorer = {
             var ins = this;
             let data = {
                 keyword: this.config.keyword?this.config.keyword:null,
-                type:this.config.type?this.config.type:null
+                type:this.config.type?this.config.type:null,
+                verify:true
             };
             ajax("/MaterialAlbum/Album", "get", data, function (result) {
                 ins.tpt_data = result.data;
@@ -212,8 +214,9 @@ let ResourceMaterialExplorer = {
             console.debug('提交选择素材', this.choseResource);
             this.$emit('submit', this.choseResource);
             this.config.visiable = false;
-            if (clearOnSubmit) {
+            if (this.config.clearOnSubmit) {
                 this.choseResource = [];
+                this.tps.forEach(item => item.chose=false)
             }
         }
     }

@@ -13,6 +13,7 @@
          c.period,
          c.user_id,
          c.snapshot,
+         c.demand,
          c.process_item_id,
          DATE_FORMAT(c.add_date, '%Y-%m-%d %H:%i:%s') as add_date,
          pi.label,

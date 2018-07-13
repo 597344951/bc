@@ -24,6 +24,10 @@ public class MaterialAlbum {
     private String keyword;
     /** 对应数量 **/
     private Integer count;
+    /**审核通过，未通过**/
+    private Boolean verify;
+    /**未审核**/
+    private Boolean noVerify;
 
     public MaterialAlbum() {}
 
@@ -127,6 +131,22 @@ public class MaterialAlbum {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public Boolean getVerify() {
+        return verify;
+    }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
+    }
+
+    public Boolean getNoVerify() {
+        return noVerify;
+    }
+
+    public void setNoVerify(Boolean noVerify) {
+        this.noVerify = noVerify;
     }
 
 }

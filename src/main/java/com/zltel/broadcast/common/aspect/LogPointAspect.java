@@ -74,6 +74,8 @@ public class LogPointAspect {
             // 注解上的描述
             logBean.setOperation(lp.value());
             logBean.setType(lp.type());
+            // 没有指定 日志类型，则不记录日志
+            if (lp.type() == -1) return;
         }
 
         // 请求的方法名

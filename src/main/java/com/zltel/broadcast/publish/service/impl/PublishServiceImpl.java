@@ -67,6 +67,7 @@ public class PublishServiceImpl implements PublishService {
         detail.put("end_date", content.get("endDate"));
         detail.put("period", content.get("period"));*/
         detail.put("relate_content_id", content.get("relateContent"));
+        detail.put("demand", content.get("demand"));
         detail.put("add_date", add_date);
         detail.put("update_date", add_date);
         // 获取发布流程
@@ -340,6 +341,7 @@ public class PublishServiceImpl implements PublishService {
             //使用模板添加节目
             program.put("templetId", programTemplateId);
             program.put("categoryId", programTemplateCategoryId);
+            program.put("des", content.get("demand")==null ? "" : content.get("demand"));
             addType = SolaProgramServiceImpl.ADD_PROGRAM_WITH_TEMPLATE;
         } else {
             //不适用模板添加节目
@@ -354,21 +356,15 @@ public class PublishServiceImpl implements PublishService {
             program.put("resolutionw", resolutionw);
             program.put("resolutionh", resolutionh);
             program.put("playtime", Integer.parseInt(playtime));
-            program.put("des", content.get("title"));
+            program.put("des", content.get("demand")==null ? "" : content.get("demand"));
             addType = SolaProgramServiceImpl.ADD_PROGRAM_NO_TEMPLATE;
         }
         // 素材
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         List<Map<String, Object>> resources = new ArrayList<>();
-        Map<String, Object> res = new HashMap<>();
-        res.put("Name", "节目制作需求");
-        res.put("Type", 1);
-        res.put("Content", content.get("demand")==null ? "" : content.get("demand"));
-        res.put("Url", "");
-        resources.add(res);
         for (Map<String, Object> material : materials) {
             boolean isFile = (boolean) material.get("isFile");
-            res = new HashMap<String, Object>();
+            Map<String, Object> res = new HashMap<String, Object>();
             String type = (String) material.get("type");
             String name = (String) material.get("name");
             String url;
@@ -838,11 +834,35 @@ public class PublishServiceImpl implements PublishService {
         for (Map<String, Object> terminal : terminals) {
             tids += "," + terminal.get("terminal_id");
         }
-        tids = tids.replace(",", "");
-        solaProgramService.cancelProgram("" + content.get("snapshot"), "2");
+        tids = tids.replaceFirst(",", "");
+        solaProgramService.cancelProgram("" + content.get("snapshot"), tids);
         changeProcess(contentId, Constant.PUBLISHED);
         addProcessState(contentId, user.getUserId(), Constant.PUBLISHED,
                 Constant.MSG_CONTENT_OFFLINE + user.getUsername(), null);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void offline(SysUser user, String programId) {
+        Map<String, Object> queryParam = new HashMap<String, Object>();
+        queryParam.put("snapshot", programId);
+        List<Map<String, Object>> contents = simpleDao.query("publish_content", queryParam);
+        for(Map<String, Object> content : contents) {
+            int contentId = (int) content.get("content_id");
+            queryParam = new HashMap<String, Object>();
+            queryParam.put("content_id", contentId);
+            List<Map<String, Object>> terminals = simpleDao.query("publish_terminal", queryParam);
+            String tids = "";
+            for (Map<String, Object> terminal : terminals) {
+                tids += "," + terminal.get("terminal_id");
+            }
+            tids = tids.replaceFirst(",", "");
+            solaProgramService.cancelProgram(programId, tids);
+            changeProcess(contentId, Constant.PUBLISHED);
+            addProcessState(contentId, user.getUserId(), Constant.PUBLISHED,
+                    Constant.MSG_CONTENT_OFFLINE + user.getUsername(), null);
+        }
+
     }
 
     @Override

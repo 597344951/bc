@@ -176,11 +176,15 @@ public class PublishController extends BaseController{
 
     @RequestMapping(value = "/process/offline/{id}")
     @ResponseBody
-    public R offline(@PathVariable("id") int id) {
+    public R offline(@PathVariable("id") String id, @RequestParam("byType") String byType) {
         R r;
         try {
             r = R.ok();
-            publishService.offline(getSysUser(), id);
+            if("contentId".equals(byType)) {
+                publishService.offline(getSysUser(), Integer.valueOf(id));
+            } else if("programId".equals(byType)) {
+                publishService.offline(getSysUser(), id);
+            }
         } catch (Exception e) {
             logout.error(e.getMessage(),e);
             r = R.error(e.toString());

@@ -14,14 +14,18 @@ let serverConfig = {
     //"/ueditor -> POST - Ueditor相关操作：参数 action - 对应操作",
     //"/video -> POST - 视频文件上传, 参数：file - 视频文件",
     //"/video/:name -> DELETE - 删除视频文件, URL参数：name - 视频名称"
-
+    
+    getDefaultUploadUrl(){
+        return serverUrl + '/upload';
+    },
     getUploadUrl(contentType){
+        
         if(contentType.startsWith('image')){
             return serverUrl + '/image';
         }
         if(contentType.startsWith('audio') || contentType.startsWith('video')){
             return serverUrl + '/video';
-        }
+        } 
         
         return serverUrl + '/upload';
     },

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.PartyIntegralRecordMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.PartyIntegralRecord">
+    <id column="pir_id" jdbcType="INTEGER" property="pirId" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="party_id" jdbcType="INTEGER" property="partyId" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="change_type_id" jdbcType="INTEGER" property="changeTypeId" />
+    <result column="change_describes" jdbcType="VARCHAR" property="changeDescribes" />
+    <result column="change_integral_type" jdbcType="INTEGER" property="changeIntegralType" />
+    <result column="change_time" jdbcType="TIMESTAMP" property="changeTime" />
+    <result column="weight_coefficient" jdbcType="DECIMAL" property="weightCoefficient" />
+    <result column="weight_type" jdbcType="INTEGER" property="weightType" />
+    <result column="is_merge" jdbcType="INTEGER" property="isMerge" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    pir_id, org_id, party_id, activity_id, change_type_id, change_describes, change_integral_type, 
+    change_time, weight_coefficient, weight_type, is_merge
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from party_integral_record
+    where pir_id = #{pirId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from party_integral_record
+    where pir_id = #{pirId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
+    insert into party_integral_record (pir_id, org_id, party_id, 
+      activity_id, change_type_id, change_describes, 
+      change_integral_type, change_time, weight_coefficient, 
+      weight_type, is_merge)
+    values (#{pirId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{partyId,jdbcType=INTEGER}, 
+      #{activityId,jdbcType=INTEGER}, #{changeTypeId,jdbcType=INTEGER}, #{changeDescribes,jdbcType=VARCHAR}, 
+      #{changeIntegralType,jdbcType=INTEGER}, #{changeTime,jdbcType=TIMESTAMP}, #{weightCoefficient,jdbcType=DECIMAL}, 
+      #{weightType,jdbcType=INTEGER}, #{isMerge,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
+    insert into party_integral_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pirId != null">
+        pir_id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="partyId != null">
+        party_id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="changeTypeId != null">
+        change_type_id,
+      </if>
+      <if test="changeDescribes != null">
+        change_describes,
+      </if>
+      <if test="changeIntegralType != null">
+        change_integral_type,
+      </if>
+      <if test="changeTime != null">
+        change_time,
+      </if>
+      <if test="weightCoefficient != null">
+        weight_coefficient,
+      </if>
+      <if test="weightType != null">
+        weight_type,
+      </if>
+      <if test="isMerge != null">
+        is_merge,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pirId != null">
+        #{pirId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="partyId != null">
+        #{partyId,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="changeTypeId != null">
+        #{changeTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="changeDescribes != null">
+        #{changeDescribes,jdbcType=VARCHAR},
+      </if>
+      <if test="changeIntegralType != null">
+        #{changeIntegralType,jdbcType=INTEGER},
+      </if>
+      <if test="changeTime != null">
+        #{changeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="weightCoefficient != null">
+        #{weightCoefficient,jdbcType=DECIMAL},
+      </if>
+      <if test="weightType != null">
+        #{weightType,jdbcType=INTEGER},
+      </if>
+      <if test="isMerge != null">
+        #{isMerge,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
+    update party_integral_record
+    <set>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="partyId != null">
+        party_id = #{partyId,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="changeTypeId != null">
+        change_type_id = #{changeTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="changeDescribes != null">
+        change_describes = #{changeDescribes,jdbcType=VARCHAR},
+      </if>
+      <if test="changeIntegralType != null">
+        change_integral_type = #{changeIntegralType,jdbcType=INTEGER},
+      </if>
+      <if test="changeTime != null">
+        change_time = #{changeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="weightCoefficient != null">
+        weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
+      </if>
+      <if test="weightType != null">
+        weight_type = #{weightType,jdbcType=INTEGER},
+      </if>
+      <if test="isMerge != null">
+        is_merge = #{isMerge,jdbcType=INTEGER},
+      </if>
+    </set>
+    where pir_id = #{pirId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
+    update party_integral_record
+    set org_id = #{orgId,jdbcType=INTEGER},
+      party_id = #{partyId,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=INTEGER},
+      change_type_id = #{changeTypeId,jdbcType=INTEGER},
+      change_describes = #{changeDescribes,jdbcType=VARCHAR},
+      change_integral_type = #{changeIntegralType,jdbcType=INTEGER},
+      change_time = #{changeTime,jdbcType=TIMESTAMP},
+      weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
+      weight_type = #{weightType,jdbcType=INTEGER},
+      is_merge = #{isMerge,jdbcType=INTEGER}
+    where pir_id = #{pirId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryPartyIntegralRecords" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  pir.pir_id pirId,
+	  pir.org_id orgId,
+	  oi.org_info_name orgInfoName,
+	  bui.base_user_id userId,
+	  bui.name name,
+	  pir.change_describes changeDescribes,
+	  ict.type changeType,
+	  ict.name changeName,
+	  ict.describes changeTypeDescribes,
+	  ict.operation changeOperation,
+	  pir.change_time changeTime,
+	  pir.is_merge isMerge
+	from
+	  party_integral_record pir 
+	  inner join organization_information oi on pir.org_id = oi.org_info_id 
+	  inner join party_user_info pui on pui.party_user_id = pir.party_id 
+	  inner join base_user_info bui on pui.party_user_id = bui.base_user_id
+	  inner join integral_change_type ict on pir.change_integral_type = ict.ict_id
+	where
+	  1 = 1
+  </select>
+</mapper>

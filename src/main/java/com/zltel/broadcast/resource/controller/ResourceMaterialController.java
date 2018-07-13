@@ -22,7 +22,6 @@ import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
-import com.zltel.broadcast.resource.bean.Material;
 import com.zltel.broadcast.resource.bean.ResourceMaterial;
 import com.zltel.broadcast.resource.service.ResourceMaterialService;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -46,6 +45,7 @@ public class ResourceMaterialController extends BaseController {
         nm.setAlbumId(rm.getAlbumId());
         nm.setType(rm.getType());
         nm.setContentType(rm.getContentType());
+        nm.setVerify(rm.getVerify());
 
         Pager pager = new Pager(pageIndex, limit);
         List<ResourceMaterial> data = this.materialService.query(nm, pager);
@@ -55,7 +55,7 @@ public class ResourceMaterialController extends BaseController {
 
     @ApiOperation(value = "批量导入资源")
     @PostMapping(value = "/Materials")
-    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "导入资源", template = "批量导入资源")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "导入资源", template = "批量导入资源:${rms.toString()}")
     public R saveList(@RequestBody List<ResourceMaterial> rms) {
         for (ResourceMaterial rm : rms) {
             ValidatorUtils.validateEntity(rm);
@@ -64,14 +64,15 @@ public class ResourceMaterialController extends BaseController {
             rm.setUserId(user.getUserId());
             rm.setAddDate(new Date());
         }
-        
+
         this.materialService.inserts(rms);
+        rms.stream().forEach(this.materialService::loadOtherInfo);
         return R.ok();
     }
 
     @ApiOperation(value = "新建资源内容")
     @PostMapping(value = "/Material")
-    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源", template = "新增资源:${m.name}")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源", template = "新增资源:${rm.toString()}")
     public R save(@RequestBody ResourceMaterial rm) {
         ValidatorUtils.validateEntity(rm);
         SysUser user = this.getSysUser();
@@ -79,6 +80,7 @@ public class ResourceMaterialController extends BaseController {
         rm.setUserId(user.getUserId());
         rm.setAddDate(new Date());
         this.materialService.insert(rm);
+        this.materialService.loadOtherInfo(rm);
         return R.ok();
     }
 

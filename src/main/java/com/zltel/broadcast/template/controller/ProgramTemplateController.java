@@ -30,7 +30,7 @@ public class ProgramTemplateController extends BaseController {
     @ApiOperation(value = "获取节目模版目录")
     public R getProgramCategory() {
         List<Category> cats = this.solaService.getProgramCategoryMouldList();
-        List<TreeNode<Category>> tree = TreeNodeCreateUtil.toTree(Category.class, cats, "pkId", "parentId");
+        List<TreeNode<Category>> tree = TreeNodeCreateUtil.toTree(cats, Category::getPkId, Category::getParentId);
         R r = R.ok().setData(tree);
         r.put("cats", cats);
         return r.setData(tree);

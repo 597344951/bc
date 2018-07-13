@@ -47,6 +47,12 @@ public interface SolaProgramService {
     public void cancelProgram(String pids, String tids);
 
     /**
+     * 删除节目
+     * @param programId
+     */
+    public void deleteProgram(int programId);
+
+    /**
      * 终端
      * 
      * @return

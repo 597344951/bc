@@ -55,6 +55,13 @@ public class SolaController {
         return next(id, viewUrl);
     }
 
+    @GetMapping(value = "/delete/{id}")
+    @ResponseBody
+    public R delete(@PathVariable("id") int id) {
+        solaProgramService.deleteProgram(id);
+        return R.ok();
+    }
+
     @GetMapping(value = "/terminals")
     @ResponseBody
     public Object terminals() {

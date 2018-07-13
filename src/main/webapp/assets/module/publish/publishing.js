@@ -19,7 +19,7 @@ var app = new Vue({
         },
         offline(row) {
             this.$confirm('确认移除？').then(()=>{
-                get('/publish/process/offline/' + row.content_id, reps => {
+                get('/publish/process/offline/' + row.content_id + '?byType=contentId', reps => {
                     if(reps.status) {
                         app.$message('下线成功 !');
                         load(1, app.pageSize);

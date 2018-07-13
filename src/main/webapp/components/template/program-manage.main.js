@@ -74,6 +74,27 @@ let ProgramTemplate = {
             let url = '/sola/edit/' + pt.programId;
             window.open(url, "_blank", "width="+screen.availWidth+" height="+screen.availHeight);
         },
+        deleteProgram(p) {
+            let url = '/sola/delete/' + p.programId
+            ajax_promise(url, 'get').then(result => {
+                if(result.status) {
+                    this.loadCategoryProgram();
+                    this.$message('删除成功')
+                } else {
+                    this.$message(result.msg)
+                }
+            })
+        },
+        cancleProgram(p) {
+            let url = '/publish/process/offline/' + p.programId + '?byType=programId'
+            ajax_promise(url, 'get').then(result => {
+                if(result.status) {
+                    this.$message('取消播放成功')
+                } else {
+                    this.$message(result.msg)
+                }
+            })
+        },
         pubProgram(p) {
             //发布节目
             this.$emit('publish', p);

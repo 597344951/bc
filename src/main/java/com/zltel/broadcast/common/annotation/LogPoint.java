@@ -29,8 +29,10 @@ public @interface LogPoint {
 	public static int TYPE_TASK_LOG = 6;
 	/** 文档管理日志 **/
 	public static int TYPE_DOC_MANAGE_LOG = 7;
+	/**素材审核日志**/
+	public static int TYPE_RESOURCE_VERIFY_LOG = 8;
 
-	int type() default TYPE_SYSTEM_LOG;
+	int type() default -1;
 
 	String value() default "";
 

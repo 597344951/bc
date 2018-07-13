@@ -110,4 +110,11 @@ public interface OrganizationInformationService {
      * @throws Exception
      */
     public R deleteOrgInfo(OrganizationInformation organizationInformation) throws Exception;
+    
+    /**
+     * 查询积分结构树
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralConstituteToTree(Map<String, Object> conditions);
 }

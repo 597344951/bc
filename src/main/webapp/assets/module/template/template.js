@@ -2,7 +2,7 @@ import serverConfig from '/environment/resourceUploadConfig.jsp';
 
 window.onclose = function () {
   let tp = appInstince.tp.data;
-  if(tp.title || _editor.hasContents()){
+  if (tp.title || _editor.hasContents()) {
     return confirm('有未保存数据，是否关闭？');
   }
   return true;
@@ -31,16 +31,16 @@ var appInstince = new Vue({
       icon: 'el-icon-delete',
       type: 'danger'
     }],
-    resource_menu:[{
-          label: '素材管理',
-          children: [{
-            label: '视频(8)' 
-          },{
-            label: '音频(4)' 
-          },{
-            label: '图片(34)' 
-          }]
-        }],
+    resource_menu: [{
+      label: '素材管理',
+      children: [{
+        label: '视频(8)'
+      }, {
+        label: '音频(4)'
+      }, {
+        label: '图片(34)'
+      }]
+    }],
     keyword: '',
     //当前目录
     currentCategory: {
@@ -56,7 +56,7 @@ var appInstince = new Vue({
       visiable: false
     },
     rules: {
-      programTemplate:[{
+      programTemplate: [{
         required: true,
         message: "请选择节目模版",
         trigger: "blur"
@@ -151,7 +151,7 @@ var appInstince = new Vue({
     },
     tpt_data: [],
     tps: [],
-    resource_server_url:serverConfig.getUploadUrl('image')
+    resource_server_url: serverConfig.getUploadUrl('image')
   },
   mounted() {
     this.loadTreeData();
@@ -190,23 +190,26 @@ var appInstince = new Vue({
       this.curContextData = null;
     },
 
-    card_hover(it){
+    card_hover(it) {
       it.showtoolbar = true;
     },
-    card_leave(it){
+    card_leave(it) {
       it.showtoolbar = false;
     },
 
     //查询模板
-    searchTemplate(){
+    searchTemplate() {
       this.currentCategory.name = '所有类别';
+      this.currentCategory.tpTypeId = 0;
       this.loadTpTypeData();
       this.loadTreeData();
     },
     // 加载类别树的数据
     loadTreeData: function () {
       var ins = this;
-      let data = {keyword:this.keyword};
+      let data = {
+        keyword: this.keyword
+      };
       ajax("tpt/listTypeTree", "get", data, function (result) {
         ins.tpt_data = result.data;
       });
@@ -228,7 +231,7 @@ var appInstince = new Vue({
     }, // 重新加载分类数据
     reloadTpTypeData: function () {
       var node = this.$refs.tree.getCurrentNode();
-      this.loadTpTypeData(node ? node.data:null, this);
+      this.loadTpTypeData(node ? node.data : null, this);
     },
     checkTreeSelectData: function () {
       var node = this.$refs.tree.getCurrentNode();
@@ -238,7 +241,7 @@ var appInstince = new Vue({
       }
       return this.curContextData ? this.curContextData : node.data;
     },
-    initData(data){
+    initData(data) {
       data.forEach(element => {
         element.showtoolbar = false;
         element.cfv = false;
@@ -248,7 +251,12 @@ var appInstince = new Vue({
     // 增加模板类别
     addTemplateType: function () {
       var nodedata = this.checkTreeSelectData();
-      if (!nodedata) return;
+      if (!nodedata) {
+        nodedata = {
+          tpTypeId: 0,
+          name: '根目录'
+        };
+      }
 
       var tpt = this.tpt;
       tpt.update = false;
@@ -340,10 +348,10 @@ var appInstince = new Vue({
       this.tp.visible = true;
       this.tp.update = false;
       this.tp.title = "新增模板";
-      
+
     },
-     //重置模板类别
-     resetTemplate(){
+    //重置模板类别
+    resetTemplate() {
       this.tp.data = {
         previewPicture: '',
         programTemplate: ''
@@ -444,7 +452,8 @@ var appInstince = new Vue({
     handleCurrentChange(val) {
       this.tpager.current = val;
       this.loadTpTypeData();
-    },getResUrl(url) {
+    },
+    getResUrl(url) {
       return serverConfig.getUrl(url);
     }
   }

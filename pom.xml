@@ -196,12 +196,6 @@
 
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -242,7 +236,7 @@
 							<propertyName>surefireArgLine</propertyName>
 						</configuration>
 					</execution>
-					<!-- 在程序的verify阶段，执行report测试的程序。 文件的输入为perpare-agent阶段中设置或者默认的jacoco.exec. 
+					<!-- 在程序的verify阶段，执行report测试的程序。 文件的输入为perpare-agent阶段中设置或者默认的jacoco.exec.
 						参数 includes和excludes可用来选定report中过滤的类。 -->
 					<execution>
 						<id>default-report</id>
@@ -257,7 +251,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- 使用 maven-surefire-plugin来执行单元测试。 将surefireArgLine赋值给argLine参数，以保证在测试执行时Jacoco 
+			<!-- 使用 maven-surefire-plugin来执行单元测试。 将surefireArgLine赋值给argLine参数，以保证在测试执行时Jacoco
 				agent处于运行状态。 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

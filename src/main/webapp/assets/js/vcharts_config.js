@@ -37,6 +37,14 @@ let config = {
         	textStyle:{
         		color:'#fff',
         },
-    }
+    },
+    grid:{
+        left:"100",
+        top:'100',
+        bottom:'100',
+        right:'120',
+        width:100,
+        height:100
+    },
 }
 export default config;

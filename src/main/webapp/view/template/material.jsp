@@ -17,7 +17,7 @@
 <link href="${urls.getForLookupPath('/assets/module/template/template.css')}" rel="stylesheet">
 </head>
 
-<body style="min-width:1100px;">
+<body >
     <div class="height_full" id="app" v-cloak>
         <el-container>
             <el-header>
@@ -44,7 +44,7 @@
                 </div>
             </el-header>
             <el-container>
-                <el-aside width="300px">
+                <el-aside width="250px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
                         @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu">
                         <span class="custom-tree-node" slot-scope="{ node, data }">
@@ -68,10 +68,12 @@
                             <el-col :span="10">
                                 <!--查询-->
                                 <el-breadcrumb separator="/" style="margin-top: 10px;">
-                                        <el-breadcrumb-item>所有类别</el-breadcrumb-item>
-                                        <template v-for="item in breadcrumbData">
-                                            <el-breadcrumb-item ><a @click="breadPathClick(item)">{{item.name}}</a></el-breadcrumb-item>
-                                        </template>
+                                    <el-breadcrumb-item>所有类别</el-breadcrumb-item>
+                                    <template v-for="item in breadcrumbData">
+                                        <el-breadcrumb-item>
+                                            <a @click="breadPathClick(item)">{{item.name}}</a>
+                                        </el-breadcrumb-item>
+                                    </template>
                                 </el-breadcrumb>
                             </el-col>
                             <el-col :span="14" style="text-align: right;">
@@ -82,8 +84,13 @@
                                 </el-pagination>
                             </el-col>
                         </el-row>
-                        <template v-for="tp in tps">
+                        <span v-for="tp in tps">
                             <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }">
+                                <span class="verify-status">
+                                    <el-tag class="not-verify" v-if="tp.verify == null" type="info" size="mini"></el-tag>
+                                    <el-tag class="pass" v-if="tp.verify" type="success" size="mini"></el-tag>
+                                    <el-tag class="not-pass" v-if="tp.verify == false" type="danger" size="mini"></el-tag>
+                                </span>
                                 <div class="background-img" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)">
                                     <template v-if="tp.type == 'image' || tp.type == 'text'">
                                         <!--图片-->
@@ -120,7 +127,7 @@
                                     </div>
                                 </div>
                             </el-card>
-                        </template>
+                            </template>
 
                     </div>
                     <!-- 模板编辑框 -->
@@ -172,7 +179,8 @@
                                         </el-form-item>
 
                                         <el-form-item label="所属分类" prop="albumIds">
-                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
+                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false" filterable
+                                                change-on-select></el-cascader>
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button @click="tp.visible = false">取 消</el-button>
@@ -211,31 +219,29 @@
         </el-dialog>
         <!--模板类别 管理对话框-->
         <!--导入资源-->
-        <el-dialog :title="importResource.title" :visible.sync="importResource.visiable" >
+        <el-dialog :title="importResource.title" :visible.sync="importResource.visiable">
             <el-form ref="importResForm" :model="importResource.data" :rules="rules" label-width="120px">
                 <el-form-item label="名称来源">
                     <el-radio v-model="importResource.nameType" label="fileName" @change="importResource.data.name=''">文件名</el-radio>
-                    <el-radio v-model="importResource.nameType" label="input"  @change="importResource.data.name=''">用户输入</el-radio>
+                    <el-radio v-model="importResource.nameType" label="input" @change="importResource.data.name=''">用户输入</el-radio>
                 </el-form-item>
                 <el-form-item label="素材标题" prop="name" v-if="importResource.nameType == 'input'">
                     <el-input v-model="importResource.data.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="素材描述" >
+                <el-form-item label="素材描述">
                     <el-input type="textarea" :rows="3" v-model="importResource.data.description" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="所属分类" prop="albumIds">
                     <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
                 </el-form-item>
                 <el-form-item label="选取文件">
-                    <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" 
-                    :on-preview="handlePreview"
-                    :on-success="handleSuccess"
-                        :on-remove="handleRemove"  :auto-upload="false" :multiple="true">
+                    <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" :on-preview="handlePreview" :on-success="handleSuccess"
+                        :on-remove="handleRemove" :auto-upload="false" :multiple="true">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="danger" @click="clearChose">清空文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>
                         <el-checkbox style="margin-left: 10px;" v-model="importResource.commitOnUpload">上传完成后自动提交</el-checkbox>
-                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                        <div slot="tip" class="el-upload__tip">上传文件大小不能超过200M</div>
                     </el-upload>
                 </el-form-item>
             </el-form>
@@ -249,7 +255,7 @@
         <!--Tree 右键菜单-->
         <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
         <!--Tree 右键菜单-->
-        <el-dialog class="resourceView" :title="resourceView.title" :visible.sync="resourceView.visible" >
+        <el-dialog class="resourceView" :title="resourceView.title" :visible.sync="resourceView.visible" @close="resourceViewClose">
             <template v-if="resourceView.type == 'video'">
                 <video :src="getResUrl(resourceView.url)" controls="controls" class="videoView"></video>
             </template>
@@ -261,10 +267,10 @@
             <template v-if="resourceView.type == 'image'">
                 <img :src="getResUrl(resourceView.url) " class="imageView">
             </template>
-            
+
         </el-dialog>
     </div>
 </body>
 
 </html>
-<script  charset="utf-8" type="module" src="${urls.getForLookupPath('/assets/module/template/material.js')}"></script>
+<script charset="utf-8" type="module" src="${urls.getForLookupPath('/assets/module/template/material.js')}"></script>

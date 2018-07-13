@@ -168,7 +168,7 @@
 					  	width="400" 
 					  	trigger="click" >
 					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-upload"></i>
+					  		<i class="el-icon-upload2"></i>
 					  		导入记录
 					  	</el-button>
 					  	<div>
@@ -183,7 +183,9 @@
 							<el-button type="text" @click="money_manage_showImportPMDMsExcelErrorMsgDialog">显示导入错误信息</el-button>
 					  	</div>
 					</el-popover>
-					<el-button-group>
+					<el-button v-show="dis_h_v" size="small" icon="el-icon-download"
+						type="primary" @click="money_manage_exportPMDMExcel">下载记录</el-button>
+					<el-button-group :class="dis_h_v ? 'margin-0-10' : ''">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
@@ -250,6 +252,7 @@
 								    </el-date-picker>
 					  			</el-row>
 					  			<div id="PMDMChart" :style="PMDMChartStyle"></div>
+					  			<div id="PMDMLineChart" :style="PMDMChartStyle"></div>
 					  		</div>
 					  	</el-main>
 					</el-container>
@@ -440,7 +443,7 @@
 				var height = window.innerHeight;
 				obj.money_manage_pmdmPages.pageSize = parseInt((height - 100)/50);
 				obj.money_manage_orgInfoForPmdmPages.pageSize = parseInt((height - 100)/25);
-				obj.PMDMChartStyle = "width: 75%; height: " + (height - 250) + "px;";
+				obj.PMDMChartStyle = "width: 75%; height: " + (height - 300) + "px;padding-left: 17px;margin-bottom: 30px;";
 			},
 			money_manage_initPager() {	/* 初始化页面数据 */
 				var obj = this;
@@ -564,27 +567,51 @@
 				myChart.showLoading({
 				　　text : '正在查找当前组织党费缴纳统计... ...\n为避免加载过长在时间选择上应避免太大的跨度'
 				});
+				var myLineChart = echarts.init(document.getElementById("PMDMLineChart"));
+		        myLineChart.clear();
+				myLineChart.showLoading({
+				　　text : '正在查找当前组织党费缴纳统计... ...\n为避免加载过长在时间选择上应避免太大的跨度'
+				});
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
 						if (data.data != undefined) {	
 
 							// 基于准备好的dom，初始化echarts实例
 
-					        var legendDatasData = data.data.legendDatas;
-					        var dateLinesData = data.data.dateLines;
+					        var legendDatasData = data.data.legendDatas;	/*提示文本*/
+					        var dateLinesData = data.data.dateLines;	/*x轴信息*/
+
 					        var datasData = data.data.datas;
 					        var datasss = new Array;
 					        for (var i = 0; i < datasData.length; i++) {
 					        	var datas = datasData[i];
-					        	var shuju = {name:null, type: null, data: []};
+					        	var shuju = {name:null, type: "bar", data: []};
 					        	shuju.name = legendDatasData[i];
-					        	shuju.type = "bar";
 					        	shuju.data = datasData[i];
 					        	datasss[i] = shuju;
 					        }
+					        var lineDatasData = data.data.lineDatas;
+					        var lineDatasss = new Array;
+					        for (var i = 0; i < lineDatasData.length; i++) {
+					        	var lineDatas = lineDatasData[i];
+					        	var lineShuju = {name:null, type: "line", data: [], smooth: true};
+					        	lineShuju.name = legendDatasData[i];
+					        	lineShuju.data = lineDatasData[i];
+					        	lineDatasss[i] = lineShuju;
+					        }
+
+
+
+
+
+
 					        // 绘制图表
 					        myChart.hideLoading();    //隐藏加载动画
+					        myLineChart.hideLoading();
 					        var option = {
+					        	title: {
+							        text: '党费缴纳人数统计'
+							    },
 							    tooltip: {
 							        trigger: 'axis',
 							        axisPointer: {
@@ -632,7 +659,50 @@
 							    ],
 							    series: datasss
 							};
+							var lineOption = {
+							    title: {
+							        text: '党费缴纳比例统计'
+							    },
+							    tooltip: {
+							        trigger: 'axis'
+							    },
+							    legend: {
+							        data:legendDatasData
+							    },
+
+							    toolbox: {
+							        feature: {
+							            dataView: {show: true, readOnly: false},
+							            magicType: {show: true, type: ['line', 'bar']},
+							            restore: {show: true},
+							            saveAsImage: {show: true}
+							        }
+							    },
+							    xAxis: {
+							        type: 'category',
+							        boundaryGap: false,
+							        data: dateLinesData
+							    },
+							    yAxis: [
+							        {
+							            type: 'value',
+							            name: '比例',
+							            min: 0,
+							            axisLabel: {
+							                formatter: '{value} %'
+							            }
+							        }
+							    ],
+							    dataZoom: [
+							        {
+							            type: 'slider',
+							            show: true
+							        }
+							    ],
+							    series: lineDatasss
+							};
 					        myChart.setOption(option);
+					        myLineChart.setOption(lineOption);
 						} 
 					}
 					
@@ -691,6 +761,48 @@
 			money_manage_showImportPMDMsExcelErrorMsgDialog() {
 				var obj = this;
 				obj.money_manage_importPMDMsExcelErrorMsgDialog = true;
+			},
+			linkCondition(conditions) {
+				if (conditions.length == 0) {
+					conditions += "?";
+				} else {
+					conditions += "&";
+				}
+				return conditions;
+			},
+			money_manage_exportPMDMExcel() {
+				var obj = this;
+				var conditions = "";
+				if (obj.queryCondition.partyUserName != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "partyUserName=" + obj.queryCondition.partyUserName;
+				}
+				if (obj.queryCondition.idCard != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "idCard=" + obj.queryCondition.idCard;
+				}
+				if (obj.queryCondition.payStatus != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "payStatus=" + obj.queryCondition.payStatus;
+				}
+				if (obj.queryCondition.paidWay != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "paidWay=" + obj.queryCondition.paidWay;
+				}
+				if (obj.queryCondition.paidDateStart != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "paidDateStart=" + obj.queryCondition.paidDateStart;
+				}
+				if (obj.queryCondition.paidDateEnd != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "paidDateEnd=" + obj.queryCondition.paidDateEnd;
+				}
+				if (obj.queryCondition.orgInfoId != null) {
+					conditions += obj.linkCondition(conditions);
+					conditions += "orgInfoId=" + obj.queryCondition.orgInfoId;
+				}
+
+				window.location = "/party/pmdm/exportPMDMExcel" + conditions;
 			}
 		}
 	});

@@ -168,6 +168,7 @@ public interface PublishService {
      * @param contentId
      */
     public void offline(SysUser user, int contentId);
+    public void offline(SysUser user, String programId);
 
     /**
      * 下架

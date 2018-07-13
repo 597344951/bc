@@ -20,6 +20,7 @@ import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.tree.TreeNode;
 import com.zltel.broadcast.um.bean.OrganizationInformation;
+import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
 import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.service.OrganizationInformationService;
@@ -32,6 +33,8 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     private OrganizationInformationMapper organizationInformationMapper;
 	@Resource
     private OrganizationRelationMapper organizationRelationMapper;
+	@Resource
+    private IntegralConstituteMapper integralConstituteMapper;
 	@Override
     public BaseDao<OrganizationInformation> getInstince() {
         return this.organizationInformationMapper;
@@ -406,6 +409,47 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     		this.toTreeNodes(treeNodes);
     	}
     	return R.ok().setData(treeNodes);
+    }
+    
+    /**
+     * 查询积分结构树
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralConstituteToTree(Map<String, Object> conditions) {
+    	List<Map<String, Object>> icsMaps = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    	List<TreeNode<Map<String, Object>>> treeNodes = new ArrayList<>();
+    	if (icsMaps != null && icsMaps.size() > 0) {
+    		for (Map<String, Object> ic : icsMaps) {
+    			TreeNode<Map<String, Object>> treeNode = new TreeNode<Map<String, Object>>();
+    			treeNode.setData(ic);
+    			treeNodes.add(treeNode);
+			}
+    		this.toTreeNodes_IC(treeNodes);
+    	}
+    	
+    	return R.ok().setData(treeNodes);
+    }
+    
+    private void toTreeNodes_IC(List<TreeNode<Map<String, Object>>> treeNodes) {
+    	if (treeNodes != null && treeNodes.size() > 0) {
+    		for (TreeNode<Map<String, Object>> treeNode : treeNodes) {
+    			Map<String, Object> condition = new HashMap<>();
+				condition.put("orgId", treeNode.getData().get("orgId"));
+				condition.put("parentIcId", treeNode.getData().get("icId"));
+				List<Map<String, Object>> orgInfoTrees = integralConstituteMapper.queryOrgIntegralConstitute(condition);
+				List<TreeNode<Map<String, Object>>> treeNodes2 = new ArrayList<>();
+				if (orgInfoTrees != null && orgInfoTrees.size() > 0) {
+					for (Map<String, Object> map : orgInfoTrees) {
+						TreeNode<Map<String, Object>> treeNode2 = new TreeNode<Map<String, Object>>();
+		    			treeNode2.setData(map);
+		    			treeNodes2.add(treeNode2);
+					}
+				}
+				treeNode.setChildren(treeNodes2);
+				toTreeNodes_IC(treeNode.getChildren());
+			}
+    	}
     }
     
     /**

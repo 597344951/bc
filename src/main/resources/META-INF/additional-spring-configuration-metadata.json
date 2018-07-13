@@ -78,10 +78,5 @@
     "name": "sola.url",
     "type": "java.lang.String",
     "description": "A description for 'sola.url'"
-  },
-  {
-    "name": "shiro.config.accountMaxSession",
-    "type": "java.lang.Integer",
-    "description": "A description for 'shiro.config.accountMaxSession'"
-  }
+  } 
 ]}

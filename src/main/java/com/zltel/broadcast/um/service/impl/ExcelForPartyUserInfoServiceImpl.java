@@ -45,6 +45,8 @@ import com.zltel.broadcast.um.bean.EducationLevel;
 import com.zltel.broadcast.um.bean.FirstLineType;
 import com.zltel.broadcast.um.bean.JoinPartyBranchType;
 import com.zltel.broadcast.um.bean.NationType;
+import com.zltel.broadcast.um.bean.OrganizationDuty;
+import com.zltel.broadcast.um.bean.OrganizationInformation;
 import com.zltel.broadcast.um.bean.OrganizationRelation;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
 import com.zltel.broadcast.um.bean.WorkNatureType;
@@ -54,6 +56,8 @@ import com.zltel.broadcast.um.dao.EducationLevelMapper;
 import com.zltel.broadcast.um.dao.FirstLineTypeMapper;
 import com.zltel.broadcast.um.dao.JoinPartyBranchTypeMapper;
 import com.zltel.broadcast.um.dao.NationTypeMapper;
+import com.zltel.broadcast.um.dao.OrganizationDutyMapper;
+import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
 import com.zltel.broadcast.um.dao.WorkNatureTypeMapper;
@@ -86,6 +90,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	private JoinPartyBranchTypeMapper joinPartyBranchTypeMapper;
 	@Autowired
 	private OrganizationRelationMapper organizationRelationMapper;
+	@Autowired
+	private OrganizationInformationMapper organizationInformationMapper;
+	@Autowired
+	private OrganizationDutyMapper organizationDutyMapper;
 
 	private final static String OFFICE_EXCEL_2003 = "XLS";
 	private final static String OFFICE_EXCEL_2010 = "XLSX";
@@ -102,7 +110,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	 */
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
-    public synchronized R importPartyUserInfosExcel(HttpServletResponse response, MultipartFile file) throws Exception {
+    public R importPartyUserInfosExcel(HttpServletResponse response, MultipartFile file) throws Exception {
 		Workbook wb = null;
 		wb = this.createWorkboot(this.getExcelSuffix(file.getOriginalFilename()), file.getInputStream());
 		Sheet hs = wb.getSheetAt(0);	//得到第一页
@@ -628,13 +636,35 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			
 			//组织编号
 			if (row.getCell(39) != null && row.getCell(40) != null) {
+				Integer orgRltInfoId;
+				Integer orgRltDutyId;
 				try {
-					orgRelation.setOrgRltInfoId(Integer.parseInt(row.getCell(39).getStringCellValue()));
-					orgRelation.setOrgRltDutyId(Integer.parseInt(row.getCell(40).getStringCellValue()));
+					orgRltInfoId = Integer.parseInt(row.getCell(39).getStringCellValue());
+					orgRltDutyId = Integer.parseInt(row.getCell(40).getStringCellValue());
 				} catch (Exception e) {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行请填写正确的组织编号和职责编号。\r\n");
 					logout.error(e.getMessage(),e);
+					break;
+				}
+				OrganizationInformation orgInfo = new OrganizationInformation();
+				orgInfo.setOrgInfoId(orgRltInfoId);
+				List<OrganizationInformation> orgInfos = organizationInformationMapper.queryOrgInfos(orgInfo);
+				if (orgInfos != null && orgInfos.size() == 1) {
+					orgRelation.setOrgRltInfoId(orgRltInfoId);
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行没有查询到该组织\r\n");
+				}
+				OrganizationDuty orgDuty = new OrganizationDuty();
+				orgDuty.setOrgDutyOrgInfoId(orgRltInfoId);
+				orgDuty.setOrgDutyId(orgRltDutyId);
+				List<OrganizationDuty> orgDutys = organizationDutyMapper.queryOrgDutys(orgDuty);
+				if (orgDutys != null && orgDutys.size() == 1) {
+					orgRelation.setOrgRltDutyId(orgRltDutyId);
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行在组织里不存在此职位\r\n");
 				}
 			} else {
 				if (row.getCell(39) == null && row.getCell(40) != null) {

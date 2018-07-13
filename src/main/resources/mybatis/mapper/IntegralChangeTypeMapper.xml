@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.IntegralChangeTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.IntegralChangeType">
+    <id column="ict_id" jdbcType="INTEGER" property="ictId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="describes" jdbcType="VARCHAR" property="describes" />
+    <result column="operation" jdbcType="INTEGER" property="operation" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ict_id, type, name, describes, operation
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from integral_change_type
+    where ict_id = #{ictId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from integral_change_type
+    where ict_id = #{ictId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
+    insert into integral_change_type (ict_id, type, name, 
+      describes, operation)
+    values (#{ictId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{describes,jdbcType=VARCHAR}, #{operation,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
+    insert into integral_change_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ictId != null">
+        ict_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="describes != null">
+        describes,
+      </if>
+      <if test="operation != null">
+        operation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ictId != null">
+        #{ictId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="operation != null">
+        #{operation,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
+    update integral_change_type
+    <set>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null">
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="operation != null">
+        operation = #{operation,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ict_id = #{ictId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
+    update integral_change_type
+    set type = #{type,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR},
+      operation = #{operation,jdbcType=INTEGER}
+    where ict_id = #{ictId,jdbcType=INTEGER}
+  </update>
+</mapper>

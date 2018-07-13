@@ -218,6 +218,7 @@
 .resourceView .el-dialog__body{
     padding:0px;
     background-color: #fafafa;
+    text-align: center;
 }
 .resourceView .imageView{
     max-width:100%;
@@ -238,4 +239,33 @@
 }
 .submitReport .el-dialog__body{
     padding:10px 20px 30px 20px;
+}
+
+.verify-status{
+    position: absolute;
+    right: 5;
+    top: 5;
+    z-index: 10;
+}
+.not-verify,.not-pass,.pass{
+    width: 30px;
+    height:30px;
+    display: inline-block;
+    border-radius: 50%;
+}
+.not-verify{
+    background: url(/assets/icons/not-verify.png) no-repeat;
+    background-size: cover;
+}
+.not-pass{
+    background: url(/assets/icons/not-pass.png) no-repeat;
+    background-size: cover;
+}
+.pass{
+    background: url(/assets/icons/pass.png) no-repeat;
+    background-size: cover;
+}
+
+.control-button{
+    margin-top:10px;
 }

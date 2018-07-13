@@ -24,22 +24,22 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = {"/program"})
-public class ProgramManageController extends BaseController{
+public class ProgramManageController extends BaseController {
     public static final Logger logout = LoggerFactory.getLogger(ProgramManageController.class);
-    
+
     @Resource
     private SolaProgramService solaService;
-    
+
     @GetMapping("/category")
     @ApiOperation(value = "获取节目目录")
     public R getProgramCategory() {
         List<Category> cats = this.solaService.getProgramCategoryList(0);
-        List<TreeNode<Category>> tree = TreeNodeCreateUtil.toTree(Category.class, cats, "pkId", "parentId");
+        List<TreeNode<Category>> tree = TreeNodeCreateUtil.toTree(cats, Category::getPkId, Category::getParentId);
         R r = R.ok().setData(tree);
         r.put("cats", cats);
         return r.setData(tree);
     }
-    
+
     @GetMapping("/{categoryId}/programs/{pageIndex}-{limit}")
     @ApiOperation(value = "获取节目模版")
     public R getProgramTemplate(@PathVariable("categoryId") int categoryId, @PathVariable("pageIndex") int pageIndex,

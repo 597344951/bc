@@ -14,20 +14,18 @@ import com.zltel.broadcast.incision.sola.bean.Category;
 
 public class TreeNodeCreateUtilTest extends BaseTests {
 
-    @Test
-    public void testToTree() throws Exception {
-        List<Category> list = getCategory();
-
-        String pk = "pkId";
-        String pt = "parentId";
-        List<TreeNode<Category>> data = TreeNodeCreateUtil.toTree(Category.class, list, pk, pt);
-        logout.info("生成目录树: {}", JSON.toJSONString(data));
-    }
-
+    
     private List<Category> getCategory() {
         String str =
                 "[{\"name\":\"党建模板\",\"parentId\":\"0\",\"pkId\":\"9\",\"showOrder\":\"0\"},{\"name\":\"劳动节模板\",\"parentId\":\"9\",\"pkId\":\"10\",\"showOrder\":\"0\"},{\"name\":\"国庆节模板\",\"parentId\":\"9\",\"pkId\":\"11\",\"showOrder\":\"0\"}]\r\n";
         return JSON.parseArray(str).stream().map(jo -> JSON.toJavaObject((JSONObject) jo, Category.class))
                 .collect(Collectors.toList());
+    }
+    
+    @Test
+    public void testToTree2() {
+        List<Category> list = getCategory();
+        List<TreeNode<Category>> data = TreeNodeCreateUtil.toTree(list, Category::getPkId, Category::getParentId);
+        logout.info("生成目录树2: {}", JSON.toJSONString(data));
     }
 }

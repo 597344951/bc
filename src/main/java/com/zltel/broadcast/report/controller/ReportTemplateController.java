@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
@@ -24,9 +26,6 @@ import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.report.bean.ReportTemplate;
 import com.zltel.broadcast.report.service.ReportTemplateService;
-import com.zltel.broadcast.resource.bean.Material;
-import com.zltel.broadcast.resource.bean.ResourceMaterial;
-import com.zltel.broadcast.resource.service.ResourceMaterialService;
 import com.zltel.broadcast.um.bean.SysUser;
 
 import io.swagger.annotations.ApiOperation;
@@ -35,10 +34,16 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = {"/report"})
 public class ReportTemplateController extends BaseController {
     public static final Logger logout = LoggerFactory.getLogger(ReportTemplateController.class);
-    @Resource
-    private ResourceMaterialService materialService;
+
     @Resource
     private ReportTemplateService reportTemplateservice;
+
+    @ApiOperation(value = "导入模版")
+    @PostMapping(value = "/template/import")
+    public R saves(@RequestParam("file") MultipartFile file) {
+        
+        return R.ok();
+    }
 
     @ApiOperation(value = "查询模版内容")
     @PostMapping(value = "/template/{pageIndex}-{limit}")

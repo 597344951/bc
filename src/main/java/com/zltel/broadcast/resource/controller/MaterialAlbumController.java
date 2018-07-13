@@ -24,8 +24,6 @@ import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.resource.bean.MaterialAlbum;
 import com.zltel.broadcast.resource.service.MaterialAlbumService;
-import com.zltel.broadcast.template.bean.TemplateType;
-import com.zltel.broadcast.template.bean.TemplateTypeTreeNode;
 import com.zltel.broadcast.um.bean.SysUser;
 
 import io.swagger.annotations.ApiOperation;
@@ -40,14 +38,16 @@ public class MaterialAlbumController extends BaseController {
 
     @ApiOperation(value = "查询用户专辑树")
     @GetMapping(value = "/Album")
-    public R listTypeTree(String keyword) {
+    public R listTypeTree(String keyword,Boolean verify) {
         SysUser user = this.getSysUser();
         MaterialAlbum ma = new MaterialAlbum(user);
         ma.setKeyword(keyword);
+        ma.setVerify(verify);
 
         List<MaterialAlbum> mas = this.materialAlbumService.listMaterialAlbum(ma);
-        List<TreeNode<MaterialAlbum>> tree = TreeNodeCreateUtil.toTree(MaterialAlbum.class, mas, "albumId", "parent");
- 
+        List<TreeNode<MaterialAlbum>> tree =
+                TreeNodeCreateUtil.toTree(mas, MaterialAlbum::getAlbumId, MaterialAlbum::getParent);
+
         return R.ok().setData(tree).set("list", mas);
     }
 

@@ -912,6 +912,7 @@
                 if(reps.status) {
                     type.children = reps.data;
 					reps.data.forEach((item => {
+						item.previewPicture = serverConfig.getUrl(item.previewPicture)
 						item.desc = item.title
 						app.templateArr[name2].push(item)
 						app.showTemplateArr[name2].push(item)
@@ -943,7 +944,12 @@
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function(reps) {
-                    callback(reps.data)
+					if(!reps.status) {
+						app.$message.error(reps.msg)
+					} else {
+						callback(reps.data)
+					}
+                    
                 },
                 error: function (err) {
 					app.$message.error('系统错误, 请联系管理员')

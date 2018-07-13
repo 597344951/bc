@@ -131,12 +131,28 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         String msg = execute(program, "CancelPublishProgram");
         log.debug("取消已发布节目<CancelPublishProgram>:{}", msg);
         ResultStatus rs = this.handleResultStatus(msg);
-        if (!rs.isSuccess()) {
+        if (rs.getCode() != 0 && rs.getCode() != 1) {
             String em = "取消播放失败: " + rs.getMsg();
             log.error(em);
             RRException.makeThrow(em);
         }
         log.info("终端:{}取消播放{}成功", tids, pids);
+    }
+
+    @Override
+    public void deleteProgram(int programId) {
+        Map<String, Object> program = new HashMap<>();
+        program.put("programId", programId);
+        program.put(ORG_ID, org);
+        String msg = execute(program, "DeleteProgram");
+        log.debug("删除节目<DeleteProgram>:{}", msg);
+        ResultStatus rs = this.handleResultStatus(msg);
+        if (!rs.isSuccess()) {
+            String em = "删除节目失败: " + rs.getMsg();
+            log.error(em);
+            RRException.makeThrow(em);
+        }
+        log.info("删除{}成功", programId);
     }
 
     @SuppressWarnings("unchecked")

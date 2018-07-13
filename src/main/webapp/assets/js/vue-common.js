@@ -11,6 +11,11 @@ Vue.filter('date', function (value) {
 		return ''
 	return moment(value).format('YYYY-MM-DD')
 });
+Vue.filter('time', function (value) {
+	if (!value)
+		return ''
+	return moment(value).format('HH:mm:ss')
+});
 /** 日期时间格式化 * */
 Vue.filter('datetime', function (value) {
 	if (!value)

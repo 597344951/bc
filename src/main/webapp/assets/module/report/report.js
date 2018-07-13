@@ -209,9 +209,9 @@ window.appInstince = new Vue({
 
   },
   methods: {
-    getTypeName(target){
+    getTypeName(target) {
       let bp = breadPath(target, this.tpt_data, item => item.children, item => item.parent, item => item.typeId, item => item.data);
-      return bp[bp.length-1].name;
+      return bp[bp.length - 1].name;
     },
     loadSubmitedReport() {
       let url = '/report/submit/' + this.crpager.current + '-' + this.crpager.size;
@@ -347,6 +347,7 @@ window.appInstince = new Vue({
     //查询模板
     searchTemplate() {
       this.currentCategory.name = '所有类别';
+      this.currentCategory.typeId = 0;
       this.loadTpTypeData();
       this.loadTreeData();
     },
@@ -430,7 +431,12 @@ window.appInstince = new Vue({
     // 增加模板类别
     addTemplateType: function () {
       var nodedata = this.checkTreeSelectData();
-      if (!nodedata) return;
+      if (!nodedata) {
+        nodedata = {
+          typeId: 0,
+          name: '根目录'
+        };
+      }
 
       var tpt = this.tpt;
       tpt.update = false;
@@ -597,7 +603,7 @@ window.appInstince = new Vue({
         }
       });
     },
-    delReport(tp){
+    delReport(tp) {
       let me = this;
       let reportId = tp.reportId;
       if (!reportId) {
@@ -608,13 +614,13 @@ window.appInstince = new Vue({
       this.$confirm(`是否删除 『${title} 』?`, "提示", {
         type: "warning"
       }).then(function () {
-        let url = '/report/submit/'+reportId;
-        ajax_json_promise(url,'delete',{}).then(result=>{
+        let url = '/report/submit/' + reportId;
+        ajax_json_promise(url, 'delete', {}).then(result => {
           me.tp.visible = false;
           me.loadSubmitedReport();
         });
       });
-      
+
     },
     saveOrUpdateTemplate: function () {
       var ins = this;

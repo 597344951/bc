@@ -53,15 +53,29 @@ public class OrganizationInformationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="/queryOrgInfosToTrees", method=RequestMethod.POST)
-	@LogPoint("查询组织信息生成树")
 	@RequiresPermissions(value = {"org:info:query"})
 	@ApiOperation(value = "查询组织信息生成树")
 	public R queryOrgInfosToTrees(@RequestParam Map<String, Object> orgInfoConditions) {
 		try {
 			return organizationInformationService.queryOrgInfosToTree(orgInfoConditions);
 		} catch (Exception e) {
-			logout.error(e.getMessage());
 			return R.error().setMsg("查询组织信息生成树失败");
+		}
+	}
+	
+	/**
+	 * 查询积分结构树
+	 * @param orgInfoConditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgIntegralConstituteToTree", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"org:info:query"})
+	@ApiOperation(value = "查询积分结构树")
+	public R queryOrgIntegralConstituteToTree(@RequestParam Map<String, Object> orgInfoConditions) {
+		try {
+			return organizationInformationService.queryOrgIntegralConstituteToTree(orgInfoConditions);
+		} catch (Exception e) {
+			return R.error().setMsg("查询积分结构树失败");
 		}
 	}
 	

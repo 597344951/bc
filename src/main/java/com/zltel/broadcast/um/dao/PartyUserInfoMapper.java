@@ -26,4 +26,12 @@ public interface PartyUserInfoMapper extends BaseDao<PartyUserInfo>  {
      * @throws Exception
      */
     public List<Map<String, Object>> queryPartyUserInfos(Map<String, Object> partyUserMap);
+    
+    /**
+     * 导入验证
+     * @param partyUserMap
+     * @return
+     * @throws Exception
+     */
+    public List<PartyUserInfo> queryPartyUserInfosForValidata(Map<String, Object> partyUserMap);
 }

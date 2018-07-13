@@ -6,7 +6,9 @@
     <%@include file="/include/base.jsp" %>
     <%@include file="/include/element-ui.jsp" %>
     <style>
-       
+       .el-button {
+           margin: 0px !important;
+       }
     </style>
 </head>
 <body>

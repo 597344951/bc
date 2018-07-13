@@ -51,7 +51,7 @@ public class ReportTypeController extends BaseController {
         rp.setOrgid(this.getSysUser().getOrgId());
         rp.setKeyword(keyword);
         List<ReportType> mas = this.reportTypeService.queryReportTemplateCount(rp);
-        List<TreeNode<ReportType>> tree = TreeNodeCreateUtil.toTree(ReportType.class, mas, "typeId", "parent");
+        List<TreeNode<ReportType>> tree = TreeNodeCreateUtil.toTree(mas, ReportType::getTypeId, ReportType::getParent);
         return R.ok().setData(tree).set("list", mas);
     }
 

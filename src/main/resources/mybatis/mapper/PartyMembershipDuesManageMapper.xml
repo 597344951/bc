@@ -207,17 +207,20 @@
       <if test="payStatus != null and payStatus != ''"> and
           pmdm.pay_status = #{payStatus}
       </if>
-      <if test="shouldPayDateStart != null"> and 
-		  pmdm.should_pay_date_start >= #{shouldPayDateStart}
+      <if test="paidDateStart != null"> and 
+		  pmdm.paid_date >= #{paidDateStart}
 	  </if>
-	  <if test="shouldPayDateEnd != null"> and 
-		  pmdm.should_pay_date_end &lt;= #{shouldPayDateEnd}
+	  <if test="paidDateEnd != null"> and 
+		  pmdm.paid_date &lt;= #{paidDateEnd}
 	  </if>
 	  <if test="paidWay != null and paidWay != ''"> and
           pmdm.paid_way = #{paidWay}
       </if>
       <if test="orgInfoId != null and orgInfoId != ''"> and
           pmdm.org_id = #{orgInfoId}
+      </if>
+      <if test="userId != null and userId != ''"> and
+          pmdm.user_id = #{userId}
       </if>
 	order by
 	  pmdm.should_pay_date_end desc

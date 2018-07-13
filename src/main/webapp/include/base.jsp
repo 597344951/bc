@@ -20,3 +20,15 @@
 
 <!--弹窗-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.js"></script>
+
+<!--系统描述信息-->
+<script>
+    var sysInfo = {
+        sysName: '${sysInfo.appname}',
+        userId: '<shiro:principal property="userId"/>',
+        orgId: '<shiro:principal property="orgId"/>',
+        sysUserName: '<shiro:principal property="username"/>',
+        title_theme: ('#' + ('<shiro:principal property="theme"/>' || '20a0ff'))
+    }
+    window.sysInfo = sysInfo;
+</script>

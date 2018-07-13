@@ -26,14 +26,14 @@ window.appInstince = new Vue({
         openTabDatas: [], //tab分页中的数据
         tabIndex: 2,
         menuDatas: [],
-        messages: [{
+        messages: [/*{
             mid: 1,
             title: 'test title',
             time: new Date(),
             sender: "System",
             content: "test message",
             url: 'http://www.baidu.com'
-        }],
+        }*/],
         changeTheme: {
             visible: false,
             color: title_theme

@@ -183,13 +183,20 @@ window.appInstince = new Vue({
     },
     tpt_data: [],
     tps: [],
-    tpt_data_normal: []
+    tpt_data_normal: [] 
   },
   mounted() {
     this.loadTreeData();
     this.loadTpTypeData(null, this);
   },
   computed: {
+    loadOrgUsers() {
+      let orgId = window.sysInfo.orgId;
+      let url = `/sys/user/querySysUsersNotPage`;
+      ajax_json_promise(url,'post',{orgId:orgId}).then(result=>{
+        orgUsers = result.data;
+      });
+    },
     breadcrumbData() {
       let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
       return bp;
@@ -197,7 +204,7 @@ window.appInstince = new Vue({
   },
   watch: {
     "tp.data.type": function (val, old) {
-      this.resource_server_url = serverConfig.getUploadUrl(this.tp.data.type);
+      this.resource_server_url = serverConfig.getDefaultUploadUrl();
     }
   },
   methods: {
@@ -208,7 +215,7 @@ window.appInstince = new Vue({
       this.loadTpTypeData(item);
     },
     getUploadUrl(type) {
-      return serverConfig.getUploadUrl(type);
+      return serverConfig.getDefaultUploadUrl(type);
     },
     submitUpload() {
       this.$refs.upload.submit();
@@ -408,7 +415,12 @@ window.appInstince = new Vue({
     // 增加模板类别
     addTemplateType: function () {
       var nodedata = this.checkTreeSelectData();
-      if (!nodedata) return;
+      if (!nodedata) {
+        nodedata = {
+          albumId: 0,
+          name: '根目录'
+        }
+      }
 
       var tpt = this.tpt;
       tpt.update = false;
@@ -493,9 +505,9 @@ window.appInstince = new Vue({
       if (tp.type == 'text') {
         _editor.setContent(tp.content);
         _editor.execCommand("preview");
-      }else{
+      } else {
         this.resourceView.url = tp.url;
-        this.resourceView.title=tp.name;
+        this.resourceView.title = tp.name;
         this.resourceView.visible = true;
       }
     },
@@ -608,7 +620,7 @@ window.appInstince = new Vue({
         this.tp.data.url = null;
       }
       if (res_type == 'audio') {
-        this.tp.data.coverUrl = '/assets/img/timg.png';
+        if (!this.tp.data.coverUrl) this.tp.data.coverUrl = '/assets/img/timg.png';
       }
     },
     beforeAvatarUpload(file) {
@@ -654,6 +666,11 @@ window.appInstince = new Vue({
     },
     getResUrl(url) {
       return serverConfig.getUrl(url);
+    },
+    resourceViewClose(){
+      //暂停视频/音频
+      $('.videoView').trigger('pause');
+      $('.audioView').trigger('pause');
     }
   }
 });

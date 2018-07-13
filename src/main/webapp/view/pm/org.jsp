@@ -441,6 +441,7 @@
 									<el-button @click="partyOrg_manager_openUpdateOrgInfoDialog(scope.row)" type="text" size="small">修改信息</el-button>
 								</shiro:hasPermission>
 								<el-button @click="partyOrg_manager_openInsertOrgDutyDialog(scope.row)" type="text" size="small">添加职责</el-button>
+								<el-button @click="partyOrg_manager_openAddOrgIntegralConstituteDialog(scope.row)" type="text" size="small">添加积分结构</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -448,6 +449,59 @@
 			</el-main>
 		</el-container>
 
+
+
+
+
+		<el-dialog @close="" title="添加组织积分结构" :visible.sync="partyOrg_manager_addOrgIntegralConstituteDialog" width="70%">
+			<el-form label-width="120px" size="small" :model="partyOrg_manager_addOrgIntegralConstituteForm" status-icon 
+				ref="partyOrg_manager_addOrgIntegralConstituteForm" label-width="100px" :rules="partyOrg_manager_addOrgIntegralConstituteFormRules" >
+				<div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
+					<div>
+						<el-form-item label="积分类型" prop="type">
+						    <el-input 
+						    	clearable 
+						    	style="width: 180px;"
+						    	v-model="partyOrg_manager_addOrgIntegralConstituteForm.type" 
+						    	placeholder="例：基础积分"></el-input>
+						</el-form-item>
+					</div>
+					<div>
+						<el-form-item label="积分值" prop="integral">
+						    <el-input 
+						    	clearable 
+						    	style="width: 90px;"
+						    	v-model="partyOrg_manager_addOrgIntegralConstituteForm.integral" 
+						    	placeholder="填写数字"></el-input> 分
+						</el-form-item>
+					</div>
+					<div>
+						<el-form-item label="说明" prop="describes">
+						    <el-input 
+							  	type="textarea"
+							 	:autosize="{ minRows: 3, maxRows: 5}"
+							 	placeholder="积分类型说明"
+								v-model="partyOrg_manager_addOrgIntegralConstituteForm.describes">
+							</el-input>
+						</el-form-item>
+					</div>
+					<div v-if="partyOrg_manager_orgInfoTreeOfIntegralConstitute.length != 0">
+						<el-form-item label="积分类型细分" prop="parentIcId" style="margin-bottom: 0px;">
+						    <el-tree :expand-on-click-node="false" 
+						    	:highlight-current="true" 
+						    	:data="partyOrg_manager_orgInfoTreeOfIntegralConstitute" 
+						    	:props="partyOrg_manager_orgInfoTreeOfIntegralConstituteProps" 
+						    	@node-click="partyOrg_manager_setIntegralparentId">
+						  	</el-tree>
+						</el-form-item>
+					</div>
+				</div>
+				<div style="margin: 20px 0px;">
+					<el-button size="small" type="primary" @click="partyOrg_manager_addOrgIntegralConstitute">添加积分</el-button>
+			    	<el-button size="small" @click="partyOrg_manager_resetAddOrgIntegralConstituteForm">重置</el-button>
+				</div>
+			</el-form>
+		</el-dialog>
 
 
 		<el-dialog @close="partyOrg_manager_resetOrgInfosRelationDialog" title="组织成员分析" :visible.sync="partyOrg_manager_showOrgInfosRelationDialog" width="70%">
@@ -828,11 +882,19 @@
 			partyOrg_manager_changeUserDutyThisOrgDialog: false,	/*变更用户职责弹窗*/
 			partyOrg_manager_showOrgInfosChildrenDialog: false, 	/*下属组织关系图弹窗*/
 			partyOrg_manager_showOrgInfosRelationDialog: false, 	/*组织人员分析图弹窗*/
+			partyOrg_manager_addOrgIntegralConstituteDialog: false, /*添加组织积分结构弹窗*/
 			partyOrg_manager_orgInfoTreeOfInsert: [],	/*添加组织信息时的组织关系树*/
 			partyOrg_manager_orgInfoTreeOfInsertProps: {
 				children: 'children',
 	            label: function(_data, node){
 	            	return _data.data.orgInfoName;
+	            }
+			},
+			partyOrg_manager_orgInfoTreeOfIntegralConstitute: [],	/*添加积分结构是选择章节的父章节*/
+			partyOrg_manager_orgInfoTreeOfIntegralConstituteProps: {
+				children: 'children',
+	            label: function(_data, node){
+	            	return _data.data.type;
 	            }
 			},
 			partyOrg_manager_orgInfoTypes:[],	/*添加组织信息时选择组织类型*/
@@ -891,6 +953,14 @@
 		    		{ required: true, message: '请输入管委会详细地址!', trigger: 'blur' }
 		    	]
 			},
+			partyOrg_manager_addOrgIntegralConstituteFormRules: {
+				type: [
+		    		{ required: true, message: '请输入积分类型!', trigger: 'blur' }
+		    	],
+		    	integral: [
+		    		{ required: true, message: '请输入积分值!', trigger: 'blur' }
+		    	]
+			},
 			partyOrg_manager_insertOrgInfoDutyForm: {	/*给组织添加职责信息*/
 				orgDutyName: null,
 				orgDutyDescribe: null,
@@ -925,7 +995,14 @@
 				},
 				partyOrg_manager_orgInfosChildrenTree: []	/*组织关系树图*/
 			},
-			partyOrg_manager_orgInfoTreesForZMD: []	/*组织结构信息-走马灯页面*/
+			partyOrg_manager_orgInfoTreesForZMD: [],	/*组织结构信息-走马灯页面*/
+			partyOrg_manager_addOrgIntegralConstituteForm: {	/*添加组织积分结构弹窗*/
+				type: null,
+				integral: null,
+				describes: null,
+				orgId: null,
+				parentIcId: -1
+			}
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -1187,9 +1264,17 @@
         		var obj = this;
 				obj.partyOrg_manager_insertOrgInfoForm.orgInfoParentId = data.data.orgInfoId;
         	},
+        	partyOrg_manager_setIntegralparentId(data) {
+        		var obj = this;
+				obj.partyOrg_manager_addOrgIntegralConstituteForm.parentIcId = data.data.icId;
+        	},
         	partyOrg_manager_resetinsertOrgInfoForm() {	/*重置新增组织表单*/
         		var obj = this;
         		obj.$refs.partyOrg_manager_insertOrgInfoForm.resetFields();
+        	},
+        	partyOrg_manager_resetAddOrgIntegralConstituteForm() {
+        		var obj = this;
+        		obj.$refs.partyOrg_manager_addOrgIntegralConstituteForm.resetFields();
         	},
         	partyOrg_manager_insertOrgInfo() {	/*新增组织信息*/
         		var obj = this;
@@ -1574,18 +1659,18 @@
 
 				                data: orgInfosRelationTree,
 
-				                top: '1%',
+				                top: '5%',
 				                left: '10%',
-				                bottom: '1%',
+				                bottom: '5%',
 				                right: '10%',
 
 				                orient: 'vertical',
-
-				                symbolSize: 7,
+				                symbolSize: 12,
 
 				                label: {
 				                    normal: {
-				                        position: 'left',
+				                        position: 'top',
+				                        rotate: -90,
 				                        verticalAlign: 'middle',
 				                        align: 'right',
 				                        fontSize: 12
@@ -1804,6 +1889,55 @@
 				setTimeout(()=>{
 					obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true);
 				},200)
+			},
+			partyOrg_manager_openAddOrgIntegralConstituteDialog(row) {
+				var obj = this;
+				obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId = row.orgInfoId;
+
+				var url = "/org/ifmt/queryOrgIntegralConstituteToTree";
+				var t = {
+					orgId: row.orgInfoId,
+					parentIcId: -1
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.partyOrg_manager_orgInfoTreeOfIntegralConstitute = [
+							data = {
+								data: {		/* 给根目录设置一个顶级节点，用于查询全部数据 */
+									icId: -1,
+									type: "新的积分类型 （不选默认）"
+								},
+								children: datas.data
+							}
+						];
+					}
+					
+				})
+
+				obj.partyOrg_manager_addOrgIntegralConstituteDialog = true;
+			},
+			partyOrg_manager_addOrgIntegralConstitute() {
+				var obj = this;
+        		this.$refs.partyOrg_manager_addOrgIntegralConstituteForm.validate( function(valid) {
+        			if (valid) {
+        				var url = "/org/ic/insertIntegralConstitute";
+        				var t = {
+        					type: obj.partyOrg_manager_addOrgIntegralConstituteForm.type,
+							integral: obj.partyOrg_manager_addOrgIntegralConstituteForm.integral,
+							describes: obj.partyOrg_manager_addOrgIntegralConstituteForm.describes,
+							orgId: obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId,
+							parentIcId: obj.partyOrg_manager_addOrgIntegralConstituteForm.parentIcId
+        				}
+        				$.post(url, t, function(data, status){
+        					if (data.code == 200) {
+        						toast('添加成功',data.msg,'success');
+        						obj.partyOrg_manager_resetAddOrgIntegralConstituteForm();
+        						obj.partyOrg_manager_addOrgIntegralConstituteDialog = false;
+        					}
+        					
+        				})
+        			}
+        		})
 			}
 		}
 	});
