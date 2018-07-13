@@ -51,16 +51,12 @@
                             <span class="left-label-group">
                                 <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
                                 {{ node.label }}</span>
-                            <span class="right-btn-group" v-show="node.showtoolbar">
-                                <!---->
-                                <el-button-group>
-                                    <el-button type="primary" size="mini" icon="el-icon-edit"></el-button>
-                                    <el-button type="primary" size="mini" icon="el-icon-share"></el-button>
-                                    <el-button type="primary" size="mini" icon="el-icon-delete"></el-button>
-                                </el-button-group>
-                            </span>
                         </span>
                     </el-tree>
+                    <div class="store-status">
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="50" status="success"></el-progress>
+                        <span class="label-txt">5G/10G</span>
+                    </div>
                 </el-aside>
                 <el-main>
                     <div role="mainDis" v-show="!tp.visible" style="overflow: auto;">

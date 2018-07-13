@@ -11,21 +11,19 @@
 .bottom {
     /*margin-top: 13px;
     line-height: 12px;*/
-   
 }
+
 .box-card {
     width: 200px;
     float: left;
     margin-left: 20px;
     margin-top: 20px;
-    transition: transform 0.2s,box-shadow 0.3s;
-
+    transition: transform 0.2s, box-shadow 0.3s;
 }
 
 .box-card:hover {
-    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-    transform:translateY(-5px);
-
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
 }
 
 .el-main,
@@ -36,15 +34,18 @@
 .el-main {
     padding: 0 20px;
 }
-.el-main>div[role='mainDis']{
+
+.el-main>div[role='mainDis'] {
     padding-bottom: 20px;
 }
-.el-main>div[role='mainDis']+.el-row{
+
+.el-main>div[role='mainDis']+.el-row {
     background-color: #fff;
     box-shadow: rgb(221, 221, 221) 0px 0px 25px 3px inset;
     padding: 15px;
     margin-bottom: 20px;
 }
+
 /**页面预览**/
 
 .page-thumb {
@@ -121,16 +122,16 @@
     margin-left: 20px;
     margin-top: 20px;
     height: 255px;
-    transition: transform 0.2s,box-shadow 0.3s;
-
+    transition: transform 0.2s, box-shadow 0.3s;
 }
-.el-card__body{
+
+.el-card__body {
     position: relative;
 }
-.passage-conver:hover {
-    transform:translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
 
+.passage-conver:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
 .passage-conver .background-img {
@@ -140,32 +141,35 @@
     width: 205px;
     background-color: #ebeef5;
 }
-.video-icon{
+
+.video-icon {
     display: block;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin:60px auto;
-    background-color: rgba(0,0,0,.4);
+    margin: 60px auto;
+    background-color: rgba(0, 0, 0, .4);
     position: relative;
     top: -165px;
 }
-.video-icon:after{
+
+.video-icon:after {
     content: '';
     width: 0;
     height: 0;
     position: absolute;
     top: 10px;
     left: 20px;
-    border:15px solid transparent;
-    border-left-color:rgba(255,255,255,1); 
+    border: 15px solid transparent;
+    border-left-color: rgba(255, 255, 255, 1);
 }
-.audio-icon{
-   display: block;
+
+.audio-icon {
+    display: block;
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    margin:60px auto; 
+    margin: 60px auto;
     background-image: url(../../img/timg.png);
     background-size: contain;
 }
@@ -185,24 +189,24 @@
     position: absolute;
     bottom: 0px;
     /*background: hsla(0, 0%, 100%, 0.90);*/
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     color: #fff;
     /*border-top: solid 1px rgba(255, 255, 255);*/
     width: 200px;
 }
 
-.image-card  .control{
-    padding:10px 0px;
-    background: rgba(0,0,0,0.45);
+.image-card .control {
+    padding: 10px 0px;
+    background: rgba(0, 0, 0, 0.45);
     color: #fff;
 }
 
-.image-card .title{
+.image-card .title {
     word-wrap: break-word;
     word-break: normal;
 }
 
-.image-card .descript{
+.image-card .descript {
     padding: 0 5px;
     margin-bottom: 15px;
     font-size: 13px;
@@ -215,57 +219,82 @@
 .el-upload-list__item-name [class^=el-icon] {
     height: auto;
 }
-.resourceView .el-dialog__body{
-    padding:0px;
+
+.resourceView .el-dialog__body {
+    padding: 0px;
     background-color: #fafafa;
     text-align: center;
 }
-.resourceView .imageView{
-    max-width:100%;
-    height:auto;
+
+.resourceView .imageView {
+    max-width: 100%;
+    height: auto;
 }
+
 .resourceView .audioView {
     width: 100%;
     margin: 10px 0;
 }
+
 .resourceView .videoView {
-    max-width:100%;
-    height:auto;
+    max-width: 100%;
+    height: auto;
 }
 
-.templateView .el-dialog__body{
-    padding:30px 20px;
+.templateView .el-dialog__body {
+    padding: 30px 20px;
     background-color: #fafafa;
 }
-.submitReport .el-dialog__body{
-    padding:10px 20px 30px 20px;
+
+.submitReport .el-dialog__body {
+    padding: 10px 20px 30px 20px;
 }
 
-.verify-status{
+.verify-status {
     position: absolute;
     right: 5;
     top: 5;
     z-index: 10;
 }
-.not-verify,.not-pass,.pass{
+
+.not-verify,
+.not-pass,
+.pass {
     width: 30px;
-    height:30px;
+    height: 30px;
     display: inline-block;
     border-radius: 50%;
 }
-.not-verify{
+
+.not-verify {
     background: url(/assets/icons/not-verify.png) no-repeat;
     background-size: cover;
 }
-.not-pass{
+
+.not-pass {
     background: url(/assets/icons/not-pass.png) no-repeat;
     background-size: cover;
 }
-.pass{
+
+.pass {
     background: url(/assets/icons/pass.png) no-repeat;
     background-size: cover;
 }
 
-.control-button{
-    margin-top:10px;
+.control-button {
+    margin-top: 10px;
+}
+
+.store-status {
+    position: fixed;
+    bottom: 10px;
+    width: 250px;
+    font-size: 13px;
+    background-color: #ebeef5;
+    margin-top: 127px;
+}
+
+.store-status .label-txt {
+    margin-left: 10px;
+    margin-bottom: 5px;
 }
