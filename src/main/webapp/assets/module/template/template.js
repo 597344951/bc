@@ -340,6 +340,8 @@ var appInstince = new Vue({
     viewTemplate: function (tp) {
       _editor.setContent(tp.content);
       _editor.execCommand("preview");
+      
+      _editor.setContent('');
     },
     // 新增模板
     addTemplate: function () {

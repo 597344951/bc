@@ -505,6 +505,8 @@ window.appInstince = new Vue({
       if (tp.type == 'text') {
         _editor.setContent(tp.content);
         _editor.execCommand("preview");
+
+        _editor.setContent('');
       } else {
         this.resourceView.url = tp.url;
         this.resourceView.title = tp.name;
