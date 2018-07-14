@@ -22,16 +22,34 @@ public class SystemInfoConfig {
     @Value("${zltel.mediaserve}")
     private String mediaserve;
 
+    /** 获取用户自定义上传路径 **/
+    public String getCustomizeUploadUrl() {
+
+        return getMediaServerUrl().append("customize").toString();
+    }
+
+    /** 获取媒体服务器地址 **/
+    public StringBuilder getMediaServerUrl() {
+        StringBuilder sb = new StringBuilder();
+        if (mediaserve.startsWith("//")) {
+            sb.append("http:");
+        } else if (!mediaserve.startsWith("http://") && mediaserve.startsWith("https://")) {
+            sb.append("http://");
+        }
+        sb.append(mediaserve);
+        if (!mediaserve.endsWith("/")) sb.append("/");
+        return sb;
+    }
+
+
     public String getAppname() throws UnsupportedEncodingException {
-        //properties 中文需要转换编码
-        return new String(appname.getBytes("ISO-8859-1"),"UTF-8");
+        // properties 中文需要转换编码
+        return new String(appname.getBytes("ISO-8859-1"), "UTF-8");
     }
 
     public String getVersion() {
         return version;
     }
-
-
 
     public void setVersion(String version) {
         this.version = version;
@@ -52,5 +70,6 @@ public class SystemInfoConfig {
     public void setAppname(String appname) {
         this.appname = appname;
     }
+
 
 }

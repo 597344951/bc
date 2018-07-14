@@ -234,19 +234,51 @@ window.appInstince = new Vue({
       return serverConfig.getUploadUrl(type);
     },
     submitUpload() {
-      this.$refs.upload.submit();
+      let me = this;
+      if (this.importResource.nameType == 'fileName') {
+        this.importResource.data.name = "占位符"
+      }
+
+      this.$refs.importResForm.validate(function (valid) {
+        if (!valid) {
+          return false;
+        }
+        me.$refs.upload.submit();
+      })
     },
     clearChose() {
       console.log('清空选中文件');
       this.$refs.upload.clearFiles();
       this.importResource.fileList = [];
     },
+    handleBeforeUpload(){
+
+    },
+    handleOnError(err, file, fileList){
+      this.$message({
+        message: file.name+' 上传失败!',
+        type: 'danger'
+      });
+    },
     handleSuccess(response, file, fileList) {
+      if (response.status) {
+        this.$message({
+          message: response.msg,
+          type: 'success'
+        });
+      } else {
+        this.$message({
+          message: response.msg,
+          type: 'danger'
+        });
+      }
       console.log('文件上传成功', arguments);
       this.importResource.fileList.push(response);
       if (fileList.length == this.importResource.fileList.length) {
         console.log('所有文件上传完成');
-        if (this.importResource.commitOnUpload) this.saveResources();
+        this.importResource.visiable = false;
+        this.loadTreeData();
+        this.reloadTpTypeData();
       }
     },
     handleRemove(file, fileList) {
@@ -307,6 +339,11 @@ window.appInstince = new Vue({
         });
 
       });
+    },
+    albumIdsChange() {
+      let me = this;
+      let ids = me.importResource.data.albumIds
+      me.importResource.data.typeId = ids[ids.length - 1];
     },
     importResources() {
       this.importResource.visiable = true;
@@ -576,12 +613,12 @@ window.appInstince = new Vue({
       this.submitedReport.visible = false;
     },
     editReportShow(tp) {
+      if (!tp) tp = {};
       this.resetTemplate();
       this.tp.visible = true;
       this.tp.title = "创建报告";
       this.tp.data = tp;
       this.tp.update = false;
-      tp.typeDisable = true;
       if (tp.content) _editor.setContent(tp.content);
       var ids = getTpTypeIds(this.tp.data, this.tpt_data);
       this.tp.data.albumIds = ids;
@@ -622,6 +659,7 @@ window.appInstince = new Vue({
       });
 
     },
+
     saveOrUpdateTemplate: function () {
       var ins = this;
       var tp = this.tp;
@@ -756,6 +794,12 @@ window.appInstince = new Vue({
     },
     getResUrl(url) {
       return serverConfig.getUrl(url);
+    },
+    importResourceClose() {
+      this.clearChose();
+    },
+    httpRequestTest() {
+      console.log('http request test', arguments);
     }
   }
 });

@@ -112,6 +112,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	.bigClose .el-dialog__close {
 		font-size: 100px;
 	}
+	.el-main {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
 </style>
 </head>
 <body>
@@ -187,11 +191,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			</el-header>
 			<el-main>
 		  		<div 
-		  				:style="item.typeName == '正式党员' 
-							? 'background-image: url(/view/pm/img/peopleBg_red.png)' 
-								: item.typeName == '预备党员' 
-							? 'background-image: url(/view/pm/img/peopleBg_green.jpg)' 
-								: 'background-image: url(/view/pm/img/peopleBg_blue.jpg)'"
+		  				style="background-image: url(/view/pm/img/userInfoBg.png)"
 		  				@click="partyUser_manager_jumpToUserDetailInfo(item)" 
 		  				v-show="!dis_h_v" 
 		  				class="box" 

@@ -6,7 +6,7 @@ var appInstince = new Vue({
         oneSettings: {
             limitShowNum: 6,
             roseType: 'radius',
-           
+            offsetY:'125',
         },
         twoSettings: {
             dataType: {

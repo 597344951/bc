@@ -177,7 +177,7 @@
 		float: left;
 	}
 	.el-carousel__item:nth-child(n) {
-	    background-color: #ebedef;
+	    background-color: #fff;
 	}
 </style>
 </head>
@@ -268,6 +268,11 @@
 									@change="partyOrg_manager_queryOrgInfosForInfoName"
 									v-model="queryCondition.partyOrg_manager_orgInfoName" placeholder="请输入组织名"></el-input>
 							</el-row>
+							<el-row v-show="!dis_h_v">
+								<el-input size="small" clearable
+									@change="partyOrg_manager_getOrgInfoTreesForZMD"
+									v-model="queryConditionForCharts.orgInfoName" placeholder="请输入组织名"></el-input>
+							</el-row>
 					  	</div>
 					</el-popover>
 					<el-button-group>
@@ -295,7 +300,8 @@
 				      		<div style="text-align: center;">
 								<p style="margin-top: 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold;">{{item.data.orgInfoName}}</p>
 							</div>
-							<div onload="" :id="'orgInfoTree'+item.data.orgInfoId" style="width: 100%; height: 80%; text-align: center; overflow: auto;">
+							<div onload="" :id="'orgInfoTree'+item.data.orgInfoId" 
+								style="width: 100%; height: 80%; text-align: center; overflow: auto; background-image: url(/view/pm/img/orgInfoChartBg.png)">
 								
 							</div>
 							{{getItaf(item)}}
@@ -874,6 +880,9 @@
 				partyOrg_manager_orgInfoId: null,	/*用于保存使用组织id查询*/
 				partyOrg_manager_orgInfoNature: null	/*用于保存使用组织性质查询*/
 			},
+			queryConditionForCharts: {
+				orgInfoName: null
+			},
 			partyOrg_manager_insertOrgInfoDialog: false,	/*添加组织信息*/
 			partyOrg_manager_updateOrgInfoDialog: false, 	/*修改组织信息*/
 			partyOrg_manager_insertOrgDutyDialog: false,	/*添加组织职责*/
@@ -1002,7 +1011,9 @@
 				describes: null,
 				orgId: null,
 				parentIcId: -1
-			}
+			},
+			count: 0,
+			realCount: 0
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -1020,7 +1031,8 @@
 
 				var url = "/org/ifmt/queryOrgInfosToTrees";
 				var t = {
-					orgInfoParentId: -1
+					orgInfoParentId: -1,
+					orgInfoName: obj.queryConditionForCharts.orgInfoName
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
@@ -1647,6 +1659,12 @@
 			partyOrg_manager_setChartForOrgChildrens(orgInfosRelationTree, elementId, clickJump) {
 				var obj = this;
 				var Orgchildrens = echarts.init(document.getElementById(elementId));
+				var top = "15%";
+				var bottom = "15%";
+				if (orgInfosRelationTree[0].count == 2) {
+					top = "45%";
+					bottom = "45%";
+				}
 				Orgchildrens.setOption(
 					{
 				        tooltip: {
@@ -1659,13 +1677,13 @@
 
 				                data: orgInfosRelationTree,
 
-				                top: '5%',
+				                top: top,
 				                left: '10%',
-				                bottom: '5%',
+				                bottom: bottom,
 				                right: '10%',
 
 				                orient: 'vertical',
-				                symbolSize: 12,
+				                symbolSize: 8,
 
 				                label: {
 				                    normal: {
@@ -1889,6 +1907,27 @@
 				setTimeout(()=>{
 					obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true);
 				},200)
+			},
+			partyOrg_manager_getOrgChildrensTreeAndAddCount(orgInfosRelationTree, trees) {
+				var obj = this;
+				if (orgInfosRelationTree != null && orgInfosRelationTree.length > 0) {
+					for (var i = 0; i < orgInfosRelationTree.length; i++) {
+						var Tree = function(){}
+						var tree = new Tree();
+						tree.id = orgInfosRelationTree[i].data.orgInfoId;
+						tree.name = orgInfosRelationTree[i].data.orgInfoName;
+						tree.children = new Array;
+						trees[i] = tree;
+						obj.count++;
+						if (orgInfosRelationTree[i].children == null || orgInfosRelationTree[i].children.length == 0) {
+							if (obj.count > obj.realCount) {
+								obj.realCount = obj.count;
+							}
+							obj.count = 0;
+						}
+						obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(orgInfosRelationTree[i].children, tree.children);
+					}
+				}
 			},
 			partyOrg_manager_openAddOrgIntegralConstituteDialog(row) {
 				var obj = this;

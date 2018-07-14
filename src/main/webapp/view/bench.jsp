@@ -191,7 +191,7 @@
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>通知告示</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
+                    <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
                 <a v-for="l in notice" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
             </el-card>
@@ -201,7 +201,7 @@
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>正在播放内容</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
+                    <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
                 <a v-for="l in playlist" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
             </el-card>
@@ -212,7 +212,7 @@
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>党员发展</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
+                    <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
                 <div class="pie-chart-3">
                     <ve-pie :data="partyMembers.constitute" :settings="pieChartSettings"></ve-pie>
@@ -340,11 +340,7 @@
             partyMembers: {
                 constitute: {
                     columns: ['类型', '成员数'],
-                    rows: [
-                        {'类型': '党员', '成员数': 50},
-                        {'类型': '预备党员', '成员数': 15},
-                        {'类型': '积极分子', '成员数': 30}
-                    ]
+                    rows: []
                 },
                 trend: {
                     columns: ['日期', '党员', '预备党员', '积极份子'],
@@ -357,11 +353,8 @@
                     ]
                 },
                 dues: {
-                    columns: ['类型', '比列'],
-                    rows: [
-                        {'类型': '已缴纳', '比列': 90},
-                        {'类型': '未缴纳', '比列': 10}
-                    ]
+                    columns: ['类型', '人数'],
+                    rows: []
                 },
                 items: [
                     { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
@@ -404,6 +397,10 @@
                 {
                     title: '素材提交',
                     target: {menuId: 125, name: '素材管理', url: '/view/template/material.jsp'}
+                },
+                {
+                    title: '文档提交',
+                    target: {menuId: 96, name: '文档中心', url: '/view/report/index.jsp'}
                 }
             ]
 
@@ -426,6 +423,8 @@
         loadPending()
         loadNotice()
         loadNotice()
+        loadPartyMemberConstitute()
+        loadPartyMemberDues()
     }
 
     function loadPending() {
@@ -479,6 +478,36 @@
                         date: item.end_date + ' 止',
                         title: item.title,
                         href: "#"
+                    })
+                })
+            }
+        })
+    }
+
+    function loadPartyMemberConstitute() {
+        let url = '/statistics/partyMember'
+        get(url, reps => {
+            if(reps.status) {
+                app.partyMembers.constitute.rows = []
+                reps.data.forEach(item => {
+                    app.partyMembers.constitute.rows.push({
+                        '类型': item.type,
+                        '成员数': item.count
+                    })
+                })
+            }
+        })
+    }
+
+    function loadPartyMemberDues() {
+        let url = '/statistics/partyFeePayment'
+        get(url, reps => {
+            if(reps.status) {
+                app.partyMembers.dues.rows = []
+                reps.data.forEach(item => {
+                    app.partyMembers.dues.rows.push({
+                        '类型': item.name,
+                        '人数': item.count
                     })
                 })
             }

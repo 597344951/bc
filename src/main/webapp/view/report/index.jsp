@@ -28,6 +28,7 @@
                             <el-button type="danger" icon="el-icon-delete" @click="deleteTemplateType" size="small">删除分类</el-button>
                             <el-button type="success" icon="el-icon-plus" @click="addTemplate" size="small">新建模版</el-button>
                             <el-button type="success" icon="el-icon-upload" @click="importResources" size="small">导入模版</el-button>
+                            <el-button type="success" icon="el-icon-plus" @click="editReportShow()" size="small">新建空白报告</el-button>
                             <el-button type="primary" icon="el-icon-document" @click="openSubmitReport" size="small">已提交报告</el-button>
                         </div>
                     </div>
@@ -175,7 +176,7 @@
         </el-dialog>
         <!--模板类别 管理对话框-->
         <!--导入资源-->
-        <el-dialog :title="importResource.title" :visible.sync="importResource.visiable">
+        <el-dialog :title="importResource.title" :visible.sync="importResource.visiable" width="40%" @close="importResourceClose">
             <el-form ref="importResForm" :model="importResource.data" :rules="rules" label-width="120px">
                 <el-form-item label="名称来源">
                     <el-radio v-model="importResource.nameType" label="fileName" @change="importResource.data.name=''">文件名</el-radio>
@@ -184,26 +185,21 @@
                 <el-form-item label="素材标题" prop="name" v-if="importResource.nameType == 'input'">
                     <el-input v-model="importResource.data.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="素材描述">
-                    <el-input type="textarea" :rows="3" v-model="importResource.data.description" auto-complete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="所属分类" prop="albumIds">
-                    <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
+                    <el-cascader v-model="importResource.data.albumIds" @change="albumIdsChange" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
                 </el-form-item>
                 <el-form-item label="选取文件">
-                    <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" :on-preview="handlePreview" :on-success="handleSuccess"
-                        :on-remove="handleRemove" :auto-upload="false" :multiple="true">
+                    <el-upload class="upload-demo" ref="upload" action="/report/template/import" :on-preview="handlePreview" :on-success="handleSuccess"
+                        :on-remove="handleRemove" :auto-upload="false" :multiple="true" :data="importResource.data" :on-error="handleOnError" :before-upload="handleBeforeUpload" accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="danger" @click="clearChose">清空文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>
-                        <el-checkbox style="margin-left: 10px;" v-model="importResource.commitOnUpload">上传完成后自动提交</el-checkbox>
-                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                        <div slot="tip" class="el-upload__tip">只能导入word文件</div>
                     </el-upload>
                 </el-form-item>
             </el-form>
-            <div class="dialog-footer" slot="footer">
+            <div class="dialog-footer" slot="footer" >
                 <el-button @click="importResource.visiable = false">取 消</el-button>
-                <el-button type="primary" @click="saveResources">确 定</el-button>
+                <el-button style="margin-left: 10px;" size="small" type="primary" @click="submitUpload">上传文件</el-button>
             </div>
         </el-dialog>
         <!--导入资源-->

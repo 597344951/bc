@@ -754,13 +754,14 @@
 				materialSelected(data) {
 					let coverUrl
 					data.forEach(item => {
-						coverUrl = item.coverUrl ? serverConfig.getUrl(item.coverUrl) : "/assets/img/timg.png"
+						coverUrl = item.type.startsWith('audio') ? "/assets/img/timg.png" : serverConfig.getUrl(item.coverUrl)
 						this.material.push({
 							uid: item.materialId,
 							name: item.name,
 							type: item.type,
 							coverUrl: coverUrl,
 							url: serverConfig.getUrl(item.url),
+							content: item.content,
 							isFile: item.type == 'text' ? false : true
 						})
 					})

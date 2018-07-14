@@ -185,11 +185,17 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.17</version>
 		</dependency>
-		<!--HWPF word-->
+		<!--HWPF word -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.17</version>
+		</dependency>
+		<!-- docx 处理 -->
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j</artifactId>
+			<version>3.3.7</version>
 		</dependency>
 
 	</dependencies>
@@ -236,8 +242,7 @@
 							<propertyName>surefireArgLine</propertyName>
 						</configuration>
 					</execution>
-					<!-- 在程序的verify阶段，执行report测试的程序。 文件的输入为perpare-agent阶段中设置或者默认的jacoco.exec.
-						参数 includes和excludes可用来选定report中过滤的类。 -->
+					<!-- 在程序的verify阶段，执行report测试的程序。 文件的输入为perpare-agent阶段中设置或者默认的jacoco.exec. 参数 includes和excludes可用来选定report中过滤的类。 -->
 					<execution>
 						<id>default-report</id>
 						<phase>test</phase>
@@ -251,8 +256,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- 使用 maven-surefire-plugin来执行单元测试。 将surefireArgLine赋值给argLine参数，以保证在测试执行时Jacoco
-				agent处于运行状态。 -->
+			<!-- 使用 maven-surefire-plugin来执行单元测试。 将surefireArgLine赋值给argLine参数，以保证在测试执行时Jacoco agent处于运行状态。 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -261,7 +265,7 @@
 					<argLine>${surefireArgLine}</argLine>
 				</configuration>
 			</plugin>
-			<!--mybatis自动生成工具-->
+			<!--mybatis自动生成工具 -->
 			<plugin>
 				<groupId>org.mybatis.generator</groupId>
 				<artifactId>mybatis-generator-maven-plugin</artifactId>

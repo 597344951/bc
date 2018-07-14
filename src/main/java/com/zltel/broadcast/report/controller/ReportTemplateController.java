@@ -1,9 +1,11 @@
 package com.zltel.broadcast.report.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
+import com.zltel.broadcast.doc_handler.service.DocConvertService;
 import com.zltel.broadcast.report.bean.ReportTemplate;
 import com.zltel.broadcast.report.service.ReportTemplateService;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -38,11 +41,29 @@ public class ReportTemplateController extends BaseController {
     @Resource
     private ReportTemplateService reportTemplateservice;
 
+    @Resource
+    private DocConvertService docConvertService;
+
     @ApiOperation(value = "导入模版")
     @PostMapping(value = "/template/import")
-    public R saves(@RequestParam("file") MultipartFile file) {
-        
-        return R.ok();
+    public R saves(HttpServletResponse response, @RequestParam("file") MultipartFile file, ReportTemplate rt)
+            throws IOException {
+        try {
+            String html = this.docConvertService.wordToHtml(file.getInputStream(), file.getOriginalFilename());
+            rt.setContent(html);
+            SysUser user = this.getSysUser();
+            rt.setOrgid(user.getOrgId());
+            rt.setUid(user.getUserId());
+            rt.setCreatetime(new Date());
+            if (null == rt.getTitle()) rt.setTitle(file.getOriginalFilename());
+            this.reportTemplateservice.insert(rt);
+
+            return R.ok(file.getOriginalFilename() + "导入成功");
+        } catch (Exception e) {
+            logout.error(e.getMessage(), e);
+            response.sendError(500, "导入资源失败：" + e.getMessage());
+        }
+        return null;
     }
 
     @ApiOperation(value = "查询模版内容")
