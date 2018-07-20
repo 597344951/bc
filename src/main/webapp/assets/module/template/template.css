@@ -286,15 +286,48 @@
 }
 
 .store-status {
-    position: fixed;
-    bottom: 10px;
     width: 250px;
     font-size: 13px;
-    background-color: #ebeef5;
-    margin-top: 127px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
 }
 
 .store-status .label-txt {
     margin-left: 10px;
     margin-bottom: 5px;
+}
+
+.next-dirs{
+    padding:10px;
+    overflow:hidden;
+}
+.next-dirs .dirs{
+    width:100px;
+    height:100px;
+    background-image:url(/assets/icons/folder.png);
+    float:left;
+    line-height: 130px;
+    text-align: center;
+    color: #fff;
+    cursor:pointer;
+    margin-left:10px;
+    margin-top: 0;
+    padding: 5px;
+}
+.next-dirs .dirs:hover{
+    transition: transform 0.2s;
+    transform: translateY(-3px)
+}
+.next-dirs .dirs  .title{
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100px;   
+}
+.next-dirs .dirs:hover .title{
+   color:#c9ebff; 
+   transition: transform 0.3s;
+    transform: rotate(360deg);
 }

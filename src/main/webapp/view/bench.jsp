@@ -193,7 +193,7 @@
                     <span>通知告示</span>
                     <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
-                <a v-for="l in notice" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+                <a v-for="l in notice" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
             </el-card>
         </el-col>
 
@@ -203,7 +203,7 @@
                     <span>正在播放内容</span>
                     <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
-                <a v-for="l in playlist" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+                <a v-for="l in playlist" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
             </el-card>
         </el-col>
     </el-row>
@@ -392,7 +392,7 @@
                 },
                 {
                     title: '困难党员帮扶',
-                    target: {menuId: 111, name: '活动策划', url: '/view/calendar/index.jsp'}
+                    target: {menuId: 120, name: '活动策划', url: '/html/calendar/index2.html'}
                 },
                 {
                     title: '素材提交',
@@ -422,7 +422,7 @@
     function init() {
         loadPending()
         loadNotice()
-        loadNotice()
+        loadPlayList()
         loadPartyMemberConstitute()
         loadPartyMemberDues()
     }
@@ -438,13 +438,15 @@
                         app.pending.verifying.list.push({
                             date: new Date(item.updateDate).toLocaleString(),
                             title: item.title,
-                            target: {menuId: 29, name: '正在审核', url: '/publish/process'}
+                            //target: {menuId: 29, name: '正在审核', url: '/publish/process'}
+                            target: {menuId: -2, name: '待审核内容', url: item.url}
                         })
                     } else if(item.type == 2) {
                         app.pending.handling.list.push({
                             date: new Date(item.updateDate).toLocaleString(),
                             title: item.title,
-                            target: {menuId: 29, name: '正在审核', url: '/publish/process'}
+                            //target: {menuId: 29, name: '正在审核', url: '/publish/process'}
+                            target: {menuId: -3, name: '待办理事项', url: item.url}
                         })
                     }
                 })
@@ -461,14 +463,14 @@
                     app.notice.push({
                         date: item.updateDate,
                         title: item.title,
-                        href: "#"
+                        target: {menuId: -1, name: '消息通知', url: item.url}
                     })
                 })
             }
         })
     }
 
-    function loadNotice() {
+    function loadPlayList() {
         let url = '/publish/publishing/content/1/10'
         get(url, reps => {
             if(reps.status) {
@@ -477,7 +479,7 @@
                     app.playlist.push({
                         date: item.end_date + ' 止',
                         title: item.title,
-                        href: "#"
+                        target: {menuId: 30, name: '已发布节目', url: '/publish/publishing'}
                     })
                 })
             }

@@ -199,7 +199,7 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 			String salt = UUID.randomUUID().toString();
 			sysUser.setSalt(salt);	//保存盐
 			sysUser.setPassword(PasswordHelper.encryptPassword(sysUser.getPassword(), salt));	//加密
-			sysUser.setStatus((byte)1);
+			sysUser.setStatus(true);
 			int count = this.insertSelective(sysUser);	//开始添加系统用户信息
 			if (count == 1) {	//受影响的行数，判断是否修改成功
 				return R.ok().setMsg("系统用户添加成功。");
@@ -209,5 +209,14 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 		} else {	//添加一定需要一个用户信息
 			throw new Exception();
 		}
+    }
+
+    @Override
+    public void disableUser(String username) {
+        SysUser user =  this.sysUserMapper.selectByUserName(username); 
+        SysUser nu = new SysUser();
+        nu.setStatus(false);
+        nu.setUserId(user.getUserId());
+        this.sysUserMapper.updateByPrimaryKeySelective(nu);
     }
 }

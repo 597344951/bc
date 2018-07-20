@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class EventPlanInfo {
      
 
@@ -16,7 +18,7 @@ public class EventPlanInfo {
     @NotNull(message = "计划正文不能为空")
     private String content;
     
-    @NotNull(message = "�?始时间不能为�?")
+    @NotNull(message = "开始时间不能为")
     private Date stime;
     @NotNull(message = "结束时间不能为空")
     private Date etime;
@@ -25,10 +27,15 @@ public class EventPlanInfo {
     private Integer status;
     private Integer userId;
 
-    private List<CostPlan> costplans;
     
     private String pubTaskId;
+    private Date saveTime;
+    
     private String status_label;
+    /**延迟加载状态信息**/
+    private EventPlanStatus planStatus;
+    private List<CostPlan> costplans;
+    
 
     public Integer getEventPlanId() {
         return eventPlanId;
@@ -148,6 +155,34 @@ public class EventPlanInfo {
 
     public void setStatus_label(String status_label) {
         this.status_label = status_label;
+    }
+
+    /**
+     * @return the planStatus
+     */
+    public EventPlanStatus getPlanStatus() {
+        return planStatus;
+    }
+
+    /**
+     * @param planStatus the planStatus to set
+     */
+    public void setPlanStatus(EventPlanStatus planStatus) {
+        this.planStatus = planStatus;
+    }
+
+    /**
+     * @return the saveTime
+     */
+    public Date getSaveTime() {
+        return saveTime;
+    }
+
+    /**
+     * @param saveTime the saveTime to set
+     */
+    public void setSaveTime(Date saveTime) {
+        this.saveTime = saveTime;
     }
     
 }

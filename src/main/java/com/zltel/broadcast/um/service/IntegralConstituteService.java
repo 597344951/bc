@@ -33,10 +33,24 @@ public interface IntegralConstituteService {
     public R queryOrgInfoForIc(Map<String, Object> conditions, int pageNum, int pageSize);
     
     /**
+     * 查询拥有积分结构的组织
+     * @param conditions
+     * @return
+     */
+    public R queryOrgInfoForIcNotPage(Map<String, Object> conditions);
+    
+    /**
      * 查询该组织拥有的党员，仅为党员积分功能服务
      * @param conditions
      * @return
      */
     public R queryPartyUserInfoAndIcInfo(Map<String, Object> conditions, int pageNum, int pageSize);
+    
+    /**
+     * 查询组织积分信息
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralInfo(Map<String, Object> conditions);
 
 }

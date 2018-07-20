@@ -1,3 +1,7 @@
+window.onFocus = function() {
+    window.location.reload()
+}
+
 let app = new Vue({
     el: '#app',
     data:{
@@ -19,6 +23,10 @@ let app = new Vue({
             active: 0,
             steps:[],
             detail: []
+        },
+        verifyState: {
+            visible: false,
+            list: []
         },
         publishPeriod: {
             show: false,
@@ -188,6 +196,17 @@ let app = new Vue({
                     }
                 } else {
                     app.$message('获取进度信息失败!!!');
+                }
+            })
+        },
+        getVerifyState(row) {
+            this.url = '/publish/verifyState/' + row.id
+            get(this.url, reps => {
+                if(reps.status) {
+                    this.verifyState.list = reps.data
+                    this.verifyState.visible = true
+                } else {
+                    app.$message('获取审核进度失败')
                 }
             })
         },

@@ -133,6 +133,9 @@
 	  inner join organization_information _oi on ic.org_id = _oi.org_info_id
 	where
 	  1 = 1
+	  <if test="orgInfoName != null and orgInfoName != ''"> and
+          _oi.org_info_name like CONCAT('%',#{orgInfoName},'%')
+      </if>
   </select>
   
   <select id="queryPartyUserInfoAndIcInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">

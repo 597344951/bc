@@ -14,13 +14,18 @@
     <%@include file="/include/head_notbootstrap.jsp"%>
     <%--ueditor--%>
     <%@include file="/include/ueditor.jsp"%>
+    <style>
+    #edui1,#edui1_iframeholder{
+        width:100%!important;
+    }
+    </style>
 </head>
 
 <body style="min-width:1100px;">
     <div class="height_full" id="app" v-cloak>
         <el-container>
             <el-header>
-                <div class="toolbar" style="display:flex;">
+                <div class="toolbar" style="display:flex; padding:10px;">
                     <div>
                         <div class="grid-content bg-purple">
                             <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
@@ -32,7 +37,7 @@
                             <el-button type="primary" icon="el-icon-document" @click="openSubmitReport" size="small">已提交报告</el-button>
                         </div>
                     </div>
-                    <div style="text-align: left;margin-left: 30px;">
+                    <div style="text-align: left;margin-left: 10px;">
                         <el-form :inline="true" class="demo-form-inline">
                             <el-form-item label="搜索模版">
                                 <el-input placeholder="搜索模版" v-model="keyword"></el-input>
@@ -46,20 +51,12 @@
             </el-header>
             <el-container>
                 <el-aside width="300px">
-                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu">
+                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" :default-expand-all="false" :expand-on-click-node="true"
+                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" accordion>
                         <span class="custom-tree-node" slot-scope="{ node, data }">
                             <span class="left-label-group">
                                 <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
                                 {{ node.label }}</span>
-                            <span class="right-btn-group" v-show="node.showtoolbar">
-                                <!---->
-                                <el-button-group>
-                                    <el-button type="primary" size="mini" icon="el-icon-edit"></el-button>
-                                    <el-button type="primary" size="mini" icon="el-icon-share"></el-button>
-                                    <el-button type="primary" size="mini" icon="el-icon-delete"></el-button>
-                                </el-button-group>
-                            </span>
                         </span>
                     </el-tree>
                 </el-aside>
@@ -119,10 +116,10 @@
                     <!-- 模板编辑框 -->
                     <transition name="el-zoom-in-bottom">
                         <el-row v-show="tp.visible">
-                            <el-col :span="4" style="width:60px;">
+                            <el-col :span="2" style="width:60px;">
                                 <el-button type="primary" icon="el-icon-close" circle @click="tp.visible = false"></el-button>
                             </el-col>
-                            <el-col :span="20">
+                            <el-col :span="22">
                                 <div class="editTp">
                                     <h2 style="margin-top: 5px;">{{tp.title}}</h2>
                                     <el-form ref="tpForm" :model="tp.data" :rules="rules" label-width="100px">
@@ -137,7 +134,7 @@
                                             <div class="editerContainer" id="templateText" type="textarea" style="height: 400px;"></div>
                                         </el-form-item>
                                         <el-form-item label="分类" prop="albumIds">
-                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
+                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="true"></el-cascader>
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button @click="tp.visible = false">取 消</el-button>
@@ -166,7 +163,14 @@
                     <el-input type="text" v-model="tpt.data.orderNum"></el-input>
                 </el-form-item>
                 <el-form-item label="上一级目录" v-if="tpt.update != true">
-                    <el-input aria-readonly="true" v-model="tpt.data.parentLabel"></el-input>
+                    <el-select v-model="tpt.data.parentLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in tpt_parents"
+                          :key="item.parent"
+                          :label="item.parentLabel"
+                          :value="item.parentLabel">
+                        </el-option>
+                </el-select>
                 </el-form-item>
             </el-form>
             <div class="dialog-footer" slot="footer">

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,7 @@ import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.doc_handler.service.DocConvertService;
 import com.zltel.broadcast.report.bean.ReportTemplate;
@@ -46,6 +48,7 @@ public class ReportTemplateController extends BaseController {
 
     @ApiOperation(value = "导入模版")
     @PostMapping(value = "/template/import")
+    @RequiresPermissions("report:template:save")
     public R saves(HttpServletResponse response, @RequestParam("file") MultipartFile file, ReportTemplate rt)
             throws IOException {
         try {
@@ -68,6 +71,7 @@ public class ReportTemplateController extends BaseController {
 
     @ApiOperation(value = "查询模版内容")
     @PostMapping(value = "/template/{pageIndex}-{limit}")
+    @RequiresPermissions("report:template:query")
     public R list(@PathVariable("pageIndex") int pageIndex, @PathVariable("limit") int limit,
             @RequestBody ReportTemplate rm) {
         SysUser user = this.getSysUser();
@@ -75,6 +79,10 @@ public class ReportTemplateController extends BaseController {
         nm.setOrgid(user.getOrgId());
         nm.setTypeId(rm.getTypeId());
         nm.setKeyword(rm.getKeyword());
+        AdminRoleUtil.handleAdminRole(nm, item -> item.setUid(null), item -> {
+            item.setUid(null);
+            item.setOrgid(null);
+        });
 
         Pager pager = new Pager(pageIndex, limit);
         List<ReportTemplate> data = this.reportTemplateservice.query(nm, pager);
@@ -85,6 +93,7 @@ public class ReportTemplateController extends BaseController {
     @ApiOperation(value = "新建资源内容")
     @PostMapping(value = "/template")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源", template = "新增资源:${rm.title}")
+    @RequiresPermissions("report:template:save")
     public R save(@RequestBody ReportTemplate rt) {
         ValidatorUtils.validateEntity(rt);
         SysUser user = this.getSysUser();
@@ -97,6 +106,7 @@ public class ReportTemplateController extends BaseController {
 
     @ApiOperation(value = "更新信息")
     @PutMapping(value = "/template")
+    @RequiresPermissions("report:template:update")
     public R update(@RequestBody ReportTemplate rt) {
         ValidatorUtils.validateEntity(rt);
         SysUser user = this.getSysUser();
@@ -109,6 +119,7 @@ public class ReportTemplateController extends BaseController {
 
     @ApiOperation(value = "获取指定信息")
     @GetMapping("/template/{tpId}")
+    @RequiresPermissions("report:template:query")
     public R get(@PathVariable("tpId") Integer tpId) {
         if (null == tpId) throw new RRException("输入分类的id");
         ReportTemplate m = this.reportTemplateservice.selectByPrimaryKey(tpId);
@@ -118,6 +129,7 @@ public class ReportTemplateController extends BaseController {
     @ApiOperation(value = "删除分类信息")
     @DeleteMapping("/template/{tpId}")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "删除资源分类", template = "删除分类id:${tpId}")
+    @RequiresPermissions("report:template:delete")
     public R delete(@PathVariable("tpId") Integer tpId) {
         if (null == tpId) throw new RRException("输入删除分类的id");
         SysUser user = this.getSysUser();

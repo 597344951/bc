@@ -16,32 +16,15 @@ let CostPlan = {
                 return [];
             }
         },
-        costTypeGroup: {
-            type: Array,
-            default: function () {
-                return [{
-                    "data": {
-                        "costType": 1,
-                        "name": "未知划分类型",
-                        "type": 1,
-                        "parent": 0
-                    } ,
-                    children: [{
-                        "data": {
-                            "costType": 3,
-                            "name": "未知划分类型",
-                            "type": 1,
-                            "parent": 1
-                        },
-                        "children": null
-                        }]
-                }];
-            }
+        mode: {
+            type: String,
+            default: 'view'
         }
     },
     //['costPlanData', 'costTypeGroup'],
     data: function () {
         return {
+            costTypeGroup: [],
             formModel: {},
             rules: {
                 name: [{
@@ -115,15 +98,35 @@ let CostPlan = {
             return this.sponsorship_fee + this.cost_fee;
         }
     },
-    mounted(){
-        this.reBindFormModel();
+    mounted() {
+        this.loadCostTypeData();
+        setTimeout(() => {
+            for (let i = 0; i < this.costPlanData.length; i++) {
+                let e1 = this.costPlanData[i];
+                this.changeCostType(e1);
+            }
+            this.reBindFormModel();
+            this.reDraw();
+        }, 50);
     },
     methods: {
+        reDraw() {
+            //fake: 触发Vue重新计算属性
+            this.costPlanData.push({});
+            this.costPlanData.pop();
+        },
+        loadCostTypeData() {
+            let url = '/costplan/costtype';
+            ajax_promise(url, 'get', {}).then(result => {
+                this.costTypeGroup = result.data;
+            });
+        },
+
         //绑定输入的costPlanData 到 formModel上
-        reBindFormModel(){
-            $.each(this.costPlanData,(i,cpd)=>{
-                $.each(cpd,(k,v) => {
-                    this.formModel[k+'_'+i] = v;
+        reBindFormModel() {
+            $.each(this.costPlanData, (i, cpd) => {
+                $.each(cpd, (k, v) => {
+                    this.formModel[k + '_' + i] = v;
                 });
             });
         },
@@ -169,7 +172,7 @@ let CostPlan = {
         changeCostType(row, fn, idx) {
             let tv = row.costType;
             this.costTypeGroup.forEach(e1 => {
-                if(!e1.children)return;
+                if (!e1.children) return;
                 e1.children.forEach(e2 => {
                     if (e2.data.costType == tv) {
                         row.$CostType = e2.data;

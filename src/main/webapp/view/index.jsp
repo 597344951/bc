@@ -14,11 +14,30 @@
 <%@include file="/include/head.jsp"%>
 <%@include file="/include/websocket.jsp"%>
 <link href="${urls.getForLookupPath('/assets/css/index.css')}" rel="stylesheet">
-
-
+<link rel="shortcut icon" href="../assets/img/logo-icon2.png" />
+<link rel="bookmark"href="../assets/img/logo-icon2.png" />
 <style type="text/css">
-.collapseIcon,.glyphicon-send {
+.collapseIcon, .logo-width .glyphicon-send {
     line-height: 55px;
+}
+.logo .glyphicon-send {
+    display: none;
+}
+.logo-width{
+    padding-left: 55px;
+    position: relative;
+}
+.logo-icon{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    left: 8px;
+    background: url(/assets/img/logo-icon2.png) no-repeat;
+    background-size: cover;
 }
 </style>
 </head>
@@ -28,6 +47,7 @@
             <!--head-->
             <el-col class="header" :span="24">
                 <el-col :span="10" :class="app.isCollapse?' logo logo-collapse-width':'logo logo-width'">
+                    <span class="logo-icon"></span>
                     {{app.isCollapse?'':app.sysName}}
                     <i v-if="app.isCollapse" :class="app.sysIcon" :title="app.sysName"></i>
                 </el-col>
@@ -85,9 +105,9 @@
             </el-aside>
             <el-main>
                 <!--主体-->
-                <el-tabs class="mytab noselect" type="border-card" v-model="tab_index" @tab-remove="removeTab">
+                <el-tabs class="mytab noselect" type="border-card" v-model="tab_index" @tab-remove="removeTab" @before-leave="beforeLeaveTab">
                     <el-tab-pane class="full" v-for="(item, index) in openTabDatas" :key="item.menuId" :name="item.menuId +''" :closable="item.closable" >
-                        <span slot="label" @contextmenu.prevent="showMenu(item)" class="tab-label-padding">
+                        <span slot="label" @contextmenu.prevent="showMenu(item)" class="tab-label-padding" @before-leave="beforeLeaveTab">
                             <i :class="item.icon"></i>{{item.name}}</span>
                         <iframe :id="item.menuId +'_iframe'" v-bind:src="item.url"></iframe>
                     </el-tab-pane>

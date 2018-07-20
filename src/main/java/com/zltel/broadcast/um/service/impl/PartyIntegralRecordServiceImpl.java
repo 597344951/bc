@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.um.bean.PartyIntegralRecord;
 import com.zltel.broadcast.um.dao.PartyIntegralRecordMapper;
 import com.zltel.broadcast.um.service.PartyIntegralRecordService;
+import com.zltel.broadcast.um.util.DateUtil;
 
 @Service
 public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRecord> implements PartyIntegralRecordService {
@@ -36,9 +38,29 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
 		PageInfo<Map<String, Object>> partyIntegralRecordsForPageInfo = new PageInfo<>(partyIntegralRecords);
 		if (partyIntegralRecordsForPageInfo != null && partyIntegralRecordsForPageInfo.getList() != null 
 				&& partyIntegralRecordsForPageInfo.getList().size() > 0) {
+			for (Map<String, Object> map : partyIntegralRecordsForPageInfo.getList()) {
+				map.put("changeTime", 
+					DateUtil.formatDate(DateUtil.YYYY_MM_DD_HH_MM_SS, map.get("changeTime") == null ||
+					map.get("changeTime") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD_HH_MM_SS, map.get("changeTime").toString())));
+			}
 			return R.ok().setData(partyIntegralRecordsForPageInfo).setMsg("查询积分记录成功");
 		} else {
 			return R.ok().setMsg("没有查询到积分记录信息");
 		}
+    }
+    
+    /**
+     * 添加积分变更记录
+     * @param ict
+     * @return
+     */
+    public R insertPartyUserIntegralRecord(PartyIntegralRecord pir) {
+    	pir.setChangeTime(pir.getChangeTime() == null ? new Date() : pir.getChangeTime());
+    	int count = partyIntegralRecordMapper.insertSelective(pir);
+    	if(count == 1) {
+    		return R.ok().setMsg("添加成功");
+    	} else {
+    		return R.error().setMsg("添加失败");
+    	}
     }
 }

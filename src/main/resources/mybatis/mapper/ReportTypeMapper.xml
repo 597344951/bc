@@ -152,7 +152,10 @@
 		LEFT JOIN(
 		select m.type_id,count(1) COUNT from
 		report_template m
-		where (m.orgid=#{orgid} OR m.orgid = 0)
+		where 1=1
+		 <if test="orgid != null">
+		 	AND (m.orgid=#{orgid} OR m.orgid = 0)
+		 </if>
 		<if test="keyword != null and keyword !=''">
 			AND m.title like concat('%',#{keyword},'%')
 		</if>
@@ -165,8 +168,11 @@
 		<where>
 			1=1
 			<include refid="BASE_WHERE_PARAMS" />
-			<!-- 查询内置 -->
-			OR orgid = 0
+			<if test="orgid != null">
+				<!-- 查询内置 -->
+				OR orgid = 0
+			</if>
+			
 		</where>
 	</sql>
 

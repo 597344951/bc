@@ -363,8 +363,8 @@ public class PublishServiceImpl implements PublishService {
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         List<Map<String, Object>> resources = new ArrayList<>();
         for (Map<String, Object> material : materials) {
-            boolean isFile = (boolean) material.get("isFile");
             Map<String, Object> res = new HashMap<String, Object>();
+            boolean isFile = (boolean) material.get("isFile");
             String type = (String) material.get("type");
             String name = (String) material.get("name");
             String url;
@@ -720,6 +720,7 @@ public class PublishServiceImpl implements PublishService {
                     }
                 }
             } else if (Constant.VERIFY == processItem) {
+                operate.put("verify_state", true);
                 // 审核阶段
                 exUsers = getExamineUser(contentId);
                 // 判断是否为审核人
@@ -882,6 +883,11 @@ public class PublishServiceImpl implements PublishService {
     @Override
     public List<Map<String, Object>> queryPublishTerminal(int contentId) {
         return publishDao.queryPublishTerminal(contentId);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryVerifyState(int contentId) {
+        return publishDao.queryVerifyState(contentId);
     }
 
     @Override

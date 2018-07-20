@@ -13,6 +13,23 @@ public class CostPlan {
     private String name;
     @NotNull(message = "花费金额不能为空")
     private Float value;
+    //话费类型详细
+    private CostType costTypeInfo;
+
+
+    /**
+     * @return the costTypeInfo
+     */
+    public CostType getCostTypeInfo() {
+        return costTypeInfo;
+    }
+
+    /**
+     * @param costTypeInfo the costTypeInfo to set
+     */
+    public void setCostTypeInfo(CostType costTypeInfo) {
+        this.costTypeInfo = costTypeInfo;
+    }
 
     public Integer getId() {
         return id;

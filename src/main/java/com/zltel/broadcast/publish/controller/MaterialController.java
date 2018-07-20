@@ -5,17 +5,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.util.FileContentTypeUtil;
 import com.zltel.broadcast.common.util.FileUtil;
 import com.zltel.broadcast.common.util.UUID;
+import com.zltel.broadcast.incision.sola.utils.HttpUtil;
 import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.publish.utils.MaterialUtil;
@@ -48,6 +51,8 @@ public class MaterialController extends BaseController {
     private String uploadFileDir;
     @Value("${material.local.dir}")
     private String uploadLocalDir;
+    @Value("${zltel.mediaserve}")
+    private String mediaserve;
     @Autowired
     private MaterialService materialService;
 
@@ -220,5 +225,27 @@ public class MaterialController extends BaseController {
             logout.error(e.getMessage());
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    @PostMapping(value = "/upload")
+    @ResponseBody
+    public Map upload(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> m;
+        try {
+            HttpUtil.Result result = HttpUtil.postFile(mediaserve + "/upload", "file", file.getInputStream(), file.getOriginalFilename());
+            if(result.getCode() == 200) {
+                m = JSON.parseObject(result.getContent());
+                m.put("host", mediaserve);
+            } else {
+                m = new HashMap<>();
+                m.put("state", "FAILED");
+                m.put("msg", result.getMsg());
+            }
+        } catch (IOException e) {
+            m = new HashMap<>();
+            m.put("state", "FAILED");
+            m.put("msg", e.getMessage());
+        }
+        return m;
     }
 }

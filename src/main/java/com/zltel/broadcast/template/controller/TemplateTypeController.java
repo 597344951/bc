@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +36,7 @@ public class TemplateTypeController extends BaseController {
 
     @ApiOperation(value = "查询分类树形结构信息", notes = "根据用户所在组织查询其所具有的模板分类信息")
     @GetMapping(value = "/listTypeTree")
+    @RequiresPermissions("template:type:query")
     public R listTypeTree(String keyword) {
         TemplateType tp = new TemplateType();
         tp.setOrgid(this.getSysUser().getOrgId());
@@ -46,6 +48,7 @@ public class TemplateTypeController extends BaseController {
     @ApiOperation(value = "新建分类信息", notes = "新建模板分类信息")
     @PostMapping(value = "/tptype")
     @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="新增模版分类",template="新增模版分类:${tpt.name}")
+    @RequiresPermissions("template:type:save")
     public R save(@RequestBody TemplateType tpt) {
         ValidatorUtils.validateEntity(tpt);
         tpt.setBuiltin(false);
@@ -56,6 +59,7 @@ public class TemplateTypeController extends BaseController {
     }
 
     @ApiOperation(value = "更新分类信息", notes = "更新模板分类信息")
+    @RequiresPermissions("template:type:update")
     @PutMapping(value = "/tptype")
     public R update(@RequestBody TemplateType tpt) {
         ValidatorUtils.validateEntity(tpt);
@@ -67,6 +71,7 @@ public class TemplateTypeController extends BaseController {
 
     @ApiOperation(value = "获取指定模板分类信息")
     @GetMapping("/tptype/{tpTypeId}")
+    @RequiresPermissions("template:type:query")
     public R get(@PathVariable("tpTypeId") Integer tpTypeId) {
         TemplateType tt = this.templateTypeService.selectByPrimaryKey(tpTypeId);
         return R.ok().setData(tt);
@@ -75,6 +80,7 @@ public class TemplateTypeController extends BaseController {
     @ApiOperation(value = "删除分类信息")
     @DeleteMapping("/tptype/{tpTypeId}")
     @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="删除模版分类",template="删除模版分类id:${tpTypeId}")
+    @RequiresPermissions("template:type:delete")
     public R delete(@PathVariable("tpTypeId") Integer tpTypeId) {
         if (null == tpTypeId) throw new RRException("输入删除分类的id");
         TemplateType tc = new TemplateType();

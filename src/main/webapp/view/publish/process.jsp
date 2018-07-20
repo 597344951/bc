@@ -85,7 +85,9 @@
                                                 <div>
                                                     <el-button class="no-margin-padding" type="text" size="small" v-if="pc.operate.process" @click="getProcessState(pc)">进度</el-button>
                                                     <el-button class="no-margin-padding" type="text" size="small" v-if="pc.operate.snapshot" @click="view(pc)">预览</el-button>
+                                                    <el-button class="no-margin-padding" type="text" size="small" v-if="pc.operate.verify_state" @click="getVerifyState(pc)">审核状态</el-button>
                                                     <el-button class="no-margin-padding" type="text" size="small" @click="viewTerminal(pc)">发布终端</el-button>
+                                                    
                                                 </div>
                                             </td>
                                         </tr>
@@ -130,6 +132,7 @@
                                     <el-button type="text" size="small" v-if="scope.row.operate.process" @click="getProcessState(scope.row)">进度</el-button>
                                     <%-- <el-button type="text" size="small" v-if="scope.row.operate.template" @click="viewTemplate(scope.row)">模板</el-button> --%>
                                         <el-button type="text" size="small" v-if="scope.row.operate.snapshot" @click="view(scope.row)">预览</el-button>
+                                        <el-button type="text" size="small" v-if="scope.row.operate.verify_state" @click="getVerifyState(scope.row)">审核状态</el-button>
                                         <el-button type="text" size="small" @click="viewTerminal(scope.row)">发布终端</el-button>
                                 </template>
                             </el-table-column>
@@ -178,6 +181,16 @@
                 <span slot="footer" class="dialog-footer">
                     <el-button size="mini" @click="processState.visible = false">取 消</el-button>
                     <el-button size="mini" type="primary" @click="processState.visible = false">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <el-dialog title="审核进度" :visible.sync="verifyState.visible" width="60%">
+                <el-card shadow="never">
+                    <p style="font-size: 13px;" v-for="l in verifyState.list">{{l.username}} : {{l.state}}</p>
+                </el-card>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="mini" @click="verifyState.visible = false">取 消</el-button>
+                    <el-button size="mini" type="primary" @click="verifyState.visible = false">确 定</el-button>
                 </span>
             </el-dialog>
 

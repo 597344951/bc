@@ -60,6 +60,22 @@ public class IntegralConstituteController {
 	}
 	
 	/**
+	 * 查询拥有积分结构的组织
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgInfoForIcNotPage", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"org:ic:insert"})
+	@ApiOperation(value = "查询拥有积分结构的组织")
+	public R queryOrgInfoForIcNotPage(@RequestParam Map<String, Object> conditions) {
+		try {
+			return integralConstituteService.queryOrgInfoForIcNotPage(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("查询拥有积分结构的组织失败");
+		}
+	}
+	
+	/**
 	 * 查询该组织拥有的党员，仅为党员积分功能服务
 	 * @param conditions 条件
 	 * @return
@@ -72,6 +88,22 @@ public class IntegralConstituteController {
 			return integralConstituteService.queryPartyUserInfoAndIcInfo(conditions, pageNum, pageSize);
 		} catch (Exception e) {
 			return R.error().setMsg("查询该组织拥有的党员失败");
+		}
+	}
+	
+	/**
+	 * 得到积分的子节点信息
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgIntegralInfo", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"org:ic:insert"})
+	@ApiOperation(value = "得到积分的子节点信息")
+	public R queryOrgIntegralInfo(@RequestParam Map<String, Object> conditions) {
+		try {
+			return integralConstituteService.queryOrgIntegralInfo(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("得到积分的子节点信息失败");
 		}
 	}
 }

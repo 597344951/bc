@@ -1,0 +1,14 @@
+<el-dialog class="templateView" :title="title" :visible.sync="config.visiable" :fullscreen="config.fullscreen" :width="config.width">
+    <div slot="title" style="display: flex;">
+        <span class="el-dialog__title"> {{title}}</span>
+        <el-button-group style="margin-left:30px;">
+            <el-button size="small" icon="el-icon-rank" @click="setFullscreen" title="最大"></el-button>
+        </el-button-group>
+    </div>
+    <div slot="footer" class="foot-button-container">
+        <el-button type="primary" @click="submit">确定</el-button>
+        <el-button @click="close">关闭</el-button>
+    </div>
+    <div v-html="config.content" v-show="mode == 'view'"></div>
+    <div id="editor" v-show="mode == 'edit'"> </div>
+</el-dialog>

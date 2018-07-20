@@ -5,9 +5,42 @@ let CreateActivityPlan = {
         author: 'Wangch',
         descript: '创建活动策划方案'
     },
+    props: {
+        //计划信息
+        plan: {
+            type: Object,
+            default () {
+                return {};
+            }
+        },
+        //事件信息
+        timeInfo: {
+            type: Object,
+            default () {
+                return {};
+            }
+        }
+    },
+    watch: {
+        "timeInfo":function(val, oldVal) {
+            this.planData.stime = val.stime;
+            this.planData.etime = val.stime;
+        },
+        plan(val, oldVal) {
+
+        }
+    },
     data: function () {
         return {
-            planData: {},
+            templateView: {
+                title: '活动策划方案选择',
+                display: false,
+                keyword: ''
+            },
+            planData: {
+                stime:this.timeInfo.stime,
+                etime:this.timeInfo.etime,
+            },
             planeTemplates: [],
             //选中模板
             choseTemplate: {},
@@ -15,82 +48,11 @@ let CreateActivityPlan = {
                 visiable: false
             },
             costPlanData: [],
-            costTypeGroup: [{
-                    "data": {
-                        "costType": 1,
-                        "name": "进项金额",
-                        "type": 1,
-                        "parent": 0
-                    },
-                    "children": [{
-                            "data": {
-                                "costType": 3,
-                                "name": "企业赞助",
-                                "type": 1,
-                                "parent": 1
-                            },
-                            "children": null
-                        },
-                        {
-                            "data": {
-                                "costType": 4,
-                                "name": "个人赞助",
-                                "type": 1,
-                                "parent": 1
-                            },
-                            "children": null
-                        }
-                    ]
-                },
-                {
-                    "data": {
-                        "costType": 2,
-                        "name": "活动花费",
-                        "type": -1,
-                        "parent": 0
-                    },
-                    "children": [{
-                            "data": {
-                                "costType": 5,
-                                "name": "场地",
-                                "type": -1,
-                                "parent": 2
-                            },
-                            "children": null
-                        },
-                        {
-                            "data": {
-                                "costType": 6,
-                                "name": "服装/道具",
-                                "type": -1,
-                                "parent": 2
-                            },
-                            "children": null
-                        },
-                        {
-                            "data": {
-                                "costType": 7,
-                                "name": "人工",
-                                "type": -1,
-                                "parent": 2
-                            },
-                            "children": null
-                        },
-                        {
-                            "data": {
-                                "costType": 8,
-                                "name": "门票花费",
-                                "type": -1,
-                                "parent": 2
-                            },
-                            "children": null
-                        }
-                    ]
-                }
-            ]
+            costTypeGroup: [ ]
         }
     },
     mounted() {
+        this.loadCostTypeData();
         let me = this;
         this.loadTemplate();
 
@@ -104,6 +66,13 @@ let CreateActivityPlan = {
         this.$refs['ueditor'] = editor;
     },
     computed: {
+
+        reset(){
+            console.log('重置数据');
+            this.$refs.ueditor.setContent("");
+            this.planData.title = "";
+            this.costPlanData = [];
+        },
 
         //转换花费数据
         costValues() {
@@ -137,6 +106,16 @@ let CreateActivityPlan = {
         }
     },
     methods: {
+        loadCostTypeData(){
+            let url = '/costplan/costtype';
+            ajax_promise(url,'get',{}).then(result=>{
+                this.costTypeGroup = result.data;
+            });
+        },
+        openTemplate() {
+            this.templateView.keyword = this.plan.title;
+            this.templateView.display = true;
+        },
         caclePlane() {
 
         },
@@ -153,11 +132,11 @@ let CreateActivityPlan = {
             });
         },
         //模板选择改变
-        tpChoseChange() {
+        tpChoseChange(tp) {
+            this.choseTemplate = tp;
             if (this.choseTemplate) {
                 this.$refs.ueditor.setContent(this.choseTemplate.content);
                 this.planData.title = this.choseTemplate.title;
-                this.loadCostPlan();
             } else {
                 this.$refs.ueditor.setContent("");
                 this.planData.title = "";
@@ -192,7 +171,7 @@ let CreateActivityPlan = {
             return rows;
         },
         submitPlane() {
-            this.$emit("submit", this.planData,this.costPlanData)
+            this.$emit("submit", this.planData, this.costPlanData)
         }
 
     }

@@ -90,8 +90,8 @@
 			transform:translateY(-2px);
 		}
         .image {
-            width: 100%;
-            height: 175px;
+            /*width: 100%;*/
+            height: 200px;
 			background: white;
         }
 
@@ -434,6 +434,7 @@
 								filter-placeholder="请输入关键字"
 								:titles="['可选审核人', '已选审核人']"
 								v-model="selectedExUser"
+								target-order="push"
 								:data="exUsers">
 						</el-transfer>
 					</div>
@@ -526,6 +527,10 @@
 
 	<script type="module">
 		import serverConfig from '/environment/resourceUploadConfig.jsp'
+
+		window.onFocus = function() {
+			window.location.reload()
+		}
 
 		window.app = new Vue({
 			el: '#app',

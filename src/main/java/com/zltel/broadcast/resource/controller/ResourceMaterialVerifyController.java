@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.tree.TreeNode;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.resource.bean.MaterialAlbum;
 import com.zltel.broadcast.resource.bean.ResourceMaterial;
@@ -36,28 +38,36 @@ public class ResourceMaterialVerifyController extends BaseController {
     @ApiOperation(value = "审核资源内容")
     @PostMapping("/verify/{verify}")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_VERIFY_LOG, value = "审核资源", template = "审核素材:${rm.toString()} , 通过状态:${verify}")
-    public R verify(@PathVariable("verify") boolean verify,
-            @RequestBody ResourceMaterial rm) {
+    @RequiresPermissions("resource:verify:verify")
+    public R verify(@PathVariable("verify") boolean verify, @RequestBody ResourceMaterial rm) {
         rm.setVerify(verify);
         this.service.verify(rm);
         return R.ok();
     }
+
     @ApiOperation(value = "审核资源内容")
     @PostMapping("/verifys/{verify}")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_VERIFY_LOG, value = "审核资源", template = "审核素材:${rms.toString()} , 通过状态:${verify}")
-    public R verifys(@PathVariable("verify") boolean verify,
-            @RequestBody List<ResourceMaterial> rms) {
+    @RequiresPermissions("resource:verify:verify")
+    public R verifys(@PathVariable("verify") boolean verify, @RequestBody List<ResourceMaterial> rms) {
 
-        this.service.verify(rms,verify);
+        this.service.verify(rms, verify);
         return R.ok();
     }
 
     @ApiOperation(value = "查询未审核资源")
     @PostMapping("/{pageIndex}-{limit}")
+    @RequiresPermissions("resource:verify:query")
     public R query(@PathVariable("pageIndex") int pageIndex, @PathVariable("limit") int limit,
             @RequestBody ResourceMaterial rm) {
         SysUser user = this.getSysUser();
         rm.setOrgId(user.getOrgId());
+        AdminRoleUtil.handleAdminRole(rm, item -> {
+            item.setUserId(null);
+        }, item -> {
+            item.setUserId(null);
+            item.setOrgId(null);
+        });
         Pager pager = new Pager(pageIndex, limit);
         List<ResourceMaterial> data = this.service.query(rm, pager);
 
@@ -66,9 +76,16 @@ public class ResourceMaterialVerifyController extends BaseController {
 
     @ApiOperation(value = "查询未审核数据目录")
     @PostMapping(value = "/AlbumTree")
-    public R listTypeTree(String keyword,Boolean verify,Boolean noVerify) {
+    @RequiresPermissions("resource:verify:query")
+    public R listTypeTree(String keyword, Boolean verify, Boolean noVerify) {
         SysUser user = this.getSysUser();
         MaterialAlbum ma = new MaterialAlbum(user);
+        AdminRoleUtil.handleAdminRole(ma, item -> {
+            item.setUid(null);
+        }, item -> {
+            item.setUid(null);
+            item.setOrgid(null);
+        });
         ma.setUid(null);
         ma.setKeyword(keyword);
         ma.setVerify(verify);

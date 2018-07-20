@@ -146,8 +146,11 @@
 	<sql id="QUERY_WHERE">
 		<where>
 			<include refid="BASE_WHERE_PARAMS" />
-			<!-- 查询内置 -->
-			OR orgid = 0
+			<if test="orgid != null">
+				<!-- 查询内置 -->
+				OR orgid = 0
+			</if>
+			
 		</where>
 	</sql>
 	<select id="query" parameterType="com.zltel.broadcast.template.bean.TemplateType" resultMap="BaseResultMap">
@@ -163,7 +166,10 @@
 		SELECT tc.tp_type_id,
 		COUNT(1) COUNT
 		FROM template_content tc
-		WHERE tc.orgid = #{orgid}
+		WHERE 1=1
+		<if test="orgid != null">
+			AND (tc.orgid = #{orgid} or tc.orgid=0)
+		</if>
 		<if test="keyword != null and keyword !=''">
 			AND tc.title like concat('%',#{keyword},'%')
 		</if>

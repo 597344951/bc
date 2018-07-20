@@ -22,8 +22,10 @@ public interface EventPlanInfoMapper extends BaseDao<EventPlanInfo>{
 
     int updateByPrimaryKey(EventPlanInfo record);
     
-    /**按给定条件查�?**/
+    /**按给定条件查**/
     List<EventPlanInfo> query(EventPlanInfo record,PageRowBounds prb);
 
     List<EventPlanInfo> queryForList(PageRowBounds prb);
+
+    List<EventPlanInfo> queryUnStop(EventPlanInfo eventplan);
 }

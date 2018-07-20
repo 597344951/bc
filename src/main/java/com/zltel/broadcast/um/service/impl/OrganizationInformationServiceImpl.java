@@ -406,7 +406,8 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     			treeNode.setData(map);
     			treeNodes.add(treeNode);
 			}
-    		this.toTreeNodes(treeNodes);
+    		treeNodes.get(0).getData().put("count", 0);
+    		this.toTreeNodes(treeNodes, 0, treeNodes.get(0));
     	}
     	return R.ok().setData(treeNodes);
     }
@@ -456,9 +457,19 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	 * 生成树
 	 * @param organizationInfo
 	 */
-    private void toTreeNodes(List<TreeNode<Map<String, Object>>> treeNodes) {
+    private void toTreeNodes(List<TreeNode<Map<String, Object>>> treeNodes, int count, TreeNode<Map<String, Object>> node) {
     	if (treeNodes != null && treeNodes.size() > 0) {
-    		for (TreeNode<Map<String, Object>> treeNode : treeNodes) {
+    		for (int i = 0; i < treeNodes.size(); i++) {
+    			TreeNode<Map<String, Object>> treeNode = treeNodes.get(i);
+    			if (i == 0) {	//表示新开一层，结果是上级count+1
+    				count = (int)node.getData().get("count");
+    				count++;
+    			} else if ((int)treeNode.getData().get("orgInfoParentId") == -1) {	//最顶层，为第一层
+    				count = 1;
+    			} else {	//本层循环，count不变
+    				count = (int)treeNodes.get(i - 1).getData().get("count");
+    			}
+    			treeNode.getData().put("count", count);
     			Map<String, Object> condition = new HashMap<>();
 				condition.put("orgInfoParentId", treeNode.getData().get("orgInfoId"));
 				List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(condition);
@@ -471,7 +482,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 					}
 				}
 				treeNode.setChildren(treeNodes2);
-				toTreeNodes(treeNode.getChildren());
+				toTreeNodes(treeNode.getChildren(), count, treeNode);
 			}
     	}
     }

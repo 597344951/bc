@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="com.zltel.broadcast.eventplan.dao.EventPlanInfoMapper">
-	<resultMap id="BaseResultMap"
-		type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-		<id column="event_plan_id" jdbcType="INTEGER"
-			property="eventPlanId" />
+<mapper namespace="com.zltel.broadcast.eventplan.dao.EventPlanInfoMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+		<id column="event_plan_id" jdbcType="INTEGER" property="eventPlanId" />
 		<result column="event_id" jdbcType="INTEGER" property="eventId" />
 		<result column="org_id" jdbcType="INTEGER" property="orgId" />
 		<result column="status" jdbcType="INTEGER" property="status" />
@@ -13,13 +10,21 @@
 		<result column="user_id" jdbcType="INTEGER" property="userId" />
 		<result column="stime" jdbcType="TIMESTAMP" property="stime" />
 		<result column="etime" jdbcType="TIMESTAMP" property="etime" />
-		<result column="pub_task_id" jdbcType="VARCHAR"
-			property="pubTaskId" />
+		<result column="pub_task_id" jdbcType="VARCHAR" property="pubTaskId" />
+		<result column="save_time" jdbcType="TIMESTAMP" property="saveTime" />
+
+		<association property="planStatus" column="status"
+			select="com.zltel.broadcast.eventplan.dao.EventPlanStatusMapper.selectByPrimaryKey">
+		</association>
+		<!-- 关联自动加载费用数据 -->
+		<collection property="costplans"
+			select="com.zltel.broadcast.eventplan.dao.CostPlanMapper.selectByEventPlanId"
+			column="event_plan_id">
+		</collection>
 	</resultMap>
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
 		type="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
-		<result column="content" jdbcType="LONGVARCHAR"
-			property="content" />
+		<result column="content" jdbcType="LONGVARCHAR" property="content" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		event_plan_id, event_id, org_id, status, title, user_id,
@@ -28,8 +33,8 @@
 	<sql id="Blob_Column_List">
 		content
 	</sql>
-	<select id="selectByPrimaryKey"
-		parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
 		select
 		<include refid="Base_Column_List" />
 		,
@@ -38,20 +43,20 @@
 		where event_plan_id =
 		#{eventPlanId,jdbcType=INTEGER}
 	</select>
-	<delete id="deleteByPrimaryKey"
-		parameterType="java.lang.Integer">
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from event_plan_info
-		where event_plan_id =
+		where event_plan_id
+		=
 		#{eventPlanId,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert"
-		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
+	<insert id="insert" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
 		insert into event_plan_info (event_plan_id, event_id,
 		org_id,
 		status, title, user_id,
 		stime, etime, pub_task_id,
 		content)
-		values (#{eventPlanId,jdbcType=INTEGER}, #{eventId,jdbcType=INTEGER},
+		values
+		(#{eventPlanId,jdbcType=INTEGER}, #{eventId,jdbcType=INTEGER},
 		#{orgId,jdbcType=INTEGER},
 		#{status,jdbcType=INTEGER},
 		#{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
@@ -166,14 +171,16 @@
 		update event_plan_info
 		set event_id =
 		#{eventId,jdbcType=INTEGER},
-		org_id = #{orgId,jdbcType=INTEGER},
+		org_id =
+		#{orgId,jdbcType=INTEGER},
 		status
 		= #{status,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
 		user_id = #{userId,jdbcType=INTEGER},
 		stime =
 		#{stime,jdbcType=TIMESTAMP},
-		etime = #{etime,jdbcType=TIMESTAMP},
+		etime =
+		#{etime,jdbcType=TIMESTAMP},
 		pub_task_id = #{pubTaskId,jdbcType=VARCHAR},
 		content =
 		#{content,jdbcType=LONGVARCHAR}
@@ -185,72 +192,82 @@
 		update event_plan_info
 		set event_id =
 		#{eventId,jdbcType=INTEGER},
-		org_id = #{orgId,jdbcType=INTEGER},
+		org_id =
+		#{orgId,jdbcType=INTEGER},
 		status
 		= #{status,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
 		user_id = #{userId,jdbcType=INTEGER},
 		stime =
 		#{stime,jdbcType=TIMESTAMP},
-		etime = #{etime,jdbcType=TIMESTAMP},
+		etime =
+		#{etime,jdbcType=TIMESTAMP},
 		pub_task_id = #{pubTaskId,jdbcType=VARCHAR}
 		where event_plan_id =
 		#{eventPlanId,jdbcType=INTEGER}
 	</update>
 
 	<!-- 查询 EventPlanInfo -->
-	<select id="query"
-		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo"
+	<select id="query" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo"
 		resultMap="ResultMapWithBLOBs">
 		select * from event_plan_info
 		<include refid="EventPlanInfoWhere" />
 	</select>
-	<select id="queryForList"
-		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo"
-		resultMap="ResultMapWithBLOBs">
+	<select id="queryForList" resultMap="ResultMapWithBLOBs">
 		select * from event_plan_info
 	</select>
+
+	<select id="queryUnStop" parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo"
+		resultMap="ResultMapWithBLOBs">
+		select * from event_plan_info
+		where status != -1 AND status != 6
+		<include refid="EventPlanInfoParam"></include>
+	</select>
+
 
 	<!-- 查询条件 EventPlanInfo -->
 	<sql id="EventPlanInfoWhere">
 		<where>
-			<if test="eventId != null">
-				AND event_id=#{eventId}
-			</if>
-			<if test="status_label != null">
-				AND status_label=#{status_label}
-			</if>
-			<if test="eventPlanId != null">
-				AND event_plan_id=#{eventPlanId}
-			</if>
-			<if test="etime != null">
-				AND etime=#{etime}
-			</if>
-			<if test="costplans != null">
-				AND costplans=#{costplans}
-			</if>
-			<if test="stime != null">
-				AND stime=#{stime}
-			</if>
-			<if test="title != null">
-				AND title=#{title}
-			</if>
-			<if test="userId != null">
-				AND user_id=#{userId}
-			</if>
-			<if test="pubTaskId != null">
-				AND pub_task_id=#{pubTaskId}
-			</if>
-			<if test="content != null">
-				AND content=#{content}
-			</if>
-			<if test="orgId != null">
-				AND org_id=#{orgId}
-			</if>
-			<if test="status != null">
-				AND status=#{status}
-			</if>
+			<include refid="EventPlanInfoParam"></include>
 		</where>
+	</sql>
+	<sql id="EventPlanInfoParam">
+		<if test="eventId != null">
+			AND event_id=#{eventId}
+		</if>
+		<if test="status_label != null">
+			AND status_label=#{status_label}
+		</if>
+		<if test="eventPlanId != null">
+			AND event_plan_id=#{eventPlanId}
+		</if>
+		<if test="etime != null">
+			AND etime=#{etime}
+		</if>
+		<if test="costplans != null">
+			AND costplans=#{costplans}
+		</if>
+		<if test="stime != null">
+			AND stime=#{stime}
+		</if>
+		<if test="title != null">
+			AND title=#{title}
+		</if>
+		<if test="userId != null">
+			AND user_id=#{userId}
+		</if>
+		<if test="pubTaskId != null">
+			AND pub_task_id=#{pubTaskId}
+		</if>
+		<if test="content != null">
+			AND content=#{content}
+		</if>
+		<if test="orgId != null">
+			AND org_id=#{orgId}
+		</if>
+		<if test="status != null">
+			AND status=#{status}
+		</if>
 	</sql>
 
 </mapper>

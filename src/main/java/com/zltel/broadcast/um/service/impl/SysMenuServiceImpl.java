@@ -18,10 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.tree.TreeNode;
 import com.zltel.broadcast.common.util.Constant;
+import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.um.bean.SysMenu;
 import com.zltel.broadcast.um.bean.SysMenuTreeNode;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -46,7 +48,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         SysMenu menu = new SysMenu();
         menu.setParentId(menuId);
 
-        return this.sysMenuMapper.query(menu, null);
+        return this.sysMenuMapper.query(menu, Pager.DEFAULT_PAGER);
     }
 
     /**
@@ -146,6 +148,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
 
 
         });
+        logout.info("菜单: {} 包含子节点: {}",node.toString(),childs.toString());
         if (childs.isEmpty()) return;
         node.setChildren(childs);
         childs.forEach(n -> {
@@ -185,6 +188,12 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         childs.forEach(n -> {
             nextNode(n, datas);
         });
+    }
+
+    @Override
+    public List<TreeNode<SysMenu>> queryAllMenuInfo() {
+        List<SysMenu> datas = this.query(null, null);
+        return TreeNodeCreateUtil.toTree(datas, SysMenu::getMenuId, SysMenu::getParentId);
     }
 
 

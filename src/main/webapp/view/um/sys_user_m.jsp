@@ -20,7 +20,7 @@
 		text-align: center;
 	}
 	#querySysUserStyle>span {
-		margin-right: 20px;
+		margin-right: 10px;
 	}
 	#baseUser_manager_queryBaseUserStyle>span {
 		margin-right: 20px;
@@ -33,21 +33,19 @@
 		  <el-header>
 		  	<el-row>
 		  		<shiro:hasPermission name="sys:user:insert">  
-			 	    <el-button type="primary" icon="el-icon-circle-plus-outline" @click="insertSysUserDialog = true">添加系统用户</el-button>
+			 	    <el-button size="small" type="primary" icon="el-icon-circle-plus-outline" @click="insertSysUserDialog = true">添加用户</el-button>
 			  	</shiro:hasPermission>
 			</el-row>
 		  </el-header>
 		  <el-header>
 		  	<el-row	id="querySysUserStyle">
 			  	<span>
-			  		用户状态
-				  <el-select clearable v-model="sysUserStatu" @change="querySysUsersByStatus" placeholder="请选择系统用户状态">
+				  <el-select size="small" clearable v-model="sysUserStatu" @change="querySysUsersByStatus" placeholder="请选择系统用户状态">
 				   	 <el-option v-for="item in usersStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				  </el-select>
 				</span>
 				<span>
-					创建日期
-				    <el-date-picker v-model="sysUsercreateTime" @change="querySysUsersBycreateTime" type="daterange" align="right" unlink-panels range-separator="至"
+				    <el-date-picker size="small" v-model="sysUsercreateTime" @change="querySysUsersBycreateTime" type="daterange" align="right" unlink-panels range-separator="至"
 				      start-placeholder="开始日期" end-placeholder="结束日期">
 				    </el-date-picker>
 				</span>
@@ -56,36 +54,33 @@
 		  <el-main>
 		  	<template>
 		  		<el-table size="mini" :data="pager.list" style="width: 100%" max-height="550">
-				    <el-table-column fixed prop="userId" label="ID" width="50">
+				    <el-table-column fixed prop="userId" label="ID" width=50>
 				    </el-table-column>
-				    <el-table-column prop="username" label="用户名" width="120">
+				    <el-table-column prop="username" label="用户名" width=150>
 				    </el-table-column>
-				    <el-table-column prop="password" label="密码" width="120">
+				    <el-table-column prop="email" label="邮箱" width=150>
 				    </el-table-column>
-				    <el-table-column prop="salt" label="盐" width="120">
+				    <el-table-column prop="mobile" label="手机号" width=100>
 				    </el-table-column>
-				    <el-table-column prop="email" label="邮箱" width="300">
-				    </el-table-column>
-				    <el-table-column prop="mobile" label="手机号" width="120">
-				    </el-table-column>
-				    <el-table-column label="状态" width="120">
+				    <el-table-column label="状态" width=80>
 					    <template slot-scope="scope">
 					        <span>{{ scope.row.status == 0 ? "禁用" : "可用" }}</span>
 					    </template>
 				    </el-table-column>
 				    <el-table-column prop="createTime" label="创建时间" width="300">
 				    </el-table-column>
-				    <el-table-column fixed="right" label="操作" width=180>
+				    <el-table-column label="操作">
 					    <template slot-scope="scope">
-					      <shiro:hasPermission name="sys:user:delete">  
-						      <el-button @click="deleteSysUser(scope.row)" type="text" size="small">删除</el-button>
-					      </shiro:hasPermission>
-					      <shiro:hasPermission name="sys:user:update">  
-						      <el-button @click="openUpdateSysUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
-					      </shiro:hasPermission>
-					      <shiro:hasPermission name="sys:userRole:update">  
-						      <el-button @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
-					      </shiro:hasPermission>
+					      	<shiro:hasPermission name="sys:user:delete">  
+						      	<el-button @click="deleteSysUser(scope.row)" type="text" size="small">删除</el-button>
+					      	</shiro:hasPermission>
+					      	<shiro:hasPermission name="sys:user:update">  
+						     	<el-button @click="openUpdateSysUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
+					      	</shiro:hasPermission>
+					      	<shiro:hasPermission name="sys:userRole:update">  
+						      	<el-button @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
+					      	</shiro:hasPermission>
+					      	<el-button type="text" size="small" slot="reference" @click="openSetInnerManageRolesDialog(scope.row)">赋予管理角色</el-button>
 					    </template>
 				    </el-table-column>
 				 </el-table>
@@ -122,7 +117,7 @@
 				    <el-input v-model="insertSysUserForm.email" placeholder="示例：zltel@zltel.com"></el-input>
 				</el-form-item>
 				<el-form-item>
-				    <el-button type="primary" @click="insertSysUser('insertSysUserForm')">添加系统用户</el-button>
+				    <el-button type="primary" @click="insertSysUser('insertSysUserForm')">添加用户</el-button>
 				    <el-button @click="resetInsertSysUserForm('insertSysUserForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
@@ -171,19 +166,33 @@
 				    <el-input :disabled="true" v-model="updateSysUserForm.createTime"></el-input>
 				</el-form-item>
 				<el-form-item>
-				    <el-button type="primary" @click="updateSysUser('updateSysUserForm')">变更系统用户信息</el-button>
+				    <el-button type="primary" @click="updateSysUser('updateSysUserForm')">变更信息</el-button>
 				</el-form-item>
 			</el-form>	  
 	    </el-dialog>
 	    
 	    <el-dialog @close="resetChangeSysUserRoleForm" title="用户角色变更" :visible.sync="changeSysUserRoleDialog">
-			<template>
+			<div style="margin-bottom: 10px;">
 			  <el-transfer :props="{key: 'roleId', label: 'remark'}" v-model="sysUserRoles" :data="roleList" :titles="['角色列表', '用户拥有角色']" :button-texts="['移除角色', '添加角色']"></el-transfer>
-			</template>
-			<el-row>
-			    <el-button type="primary" @click="changeSysUserRoles">变更系统用户角色</el-button>
+			</div>
+			<el-row style="margin-bottom: 20px;">
+			    <el-button size="small" type="primary" @click="changeSysUserRoles">变更角色</el-button>
 			</el-row>
 	    </el-dialog>
+
+	     <el-dialog title="管理内置角色" :visible.sync="innserManageRolesDialog" width="200px">
+	     	<el-select size="small" clearable 
+					v-model="innerManageRoles.roleId"
+					placeholder="所在组织">
+				<el-option
+					v-for="item in innerManageRoles.roles"
+					:key="item.roleId"
+					:label="item.remark"
+					:value="item.roleId">
+				</el-option>
+			</el-select>
+			<el-button style="margin: 10px 0" size="small" type="primary" @click="updateInnerManageRols">确认</el-button>
+	     </el-dialog>
 	</div>
 </body>
 
@@ -197,6 +206,7 @@
 	        updateSysUserDialog: false,		/* 修改用户信息弹窗默认不显示初始化 */
 	        updateSysUserPwdDialog: false,
 	        changeSysUserRoleDialog: false,	/* 变更用户角色弹窗默认不显示初始化 */
+	        innserManageRolesDialog: false, 	/*内置角色管理弹窗*/
 		    usersStatus: [	/* 用户状态值初始化 */
 				{
 					value: '0',
@@ -319,12 +329,68 @@
 		    sysUserRoles: [],
 		    changeSysUserRole: {
 		    	userId: ""
+		    },
+		    innerManageRoles: {
+		    	roles: [],
+		    	userId: null,
+		    	roleId: null,
+		    	isShow: 0
 		    }
 		},
 		created:function () {
 			this.queryUsers(1, 12); //这里定义这个方法，vue实例之后运行到这里就调用这个函数
+			this.getInnerManageRoles();
 		},
 		methods: {
+			updateInnerManageRols() {
+				var obj = this;
+				var url = "/sys/userRole/updateInnerManageRols";
+				var t = {
+					userId: obj.innerManageRoles.userId,
+					roleId: obj.innerManageRoles.roleId,
+					isShow: obj.innerManageRoles.isShow
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						toast('修改成功成功',data.msg,'success');
+						obj.innserManageRolesDialog = false;
+						obj.queryUsers(obj.pager.pageNum, obj.pager.pageSize);
+					}
+				})
+			},
+			openSetInnerManageRolesDialog(row) {
+				var obj = this;
+				obj.innerManageRoles.userId = row.userId;
+
+				var url = "/sys/userRole/querySysUserRolesNotPage";
+				var t = {
+					userId: obj.innerManageRoles.userId,
+					isShow: obj.innerManageRoles.isShow
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {
+							obj.innerManageRoles.roleId = data.data[0].roleId;
+						} else {
+							obj.innerManageRoles.roleId = null;
+						}
+					}
+				})
+
+				obj.innserManageRolesDialog = true;
+			},
+			getInnerManageRoles() {
+				var obj = this;
+				var url = "/sys/role/querySysRolesNotPage";
+		    	var t = {
+					isShow: obj.innerManageRoles.isShow
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						obj.innerManageRoles.roles = data.data;
+					}
+				})
+		    },
 			initPager(){
 				this.pager.pageNum = 1;
 				this.pager.pageSize = 12;
@@ -463,7 +529,10 @@
 		    	appInstince.changeSysUserRole.userId = row.userId;
 		    	
 		    	var url = "/sys/role/querySysRolesNotPage";
-				$.post(url, function(data, status){
+		    	var t = {
+					isShow: 1
+				}
+				$.post(url, t, function(data, status){
 					if (data.code == 200) {
 						appInstince.changeSysUserRoleDialog = true;
 						appInstince.roleList = data.data;
@@ -472,7 +541,8 @@
 				
 				var url = "/sys/userRole/querySysUserRolesNotPage";
 				var t = {
-					userId: row.userId
+					userId: row.userId,
+					isShow: 1
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {

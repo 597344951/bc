@@ -33,7 +33,7 @@
 			<el-header>
 				<el-row>
 			  		<shiro:hasPermission name="sys:role:insert">  
-				 	    <el-button type="primary" icon="el-icon-circle-plus-outline" @click="role_manager_showInsertSysRoleDialog">新建角色</el-button>
+				 	    <el-button size="small" type="primary" icon="el-icon-circle-plus-outline" @click="role_manager_showInsertSysRoleDialog">新建角色</el-button>
 				  	</shiro:hasPermission>
 				</el-row>
 			</el-header>
@@ -109,24 +109,26 @@
 				    <el-input :disabled="true" v-model="role_manager_updateSysRoleForm.createTime"></el-input>
 				</el-form-item>
 				<el-form-item>
-				    <el-button type="primary" @click="role_manager_updateSysRole('role_manager_updateSysRoleForm')">修改角色信息</el-button>
+				    <el-button type="primary" @click="role_manager_updateSysRole('role_manager_updateSysRoleForm')">修改信息</el-button>
 				</el-form-item>
 			</el-form>
 	    </el-dialog>
 	    
 	    <el-dialog @close="role_manager_resetUpdateSysRoleMenuDialog" title="角色权限变更" :visible.sync="role_manager_updateSysRoleMenuDialog">
-			<el-tree ref="role_manager_updateSysUserRoleTree" 
-				node-key="id" 
-				:default-expanded-keys=role_manager_menuTreeDefaultExpandedKeys 
-				show-checkbox 
-				:expand-on-click-node="false" 
-				:highlight-current="true" 
-				:data="role_manager_querySysMenuTreeCondition" 
-		    	:props="role_manager_querySysMenuConditionTreeProps" 
-		    	:check-strictly="true">
-		  	</el-tree>
-		  	<el-row>
-			    <el-button type="primary" @click="role_manager_updateSysRoleMenu">变更角色权限</el-button>
+	    	<div style="margin-bottom: 10px;">
+				<el-tree ref="role_manager_updateSysUserRoleTree" 
+					node-key="id" 
+					:default-expanded-keys=role_manager_menuTreeDefaultExpandedKeys 
+					show-checkbox 
+					:expand-on-click-node="false" 
+					:highlight-current="true" 
+					:data="role_manager_querySysMenuTreeCondition" 
+			    	:props="role_manager_querySysMenuConditionTreeProps" 
+			    	:check-strictly="true">
+			  	</el-tree>
+		  	</div>
+		  	<el-row style="margin-bottom: 20px">
+			    <el-button size="small" type="primary" @click="role_manager_updateSysRoleMenu">变更权限</el-button>
 			</el-row>
 	    </el-dialog>
 	</div>
@@ -199,7 +201,8 @@
 				var url = "/sys/role/querySysRoles";
 				var t = {
 					pageNum: obj.role_manager_pager.pageNum,
-					pageSize: obj.role_manager_pager.pageSize
+					pageSize: obj.role_manager_pager.pageSize,
+					isShow: 1
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {

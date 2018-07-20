@@ -26,4 +26,11 @@ public class ResourceMaterialServiceTest extends BroadcastApplicationTests {
 
         logout.info("\n pager: {}\n result: {}",JSON.toJSONString(pager),JSON.toJSONString(result));
     }
+    
+    @Test
+    public void testOrgUsedStoreSize() {
+        int orgid = 6;
+        long size = this.service.orgUsedStoreSize(orgid);
+        logout.info("{} 使用资源存储容量: {}",orgid,size);
+    }
 }

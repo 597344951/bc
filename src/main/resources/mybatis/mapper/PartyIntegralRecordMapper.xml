@@ -10,13 +10,14 @@
     <result column="change_describes" jdbcType="VARCHAR" property="changeDescribes" />
     <result column="change_integral_type" jdbcType="INTEGER" property="changeIntegralType" />
     <result column="change_time" jdbcType="TIMESTAMP" property="changeTime" />
+    <result column="change_score" jdbcType="INTEGER" property="changeScore" />
     <result column="weight_coefficient" jdbcType="DECIMAL" property="weightCoefficient" />
     <result column="weight_type" jdbcType="INTEGER" property="weightType" />
     <result column="is_merge" jdbcType="INTEGER" property="isMerge" />
   </resultMap>
   <sql id="Base_Column_List">
     pir_id, org_id, party_id, activity_id, change_type_id, change_describes, change_integral_type, 
-    change_time, weight_coefficient, weight_type, is_merge
+    change_time, change_score, weight_coefficient, weight_type, is_merge
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -31,11 +32,12 @@
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
     insert into party_integral_record (pir_id, org_id, party_id, 
       activity_id, change_type_id, change_describes, 
-      change_integral_type, change_time, weight_coefficient, 
+      change_integral_type, change_time, change_score, weight_coefficient, 
       weight_type, is_merge)
     values (#{pirId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{partyId,jdbcType=INTEGER}, 
       #{activityId,jdbcType=INTEGER}, #{changeTypeId,jdbcType=INTEGER}, #{changeDescribes,jdbcType=VARCHAR}, 
-      #{changeIntegralType,jdbcType=INTEGER}, #{changeTime,jdbcType=TIMESTAMP}, #{weightCoefficient,jdbcType=DECIMAL}, 
+      #{changeIntegralType,jdbcType=INTEGER}, #{changeTime,jdbcType=TIMESTAMP}, #{changeScore,jdbcType=INTEGER}, 
+      #{weightCoefficient,jdbcType=DECIMAL}, 
       #{weightType,jdbcType=INTEGER}, #{isMerge,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
@@ -64,6 +66,9 @@
       </if>
       <if test="changeTime != null">
         change_time,
+      </if>
+      <if test="changeScore != null">
+        change_score,
       </if>
       <if test="weightCoefficient != null">
         weight_coefficient,
@@ -100,6 +105,9 @@
       <if test="changeTime != null">
         #{changeTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="changeScore != null">
+        #{changeScore,jdbcType=INTEGER},
+      </if>
       <if test="weightCoefficient != null">
         #{weightCoefficient,jdbcType=DECIMAL},
       </if>
@@ -135,6 +143,9 @@
       <if test="changeTime != null">
         change_time = #{changeTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="changeScore != null">
+        change_score = #{changeScore,jdbcType=INTEGER},
+      </if>
       <if test="weightCoefficient != null">
         weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
       </if>
@@ -156,6 +167,7 @@
       change_describes = #{changeDescribes,jdbcType=VARCHAR},
       change_integral_type = #{changeIntegralType,jdbcType=INTEGER},
       change_time = #{changeTime,jdbcType=TIMESTAMP},
+      change_score = #{changeScore,jdbcType=INTEGER},
       weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
       weight_type = #{weightType,jdbcType=INTEGER},
       is_merge = #{isMerge,jdbcType=INTEGER}
@@ -175,6 +187,7 @@
 	  ict.describes changeTypeDescribes,
 	  ict.operation changeOperation,
 	  pir.change_time changeTime,
+	  pir.change_score changeScore,
 	  pir.is_merge isMerge
 	from
 	  party_integral_record pir 
@@ -184,5 +197,11 @@
 	  inner join integral_change_type ict on pir.change_integral_type = ict.ict_id
 	where
 	  1 = 1
+	  <if test="orgId != null and orgId != ''"> and
+       	pir.org_id = #{orgId}
+      </if>
+      <if test="idCard != null and idCard != ''"> and
+       	bui.id_card = #{idCard}
+      </if>
   </select>
 </mapper>

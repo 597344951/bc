@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.statistics.dao.StatisticsDao">
+    <select id="partyMemberStatistics" resultType="java.util.Map">
+        SELECT COUNT(1) AS count, '积极分子' AS `type`
+        FROM organization_relation o
+        INNER JOIN base_user_info u ON o.org_rlt_user_id = u.base_user_id
+        WHERE u.positive_user=1
+        UNION ALL
+        SELECT COUNT(1) AS count, CASE p.`type` WHEN 0 THEN '预备党员' WHEN 1 THEN '党员' ELSE '其他' END AS `type`
+        FROM organization_relation o
+        INNER JOIN base_user_info u ON o.org_rlt_user_id = u.base_user_id
+        INNER JOIN party_user_info p ON u.base_user_id = p.party_user_id
+        WHERE u.is_party=1
+        GROUP BY p.`type`
+    </select>
+    <select id="partyFeePaymentStatistics" resultType="java.util.Map">
+        SELECT COUNT(1) as count, d.pay_status as payState, ds.name
+        FROM organization_relation o
+        INNER JOIN party_membership_dues_manage d ON d.user_id = o.org_rlt_user_id
+        INNER JOIN party_membership_dues_status ds ON ds.id = d.pay_status
+        GROUP BY d.pay_status
+    </select>
+</mapper>

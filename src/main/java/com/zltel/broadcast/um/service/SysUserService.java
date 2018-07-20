@@ -30,49 +30,58 @@ public interface SysUserService {
 
     /** 更新指定用户密码信息 **/
     int updatePassword(Integer userId, String password, String newPassword);
-    
-    
+
+
     /**
      * 查询系统用户信息
+     * 
      * @param sysUser 条件
-     * @return	查询得到的系统用户
+     * @return 查询得到的系统用户
      */
     public R querySysUsers(SysUser sysUser, int pageNum, int pageSize) throws Exception;
-    
+
     /**
      * 查询系统用户信息
+     * 
      * @param sysUser 条件
-     * @return	查询得到的系统用户
+     * @return 查询得到的系统用户
      */
     public R querySysUsersNotPage(SysUser sysUser) throws Exception;
-    
+
     /**
      * 修改系统用户信息
+     * 
      * @param sysUser 要修改的系统用户
-     * @return	
+     * @return
      */
     public R updateSysUser(SysUser sysUser) throws Exception;
-    
+
     /**
      * 修改系统用户密码
+     * 
      * @param sysUser 要修改的系统用户
-     * @return	
+     * @return
      */
     public R updateSysUserPwd(SysUser sysUser) throws Exception;
-    
+
     /**
      * 删除系统用户
+     * 
      * @param sysUsers 要删除的系统用户
-     * @return	
+     * @return
      */
     public R deleteSysUser(SysUser sysUser) throws Exception;
-    
+
     /**
      * 新增系统用户
+     * 
      * @param sysUser 要新增的系统用户
      * @return
      * @throws Exception
      */
     public R insertSysUser(SysUser sysUser) throws Exception;
-    
+
+    /** 禁用指定账户 **/
+    void disableUser(String username);
+
 }

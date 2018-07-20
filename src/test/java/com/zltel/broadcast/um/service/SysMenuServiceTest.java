@@ -17,19 +17,26 @@ import com.zltel.broadcast.um.bean.SysMenuTreeNode;
 public class SysMenuServiceTest extends BroadcastApplicationTests {
 
     private Logger logout = Logger.getLogger(SysMenuServiceTest.class.toString());
-    
+
     @Resource
     private SysMenuService service;
- 
+
     @Test
-    public void testQueryAllMenuForTree()throws Exception  {
+    public void testQueryAllMenuForTree() throws Exception {
         List<SysMenuTreeNode> datas = this.service.queryAllMenuForTree();
         logout.info(JSON.toJSONString(datas));
     }
+
     @Test
     public void testQueryTreeMenu() throws Exception {
-        List<TreeNode<SysMenu>> result  = service.queryTreeMenu();
-        
+        List<TreeNode<SysMenu>> result = service.queryTreeMenu();
+
+        logout.info(JSON.toJSONString(result));
+    }
+
+    @Test
+    public void testQueryAllMenuInfo() {
+        List<TreeNode<SysMenu>> result = this.service.queryAllMenuInfo();
         logout.info(JSON.toJSONString(result));
     }
 }

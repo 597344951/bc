@@ -250,7 +250,7 @@
 				verify = #{verify,jdbcType=TINYINT},
 			</if>
 			<if test="verifyDate != null">
-				verify_date = #{verifyDate,jdbcType=TIMESTAMP},  
+				verify_date = #{verifyDate,jdbcType=TIMESTAMP},
 			</if>
 		</set>
 		where material_id = #{materialId,jdbcType=INTEGER}
@@ -282,7 +282,8 @@
 		content =
 		#{content,jdbcType=LONGVARCHAR},
 		verify = #{verify,jdbcType=TINYINT},
-		verify_date = #{verifyDate,jdbcType=TIMESTAMP} 
+		verify_date =
+		#{verifyDate,jdbcType=TIMESTAMP}
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</update>
@@ -310,8 +311,9 @@
 		album_id =
 		#{albumId,jdbcType=INTEGER},
 		add_date = #{addDate,jdbcType=TIMESTAMP},
-		verify = #{verify,jdbcType=TINYINT},
-		verify_date = #{verifyDate,jdbcType=TIMESTAMP} 
+		verify =
+		#{verify,jdbcType=TINYINT},
+		verify_date = #{verifyDate,jdbcType=TIMESTAMP}
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</update>
@@ -387,4 +389,15 @@
 		delete from resource_material
 		<include refid="ResourceMaterialWhere" />
 	</delete>
+
+	<select id="orgUsedStoreSize" parameterType="java.lang.Integer" resultType="java.lang.Long">
+		SELECT SUM(size)
+		FROM(
+		SELECT CASE WHEN rm.`type` = 'text' THEN LENGTH(rm.content) ELSE rm.size END size
+		FROM
+		resource_material rm
+		where rm.org_id = #{orgid}
+		) t
+	</select>
+
 </mapper>

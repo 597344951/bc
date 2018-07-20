@@ -26,14 +26,16 @@ window.appInstince = new Vue({
         openTabDatas: [], //tab分页中的数据
         tabIndex: 2,
         menuDatas: [],
-        messages: [/*{
-            mid: 1,
-            title: 'test title',
-            time: new Date(),
-            sender: "System",
-            content: "test message",
-            url: 'http://www.baidu.com'
-        }*/],
+        messages: [
+            /*{
+                        mid: 1,
+                        title: 'test title',
+                        time: new Date(),
+                        sender: "System",
+                        content: "test message",
+                        url: 'http://www.baidu.com'
+                    }*/
+        ],
         changeTheme: {
             visible: false,
             color: title_theme
@@ -57,15 +59,20 @@ window.appInstince = new Vue({
         this.initWS();
         this.loadSetting();
     },
+    watch: {
+        tab_index(val, oldVal) {
+            this.noticeTabFocus(val);
+        }
+    },
     methods: {
         contextMenuClick(item) {
             let me = this;
             let tabs = this.openTabDatas.filter(item => item.closable);
             if (item.label == '关闭所有') {
-                tabs.map(item => item.menuId).forEach(id=>me.removeTab(id));
+                tabs.map(item => item.menuId).forEach(id => me.removeTab(id));
             } else if (item.label = '关闭其他') {
                 let closeIds = tabs.filter(item => item.menuId != me.contextNode.menuId).map(item => item.menuId);
-                closeIds.forEach(id=>me.removeTab(id));
+                closeIds.forEach(id => me.removeTab(id));
             }
             this.contextNode = null;
         },
@@ -159,6 +166,20 @@ window.appInstince = new Vue({
             }
             this.saveSetting();
         },
+        //通知标签页面 被选中
+        noticeTabFocus(target_index) {
+            let ifid = target_index + '_iframe';
+            console.debug('tab focus:  ', ifid);
+            try {
+                let callback = $('#' + ifid)[0].contentWindow.onFocus; //页面的关闭回调函数
+                if(callback){
+                    console.debug('tab focus method invoke');
+                    callback();
+                }else{
+                    console.debug('tab focus method not found');
+                }
+            } catch (e) {}
+        },
         checkTabClose(target_index) {
             let ifid = target_index + '_iframe';
             console.debug('close ', ifid);
@@ -189,6 +210,11 @@ window.appInstince = new Vue({
             this.openTabDatas = this.openTabDatas.filter(tab => tab.menuId != target_index);
 
             this.saveSetting();
+        },
+        //切换tab时
+        beforeLeaveTab(activeName, oldActiveName) {
+            console.log(arguments)
+            return false;
         },
         menuItemClick(obj) {
             console.log('打开' + obj.menuId + ' ' + obj.name)

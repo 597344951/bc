@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.um.bean.PartyIntegralRecord;
 import com.zltel.broadcast.um.service.PartyIntegralRecordService;
 
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +40,22 @@ public class PartyIntegralRecordController {
 			return partyIntegralRecordService.queryPartyIntegralRecords(conditions, pageNum, pageSize);
 		} catch (Exception e) {
 			return R.error().setMsg("查询积分记录失败");
+		}
+	}
+	
+	/**
+	 * 添加积分变更记录
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/insertPartyUserIntegralRecord", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"org:ic:insert"})
+	@ApiOperation(value = "添加积分变更记录")
+	public R insertPartyUserIntegralRecord(PartyIntegralRecord pir) {
+		try {
+			return partyIntegralRecordService.insertPartyUserIntegralRecord(pir);
+		} catch (Exception e) {
+			return R.error().setMsg("添加积分变更记录失败");
 		}
 	}
 }

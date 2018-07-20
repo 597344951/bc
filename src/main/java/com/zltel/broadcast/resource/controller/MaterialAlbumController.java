@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.tree.TreeNode;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.resource.bean.MaterialAlbum;
@@ -38,9 +40,19 @@ public class MaterialAlbumController extends BaseController {
 
     @ApiOperation(value = "查询用户专辑树")
     @GetMapping(value = "/Album")
-    public R listTypeTree(String keyword,Boolean verify) {
+    @RequiresPermissions("resource:album:query")
+    public R listTypeTree(String keyword, Boolean verify) {
         SysUser user = this.getSysUser();
         MaterialAlbum ma = new MaterialAlbum(user);
+        AdminRoleUtil.handleAdminRole(ma, item -> {
+            // 组织管理员
+            ma.setUid(null);
+        }, item -> {
+         // 平台管理员
+            ma.setUid(null);
+            ma.setOrgid(null);
+        });
+
         ma.setKeyword(keyword);
         ma.setVerify(verify);
 
@@ -54,6 +66,7 @@ public class MaterialAlbumController extends BaseController {
     @ApiOperation(value = "新建专辑信息")
     @PostMapping(value = "/Album")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源专辑分类", template = "新增资源分类:${ma.name}")
+    @RequiresPermissions("resource:album:save")
     public R save(@RequestBody MaterialAlbum ma) {
         ValidatorUtils.validateEntity(ma);
         SysUser user = this.getSysUser();
@@ -67,6 +80,7 @@ public class MaterialAlbumController extends BaseController {
 
     @ApiOperation(value = "更新分类信息")
     @PutMapping(value = "/Album")
+    @RequiresPermissions("resource:album:update")
     public R update(@RequestBody MaterialAlbum ma) {
         ValidatorUtils.validateEntity(ma);
         SysUser user = this.getSysUser();
@@ -92,6 +106,7 @@ public class MaterialAlbumController extends BaseController {
     @ApiOperation(value = "删除分类信息")
     @DeleteMapping("/Album/{albumId}")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "删除资源分类", template = "删除分类id:${tpTypeId}")
+    @RequiresPermissions("resource:album:delete")
     public R delete(@PathVariable("albumId") Integer albumId) {
         if (null == albumId) throw new RRException("输入删除分类的id");
         MaterialAlbum ma = new MaterialAlbum(this.getSysUser());

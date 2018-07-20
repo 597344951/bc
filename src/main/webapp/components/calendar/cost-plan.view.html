@@ -4,8 +4,8 @@
         <el-table :data="costPlanData" :row-class-name="computCostTypeTheme" show-summary :summary-method="costSummaries">
             <el-table-column label="花费名称">
                 <template slot-scope="scope">
-                    <el-form-item class="no-margin" :prop="'name_'+scope.$index" :rules="rules.name">
-                        <el-input v-model="scope.row.name" auto-complete="off" placeholder="请输入费用名" @change="inputChange('name',scope.$index)">
+                    <el-form-item class="no-margin" :prop="'name_'+scope.$index" :rules="rules.name" >
+                        <el-input v-model="scope.row.name" auto-complete="off" placeholder="请输入费用名" @change="inputChange('name',scope.$index)" :disabled="mode=='view'">
                             <i class="el-input__icon el-icon-edit" slot="prefix"></i>
                         </el-input>
                     </el-form-item>
@@ -14,9 +14,9 @@
             <el-table-column label="花费类型">
                 <template slot-scope="scope">
                     <el-form-item class="no-margin" prop="costType" :prop="'costType_'+scope.$index" :rules="rules.costType">
-                        <el-select v-model="scope.row.costType" placeholder="请选择" @change="changeCostType(scope.row,'costType',scope.$index)">
+                        <el-select v-model="scope.row.costType" placeholder="请选择" @change="changeCostType(scope.row,'costType',scope.$index)"  :disabled="mode=='view'">
                             <el-option-group v-for="group in costTypeGroup" :key="group.data.costType" :label="group.data.name">
-                                <el-option v-for="item in group.children" :key="item.data.costType" :label="item.data.name" :value="item.data.costType+''">
+                                <el-option v-for="item in group.children" :key="item.data.costType" :label="item.data.name" :value="item.data.costType">
                                 </el-option>
                             </el-option-group>
                         </el-select>
@@ -26,19 +26,19 @@
             <el-table-column label="金额">
                 <template slot-scope="scope">
                     <el-form-item class="no-margin" :prop="'value_'+scope.$index" :rules="rules.monely">
-                        <el-input v-model.number="scope.row.value" placeholder="请输入金额" @change="inputChange('value',scope.$index)">
+                        <el-input v-model.number="scope.row.value" placeholder="请输入金额" @change="inputChange('value',scope.$index)"  :disabled="mode=='view'">
                             <i class="el-input__icon " slot="prefix" v-bind:class="scope.row.$CostType && scope.row.$CostType.type > 0?'el-icon-plus':'el-icon-minus'"></i>
                         </el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
-                <template slot-scope="scope">
+                <template slot-scope="scope" v-if="mode=='edit'">
                     <el-button type="danger" size="small" @click="delCostItem(scope.row,scope.$index)">删除</el-button>
                 </template>
             </el-table-column>
             <el-row slot="append" style="padding:10px;">
-                <el-col :span="24">
+                <el-col :span="24" v-if="mode=='edit'">
                     <el-button size="small" @click="addNewCostItem">新增条目</el-button>
                     <el-button type="primary" size="small" @click="finsh">完成编辑</el-button>
                 </el-col>

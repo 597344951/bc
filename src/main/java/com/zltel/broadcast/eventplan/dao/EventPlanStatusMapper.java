@@ -1,8 +1,9 @@
 package com.zltel.broadcast.eventplan.dao;
 
+import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.eventplan.bean.EventPlanStatus;
 
-public interface EventPlanStatusMapper {
+public interface EventPlanStatusMapper extends BaseDao<EventPlanStatus>{
     int deleteByPrimaryKey(Integer status);
 
     int insert(EventPlanStatus record);

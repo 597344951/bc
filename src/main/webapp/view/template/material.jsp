@@ -41,6 +41,12 @@
                             </el-form-item>
                         </el-form>
                     </div>
+                    <div>
+                        <div class="store-status">
+                            <el-progress :text-inside="true" :stroke-width="18" :percentage="storeUsedPercent" status="success"></el-progress>
+                            <span class="label-txt">{{storeInfo.used | byteToSize}}/{{storeInfo.total | byteToSize}}</span>
+                        </div>
+                    </div>
                 </div>
             </el-header>
             <el-container>
@@ -53,10 +59,6 @@
                                 {{ node.label }}</span>
                         </span>
                     </el-tree>
-                    <div class="store-status">
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="50" status="success"></el-progress>
-                        <span class="label-txt">5G/10G</span>
-                    </div>
                 </el-aside>
                 <el-main>
                     <div role="mainDis" v-show="!tp.visible" style="overflow: auto;">
@@ -64,9 +66,9 @@
                             <el-col :span="10">
                                 <!--查询-->
                                 <el-breadcrumb separator="/" style="margin-top: 10px;">
-                                    <el-breadcrumb-item>所有类别</el-breadcrumb-item>
+                                    <el-breadcrumb-item><a @click="breadPathClick({parent:0})">所有类别</a></el-breadcrumb-item>
                                     <template v-for="item in breadcrumbData">
-                                        <el-breadcrumb-item>
+                                        <el-breadcrumb-item >
                                             <a @click="breadPathClick(item)">{{item.name}}</a>
                                         </el-breadcrumb-item>
                                     </template>
@@ -80,7 +82,15 @@
                                 </el-pagination>
                             </el-col>
                         </el-row>
-                        <span v-for="tp in tps">
+                        <div role="nextDirs" class="next-dirs">
+                                <el-button icon="el-icon-back" circle style="float:left;" @click="backToBefore()"></el-button>
+                                <template v-for="dir in nextDirs">
+                                    <div class="dirs" @click="dir_click(dir.data)">
+                                        <span class="title">{{dir.data.name}}</span>
+                                    </div>
+                                </template>
+                        </div>
+                        <template v-for="tp in tps">
                             <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }">
                                 <span class="verify-status">
                                     <el-tag class="not-verify" v-if="tp.verify == null" type="info" size="mini"></el-tag>
@@ -151,6 +161,7 @@
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="audio">音频</el-radio>
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="video">视频</el-radio>
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="text">文字</el-radio>
+                                            <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="images">图片万花筒</el-radio>
                                         </el-form-item>
                                         <el-form-item label="素材正文" v-show="tp.data.type == 'text'">
                                             <div class="editerContainer" id="templateText" type="textarea" style="height: 300px;"></div>
@@ -164,7 +175,7 @@
                                                 </div>
                                             </el-upload>
                                         </el-form-item>
-                                        <el-form-item label="上传素材" v-show="tp.data.type != 'text'">
+                                        <el-form-item label="上传素材" v-show="tp.data.type != 'text' && tp.data.type != 'images'">
                                             <el-upload class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
                                                 :before-upload="beforeResourceUpload">
                                                 <div style="display:flex;">
@@ -173,9 +184,15 @@
                                                 </div>
                                             </el-upload>
                                         </el-form-item>
+                                        <el-form-item label="上传素材" v-show="tp.data.type == 'images'">
+                                            <div class="editerContainer" v-show="tp.m3Visible" style="height: 400px;">
+                                                <div id="imagesContainer"></div>
+                                            </div>
+                                            <img v-show="!tp.m3Visible" :src="getResUrl(tp.data.coverUrl)" class="avatar" @click="openM3">
+                                        </el-form-item>
 
                                         <el-form-item label="所属分类" prop="albumIds">
-                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false" filterable
+                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="true" filterable
                                                 change-on-select></el-cascader>
                                         </el-form-item>
                                         <el-form-item>
@@ -205,7 +222,14 @@
                     <el-input type="text" v-model="tpt.data.orderNum"></el-input>
                 </el-form-item>
                 <el-form-item label="上一级目录" v-if="tpt.update != true">
-                    <el-input aria-readonly="true" v-model="tpt.data.parentLabel"></el-input>
+                    <el-select v-model="tpt.data.parentLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in tpt_parents"
+                          :key="item.parent"
+                          :label="item.parentLabel"
+                          :value="item.parentLabel">
+                        </el-option>
+                </el-select>
                 </el-form-item>
             </el-form>
             <div class="dialog-footer" slot="footer">
@@ -228,7 +252,7 @@
                     <el-input type="textarea" :rows="3" v-model="importResource.data.description" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="所属分类" prop="albumIds">
-                    <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="false"></el-cascader>
+                    <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="true"></el-cascader>
                 </el-form-item>
                 <el-form-item label="选取文件">
                     <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" :on-preview="handlePreview" :on-success="handleSuccess"
@@ -270,3 +294,5 @@
 
 </html>
 <script charset="utf-8" type="module" src="${urls.getForLookupPath('/assets/module/template/material.js')}"></script>
+<%-- 美图开放API --%>
+<script src="http://open.web.meitu.com/sources/xiuxiu.js" type="text/javascript"></script>

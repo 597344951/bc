@@ -179,18 +179,38 @@ function openwindow(url, name, iWidth, iHeight) {
 	var iLeft = (window.screen.width - 10 - iWidth) / 2; // 获得窗口的水平位置;
 	window.open(url, name, 'height=' + iHeight + ',,innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',toolbar=no,menubar=no,scrollbars=auto,resizeable=no,location=no,status=no');
 }
-
-function breadPath(target, datas, getChild, getParentId, getSelfId,getSelf) {
-	// 深度遍历路径
+/**
+ * 生成面包路径 
+ * @param {*} target 目标对象 
+ * @param {*} datas 所有数据
+ * @param {*} getChild  获取
+ * @param {*} getParentId 上一级id
+ * @param {*} getSelfId   自己的id
+ * @param {*} getSelf     获取自身数据
+ */
+function breadPath(target, datas, getChild, getParentId, getSelfId, getSelf) {
+	/**
+	 * 深度遍历路径
+	 * @param {*} ay 路径数组
+	 * @param {*} target 目标对象
+	 * @param {*} datas  数组
+	 */
 	function pathScan(ay, target, datas) {
-		if(getParentId(target) == 0){
+		//最顶级的item
+		if (getParentId(target) == 0) {
 			ay.push(target);
 			return ay;
 		}
-		
+
 		var pid = getSelfId(target);
 		for (var i = 0; i < datas.length; i++) {
 			var v = datas[i];
+			let self = getSelf(v);
+			//自身
+			if (getSelfId(self) == pid) {
+				ay.push(self);
+				return;
+			}
 			let chi = getChild(v);
 			if (chi) {
 				pathScan(ay, target, chi);
@@ -199,6 +219,7 @@ function breadPath(target, datas, getChild, getParentId, getSelfId,getSelf) {
 					let self = getSelf(v);
 					if (getSelfId(self) == getParentId(cn)) {
 						ay.push(self);
+						return;
 					}
 				}
 			} else {
@@ -213,6 +234,7 @@ function breadPath(target, datas, getChild, getParentId, getSelfId,getSelf) {
 					let self = getSelf(v);
 					if (getSelfId(self) == getParentId(cn)) {
 						ay.push(self);
+						return;
 					}
 				}
 			}
@@ -222,7 +244,66 @@ function breadPath(target, datas, getChild, getParentId, getSelfId,getSelf) {
 	pathScan(ay, target, datas);
 	return ay.reverse();
 }
+/**
+ * 获取指定数据对象子数据
+ * @param {*} target 目标对象 
+ * @param {*} datas 所有数据
+ * @param {*} getChild  获取
+ * @param {*} getSelfId   自己的id
+ * @param {*} getSelf     获取自身数据
+ */
+function getDataNextItem(target, datas, getChild,getSelfId, getSelf) {
+	/**
+	 * 深度遍历路径
+	 * @param {*} ay 路径数组
+	 * @param {*} target 目标对象
+	 * @param {*} datas  数组
+	 */
+	function pathScan( target, datas) {
+		//优先 广度遍历
+		var pid = getSelfId(target);
+		for (var i = 0; i < datas.length; i++) {
+			var v = datas[i];
+			let self = getSelf(v);
+			//自身
+			if (getSelfId(self) == pid) {
+				return v;
+			}
+		}
+		for (var i = 0; i < datas.length; i++) {
+			var v = datas[i];
+			let chi = getChild(v);
+			if (chi) {
+				return pathScan( target, chi);
+			}  
+		}
+	}
+	return pathScan(target, datas);
+}
+
 /** 复制对象* */
-function clone(obj){
+function clone(obj) {
 	return JSON.parse(JSON.stringify(obj));
+}
+ 
+/**
+ * 获取地址栏参数Map对象
+ */
+function UrlSearchParams() {
+	var name, value;
+	var str = location.href; //取得整个地址栏
+	var num = str.indexOf("?")
+	str = str.substr(num + 1); //取得所有参数   stringvar.substr(start [, length ]
+
+	var arr = str.split("&"); //各个参数放到数组里
+	let map = new Map();
+	for (var i = 0; i < arr.length; i++) {
+		num = arr[i].indexOf("=");
+		if (num > 0) {
+			name = arr[i].substring(0, num);
+			value = arr[i].substr(num + 1);
+			map.set(name,value);
+		}
+	}
+	return map;
 }

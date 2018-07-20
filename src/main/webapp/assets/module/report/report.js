@@ -193,7 +193,8 @@ window.appInstince = new Vue({
     },
     tpt_data: [],
     tps: [],
-    tpt_data_normal: []
+    tpt_data_normal: [],
+    beforeDelete: {}
   },
   mounted() {
     this.loadTreeData();
@@ -203,6 +204,22 @@ window.appInstince = new Vue({
     breadcrumbData() {
       let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.typeId, item => item.data);
       return bp;
+    },
+    tpt_parents() {
+      let ay = [{
+        parent: 0,
+        parentLabel: '根目录'
+      }];
+      if (this.tpt.data.parent != 0) {
+        var nodedata = this.checkTreeSelectData();
+        if (nodedata) {
+          ay.push({
+            parent: nodedata.typeId,
+            parentLabel: nodedata.name
+          })
+        }
+      }
+      return ay;
     }
   },
   watch: {
@@ -251,12 +268,12 @@ window.appInstince = new Vue({
       this.$refs.upload.clearFiles();
       this.importResource.fileList = [];
     },
-    handleBeforeUpload(){
+    handleBeforeUpload() {
 
     },
-    handleOnError(err, file, fileList){
+    handleOnError(err, file, fileList) {
       this.$message({
-        message: file.name+' 上传失败!',
+        message: file.name + ' 上传失败!',
         type: 'danger'
       });
     },
@@ -456,7 +473,8 @@ window.appInstince = new Vue({
         $message("请先选择要操作的位置", "warning", this)
         return null;
       }
-      return this.curContextData ? this.curContextData : node.data;
+      let data = this.curContextData ? this.curContextData : node.data;
+      return data.typeId != this.beforeDelete.typeId ? data : null;
     },
     initData(data) {
       data.forEach(element => {
@@ -500,6 +518,9 @@ window.appInstince = new Vue({
     saveOrUpdateTemplateType: function () {
       var ins = this;
       var tpt = this.tpt;
+      if (tpt.data.parentLabel == '根目录') {
+        tpt.data.parent = 0;
+      }
       this.$refs.tptForm.validate(function (valid) {
         if (!valid) {
           return false;
@@ -542,6 +563,7 @@ window.appInstince = new Vue({
           if (result.status) {
             tpt.visible = false;
             ins.loadTreeData();
+            ins.beforeDelete = nodedata;
           }
         });
       });

@@ -1,5 +1,7 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +60,20 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     }
     
     /**
+     * 查询拥有积分结构的组织
+     * @param conditions
+     * @return
+     */
+    public R queryOrgInfoForIcNotPage(Map<String, Object> conditions) {
+    	List<Map<String, Object>> orgInfoForIcs = integralConstituteMapper.queryOrgInfoForIc(conditions);
+    	if (orgInfoForIcs != null &&  orgInfoForIcs.size() > 0) {
+			return R.ok().setData(orgInfoForIcs).setMsg("查询组织信息成功");
+		} else {
+			return R.ok().setMsg("没有查询到组织信息");
+		}
+    }
+    
+    /**
      * 查询该组织拥有的党员，仅为党员积分功能服务
      * @param conditions
      * @return
@@ -72,5 +88,42 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
 		} else {
 			return R.ok().setMsg("没有查询到组织信息");
 		}
+    }
+    
+    /**
+     * 查询组织积分信息
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralInfo(Map<String, Object> conditions) {
+    	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    	Double integralCount = new Double(0.0);
+    	Map<String, Object> results = new HashMap<>();
+    	results.put("integralCount", integralCount);
+    	getIntegralInfoChildrens(ics, results, conditions);
+    	
+    	return R.ok().setData(results);
+    }
+    
+    /**
+     * 得到积分的子节点信息
+     * @param ics
+     * @param count
+     */
+    private void getIntegralInfoChildrens(List<Map<String, Object>> ics, Map<String, Object> results, Map<String, Object> conditions) {
+    	if (ics != null && ics.size() > 0) {
+    		for (Map<String, Object> ic : ics) {
+				Map<String, Object> condition = new HashMap<>();
+				condition.put("orgId", conditions.get("orgId"));
+				condition.put("parentIcId", ic.get("icId"));
+				
+				List<Map<String, Object>> icChildrens = integralConstituteMapper.queryOrgIntegralConstitute(condition);
+				if (icChildrens == null || icChildrens.size() == 0) {		
+					BigDecimal bd = new BigDecimal(ic.get("integral").toString());
+					results.put("integralCount", Double.parseDouble(results.get("integralCount").toString()) + bd.doubleValue());
+				}
+				getIntegralInfoChildrens(icChildrens, results, condition);
+			}
+    	}
     }
 }

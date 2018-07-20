@@ -90,6 +90,16 @@
         from publish_examine_user eu
         inner join sys_user u on u.user_id = eu.user_id
         where eu.state in(0, 3)
-        group by eu.content_id, eu.sort
+        order by eu.content_id, eu.sort
+    </select>
+
+    <select id="queryVerifyState" resultType="java.util.Map">
+        SELECT CASE eu.state WHEN 0 THEN '等待审核' WHEN 1 THEN '通过审核' WHEN 2 THEN '未通过审核' WHEN 3 THEN '等待再次审核' WHEN 4 THEN '放弃审核' END as state,
+        eu.deadline,
+        u.username
+        FROM publish_examine_user eu
+        INNER JOIN sys_user u ON u.user_id = eu.user_id
+        where eu.content_id = #{contentId}
+        order by eu.sort
     </select>
 </mapper>

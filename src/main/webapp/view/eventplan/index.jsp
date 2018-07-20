@@ -208,7 +208,7 @@
             <add-event :add-event-dialog="addEventDialog" @added-data="addEventCallback"></add-event>
         </el-dialog>
         <el-dialog title="新建活动策划" :visible.sync="createActivityPlanDialog.visiable" :fullscreen="true" :modal="false">
-            <create-activity-plan :data="sugPlan" @submit="addActivityPlan"></create-activity-plan>
+            <create-activity-plan ref="activityPlan" :time-info="eventdata" :plan="sugPlan" @submit="addActivityPlan"></create-activity-plan>
         </el-dialog>
         <el-dialog custom-class="no-title" :visible.sync="planGuide.visiable" :fullscreen="true" >
             <load-report @save="createPlanGuidSave"></load-report>

@@ -10,9 +10,10 @@
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
   </resultMap>
   <sql id="Base_Column_List">
-    message_id, type, title, content, state, user_id, source_id, add_date, update_date
+    message_id, type, title, content, state, user_id, source_id, add_date, update_date,url
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -27,10 +28,10 @@
   <insert id="insert" parameterType="com.zltel.broadcast.message.bean.Message">
     insert into message (message_id, type, title,
       content, state, user_id, source_id, add_date,
-      update_date)
+      update_date,url)
     values (#{messageId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{sourceId,jdbcType=INTEGER},
-      #{addDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+      #{addDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP},#{url,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.message.bean.Message">
     insert into message
@@ -62,6 +63,9 @@
       <if test="updateDate != null">
         update_date,
       </if>
+      <if test="url != null">
+        url,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="messageId != null">
@@ -91,6 +95,9 @@
       <if test="updateDate != null">
         #{updateDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.message.bean.Message">
@@ -111,6 +118,9 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
     </set>
     where message_id = #{messageId,jdbcType=INTEGER} and update_date = #{updateDate,jdbcType=TIMESTAMP}
   </update>
@@ -120,7 +130,8 @@
       title = #{title,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER}
+      user_id = #{userId,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR}
     where message_id = #{messageId,jdbcType=INTEGER} and update_date = #{updateDate,jdbcType=TIMESTAMP}
   </update>
 

@@ -1,0 +1,75 @@
+<el-dialog :title="title" :visible.sync="config.visiable" :fullscreen="config.fullscreen" :width="config.width"  append-to-body>
+    <div slot="title" style="display: flex;">
+        <span class="el-dialog__title"> {{title}}</span>
+        <el-button-group style="margin-left:30px;">
+            <el-button size="small" icon="el-icon-rank" @click="setFullscreen" title="最大"></el-button>
+        </el-button-group>
+        <el-input placeholder="请输入内容" v-model="config.keyword" class="input-with-select" style="margin-left:10%;width:500px">
+            <el-button slot="append" icon="el-icon-search" @click="searchTemplate"></el-button>
+        </el-input>
+    </div>
+    <div slot="footer" class="foot-button-container">
+        <el-button type="primary" @click="submit">确定</el-button>
+        <el-button @click="close">关闭</el-button>
+    </div>
+    <el-container>
+        <el-aside width="200px">
+            <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
+                @node-click="tptTreeClick" class="menu-tree" >
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                    <span class="left-label-group">
+                        <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
+                        {{ node.label }}</span>
+                </span>
+            </el-tree>
+        </el-aside>
+        <el-main>
+            <div role="mainDis"  style="overflow: auto;">
+                <el-row>
+                    <el-col :span="10">
+                        <!--查询-->
+                        <el-breadcrumb separator="/" style="margin-top: 10px;">
+                            <el-breadcrumb-item>所有类别</el-breadcrumb-item>
+                            <template v-for="item in breadcrumbData">
+                                <el-breadcrumb-item>
+                                    <a @click="breadPathClick(item)">{{item.name}}</a>
+                                </el-breadcrumb-item>
+                            </template>
+                        </el-breadcrumb>
+                    </el-col>
+                    <el-col :span="14" style="text-align: right;">
+                        <!--分页-->
+                        <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size"
+                            layout="total, sizes, prev, pager, next, jumper" :total="tpager.total" @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+                <template v-for="tp in tps">
+                    <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }">
+                        <div class="background-img" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)" >
+                            <!--图片-->
+                            <img src="/assets/img/Docs_740px_1141790_easyicon.net.png" class="image">
+                            <div class="control ">
+                                <span class="title">{{tp.title}}</span>
+                                <el-collapse-transition name="el-fade-in">
+                                    <div class="bottom clearfix">
+                                        <p class="descript">{{tp.description}}</p>
+                                        <el-button-group>
+                                            <el-button type="success" size="small" @click="viewTemplate(tp)">预览</el-button>
+                                            <el-button type="primary" size="small"  @click="chose(tp)">选择</el-button>
+                                        </el-button-group>
+                                    </div>
+                                </el-collapse-transition>
+                            </div>
+                        </div>
+                    </el-card>
+                </template>
+
+            </div>
+        </el-main>
+    </el-container>
+    <el-dialog class="templateView" :title="resourceView.title" :visible.sync="resourceView.visible" width="80%"  append-to-body>
+        <div v-html="resourceView.content"></div>
+    </el-dialog>
+</el-dialog>

@@ -22,4 +22,6 @@ public interface ResourceMaterialService extends BaseDao<ResourceMaterial> {
     
     /**加载其他数据信息**/
     public void loadOtherInfo(ResourceMaterial rm);
+    /**查询指定组织 素材存储**/
+    long orgUsedStoreSize(Integer orgid);
 }

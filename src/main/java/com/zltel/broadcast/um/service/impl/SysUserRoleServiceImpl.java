@@ -1,7 +1,9 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -119,24 +121,68 @@ public class SysUserRoleServiceImpl extends BaseDaoImpl<SysUserRole> implements 
     @Transactional
     public R insertSysUserRole(SysUserRole sysUserRole) {
 		if (sysUserRole != null && sysUserRole.getUserId() != null) {
-			//新增用户角色前先删除此用户的所有角色
-			this.deleteSysUserRoleByUserId(sysUserRole);
-			if (StringUtil.isNotEmpty(sysUserRole.getRoles()) && !sysUserRole.getRoles().equals(",")) {
-				int count = 0;
-				String[] roles = sysUserRole.getRoles().split(",");
-				if (roles != null && roles.length > 0) {
-					for (String roleId : roles) {
-						sysUserRole.setRoleId(Long.parseLong(roleId));
-						count += this.insertSelective(sysUserRole); //开始添加用户角色信息
+			SysUserRole sur = new SysUserRole();
+			sur.setUserId(sysUserRole.getUserId());
+			List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(sysUserRole);
+			List<String> haveRoles = new ArrayList<>();	//已经存在的角色
+			if (sysUserRolesMap != null && sysUserRolesMap.size() > 0) {
+				for (HashMap<String, Object> surMap : sysUserRolesMap) {
+					haveRoles.add(String.valueOf(surMap.get("roleId")));
+				}
+			}
+			
+			int count = 0;
+			String[] roles = sysUserRole.getRoles().split(",");	//要添加的角色
+			
+			List<String> deleteRoles = new ArrayList<>();
+			List<String> insertRoles = new ArrayList<>();
+			Map<String, Integer> bj = new HashMap<>();
+			//不能删除全部角色在添加，因为涉及到添加内置角色，会删除内置角色，这不是想要的结果，内置角色不会被查询出
+			if (haveRoles != null && haveRoles.size() > 0) {
+				for (String string : haveRoles) {
+					bj.put(string, 1);
+				}
+			}
+			if (roles != null && roles.length > 0) {
+				for (int i = 0; i < roles.length; i++) {
+					if (StringUtil.isEmpty(roles[i])) continue;
+					Integer c = bj.get(roles[i]);
+					if (c == null) {	//在bj没找到则是要添加的角色
+						insertRoles.add(roles[i]);
+					} else {	//找到就是已经存在的，++c
+						bj.put(roles[i], ++c);
 					}
 				}
-				if (roles != null && count == roles.length) { //受影响的行数，判断是否修改成功
-					return R.ok().setMsg("用户角色变更成功。");
-				} else { //没有受影响行数表示添加失败
-					throw new RRException("没有受影响行数表示添加失败");
-				} 
 			}
-			return R.ok().setMsg("用户角色变更成功。");
+			if (bj != null && bj.entrySet().size() > 0) {
+				for (Map.Entry<String, Integer> entry : bj.entrySet()) {
+					if (entry.getValue() == 1) {	//bj里不变的说明没有roles光顾，则为要删除的角色
+						deleteRoles.add(entry.getKey());
+					}
+				}
+			}
+			
+			if (deleteRoles != null && deleteRoles.size() > 0) {
+				for (String string : deleteRoles) {
+					SysUserRole bean = new SysUserRole();
+					bean.setUserId(sysUserRole.getUserId());
+					bean.setRoleId(Long.parseLong(string));
+					sysUserRoleMapper.deleteSysUserRolesByUpdateSysUserRole(bean);
+				}
+			}
+			if (insertRoles != null && insertRoles.size() > 0) {
+				for (String string : insertRoles) {
+					SysUserRole bean = new SysUserRole();
+					bean.setUserId(sysUserRole.getUserId());
+					bean.setRoleId(Long.parseLong(string));
+					count += this.insertSelective(bean); //开始添加用户角色信息
+				}
+			}
+			if (count == (insertRoles == null ? -1 : insertRoles.size())) { //受影响的行数，判断是否修改成功
+				return R.ok().setMsg("用户角色变更成功。");
+			} else { //没有受影响行数表示添加失败
+				throw new RRException("没有受影响行数表示添加失败");
+			} 
 		} else {	//添加一定需要一个用户角色信息
 			throw new RRException("添加一定需要一个用户角色信息");
 		}

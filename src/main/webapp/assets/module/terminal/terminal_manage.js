@@ -59,7 +59,8 @@ window.appInstince = new Vue({
             label: '停止播放',
             opt: '0',
             icon: 'fa fa-stop-circle-o',
-            checked: false
+            checked: false,
+            danger: true
         }, {
             type: 'volume',
             label: '音量+',
@@ -101,7 +102,8 @@ window.appInstince = new Vue({
             label: '关闭播放器',
             opt: '0',
             icon: 'fa fa-times-circle',
-            checked: false
+            checked: false,
+            danger: true
         }, {
             type: 'wakelock',
             label: '打开显示屏',
@@ -113,13 +115,15 @@ window.appInstince = new Vue({
             label: '关闭显示屏',
             opt: '0',
             icon: 'fa fa-window-close',
-            checked: false
+            checked: false,
+            danger: true
         }, {
             type: 'cleardata',
             label: '清空数据',
             opt: '1',
             icon: 'fa fa-trash-o',
-            checked: false
+            checked: false,
+            danger: true
         }, {
             type: 'refresh',
             label: '刷新页面',
@@ -143,19 +147,22 @@ window.appInstince = new Vue({
             label: '升级',
             opt: '0',
             icon: 'fa fa-cloud-upload',
-            checked: false
+            checked: false,
+            danger: true
         }, {
             type: 'shutdown',
             label: '关机',
             opt: '1',
             icon: 'fa fa-toggle-off',
-            checked: false
+            checked: false,
+            danger: true
         }, {
             type: 'reboot',
             label: '重启',
             opt: '1',
             icon: 'fa fa-repeat',
-            checked: false
+            checked: false,
+            danger: true
         }]
 
     },
@@ -227,6 +234,16 @@ window.appInstince = new Vue({
             this.controlList.map((c) => {
                 c.checked = false;
             });
+            //危险操作， 提示确认
+            if (control.danger) {
+                this.$confirm('危险命令,是否确定？', '是否执行此操作?', {
+                    type: 'danger'
+                }).then(() => {
+                    this.executeCommand(control);
+                })
+            } else this.executeCommand(control);
+        },
+        executeCommand(control) {
             control.checked = true;
             let tid = this.tcw.terminal.id
             let cmd = {

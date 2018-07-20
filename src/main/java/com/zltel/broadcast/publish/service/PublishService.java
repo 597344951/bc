@@ -192,6 +192,13 @@ public interface PublishService {
     public List<Map<String, Object>> queryPublishTerminal(int contentId);
 
     /**
+     * 审核状态
+     * @param contentId
+     * @return
+     */
+    public List<Map<String, Object>> queryVerifyState(int contentId);
+
+    /**
      * 审核超时处理
      */
     public void verifyTimeout();

@@ -1,0 +1,47 @@
+@charset "utf-8";
+/* CSS Document */
+body{ padding:0; margin:0;  font:normal 12px/180% "宋体"; color:#000000;text-align:center; background:url(bg01.gif) top repeat-x #990000;}
+h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,button,input,textarea,th,td{margin:0;padding:0;}
+div{margin:0 auto;text-align:left;font:normal 12px/180% "宋体";}
+li,p{text-align:left;font:normal 12px/180% "宋体";}
+a:link,a:visited{color:#000000; text-decoration:none;}
+a:hover{color:#000000; text-decoration:underline;}
+img{ border:none;}
+ol,ul,li{list-style:none;}
+em,i{ font-style:normal;} 
+/*clear*/
+.clear{ clear:both;}
+.clearfix:after{display:block;clear:both;content:".";visibility:hidden; height:0;}
+/*other*/
+h1,h2,h3,h4,h5,h6{ text-align:left;font:normal 12px/180% "宋体";}
+.mt10{ margin-top:10px;}
+.mb10{ margin-bottom:10px;}
+.m10{ margin:10px auto;}
+.w980{ width:980px;}
+.list_14 li{ background:url(dot.gif) no-repeat 0 12px; padding-left:12px;font-size:14px;}
+.list_12 li{ background:url(dot.gif) no-repeat 0 8px; padding-left:12px;}
+.fl{ float:left;}
+.fr{ float:right;}
+
+.top01{ height:30px; line-height:30px;}
+.top01 em{ float:left;}
+.top01 i{ float:right;}
+.top01 i a{ padding:0 8px;}
+.nav01{ height:38px; line-height:38px; text-align:center; font-size:14px;}
+.nav01 a{ padding:0 10px;}
+.nav01,.nav01 a,.nav01 a:hover{ color:#fff;}
+.top02 img{ float:left;}
+/*p1*/
+.p1_content{ background:url(bg02.jpg) no-repeat; height:488px; overflow:hidden; padding-left:130px; width:850px;}
+.p1_content div{ width:380px; float:left; padding-right:20px;}
+.p1_content h2{ background:url(icon03.gif) no-repeat; height:31px; line-height:31px; font-size:14px; padding-left:15px; margin:20px auto 10px 0;}
+.p1_content h2,.p1_content h2 a,.p1_content h2 a:hover{ color:#FEEEB3;}
+.p1_content ul li{ font-size:14px;}
+.p1_content .fl{ height:430px; overflow:hidden;}
+.p1_content span{ margin:10px auto; font-size:14px; display:block; text-align:center;}
+.p1_content span a{ padding:3px 6px; margin:0 10px;}
+.p1_content span a:hover{ text-decoration:none; background:#C31822;color:#fff;}
+.onpage{ text-decoration:none; background:#C31822; }
+
+.line{ background:url(bg03.jpg) no-repeat; height:139px; overflow:hidden;}
+.copyright{ text-align:center; text-align:center; color:#E6C794; padding:30px 0;}

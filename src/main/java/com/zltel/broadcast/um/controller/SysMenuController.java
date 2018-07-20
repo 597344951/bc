@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.tree.TreeNode;
 import com.zltel.broadcast.um.bean.SysMenu;
 import com.zltel.broadcast.um.bean.SysMenuTreeNode;
 import com.zltel.broadcast.um.service.SysMenuService;
@@ -52,7 +56,7 @@ public class SysMenuController {
      * 保存
      */
     @LogPoint("保存菜单")
-    @RequestMapping("/save")
+    @PostMapping("/menu")
     @RequiresPermissions("sys:menu:save")
     public R save(@RequestBody SysMenu menu) {
         // 数据校验
@@ -65,7 +69,7 @@ public class SysMenuController {
      * 修改
      */
     @LogPoint("修改菜单")
-    @RequestMapping("/update")
+    @PutMapping("/menu")
     @RequiresPermissions("sys:menu:update")
     public R update(@RequestBody SysMenu menu) {
         // 数据校验
@@ -78,16 +82,13 @@ public class SysMenuController {
      * 删除
      */
     @LogPoint("删除菜单")
-    @RequestMapping("/delete")
+    @DeleteMapping("/menu/{menuId}")
     @RequiresPermissions("sys:menu:delete")
-    public R delete(long menuId) {
-        if (menuId <= 31) {
-            return R.error("系统菜单，不能删除");
-        }
+    public R delete(@PathVariable("menuId") long menuId) {
 
         // 判断是否有子菜单或按钮
         List<SysMenu> menuList = sysMenuService.queryListParentId(menuId);
-        if (menuList.size() > 0) {
+        if (!menuList.isEmpty()) {
             return R.error("请先删除子菜单或按钮");
         }
 
@@ -112,7 +113,7 @@ public class SysMenuController {
             return R.error().setMsg("查询菜单信息失败");
         }
     }
-    
+
     /**
      * 查询菜单信息
      * 
@@ -137,10 +138,18 @@ public class SysMenuController {
         List<SysMenuTreeNode> datas = sysMenuService.queryMenuForTreeByPerms();
         return R.ok().setData(datas);
     }
+
     @GetMapping("/treeNode")
     @ApiOperation(value = "查询权限树")
     public R queryTreeNode() {
         List<SysMenuTreeNode> datas = this.sysMenuService.queryAllMenuForTree();
+        return R.ok().setData(datas);
+    }
+
+    @GetMapping("/tree-node")
+    @ApiOperation(value = "查询所有菜单树,结果为TreeNode")
+    public R queryMenuTreeNode() {
+        List<TreeNode<SysMenu>> datas = this.sysMenuService.queryAllMenuInfo();
         return R.ok().setData(datas);
     }
 }

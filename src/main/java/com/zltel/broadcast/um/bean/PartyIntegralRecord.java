@@ -19,6 +19,8 @@ public class PartyIntegralRecord {
     private Integer changeIntegralType;
 
     private Date changeTime;
+    
+    private Integer changeScore;
 
     private BigDecimal weightCoefficient;
 
@@ -26,7 +28,15 @@ public class PartyIntegralRecord {
 
     private Integer isMerge;
 
-    public Integer getPirId() {
+    public Integer getChangeScore() {
+		return changeScore;
+	}
+
+	public void setChangeScore(Integer changeScore) {
+		this.changeScore = changeScore;
+	}
+
+	public Integer getPirId() {
         return pirId;
     }
 

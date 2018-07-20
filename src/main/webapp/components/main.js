@@ -21,11 +21,13 @@ import ResourceMaterialExplorer from '/components/template/resource-material-exp
 import CreateActivityPlan from '/components/calendar/create-activity-plan.main.js';
 
 import ContextMenu from '/components/common/context-menu.main.js';
+import ReportTemplateExplorer from '/components/template/report-template-explorer.main.js';
+import TextViewEdit from '/components/common/text-view-edit.main.js';
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
 export const comps = [MessageNotice, VueCalendar, AddEvent, EventToolTip, CostPlan, PlanSuggest,
     EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport,
-    ProgramManage, ProgramTemplate, CreateActivityPlan, ResourceMaterialExplorer,ContextMenu
+    ProgramManage, ProgramTemplate, CreateActivityPlan, ResourceMaterialExplorer, ContextMenu, ReportTemplateExplorer, TextViewEdit
 ];
 comps.map((comp) => {
     if (checkModuleName(comp))

@@ -176,6 +176,7 @@
 		parameterType="com.zltel.broadcast.report.bean.ReportTemplate"
 		resultMap="ResultMapWithBLOBs">
 		select * from report_template
+		order by createtime desc
 	</select>
 
 	<!-- 查询 ReportTemplate -->
@@ -184,6 +185,7 @@
 		resultMap="ResultMapWithBLOBs">
 		select * from report_template
 		<include refid="ReportTemplateWhere" />
+		order by createtime desc
 	</select>
 	<delete id="delete" parameterType="com.zltel.broadcast.report.bean.ReportTemplate">
 		delete from report_template

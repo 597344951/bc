@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -20,8 +18,11 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 
+import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.util.Constant;
 import com.zltel.broadcast.um.bean.SysMenu;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -32,21 +33,25 @@ import com.zltel.broadcast.um.service.SysUserService;
 
 public class UserRealm extends AuthorizingRealm {
     /** 日志输出对象 **/
-    public static final Log logout = LogFactory.getLog(UserRealm.class);
+
+    private static final Logger logout = LoggerFactory.getLogger(UserRealm.class);
+
 
     public static final String REALM_NAME = "UserPassWordRealm";
 
-    @Resource@Lazy
+    @Resource
+    @Lazy
     private SysUserService sysUserService;
 
-    @Resource@Lazy
+    @Resource
+    @Lazy
     private SysMenuService sysMenuService;
 
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SysUser user = (SysUser) principals.getPrimaryPrincipal();
-        logout.info("查找" + user.getUsername() + " 权限");
+        logout.info("查找{}权限",user.getUsername());
         Integer userId = user.getUserId();
 
         List<String> permsList = null;
@@ -78,6 +83,8 @@ public class UserRealm extends AuthorizingRealm {
         String username = (String) token.getPrincipal();
         SysUser user = this.sysUserService.selectByUserName(username);
         if (user == null) throw new UnknownAccountException();
+        if (!user.getStatus()) RRException.makeThrow("账户已被禁用");
+
         authenticationInfo = new SimpleAuthenticationInfo(user, // 用户名
                 user.getPassword(), // 密码
                 ByteSource.Util.bytes(user.getSalt()), // salt=username

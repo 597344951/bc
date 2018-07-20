@@ -85,17 +85,6 @@ public class MaterialServiceImpl implements MaterialService {
         for (Element img : imgs) {
             src = img.attr("src");
             alt = img.attr("alt");
-            /*try {
-                fileName = src.substring(src.lastIndexOf("/") + 1, src.length());
-                alt = StringUtils.isNotEmpty(alt) ? alt : fileName;
-                srcFile = srcDir + src;
-                descFileUrl = "/" + user.getUserId() + "/" + FileUtil.getYMD() + "/" + fileName;
-                descFile = descDir + descFileUrl;
-                FileUtil.copy(srcFile, descFile, true);
-
-            } catch (IOException e) {
-                descFileUrl = src;
-            }*/
             fileName = src.substring(src.lastIndexOf("/") + 1, src.length());
             alt = StringUtils.isNotEmpty(alt) ? alt : fileName;
             // 添加记录
@@ -107,9 +96,10 @@ public class MaterialServiceImpl implements MaterialService {
             material.put("coverUrl", src);
             //回填到素材
             materials.add(material);
+            img.remove();
         }
         //文字
-        Elements ps = doc.getElementsByTag("p");
+        /*Elements ps = doc.getElementsByTag("p");
         for (int i = 0; i < ps.size(); i++) {
             Element p = ps.get(i);
             String name = p.attr("id");
@@ -123,6 +113,12 @@ public class MaterialServiceImpl implements MaterialService {
             material.put("name", StringUtils.isNotEmpty(name) ? name : "段落" + i);
             material.put("content", inner);
             materials.add(material);
-        }
+        }*/
+        material = new HashMap<String, Object>();
+        material.put("isFile", false);
+        material.put("type", Constant.MATERIAL_TYPE_TEXT);
+        material.put("name", "节目文字内容");
+        material.put("content", doc.body().html());
+        materials.add(material);
     }
 }

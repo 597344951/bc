@@ -161,9 +161,36 @@ var appInstince = new Vue({
     breadcrumbData() {
       let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.tpTypeId, item => item.data);
       return bp;
+    },
+    tpt_parents() {
+      let ay = [{
+        parent: 0,
+        parentLabel: '根目录'
+      }];
+      if (this.tpt.data.parent != 0) {
+        var nodedata = this.checkTreeSelectData();
+        if (nodedata) {
+          ay.push({
+            parent: nodedata.tpTypeId,
+            parentLabel: nodedata.name
+          })
+        }
+      }
+      return ay;
     }
   },
   methods: {
+    rechoseTree(data) {
+      console.debug('重新设置 选中');
+      let bp = breadPath(data, this.tpt_data, item => item.children, item => item.parent, item => item.tpTypeId, item => item.data);
+      setTimeout(() => {
+        if (bp.length > 1) {
+          this.$refs.tree.setCurrentKey(bp[bp.length - 2].tpTypeId)
+        } else {
+          this.$refs.tree.setCurrentKey(this.tpt_data[0].id)
+        }
+      }, 500)
+    },
     breadPathClick(item) {
       let cc = this.currentCategory;
       if (cc.tpTypeId == item.tpTypeId) return;
@@ -175,6 +202,9 @@ var appInstince = new Vue({
       this.contextMenu.visiable = true;
       this.contextMenu.event = event;
       this.curContextData = data.data;
+    },
+    contextMenuClose() {
+      this.curContextData = null;
     },
     contextMenuClick(menuItem) {
       console.log('菜单点击事件', menuItem);
@@ -283,6 +313,9 @@ var appInstince = new Vue({
     saveOrUpdateTemplateType: function () {
       var ins = this;
       var tpt = this.tpt;
+      if (tpt.data.parentLabel == '根目录') {
+        tpt.data.parent = 0;
+      }
       this.$refs.tptForm.validate(function (valid) {
         if (!valid) {
           return false;
@@ -320,14 +353,14 @@ var appInstince = new Vue({
         type: "warning"
       }).then(function () {
         // 删除数据
-        ajax_json("tpt/tptype/" + data.tpTypeId, "delete", null, function (
-          result
-        ) {
-          if (result.status) {
-            tpt.visible = false;
-            ins.loadTreeData();
-          }
-        });
+        ajax_json("tpt/tptype/" + data.tpTypeId, "delete", null,
+          result => {
+            if (result.status) {
+              tpt.visible = false;
+              ins.rechoseTree(data);
+              ins.loadTreeData();
+            }
+          });
       });
     },
     // 类别点击
@@ -340,7 +373,7 @@ var appInstince = new Vue({
     viewTemplate: function (tp) {
       _editor.setContent(tp.content);
       _editor.execCommand("preview");
-      
+
       _editor.setContent('');
     },
     // 新增模板
@@ -460,7 +493,7 @@ var appInstince = new Vue({
     }
   }
 });
-
+window.appInstince = appInstince;
 
 // 编辑器
 var _editor = UE.getEditor("templateText", {
@@ -468,10 +501,10 @@ var _editor = UE.getEditor("templateText", {
 });
 
 function getTpTypeIds(data, tpt_data) {
-  var ay = [];
-  pathScan(ay, data, tpt_data);
+  let ay = breadPath(data, tpt_data, item => item.children, item => item.parent, item => item.tpTypeId, item => item.data);
+
   return ay.reverse().map(function (a) {
-    return a.pid;
+    return a.tpTypeId;
   });
 }
 

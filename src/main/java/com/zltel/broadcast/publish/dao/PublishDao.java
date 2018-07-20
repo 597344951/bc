@@ -76,4 +76,10 @@ public interface PublishDao {
      * @return
      */
     public List<Map<String, Object>> queryVerifyingUser();
+
+    /**
+     * 审核状态
+     * @return
+     */
+    public List<Map<String, Object>> queryVerifyState(@Param("contentId") int contentId);
 }

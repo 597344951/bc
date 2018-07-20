@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +41,7 @@ public class TemplateContentController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tpTypeId", value = "分类id", required = true, dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "/listByType/{pageIndex}-{limit}", method = {RequestMethod.GET})
+    @RequiresPermissions("template:template:query")
     public R listTpByType(TemplateContent tp,String keyword, @PathVariable("pageIndex") int pageIndex,
             @PathVariable("limit") int limit) {
         TemplateContent record = new TemplateContent();
@@ -55,6 +57,7 @@ public class TemplateContentController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tpTypeId", value = "分类id", required = true, dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "/listByType", method = {RequestMethod.GET})
+    @RequiresPermissions("template:template:query")
     public R listTpByTypeWithoutPager(TemplateContent tp) {
         Pager prb = Pager.DEFAULT_PAGER;
         return this.listTpByType(tp,null, 1, prb.getLimit());
@@ -62,6 +65,7 @@ public class TemplateContentController extends BaseController {
 
     @ApiOperation(value = "获取指定模板信息")
     @GetMapping("/template/{tpId}")
+    @RequiresPermissions("template:template:query")
     public R get(@PathVariable("tpId") Integer tpId) {
         TemplateContent tc = this.templateContentService.selectByPrimaryKey(tpId);
         return R.ok().setData(tc);
@@ -70,6 +74,7 @@ public class TemplateContentController extends BaseController {
     @ApiOperation(value = "删除模板信息")
     @DeleteMapping("/template/{tpId}")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "删除模版", template = "删除模版id:${tpId}")
+    @RequiresPermissions("template:template:delete")
     public R delete(@PathVariable("tpId") Integer tpId) {
         TemplateContent tc = new TemplateContent();
         tc.setTpId(tpId);
@@ -85,6 +90,7 @@ public class TemplateContentController extends BaseController {
     @ApiOperation(value = "新增模板信息")
     @PostMapping("/template")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增模版", template = "新增模版:${tc.title}")
+    @RequiresPermissions("template:template:save")
     public R save(@RequestBody TemplateContent tc) {
         ValidatorUtils.validateEntity(tc);
         SysUser sysUser = this.getSysUser();
@@ -97,6 +103,7 @@ public class TemplateContentController extends BaseController {
 
     @ApiOperation(value = "更新模板信息")
     @PutMapping("/template")
+    @RequiresPermissions("template:template:update")
     public R update(@RequestBody TemplateContent tc) {
         ValidatorUtils.validateEntity(tc);
         tc.setUid(null);

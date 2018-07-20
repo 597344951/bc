@@ -342,7 +342,11 @@
 							info.className = "info";
 
 							//可以通过下面的方式修改自定义窗体的宽高
-							info.style.width = "200px";
+							info.style.width = "250px";
+							info.style.borderRadius ='6px';
+							info.style.padding='5px';
+							info.style.backgroundColor="#fff";
+							info.style.boxShadow = "0px 0 20px 0px #7d7d7d";
 							// 定义顶部标题
 							var top = document.createElement("div");
 							var titleD = document.createElement("div");
@@ -360,6 +364,9 @@
 							var middle = document.createElement("div");
 							middle.className = "info-middle";
 							middle.style.backgroundColor = 'white';
+							middle.style.borderBottomRightRadius='6px';
+							middle.style.borderBottomLeftRadius='6px';
+							middle.style.padding='10px';
 							middle.innerHTML = content;
 							info.appendChild(middle);
 
@@ -367,7 +374,7 @@
 							var bottom = document.createElement("div");
 							bottom.className = "info-bottom";
 							bottom.style.position = 'relative';
-							bottom.style.top = '0px';
+							bottom.style.top = '5px';
 							bottom.style.margin = '0 auto';
 							var sharp = document.createElement("img");
 							sharp.src = "http://webapi.amap.com/images/sharp.png";

@@ -164,7 +164,7 @@
 			select m.album_id,count(1) COUNT from resource_material m 
 			where 1=1
 			<if test="orgid != null and orgid !=''">
-				and m.org_id=#{orgid} 
+				and (m.org_id=#{orgid} or m.org_id=0 )
 			</if>
 			<if test="uid != null and uid !=''">
 				and m.user_id = #{uid} 
@@ -188,7 +188,9 @@
 		<where>
 			<include refid="BASE_WHERE_PARAMS" />
 			<!-- 查询内置 -->
-			OR orgid = 0
+			<if test="orgid != null">
+				OR orgid = 0
+			</if>
 		</where>
 	</sql>
 	<sql id="BASE_WHERE_PARAMS">

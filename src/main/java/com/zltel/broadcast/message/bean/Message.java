@@ -34,6 +34,9 @@ public class Message {
 
     private Date updateDate;
 
+    /** 跳转连接 **/
+    private String url;
+
     public Message() {}
 
     public Message(Integer type, String title, String content, Integer userId, Integer sourceId) {
@@ -116,5 +119,19 @@ public class Message {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * @param url the url to set
+     */
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

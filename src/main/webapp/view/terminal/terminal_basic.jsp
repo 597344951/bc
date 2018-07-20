@@ -67,7 +67,7 @@
 	div.info-middle {
 		font-size: 12px;
 		padding: 6px;
-		line-height: 20px;
+		line-height: 25px;
 	}
 
 	div.info-bottom {
@@ -90,6 +90,14 @@
 	.info-middle img {
 		float: left;
 		margin-right: 6px;
+	}
+	.control-button{
+		margin-left: 10px;
+		margin-top: 0;
+	}
+	.amap-logo,.amap-copyright{
+		display: none!important;
+		position: relative;
 	}
 </style>
 </head>
@@ -127,7 +135,7 @@
 						</el-popover>
 						<el-button type="primary" size="small" icon="el-icon-refresh" @click="syn()">同步数据</el-button>
 						<el-button type="primary" size="small" icon="el-icon-info" @click="statistic()">统计图表</el-button>
-						<el-button-group class="control-button">
+						<el-button-group >
 							<el-button size="small" :type="tbi.style?'primary':''" icon="el-icon-location" @click="mapThings()"></el-button>
                             <el-button size="small" :type="!tbi.style?'primary':''"  icon="el-icon-menu" @click="tbi.style=false"></el-button>                           
                         </el-button-group>
@@ -139,7 +147,7 @@
 
 			<!--表格主体-->
 			<el-main>
-				<div v-show="tbi.style" style="height:100%;">
+				<div v-show="tbi.style" style="height:100%;border-radius: 6px;overflow: hidden;box-shadow: inset 0px 0px 12px 2px #ccc;padding: 10px;background: #fcf9f2;">
 					<div id="container">
 			
 					</div>

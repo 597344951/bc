@@ -46,4 +46,6 @@ public interface SysMenuService {
     /**查询权限树信息**/
     List<TreeNode<SysMenu>> queryTreeMenu();
     
+    List<TreeNode<SysMenu>> queryAllMenuInfo();
+    
 }

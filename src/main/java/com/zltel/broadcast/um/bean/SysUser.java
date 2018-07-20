@@ -20,7 +20,7 @@ public class SysUser implements Serializable {
 
     private String mobile;
 
-    private Byte status;
+    private Boolean status;
 
     private Integer orgId;
 
@@ -108,15 +108,22 @@ public class SysUser implements Serializable {
         this.mobile = mobile == null ? null : mobile.trim();
     }
 
-    public Byte getStatus() {
+    
+    
+
+    /**
+     * @return the status
+     */
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(Boolean status) {
         this.status = status;
     }
-
-    
 
     public Integer getOrgId() {
 		return orgId;

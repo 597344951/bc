@@ -24,8 +24,13 @@
 			padding: 10px;
 			background-color: #e4e7ed;
 		}
-		body{
+
+		body {
 			padding: 0 20%;
+		}
+
+		.msgContainer {
+			background-color: #ebeef5;
 		}
 	</style>
 </head>
@@ -33,48 +38,6 @@
 <body>
 	<div id="app">
 		<h1>自定义模块样式</h1>
-		<h3>卡片布局</h3>
-		<div class="div-container">
-			<el-card class="card-item" :body-style="{ padding: '0px' }">
-				<div class="title">
-					<span class="bolder"> 标题 </span>
-				</div>
-				<div class="cover-image-container">
-					<img src="/assets/img/program-test.jpg" class="image">
-					<div class="descript">描述文本</div>
-				</div>
-				<div class="content">
-					<table class="dis-info-min">
-						<tbody>
-							<tr>
-								<td>所属目录</td>
-								<td>：</td>
-								<td>10</td>
-							</tr>
-							<tr>
-								<td>播放时长</td>
-								<td>：</td>
-								<td>24</td>
-							</tr>
-							<tr>
-								<td>节目类型</td>
-								<td>：</td>
-								<td>非触摸类节目</td>
-							</tr>
-							<tr>
-								<td>创建时间</td>
-								<td>：</td>
-								<td>2018-06-29 13:31:19</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="bottom clearfix">
-					<el-button type="button" size="mini" class="button">预览</el-button>
-					<el-button type="primary" size="mini" class="button">选定</el-button>
-				</div>
-			</el-card>
-		</div>
 
 		<h3>大展示表格</h3>
 		<div class="div-container">
@@ -120,7 +83,7 @@
 				</table>
 			</div>
 		</div>
-
+		<a name="onclose"></a>
 		<h3>标签页 内页面关闭前检测</h3>
 		<p>多标签内页面关闭前，会调用其内部页面的onclose函数来确定是否能顺利关闭，如果返回false则不关闭标签。</p>
 		<p>避免误关闭标签</p>
@@ -135,13 +98,35 @@ window.onclose = function () {
   return true;
 }
 		</pre>
-		 
+		<a name="onFocus"></a>
+		<h3>标签页 获取焦点回调</h3>
+		<p>当前标签页内页面被选中获取焦点后,会调用此方法</p>
+		<p>通过这个机制决定获取焦点时是否需要重新加载页面之类的动作</p>
+		<pre>
+//在子页面定义onFocus方法
+window.onFocus = function () {
+  console.log('页面已获取焦点');
+  //TODO: 刷新页面之类的操作
+}
+		</pre>
+		<h4>onFocus消息信息：</h4>
+		<div class="msgContainer">
+			<p v-for="msg in focusMsg">{{msg}}</p>
+		</div>
 	</div>
 </body>
 <script>
 	var ins = new Vue({
-		el: '#app'
+		el: '#app',
+		data: {
+			focusMsg: []
+		}
 	});
+	//页面获取焦点回调
+	window.onFocus = function () {
+		console.log('页面已获取焦点');
+		ins.focusMsg.push(new Date() + ' 页面获取焦点');
+	}
 </script>
 
 </html>

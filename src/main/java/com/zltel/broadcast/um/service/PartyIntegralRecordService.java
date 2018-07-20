@@ -24,4 +24,11 @@ public interface PartyIntegralRecordService {
      * @return
      */
     public R queryPartyIntegralRecords(Map<String, Object> conditions, int pageNum, int pageSize);
+    
+    /**
+     * 添加积分变更记录
+     * @param ict
+     * @return
+     */
+    public R insertPartyUserIntegralRecord(PartyIntegralRecord pir);
 }

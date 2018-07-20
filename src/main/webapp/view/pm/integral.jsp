@@ -34,6 +34,9 @@
 	.el-row {
 		margin-bottom: 10px;
 	}
+	.el-tree-node__label {
+		font-size: 12px;
+	}
 </style>
 </head>
 <body>
@@ -91,6 +94,15 @@
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
+                    <el-popover
+						placement="bottom" 
+					  	width="300" 
+					  	trigger="hover" >
+					  	<el-button type="text" size="small" slot="reference">公告</el-button>
+					  	<div style="font-size: 12px;">
+					  		<p>如果在这里没有找到希望的组织，可能没有对组织设置积分组成结构，请前往组织管理设置该组织的积分结构</p>
+					  	</div>
+					</el-popover>
                     <span style="float: right;" v-show="!dis_h_v">
 	                    <el-pagination
 						  	layout="total, prev, pager, next, jumper" 
@@ -132,6 +144,25 @@
 				  				<el-button @click="ic_manage_queryPartyIntegralRecordsFororgInfoClick" size="small" type="primary">
 									成员积分记录
 								</el-button>
+				  			</el-row>
+				  			<el-row>
+				  				<p style="font-size: 12px; float: left;">
+				  					该组织积分总分为 
+				  					<span style="font-size: 18px; font-weight: bold; color: red;">{{orgIntegralInfo.integralCount}}</span> 
+				  					分 
+				  				</p>
+				  				<div style="font-size: 12px;">
+					  				<el-popover
+										placement="bottom" 
+									  	width="300" 
+									  	trigger="hover" >
+									  	<i class="el-icon-question" slot="reference"></i>
+									  	<div style="font-size: 12px;">
+									  		<p style="margin-bottom: 8px;">总分的计算是按照子项的分值来统计的</p>
+									  		<p>例：基础积分40分，子项是政治素质方面9分，那么总分不是40分而是9分，如果政治素质还有子项就计算其子项的分值，依次类推</p>
+									  	</div>
+									</el-popover>
+								</div>
 				  			</el-row>
 							<el-table 
 								row-key="orgRltUserId"
@@ -272,6 +303,34 @@
 				</div>
 			</el-form>
 		</el-dialog>
+
+		<el-dialog title="初始化积分" :visible.sync="ic_manage_initOrgIntegralConstituteDialog" width="70%">
+			<div style="width: 100%; margin: 0 10px;">
+				<div style="font-size: 14px; color: red; font-weight: bold; ">
+					<p>如果要使用积分系统，请初始化积分项中没有设置的的项，未设置的项标记在积分名称的后面</p>
+					<p>1、如果出现“分值未设置”，请设置该项的分值</p>
+					<p>2、如果出现“加分未设置”、“减分未设置”，请设置党员该项积分加/减分时的分值变更信息</p>
+				</div>
+				<div style="margin: 10px 0;">
+					<el-container>
+					  	<el-aside width="50%" style="border-right: 1px solid #ddd;">
+					  		<el-tree :expand-on-click-node="false" 
+						    	:highlight-current="true" 
+						    	:default-expand-all="true" 
+						    	:data="ic_manager_orgInfoTreeOfIntegralConstitute" 
+						    	:props="ic_manager_orgInfoTreeOfIntegralConstituteProps" 
+						    	@node-click="">
+						  	</el-tree>
+					  	</el-aside>
+					  	<el-main>
+					  		<div v-show="updateIntegralInfo" style="text-align: center;font-size: 12px;">
+					  			请选择要修改的积分项进行修改操作
+					  		</div>
+					  	</el-main>
+					</el-container>
+				</div>
+			</div>
+		</el-dialog>
 	</div>
 </body>
 
@@ -281,7 +340,9 @@
 		el: '#app',
 		data: {
 			dis_h_v: false,
+			updateIntegralInfo: true,
 			ic_manage_changePartyUserIntegralDialog: false,	/*党员积分变更弹窗*/
+			ic_manage_initOrgIntegralConstituteDialog: false,	/*初始化组织积分*/
 			ic_manage_orgInfoForIcPages: {
 				pageNum: 1,		/* 当前页 */
 				pageSize: 10,	/* 页面大小 */
@@ -335,7 +396,19 @@
 				isMerge: [
 					{ required: true, message: '请选择是否计入总分', trigger: 'blur' }
 				]
-			}
+			},
+			orgIntegralInfo: {
+				integralCount: null
+			},
+			ic_manager_orgInfoTreeOfIntegralConstitute: [],
+			ic_manager_orgInfoTreeOfIntegralConstituteProps: {
+				children: 'children',
+	            label: function(_data, node){
+	            	return _data.data.type + "==>" + (_data.data.integral == undefined ? "分值未设置" : _data.data.integral + "分") + 
+	            		(_data.data.isChildrens ? "" : (_data.data.isReduceIntegral ? "" : " / 扣分未设置")) + 
+	            		(_data.data.isChildrens ? "" : (_data.data.isAddIntegral ? "" : " / 加分未设置"));
+	            }
+			},
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -346,7 +419,7 @@
 			this.money_manage_initSelectBox();
 		},
 		methods: {
-			money_manage_initSelectBox() {
+			money_manage_initSelectBox() {	/*初始化下拉框*/
 				var obj = this;
         		var url = "/org/ict/queryICT_ChangeType";
 				var t = {
@@ -369,7 +442,7 @@
 					
 				})
 			},
-			getChangeOperation(changeOperation) {
+			getChangeOperation(changeOperation) {	/*根据条件初始化样式*/
 				if (changeOperation == 1) {
 					return "color: green; font-weight: bold;"
 				} else {
@@ -435,9 +508,49 @@
 			ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(orgId) {	/*点击组织查询组织下的成员和积分信息*/
 				var obj = this;
 				obj.queryPartyUserInfoAndIcInfoCondition.orgId = orgId;
-				obj.ic_manage_queryPartyUserInfoAndIcInfo();
+				obj.ic_manage_queryOrgIntegralInfo();	/*查询积分信息*/
 			},
-			ic_manage_queryPartyUserInfoAndIcInfo() {
+			ic_manage_queryOrgIntegralInfo() {	/*查询组织积分信息*/
+				var obj = this;
+				var url = "/org/ic/queryOrgIntegralInfo";
+				var t = {
+					orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId,
+					parentIcId: -1
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined)  {
+							if (data.data.integralError) {	/*如果积分里有没有设置分值的*/
+								obj.orgIntegralInfo.integralCount = "NULL";
+								obj.ic_manage_initOrgIntegralConstituteDialog = true;
+								obj.ic_manager_openUpdateOrgIntegralConstitute(obj.queryPartyUserInfoAndIcInfoCondition.orgId);
+							} else {
+								obj.orgIntegralInfo.integralCount = data.data.integralCount;
+								obj.ic_manage_queryPartyUserInfoAndIcInfo();	/*组织下的党员信息*/
+							}
+						}
+					}
+					
+				})
+			},
+			ic_manager_openUpdateOrgIntegralConstitute(orgId) {
+				var obj = this;
+
+				var url = "/org/ifmt/queryOrgIntegralConstituteToTree";
+				var t = {
+					orgId: orgId,
+					parentIcId: -1
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.ic_manager_orgInfoTreeOfIntegralConstitute = datas.data;
+					}
+					
+				})
+
+				obj.partyOrg_manager_addOrgIntegralConstituteDialog = true;
+			},
+			ic_manage_queryPartyUserInfoAndIcInfo() {	/*查询组织下的党员信息及其积分信息*/
 				var obj = this;
 				var url = "/org/ic/queryPartyUserInfoAndIcInfo";
 				var t = {
@@ -470,7 +583,7 @@
 				obj.ic_manage_queryPartyIntegralRecords();
 				obj.dis_h_v = true;
 			},
-			ic_manage_queryPartyIntegralRecords() {
+			ic_manage_queryPartyIntegralRecords() {	/*查询党员积分记录*/
 				var obj = this;
 				var url = "/party/integral/queryPartyIntegralRecords";
 				var t = {

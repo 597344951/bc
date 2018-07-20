@@ -293,4 +293,12 @@ public class PublishController extends BaseController{
         }
         return r;
     }
+
+    @GetMapping(value = "/verifyState/{contentId}")
+    @ResponseBody
+    public R verifyState(@PathVariable("contentId") int contentId) {
+        R r = R.ok();
+        r.setData(publishService.queryVerifyState(contentId));
+        return r;
+    }
 }

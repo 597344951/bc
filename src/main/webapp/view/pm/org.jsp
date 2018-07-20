@@ -301,7 +301,7 @@
 								<p style="margin-top: 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold;">{{item.data.orgInfoName}}</p>
 							</div>
 							<div onload="" :id="'orgInfoTree'+item.data.orgInfoId" 
-								style="width: 100%; height: 80%; text-align: center; overflow: auto; background-image: url(/view/pm/img/orgInfoChartBg.png)">
+								style="width: 100%; height: 80%; text-align: center; overflow: auto; background-image: url(/view/pm/img/orgInfoChartBg.png); background-size: 100%">
 								
 							</div>
 							{{getItaf(item)}}
@@ -1634,7 +1634,7 @@
 							obj.partyOrg_manager_getOrgChildrensTree(obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree, trees);
 
 							setTimeout(()=>{
-								obj.partyOrg_manager_setChartForOrgChildrens(trees, "childrensOrgChildren", false);
+								obj.partyOrg_manager_setChartForOrgChildrens(trees, "childrensOrgChildren", false, 99999);
 							},200)
 						}
 					}
@@ -1656,14 +1656,20 @@
 					}
 				}
 			},
-			partyOrg_manager_setChartForOrgChildrens(orgInfosRelationTree, elementId, clickJump) {
+			partyOrg_manager_setChartForOrgChildrens(orgInfosRelationTree, elementId, clickJump, count) {
 				var obj = this;
 				var Orgchildrens = echarts.init(document.getElementById(elementId));
 				var top = "15%";
 				var bottom = "15%";
-				if (orgInfosRelationTree[0].count == 2) {
+				if (count == 2) {
 					top = "45%";
 					bottom = "45%";
+				} else if (count == 1) {
+					top = "50%";
+					bottom = "50%";
+				} else if (count == 3) {
+					top = "35%";
+					bottom = "35%";
 				}
 				Orgchildrens.setOption(
 					{
@@ -1901,31 +1907,27 @@
 				var obj = this;
 				var trees = new Array;
 				var items = new Array;
+				item.count = 0;
 				items[0] = item;
-				obj.partyOrg_manager_getOrgChildrensTree(items, trees);
+				obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(items, items, trees);
 
 				setTimeout(()=>{
-					obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true);
+					obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true, items[0].count);
 				},200)
 			},
-			partyOrg_manager_getOrgChildrensTreeAndAddCount(orgInfosRelationTree, trees) {
+			partyOrg_manager_getOrgChildrensTreeAndAddCount(addCountOrgInfosRelationTree, orgInfosRelationTree, trees) {
 				var obj = this;
 				if (orgInfosRelationTree != null && orgInfosRelationTree.length > 0) {
 					for (var i = 0; i < orgInfosRelationTree.length; i++) {
-						var Tree = function(){}
-						var tree = new Tree();
+						var tree = {name: null, children: null}
 						tree.id = orgInfosRelationTree[i].data.orgInfoId;
 						tree.name = orgInfosRelationTree[i].data.orgInfoName;
+						if (orgInfosRelationTree[i].data.count > addCountOrgInfosRelationTree[0].count) {
+							addCountOrgInfosRelationTree[0].count = orgInfosRelationTree[i].data.count;
+						}
 						tree.children = new Array;
 						trees[i] = tree;
-						obj.count++;
-						if (orgInfosRelationTree[i].children == null || orgInfosRelationTree[i].children.length == 0) {
-							if (obj.count > obj.realCount) {
-								obj.realCount = obj.count;
-							}
-							obj.count = 0;
-						}
-						obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(orgInfosRelationTree[i].children, tree.children);
+						obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(addCountOrgInfosRelationTree, orgInfosRelationTree[i].children, tree.children);
 					}
 				}
 			},

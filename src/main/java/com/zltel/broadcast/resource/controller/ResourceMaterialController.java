@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.resource.bean.ResourceMaterial;
 import com.zltel.broadcast.resource.service.ResourceMaterialService;
@@ -37,10 +39,17 @@ public class ResourceMaterialController extends BaseController {
 
     @ApiOperation(value = "查询资源内容")
     @PostMapping(value = "/Material/{pageIndex}-{limit}")
+    @RequiresPermissions("resource:material:query")
     public R list(@PathVariable("pageIndex") int pageIndex, @PathVariable("limit") int limit,
             @RequestBody ResourceMaterial rm) {
         SysUser user = this.getSysUser();
         ResourceMaterial nm = new ResourceMaterial(user);
+        AdminRoleUtil.handleAdminRole(nm, item -> {
+            item.setUserId(null);
+        }, item -> {
+            item.setUserId(null);
+            item.setOrgId(null);
+        });
         nm.setKeyword(rm.getKeyword());
         nm.setAlbumId(rm.getAlbumId());
         nm.setType(rm.getType());
@@ -56,6 +65,7 @@ public class ResourceMaterialController extends BaseController {
     @ApiOperation(value = "批量导入资源")
     @PostMapping(value = "/Materials")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "导入资源", template = "批量导入资源:${rms.toString()}")
+    @RequiresPermissions("resource:material:save")
     public R saveList(@RequestBody List<ResourceMaterial> rms) {
         for (ResourceMaterial rm : rms) {
             ValidatorUtils.validateEntity(rm);
@@ -73,6 +83,7 @@ public class ResourceMaterialController extends BaseController {
     @ApiOperation(value = "新建资源内容")
     @PostMapping(value = "/Material")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增资源", template = "新增资源:${rm.toString()}")
+    @RequiresPermissions("resource:material:save")
     public R save(@RequestBody ResourceMaterial rm) {
         ValidatorUtils.validateEntity(rm);
         SysUser user = this.getSysUser();
@@ -86,6 +97,7 @@ public class ResourceMaterialController extends BaseController {
 
     @ApiOperation(value = "更新信息")
     @PutMapping(value = "/Material")
+    @RequiresPermissions("resource:material:update")
     public R update(@RequestBody ResourceMaterial rm) {
         ValidatorUtils.validateEntity(rm);
         SysUser user = this.getSysUser();
@@ -107,6 +119,7 @@ public class ResourceMaterialController extends BaseController {
     @ApiOperation(value = "删除分类信息")
     @DeleteMapping("/Material/{materialId}")
     @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "删除资源分类", template = "删除分类id:${materialId}")
+    @RequiresPermissions("resource:material:delete")
     public R delete(@PathVariable("materialId") Integer materialId) {
         if (null == materialId) throw new RRException("输入删除分类的id");
         ResourceMaterial m = new ResourceMaterial(this.getSysUser());

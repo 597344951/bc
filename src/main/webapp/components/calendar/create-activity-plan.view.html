@@ -21,7 +21,7 @@
             <el-form-item label="策划模板">
                 <el-col :span="24">
                     <el-radio @change="tpChoseChange" v-model="choseTemplate" :label="null" border>空模板</el-radio>
-                    <el-radio @change="tpChoseChange" v-for="tp in planeTemplates" v-model="choseTemplate" :label="tp" :key="tp.id" border>{{tp.name}}</el-radio>
+                    <el-button type="primary" @click="openTemplate">选择模版</el-button>
                 </el-col>
             </el-form-item>
             <el-form-item label="策划方案">
@@ -61,6 +61,7 @@
         </el-form>
     </div>
     <el-dialog title="费用计划编辑" :visible.sync="costPlanDataDialog.visiable" append-to-body>
-        <cost-plan :cost-plan-data="costPlanData" :cost-type-group="costTypeGroup"></cost-plan>
+        <cost-plan :cost-plan-data="costPlanData" @complete="costPlanDataDialog.visiable=false"></cost-plan>
     </el-dialog>
+    <report-template-explorer :display.sync="templateView.display" :title="templateView.title" :keyword="templateView.keyword" @chose="tpChoseChange"></report-template-explorer>
 </div>

@@ -8,7 +8,14 @@ window.onclose = function () {
   return true;
 }
 
-window.appInstince = new Vue({
+window.onFocus = function(){
+  console.debug(' 素材管理页面获取得焦点');
+  
+  ins.loadTpTypeData(ins.currentCategory);
+  ins.loadTreeData();
+}
+
+let ins = new Vue({
   el: "#app",
   data: {
     resourceView: {
@@ -49,7 +56,8 @@ window.appInstince = new Vue({
     keyword: '',
     //当前目录
     currentCategory: {
-      name: '所有类别'
+      name: null,
+      parent:0
     },
     tpager: {
       total: 0,
@@ -77,28 +85,28 @@ window.appInstince = new Vue({
         trigger: "blur"
       }],
       name: [{
-          required: true,
-          message: "请输入名称",
-          trigger: "blur"
-        },
-        {
-          min: 1,
-          max: 50,
-          message: "长度在 1 到 50个字符",
-          trigger: "blur"
-        }
+        required: true,
+        message: "请输入名称",
+        trigger: "blur"
+      },
+      {
+        min: 1,
+        max: 50,
+        message: "长度在 1 到 50个字符",
+        trigger: "blur"
+      }
       ],
       remark: [{
-          required: true,
-          message: "请输入表述",
-          trigger: "blur"
-        },
-        {
-          min: 1,
-          max: 50,
-          message: "长度在 1 到 50个字符",
-          trigger: "blur"
-        }
+        required: true,
+        message: "请输入表述",
+        trigger: "blur"
+      },
+      {
+        min: 1,
+        max: 50,
+        message: "长度在 1 到 50个字符",
+        trigger: "blur"
+      }
       ],
       orderNum: [{
         required: true,
@@ -106,16 +114,16 @@ window.appInstince = new Vue({
         trigger: "blur"
       }],
       title: [{
-          required: true,
-          message: "请输入标题",
-          trigger: "blur"
-        },
-        {
-          min: 1,
-          max: 50,
-          message: "长度在 1 到 50个字符",
-          trigger: "blur"
-        }
+        required: true,
+        message: "请输入标题",
+        trigger: "blur"
+      },
+      {
+        min: 1,
+        max: 50,
+        message: "长度在 1 到 50个字符",
+        trigger: "blur"
+      }
       ],
       albumIds: [{
         required: true,
@@ -135,6 +143,7 @@ window.appInstince = new Vue({
       title: "文章模板编辑",
       visible: false,
       update: false,
+      m3Visible: true,
       data: {
         title: "",
         content: "",
@@ -183,23 +192,66 @@ window.appInstince = new Vue({
     },
     tpt_data: [],
     tps: [],
-    tpt_data_normal: [] 
+    tpt_data_normal: [],
+    beforeDelete:{},
+    storeInfo:{}
   },
   mounted() {
     this.loadTreeData();
     this.loadTpTypeData(null, this);
+    this.initM3();
+    this.loadStoreInfo();
   },
   computed: {
+    nextDirs(){
+      let ay = [];
+      if(!this.currentCategory.name){
+        ay = ay = this.tpt_data;
+      }else{
+        let nextData = getDataNextItem(this.currentCategory, this.tpt_data, item => item.children, item => item.albumId, item => item.data);
+        if(nextData){
+          ay = nextData.children;
+        }
+      }
+      return ay;
+    },
     loadOrgUsers() {
       let orgId = window.sysInfo.orgId;
       let url = `/sys/user/querySysUsersNotPage`;
-      ajax_json_promise(url,'post',{orgId:orgId}).then(result=>{
+      ajax_json_promise(url, 'post', { orgId: orgId }).then(result => {
         orgUsers = result.data;
       });
     },
     breadcrumbData() {
+      if(!this.currentCategory.albumId)return[];
       let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
       return bp;
+    },
+     tpt_parents() {
+      let ay = [{
+        parent: 0,
+        parentLabel: '根目录'
+      }];
+      if (this.tpt.data.parent != 0) {
+        var nodedata = this.checkTreeSelectData();
+        if (nodedata) {
+          ay.push({
+            parent: nodedata.albumId,
+            parentLabel: nodedata.name
+          })
+        }
+      }
+      return ay;
+    },
+    storeUsedPercent(){
+      let dft = 1;
+      let info = this.storeInfo;
+      if(info && info.used ){
+        dft = info.used * 100 / info.total;
+      }
+      let ret = dft.toFixed(1) - 0;
+      console.debug('使用率: ',ret)
+      return ret
     }
   },
   watch: {
@@ -208,6 +260,43 @@ window.appInstince = new Vue({
     }
   },
   methods: {
+    backToBefore(){
+      let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
+      let item = null;
+      if(bp.length > 1){
+        item =  bp[bp.length-2];
+      }else{
+        item = {name:null,parent:0};
+      }
+      this.breadPathClick(item);
+    },
+    dir_click(item){
+      this.breadPathClick(item);
+    },
+    loadStoreInfo(){
+      let url = '/system-capacity/resource-store';
+      ajax_promise(url,'get',{}).then(result=>{
+        this.storeInfo = result.data;
+      });
+    },
+    initM3() {
+      xiuxiu.embedSWF("imagesContainer", 2, "100%", "100%");
+      xiuxiu.setUploadURL(serverConfig.getUrl("/upload"));
+      xiuxiu.setUploadType(2);
+      xiuxiu.setUploadDataFieldName("file");
+      xiuxiu.onUploadResponse = function (data) {
+        data = JSON.parse(data)
+        appInstince.tp.data.coverUrl = appInstince.tp.data.url = appInstince.tp.data.viewUrl = data.url;
+        appInstince.tp.data.type = 'image';
+        appInstince.tp.m3Visible = false;
+      }
+      xiuxiu.onClose = function (id) {
+        appInstince.tp.m3Visible = false;
+      }
+    },
+    openM3() {
+      this.tp.m3Visible = true;
+    },
     breadPathClick(item) {
       let cc = this.currentCategory;
       if (cc.albumId == item.albumId) return;
@@ -403,7 +492,8 @@ window.appInstince = new Vue({
         $message("请先选择要操作的位置", "warning", this)
         return null;
       }
-      return this.curContextData ? this.curContextData : node.data;
+      let data =  this.curContextData ? this.curContextData : node.data;
+      return data.albumId != this.beforeDelete.albumId?data:null;
     },
     initData(data) {
       data.forEach(element => {
@@ -447,6 +537,9 @@ window.appInstince = new Vue({
     saveOrUpdateTemplateType: function () {
       var ins = this;
       var tpt = this.tpt;
+      if (tpt.data.parentLabel == '根目录') {
+        tpt.data.parent = 0;
+      }
       this.$refs.tptForm.validate(function (valid) {
         if (!valid) {
           return false;
@@ -457,6 +550,8 @@ window.appInstince = new Vue({
             if (result.status) {
               tpt.visible = false;
               ins.loadTreeData();
+              //拼接图片恢复显示
+              tpt.m3Visible = true;
             }
           });
         } else {
@@ -465,6 +560,8 @@ window.appInstince = new Vue({
             if (result.status) {
               tpt.visible = false;
               ins.loadTreeData();
+              //拼接图片恢复显示
+              tpt.m3Visible = true;
             }
           });
         }
@@ -489,6 +586,7 @@ window.appInstince = new Vue({
           if (result.status) {
             tpt.visible = false;
             ins.loadTreeData();
+            ins.beforeDelete = nodedata;
           }
         });
       });
@@ -496,6 +594,7 @@ window.appInstince = new Vue({
     // 类别点击
     tptTreeClick: function (_data, node) {
       var ins = this;
+      this.tpager.current = 1;
       var data = _data.data; // 类别节点数据
       this.loadTpTypeData(data, ins);
     },
@@ -660,16 +759,16 @@ window.appInstince = new Vue({
     },
     handleSizeChange(val) {
       this.tpager.size = val;
-      this.loadTpTypeData();
+      this.loadTpTypeData(this.currentCategory)
     },
     handleCurrentChange(val) {
       this.tpager.current = val;
-      this.loadTpTypeData();
+      this.loadTpTypeData(this.currentCategory)
     },
     getResUrl(url) {
       return serverConfig.getUrl(url);
     },
-    resourceViewClose(){
+    resourceViewClose() {
       //暂停视频/音频
       $('.videoView').trigger('pause');
       $('.audioView').trigger('pause');
@@ -684,48 +783,10 @@ var _editor = UE.getEditor("templateText", {
 });
 
 function getTpTypeIds(data, tpt_data) {
-  var ay = [];
-  pathScan(ay, data, tpt_data);
+  let ay = breadPath(data, tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
   return ay.reverse().map(function (a) {
-    return a.pid;
+    return a.albumId;
   });
 }
 
-// 深度遍历路径
-function pathScan(ay, data, tpt_data) {
-  var pid = data.albumId;
-
-  for (var i = 0; i < tpt_data.length; i++) {
-    var v = tpt_data[i];
-    if (v.children) {
-      pathScan(ay, data, v.children);
-      if (ay.length > 0) {
-        var cn = ay[ay.length - 1];
-        if (v.data.albumId == cn.parent) {
-          ay.push({
-            pid: v.data.albumId,
-            parent: v.data.parent
-          });
-        }
-      }
-    } else {
-      if (ay.length == 0) {
-        // 找到了位置
-        if (v.data.albumId == pid) {
-          ay.push({
-            pid: pid,
-            parent: v.data.parent
-          });
-        }
-      } else {
-        var cn = ay[ay.length - 1];
-        if (v.data.albumId == cn.parent) {
-          ay.push({
-            pid: v.data.albumId,
-            parent: v.data.parent
-          });
-        }
-      }
-    }
-  }
-}
+window.appInstince = ins;

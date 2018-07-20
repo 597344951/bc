@@ -1,3 +1,7 @@
+window.onFocus = function() {
+    window.location.reload()
+}
+
 var app = new Vue({
     el: '#app',
     data: {

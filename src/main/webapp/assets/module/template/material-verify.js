@@ -7,6 +7,12 @@ window.onclose = function () {
   }
   return true;
 }
+window.onFocus = function () {
+  console.debug(' 素材审核页面获取得焦点');
+  let app = window.appInstince
+  app.loadTpTypeData(app.currentCategory);
+  app.loadTreeData();
+}
 
 window.appInstince = new Vue({
   el: "#app",
@@ -186,7 +192,8 @@ window.appInstince = new Vue({
     tpt_data_normal: [],
     multipleSelection: [],
     queryForm: {
-      verify:-1,keyword:null
+      verify: -1,
+      keyword: null
     },
     verifyOptions: [{
       value: -1,
@@ -198,7 +205,7 @@ window.appInstince = new Vue({
       value: 0,
       label: '未通过'
     }],
-    orgUsers:[]
+    orgUsers: []
   },
   mounted() {
     this.loadTreeData();
@@ -217,19 +224,22 @@ window.appInstince = new Vue({
     }
   },
   methods: {
-    getUserName(item){
-      return this.orgUsers.filter(u=>u.userId == item.userId).map(i => i.username).join('');
+    getUserName(item) {
+      return this.orgUsers.filter(u => u.userId == item.userId).map(i => i.username).join('');
     },
     loadOrgUsers() {
       let orgId = window.sysInfo.orgId;
       let url = `/sys/user/querySysUsersNotPage`;
-      ajax_json_promise(url,'post',{orgId:orgId}).then(result=>{
+      ajax_json_promise(url, 'post', {
+        orgId: orgId
+      }).then(result => {
         this.orgUsers = result.data;
       });
     },
-    resetSearch(){
+    resetSearch() {
       this.queryForm = {
-        verify:-1,keyword:null
+        verify: -1,
+        keyword: null
       }
     },
     //复选框状态改变
@@ -256,9 +266,9 @@ window.appInstince = new Vue({
         }
       });
     },
-    getAlbumName(item) {
+    getAlbumName(it) {
       let bp = breadPath({
-        albumId: item.albumId
+        albumId: it.albumId
       }, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
 
       return bp[bp.length - 1].name;
@@ -394,9 +404,9 @@ window.appInstince = new Vue({
     loadTreeData: function () {
       var ins = this;
       let data = {
-        keyword: this.queryForm.keyword?this.queryForm.keyword:null,
-        verify: this.queryForm.verify>=0?this.queryForm.verify:null,
-        noVerify: this.queryForm.verify < 0 ? true:null
+        keyword: this.queryForm.keyword ? this.queryForm.keyword : null,
+        verify: this.queryForm.verify >= 0 ? this.queryForm.verify : null,
+        noVerify: this.queryForm.verify < 0 ? true : null
       };
       ajax("/resource/Material/verify/AlbumTree", "post", data, function (result) {
         ins.tpt_data = ins.init_tpt_data(result.data);
@@ -444,11 +454,11 @@ window.appInstince = new Vue({
         data = {};
       }
       let url = '/resource/Material/verify/' + this.tpager.current + '-' + this.tpager.size;
-       
-        data.keyword = this.queryForm.keyword?this.queryForm.keyword:null,
-        data.verify = this.queryForm.verify>=0?this.queryForm.verify:null,
-        data. noVerify = this.queryForm.verify < 0 ? true:null
-      
+
+      data.keyword = this.queryForm.keyword ? this.queryForm.keyword : null,
+        data.verify = this.queryForm.verify >= 0 ? this.queryForm.verify : null,
+        data.noVerify = this.queryForm.verify < 0 ? true : null
+
       let obj = clone(data);
       obj.name = null;
       ajax_json(url, "post", obj, function (result) {
@@ -731,7 +741,7 @@ window.appInstince = new Vue({
     getResUrl(url) {
       return serverConfig.getUrl(url);
     },
-    resourceViewClose(){
+    resourceViewClose() {
       //暂停视频/音频
       $('.videoView').trigger('pause');
       $('.audioView').trigger('pause');

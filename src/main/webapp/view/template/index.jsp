@@ -43,8 +43,8 @@
             </el-header>
             <el-container>
                 <el-aside width="200px">
-                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree"  @node-contextmenu="treeContextmenu"> 
+                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" :default-expand-all="false" :expand-on-click-node="true"
+                        @node-click="tptTreeClick" class="menu-tree"  @node-contextmenu="treeContextmenu" accordion> 
                     </el-tree>
                 </el-aside>
                 <el-main>
@@ -115,7 +115,7 @@
                                             <div class="editerContainer" id="templateText" type="textarea" style="height: 300px;"></div>
                                         </el-form-item>
                                         <el-form-item label="所属分类" prop="tpTypeIds">
-                                            <el-cascader v-model="tp.data.tpTypeIds" :props="tpt_props" :options="tpt_data" :show-all-levels="false"></el-cascader>
+                                            <el-cascader v-model="tp.data.tpTypeIds" :props="tpt_props" :options="tpt_data" :show-all-levels="true"></el-cascader>
                                         </el-form-item>
                                         <el-form-item label="节目模版Id" prop="programTemplate">
                                             <el-row>
@@ -161,7 +161,14 @@
                     <el-input type="text" v-model="tpt.data.orderNum"></el-input>
                 </el-form-item>
                 <el-form-item label="上一级目录" v-if="tpt.update != true">
-                    <el-input aria-readonly="true" v-model="tpt.data.parentLabel"></el-input>
+                    <el-select v-model="tpt.data.parentLabel" placeholder="请选择">
+                            <el-option
+                              v-for="item in tpt_parents"
+                              :key="item.parent"
+                              :label="item.parentLabel"
+                              :value="item.parentLabel">
+                            </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div class="dialog-footer" slot="footer">
@@ -176,7 +183,7 @@
         </el-dialog>
         <!--节目模版选择-->
         <!--Tree 右键菜单-->
-        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
+        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick" @close="contextMenuClose"></context-menu>
         <!--Tree 右键菜单-->
     </div>
 </body>

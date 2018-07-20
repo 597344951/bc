@@ -32,6 +32,7 @@ window.appInstince = new Vue({
     computed: {},
     methods: {
         showAddActivityPlan(eventdata, plan) {
+            console.log('show Add Activity Plan: ',arguments);
             this.sugPlan = plan;
             this.eventdata = eventdata;
             console.log(eventdata, plan)
@@ -45,6 +46,7 @@ window.appInstince = new Vue({
                 if (result.status) {
                     $message('增加成功!', 'success', ins);
                     ins.createActivityPlanDialog.visiable = false;
+                    ins.$refs['activityPlan'].reset();
                 }
             });
         },

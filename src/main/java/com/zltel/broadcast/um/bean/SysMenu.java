@@ -18,6 +18,21 @@ public class SysMenu {
     private Integer orderNum;
 
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SysMenu [");
+        if (menuId != null) builder.append("menuId=").append(menuId).append(", ");
+        if (parentId != null) builder.append("parentId=").append(parentId).append(", ");
+        if (name != null) builder.append("name=").append(name).append(", ");
+        if (type != null) builder.append("type=").append(type).append(", ");
+        if (orderNum != null) builder.append("orderNum=").append(orderNum);
+        builder.append("]");
+        return builder.toString();
+    }
 
     public Long getMenuId() {
         return menuId;

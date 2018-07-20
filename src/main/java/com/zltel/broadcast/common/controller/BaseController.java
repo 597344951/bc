@@ -40,8 +40,12 @@ public class BaseController {
     public SysUser getSysUser() {
         Subject subject = SecurityUtils.getSubject();
         SysUser user = (SysUser) subject.getPrincipal();
-        if(null == user)throw new UnauthenticatedException();
+        if (null == user) throw new UnauthenticatedException();
         return user;
+    }
+
+    public Subject getSubJect() {
+        return SecurityUtils.getSubject();
     }
 
     public void log(HttpSession session, String level, String msg) {
@@ -94,6 +98,7 @@ public class BaseController {
                     }
                 }
             }
+
             @Override
             public String getAsText() {
                 return this.getValue().toString();
