@@ -12,6 +12,12 @@
 		<result column="source" jdbcType="VARCHAR" property="source" />
 		<result column="status" jdbcType="INTEGER" property="status" />
 	</resultMap>
+	<!-- 关联懒加载 相关推荐活动 -->
+	<resultMap id="ResultMapWithSuggests" extends="BaseResultMap"
+		type="com.zltel.broadcast.eventplan.bean.EventList">
+		<collection column="event_id" property="suggestItems"
+			select="com.zltel.broadcast.plansuggest.dao.EventPlanSuggestItemMapper.selectByEventId"></collection>
+	</resultMap>
 	<sql id="Base_Column_List">
 		event_id, org_id, title, stime, etime, priority, remark, source, status
 	</sql>
@@ -23,15 +29,19 @@
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from event_list
-		where event_id = #{eventId,jdbcType=INTEGER}
+		where event_id =
+		#{eventId,jdbcType=INTEGER}
 	</delete>
 	<insert id="insert" parameterType="com.zltel.broadcast.eventplan.bean.EventList">
 		insert into event_list (event_id, org_id, title,
-		stime, etime, priority,
+		stime,
+		etime, priority,
 		remark,
 		source, status)
-		values (#{eventId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
-		#{stime,jdbcType=DATE}, #{etime,jdbcType=DATE}, #{priority,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
+		values (#{eventId,jdbcType=INTEGER},
+		#{orgId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
+		#{stime,jdbcType=DATE},
+		#{etime,jdbcType=DATE}, #{priority,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
 		#{source,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.zltel.broadcast.eventplan.bean.EventList">
@@ -95,7 +105,8 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.eventplan.bean.EventList">
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventList">
 		update event_list
 		<set>
 			<if test="orgId != null">
@@ -127,22 +138,26 @@
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.eventplan.bean.EventList">
 		update event_list
-		set org_id = #{orgId,jdbcType=INTEGER},
+		set org_id =
+		#{orgId,jdbcType=INTEGER},
 		title =
 		#{title,jdbcType=VARCHAR},
 		stime = #{stime,jdbcType=DATE},
-		etime = #{etime,jdbcType=DATE},
+		etime =
+		#{etime,jdbcType=DATE},
 		priority =
 		#{priority,jdbcType=INTEGER},
 		remark = #{remark,jdbcType=VARCHAR},
 		source = #{source,jdbcType=VARCHAR},
 		status =
 		#{status,jdbcType=INTEGER}
-		where event_id = #{eventId,jdbcType=INTEGER}
+		where event_id =
+		#{eventId,jdbcType=INTEGER}
 	</update>
 
 	<!-- 查询 EventList -->
-	<select id="queryForList" resultMap="BaseResultMap" parameterType="com.zltel.broadcast.eventplan.bean.EventList">
+	<select id="queryForList" resultMap="BaseResultMap"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventList">
 		select * from event_list
 		<include refid="EventListWhere" />
 	</select>
@@ -180,7 +195,8 @@
 		</where>
 	</sql>
 
-	<select id="queryInTime" resultMap="BaseResultMap" parameterType="com.zltel.broadcast.eventplan.bean.EventList">
+	<select id="queryInTime" resultMap="ResultMapWithSuggests"
+		parameterType="com.zltel.broadcast.eventplan.bean.EventList">
 		select * from event_list
 		<where>
 			<if test="eventId != null">
@@ -214,20 +230,20 @@
 			<if test="froms != null">
 				AND source in
 				<foreach collection="froms" item="f" index="index" open="(" close=")" separator=",">
-                    #{f}
-                </foreach>
+					#{f}
+				</foreach>
 			</if>
 			<if test="prioritys != null">
 				AND priority in
 				<foreach collection="prioritys" item="it" index="index" open="(" close=")" separator=",">
-                    #{it}
-                </foreach>
+					#{it}
+				</foreach>
 			</if>
 			<if test="statuss != null">
 				AND status in
 				<foreach collection="statuss" item="it" index="index" open="(" close=")" separator=",">
-                    #{it}
-                </foreach>
+					#{it}
+				</foreach>
 			</if>
 		</where>
 	</select>

@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +29,19 @@ import com.github.pagehelper.util.StringUtil;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.common.util.PasswordHelper;
 import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.bean.OrganizationRelation;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
+import com.zltel.broadcast.um.bean.SysRole;
+import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.bean.SysUserRole;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
 import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
+import com.zltel.broadcast.um.dao.SysRoleMapper;
+import com.zltel.broadcast.um.dao.SysUserMapper;
+import com.zltel.broadcast.um.dao.SysUserRoleMapper;
 import com.zltel.broadcast.um.service.OrganizationRelationService;
 import com.zltel.broadcast.um.service.PartyUserInfoService;
 import com.zltel.broadcast.um.util.DateUtil;
@@ -56,6 +66,15 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	@Resource
 	private OrganizationRelationService organizationRelationService;
 	
+	@Resource
+	private SysUserMapper sysUserMapper;
+	
+	@Resource
+	private SysRoleMapper sysRoleMapper;
+	
+	@Resource
+	private SysUserRoleMapper sysUserRoleMapper;
+	
 	@Override
     public BaseDao<PartyUserInfo> getInstince() {
         return this.partyUserInfoMapper;
@@ -73,6 +92,26 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
 	public R queryPartyUserInfos(Map<String, Object> partyUserMap, int pageNum, int pageSize) throws Exception {
+		Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        
+    	if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
+        	}
+        	partyUserMap.put("orgInfoId", sysUser.getOrgId());
+        } else {	//如果是个人账户
+        	if (sysUser.getUserType() == 0) {
+        		return R.ok().setCode(100).setMsg("非党员账户请先设置管理员类型");
+        	} else if (sysUser.getUserType() == 1) {
+            	partyUserMap.put("idCard", sysUser.getUsername());
+            }
+        }
+        
+        
+		
 		PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> partyUserInfos = partyUserInfoMapper.queryPartyUserInfos(partyUserMap);	//开始查询，没有条件则查询所有组织关系
 		PageInfo<Map<String, Object>> partyUserInfosPageInfo = new PageInfo<>(partyUserInfos);
@@ -253,6 +292,14 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("isParty")));
     	baseUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("positiveUser")));
+    	baseUserInfo.setWorkUnit((String)partyUser.get("workUnit"));
+    	baseUserInfo.setWorkNature(StringUtil.isEmpty((String)partyUser.get("workNature")) ? 
+    			null : Integer.parseInt((String)partyUser.get("workNature")));
+    	baseUserInfo.setJoinWorkDate(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinWorkDate")));
+    	baseUserInfo.setAppointmentTimeLength(StringUtil.isEmpty((String)partyUser.get("appointmentTimeLength")) ? 
+    			null : Integer.parseInt((String)partyUser.get("appointmentTimeLength")));
+    	baseUserInfo.setFirstLineSituation(StringUtil.isEmpty((String)partyUser.get("firstLineTypeName")) ? 
+    			null : Integer.parseInt((String)partyUser.get("firstLineTypeName")));
     	
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
     			null : Integer.parseInt((String)partyUser.get("type")));
@@ -260,16 +307,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("status")));
     	partyUserInfo.setJoinDateFormal(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinDateFormal")));
     	partyUserInfo.setJoinDateReserve(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinDateReserve")));
-    	partyUserInfo.setWorkUnit((String)partyUser.get("workUnit"));
-    	partyUserInfo.setWorkNature(StringUtil.isEmpty((String)partyUser.get("workNature")) ? 
-    			null : Integer.parseInt((String)partyUser.get("workNature")));
-    	partyUserInfo.setJoinWorkDate(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinWorkDate")));
-    	partyUserInfo.setAppointmentTimeLength(StringUtil.isEmpty((String)partyUser.get("appointmentTimeLength")) ? 
-    			null : Integer.parseInt((String)partyUser.get("appointmentTimeLength")));
     	partyUserInfo.setJoinPartyBranchTypeId(StringUtil.isEmpty((String)partyUser.get("joinPartyBranchType")) ? 
     			null : Integer.parseInt((String)partyUser.get("joinPartyBranchType")));
-    	partyUserInfo.setFirstLineSituation(StringUtil.isEmpty((String)partyUser.get("firstLineTypeName")) ? 
-    			null : Integer.parseInt((String)partyUser.get("firstLineTypeName")));
     	partyUserInfo.setPartyStaff(StringUtil.isEmpty((String)partyUser.get("partyStaff")) ? 
     			null : Integer.parseInt((String)partyUser.get("partyStaff")));
     	partyUserInfo.setPartyRepresentative(StringUtil.isEmpty((String)partyUser.get("partyRepresentative")) ? 
@@ -306,6 +345,37 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
         	if (insertPartyUserInfoCount != 1) {	//插入失败，抛异常回滚
         		throw new Exception();
         	}
+        	
+        	SysUser su = new SysUser();
+        	su.setUsername(baseUserInfo.getIdCard());
+        	su.setPassword(baseUserInfo.getIdCard().substring(baseUserInfo.getIdCard().length() - 6));
+        	String salt = UUID.randomUUID().toString();
+        	su.setSalt(salt);	//保存盐
+        	su.setPassword(PasswordHelper.encryptPassword(su.getPassword(), salt));	//加密
+        	su.setEmail(baseUserInfo.getEmail());
+        	su.setMobile(baseUserInfo.getMobilePhone());
+        	su.setStatus(true);
+        	su.setUserType(1);
+        	su.setCreateTime(new Date());
+			int count = sysUserMapper.insertSelective(su);
+			if (count != 1) {
+				throw new Exception();
+			}
+			//赋予默认角色
+			SysRole sysRole = new SysRole();
+			sysRole.setRoleName("party_role");
+			List<SysRole> srs = sysRoleMapper.querySysRoles(sysRole);
+			if (srs != null && srs.size() == 1) {
+				SysUserRole sur = new SysUserRole();
+				sur.setUserId((long)su.getUserId());
+				sur.setRoleId(srs.get(0).getRoleId());
+				count = sysUserRoleMapper.insertSelective(sur);
+				if (count != 1) {
+					throw new Exception();
+				}
+			} else {
+				throw new Exception();
+			}
     	}
     	FileUtil.writeFile(new FileInputStream(new File(idPhotoPathTemp)), idPhotoPath, idPhotoName);	//保存证件照
     	return R.ok().setMsg("党员信息注册成功");
@@ -374,6 +444,14 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("isParty")));
     	baseUserInfo.setPositiveUser(StringUtil.isEmpty((String)partyUser.get("positiveUser")) ? 
     			null : Integer.parseInt((String)partyUser.get("positiveUser")));
+    	baseUserInfo.setWorkUnit((String)partyUser.get("workUnit"));
+    	baseUserInfo.setWorkNature(StringUtil.isEmpty((String)partyUser.get("workNature")) ? 
+    			null : Integer.parseInt((String)partyUser.get("workNature")));
+    	baseUserInfo.setJoinWorkDate(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinWorkDate")));
+    	baseUserInfo.setAppointmentTimeLength(StringUtil.isEmpty((String)partyUser.get("appointmentTimeLength")) ? 
+    			null : Integer.parseInt((String)partyUser.get("appointmentTimeLength")));
+    	baseUserInfo.setFirstLineSituation(StringUtil.isEmpty((String)partyUser.get("firstLineTypeName")) ? 
+    			null : Integer.parseInt((String)partyUser.get("firstLineTypeName")));
     	
     	partyUserInfo.setPartyUserId(baseUserInfo.getBaseUserId());
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
@@ -382,16 +460,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("status")));
     	partyUserInfo.setJoinDateFormal(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinDateFormal")));
     	partyUserInfo.setJoinDateReserve(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinDateReserve")));
-    	partyUserInfo.setWorkUnit((String)partyUser.get("workUnit"));
-    	partyUserInfo.setWorkNature(StringUtil.isEmpty((String)partyUser.get("workNature")) ? 
-    			null : Integer.parseInt((String)partyUser.get("workNature")));
-    	partyUserInfo.setJoinWorkDate(DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)partyUser.get("joinWorkDate")));
-    	partyUserInfo.setAppointmentTimeLength(StringUtil.isEmpty((String)partyUser.get("appointmentTimeLength")) ? 
-    			null : Integer.parseInt((String)partyUser.get("appointmentTimeLength")));
     	partyUserInfo.setJoinPartyBranchTypeId(StringUtil.isEmpty((String)partyUser.get("joinPartyBranchType")) ? 
     			null : Integer.parseInt((String)partyUser.get("joinPartyBranchType")));
-    	partyUserInfo.setFirstLineSituation(StringUtil.isEmpty((String)partyUser.get("firstLineTypeName")) ? 
-    			null : Integer.parseInt((String)partyUser.get("firstLineTypeName")));
     	partyUserInfo.setPartyStaff(StringUtil.isEmpty((String)partyUser.get("partyStaff")) ? 
     			null : Integer.parseInt((String)partyUser.get("partyStaff")));
     	partyUserInfo.setPartyRepresentative(StringUtil.isEmpty((String)partyUser.get("partyRepresentative")) ? 
@@ -419,6 +489,37 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			if (insertPartyUserInfoCount != 1) {	//更新失败，抛异常回滚
             		throw new Exception();
             	}
+    			
+    			SysUser su = new SysUser();
+            	su.setUsername(baseUserInfo.getIdCard());
+            	su.setPassword(baseUserInfo.getIdCard().substring(baseUserInfo.getIdCard().length() - 6));
+            	String salt = UUID.randomUUID().toString();
+            	su.setSalt(salt);	//保存盐
+            	su.setPassword(PasswordHelper.encryptPassword(su.getPassword(), salt));	//加密
+            	su.setEmail(baseUserInfo.getEmail());
+            	su.setMobile(baseUserInfo.getMobilePhone());
+            	su.setStatus(true);
+            	su.setUserType(1);
+            	su.setCreateTime(new Date());
+    			int count = sysUserMapper.insertSelective(su);
+    			if (count != 1) {
+    				throw new Exception();
+    			}
+    			//赋予默认角色
+    			SysRole sysRole = new SysRole();
+    			sysRole.setRoleName("party_role");
+    			List<SysRole> srs = sysRoleMapper.querySysRoles(sysRole);
+    			if (srs != null && srs.size() == 1) {
+    				SysUserRole sur = new SysUserRole();
+    				sur.setUserId((long)su.getUserId());
+    				sur.setRoleId(srs.get(0).getRoleId());
+    				count = sysUserRoleMapper.insertSelective(sur);
+    				if (count != 1) {
+    					throw new Exception();
+    				}
+    			} else {
+    				throw new Exception();
+    			}
     		} else {
     			int updatePartyUserInfoCount = partyUserInfoMapper.updateByPrimaryKeySelective(partyUserInfo);	//更新党员信息
             	if (updatePartyUserInfoCount != 1) {	//更新失败，抛异常回滚
@@ -427,6 +528,13 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     		}
     	} else {
     		partyUserInfoMapper.deleteByPrimaryKey(baseUserInfo.getBaseUserId());
+    		//同时删除登录账户
+    		baseUserInfo = baseUserInfoMapper.selectByPrimaryKey(baseUserInfo.getBaseUserId());
+			if (StringUtil.isNotEmpty(baseUserInfo.getIdCard())) {
+				SysUser su = new SysUser();
+				su.setUsername(baseUserInfo.getIdCard());
+				sysUserMapper.deleteByUserName(su);
+			}
     	}
     	
     	return R.ok().setMsg("党员信息更新成功");
@@ -439,11 +547,18 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     @Transactional(rollbackFor=java.lang.Exception.class)
     public R deletePartyUserInfo(BaseUserInfo baseUserInfo) throws Exception {
     	if(baseUserInfo != null) {
+    		baseUserInfo = baseUserInfoMapper.selectByPrimaryKey(baseUserInfo.getBaseUserId());
 			int countpui = this.deleteByPrimaryKey(baseUserInfo.getBaseUserId());	//开始删除党员用户信息
 			int countBui = baseUserInfoMapper.deleteByPrimaryKey(baseUserInfo.getBaseUserId()); //删除基础用户信息
 			OrganizationRelation or = new OrganizationRelation();
 			or.setOrgRltUserId(baseUserInfo.getBaseUserId());
 			organizationRelationService.deleteOrgRelationByUserId(or).get("data");
+			if (StringUtil.isNotEmpty(baseUserInfo.getIdCard())) {
+				SysUser su = new SysUser();
+				su.setUsername(baseUserInfo.getIdCard());
+				sysUserMapper.deleteByUserName(su);
+			}
+			
 			
 			if (countpui == 1 && countBui == 1) {	//受影响的行数，判断是否全部删除
 				return R.ok().setMsg("党员删除成功！");

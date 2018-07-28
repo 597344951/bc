@@ -27,8 +27,7 @@ let EventToolTip = {
             this.$emit('callback',type, this.data)
         } 
     },
-    //模版内容
-    template: ''
+    template: require("./event-tooltip.view.html")
 }
 
 export default EventToolTip;

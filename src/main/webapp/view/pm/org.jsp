@@ -275,7 +275,7 @@
 							</el-row>
 					  	</div>
 					</el-popover>
-					<el-button-group>
+					<el-button-group v-if="signInAccountType != 'party_role'">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
@@ -291,7 +291,7 @@
 				</el-row>
 			</el-header>
 			<el-main>
-				<div v-show="!dis_h_v">
+				<div v-show="!dis_h_v" v-if="signInAccountType != 'party_role'">
 					<div style="text-align: center;">
 						<p style="margin-bottom: 20px; font-size: 20px; font-weight: bold;">党委结构一览</p>
 					</div>
@@ -472,7 +472,7 @@
 						    	placeholder="例：基础积分"></el-input>
 						</el-form-item>
 					</div>
-					<div>
+					<!-- <div>
 						<el-form-item label="积分值" prop="integral">
 						    <el-input 
 						    	clearable 
@@ -480,7 +480,7 @@
 						    	v-model="partyOrg_manager_addOrgIntegralConstituteForm.integral" 
 						    	placeholder="填写数字"></el-input> 分
 						</el-form-item>
-					</div>
+					</div> -->
 					<div>
 						<el-form-item label="说明" prop="describes">
 						    <el-input 
@@ -1010,10 +1010,12 @@
 				integral: null,
 				describes: null,
 				orgId: null,
-				parentIcId: -1
+				parentIcId: -1,
+				isInnerIntegral: 0
 			},
 			count: 0,
-			realCount: 0
+			realCount: 0,
+			signInAccountType: null
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -1024,8 +1026,27 @@
 			this.partyOrg_manager_getOrgInfoTypes();
 			this.partyOrg_manager_getOrgInfoNatures();
 			this.partyOrg_manager_getOrgInfoTreesForZMD();	/*走马灯*/
+			this.getSignInAccountType();
 		},
 		methods: {
+			getSignInAccountType() {	/*得到该登录用户的类型*/
+				var obj = this;
+
+				var url = "/siat/getSignInAccountType";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.signInAccountType = data.data;
+							if (obj.signInAccountType == "party_role") {
+								obj.dis_h_v = true;
+							}
+						}
+					}
+
+				})
+			},
 			partyOrg_manager_getOrgInfoTreesForZMD() {
 				var obj = this;
 
@@ -1964,10 +1985,11 @@
         				var url = "/org/ic/insertIntegralConstitute";
         				var t = {
         					type: obj.partyOrg_manager_addOrgIntegralConstituteForm.type,
-							integral: obj.partyOrg_manager_addOrgIntegralConstituteForm.integral,
+							/*integral: obj.partyOrg_manager_addOrgIntegralConstituteForm.integral,*/
 							describes: obj.partyOrg_manager_addOrgIntegralConstituteForm.describes,
 							orgId: obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId,
-							parentIcId: obj.partyOrg_manager_addOrgIntegralConstituteForm.parentIcId
+							parentIcId: obj.partyOrg_manager_addOrgIntegralConstituteForm.parentIcId,
+							isInnerIntegral: obj.partyOrg_manager_addOrgIntegralConstituteForm.isInnerIntegral
         				}
         				$.post(url, t, function(data, status){
         					if (data.code == 200) {

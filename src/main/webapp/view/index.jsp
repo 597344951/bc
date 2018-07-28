@@ -1,9 +1,15 @@
+<%@page import="com.zltel.broadcast.common.util.AdminRoleUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":"
             + request.getServerPort() + path + "/";
+    
+    boolean orgAdmin = AdminRoleUtil.isOrgAdmin();
+    boolean plantAdmin = AdminRoleUtil.isPlantAdmin();
+    request.setAttribute("admin_role", plantAdmin?"plantAdmin":orgAdmin?"orgAdmin":"");
+    request.setAttribute("admin_role_label", plantAdmin?"平台管理员":orgAdmin?"组织管理员":"");
 %>
 <html>
 <head>
@@ -14,8 +20,6 @@
 <%@include file="/include/head.jsp"%>
 <%@include file="/include/websocket.jsp"%>
 <link href="${urls.getForLookupPath('/assets/css/index.css')}" rel="stylesheet">
-<link rel="shortcut icon" href="../assets/img/logo-icon2.png" />
-<link rel="bookmark"href="../assets/img/logo-icon2.png" />
 <style type="text/css">
 .collapseIcon, .logo-width .glyphicon-send {
     line-height: 55px;
@@ -24,10 +28,14 @@
     display: none;
 }
 .logo-width{
-    padding-left: 55px;
+    padding-right: 15px;
     position: relative;
+    text-align: right;
 }
 .logo-icon{
+    
+}
+.dangjian{
     display: inline-block;
     width: 40px;
     height: 40px;
@@ -39,6 +47,42 @@
     background: url(/assets/img/logo-icon2.png) no-repeat;
     background-size: cover;
 }
+.wanke{
+    display: inline-block;
+    width: 83px;
+    height: 40px;
+    background-color: #fff;
+    /* border-radius: 50%; */
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    background: url(/assets/img/logo-wanke.png) no-repeat;
+    background-size: 100px;
+    background-position: 6px 12px;
+}
+/**组织管理员**/
+.orgAdmin{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin: 10px 0 10px 10px;
+    float: right;
+    background: url(/assets/img/people6.png) no-repeat;
+    background-size: cover;
+}
+/**平台管理员**/
+.plantAdmin{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin: 10px 0 10px 10px;
+    float: right;
+    background-color: #fff;
+    background: url(/assets/img/people1.png) no-repeat;
+    background-size: cover;
+}
 </style>
 </head>
 <body>
@@ -47,7 +91,7 @@
             <!--head-->
             <el-col class="header" :span="24">
                 <el-col :span="10" :class="app.isCollapse?' logo logo-collapse-width':'logo logo-width'">
-                    <span class="logo-icon"></span>
+                    <span class="logo-icon dangjian"></span>
                     {{app.isCollapse?'':app.sysName}}
                     <i v-if="app.isCollapse" :class="app.sysIcon" :title="app.sysName"></i>
                 </el-col>
@@ -61,12 +105,15 @@
                         <li>
                             <el-dropdown trigger="hover">
                                 <span class="el-dropdown-link userinfo-inner">
-                                    <img :src="this.app.sysUserAvatar"> {{app.sysUserName}}</span>
+                                    <!-- <img :src="this.app.sysUserAvatar" class="${admin_role}"> -->
+                                   
+                                   {{app.sysUserName}} <span class="${admin_role}" style="font-size:24px"></span></span>
                                 <el-dropdown-menu slot="dropdown">
+                                	<el-dropdown-item>${admin_role_label}</el-dropdown-item>
                                     <el-dropdown-item>我的消息</el-dropdown-item>
                                     <el-dropdown-item>设置</el-dropdown-item>
                                     <el-dropdown-item @click.native="changeTheme.visible=true">切换主题色</el-dropdown-item>
-                                    <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+                                    <el-dropdown-item divided @click.native="logout"><i class="fa fa-sign-out"></i>退出登录</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </li>
@@ -146,7 +193,8 @@ var sysInfo = {
     sysName: '${sysInfo.appname}',
     userId:'<shiro:principal property="userId"/>',
     sysUserName: '<shiro:principal property="username"/>',
-    title_theme: ('#'+('<shiro:principal property="theme"/>' || '20a0ff'))
+    title_theme: ('#'+('<shiro:principal property="theme"/>' || '20a0ff')),
+    adminRole: `${admin_role}`
 }
 window.sysInfo = sysInfo;
 </script>

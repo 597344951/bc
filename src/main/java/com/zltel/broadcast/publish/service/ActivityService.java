@@ -1,5 +1,7 @@
 package com.zltel.broadcast.publish.service;
 
+import com.github.pagehelper.PageInfo;
+import com.zltel.broadcast.publish.bean.Silhouette;
 import com.zltel.broadcast.um.bean.SysUser;
 
 import java.util.List;
@@ -68,4 +70,13 @@ public interface ActivityService {
      * @return
      */
     public List<Map<String, Object>> queryFinishedActivity(int pageNum, int pageSize);
+
+    /**
+     * 活动剪影操作
+     */
+    public int addSilhouette(Silhouette silhouette);
+    public int deleteSilhouette(int silhouetteId);
+    public int updateSilhouette(Silhouette silhouette);
+    public Silhouette getSilhouette(int silhouetteId);
+    public PageInfo<Silhouette> querySilhouette(int pageNum, int pageSize);
 }

@@ -154,7 +154,8 @@
   		  pui.status partyStatus,
   		  bui.id_photo idPhoto,
   		  bui.mobile_phone mobilePhone,
-  		  _or.org_rlt_join_time orgRltJoinTime
+  		  _or.org_rlt_join_time orgRltJoinTime,
+  		  bui.id_card idCard
 		from
 		  organization_relation _or
 		  inner join organization_information oi on _or.org_rlt_info_id = oi.org_info_id 
@@ -187,6 +188,9 @@
 		  </if>
 	      <if test="sex != null and sex != ''"> and 
 	        bui.sex = #{sex}
+	      </if>
+	      <if test="idCard != null and idCard != ''"> and 
+	        bui.id_card = #{idCard}
 	      </if>
 	</select>
 	

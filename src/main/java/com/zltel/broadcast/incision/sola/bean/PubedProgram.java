@@ -27,6 +27,8 @@ public class PubedProgram {
     
     /** 节目截图地址 **/
     private String coverImageUrl;
+    /** -1屏幕不存在，0节目过期，1节目正在播放,2当前未在播放**/
+    private String status;
     
     public void setCoverImage(String coverImage) {
         this.coverImage = coverImage;
@@ -102,4 +104,19 @@ public class PubedProgram {
     public void setCoverImageUrl(String coverImageUrl) {
         this.coverImageUrl = coverImageUrl;
     }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
 }

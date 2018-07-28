@@ -7,10 +7,12 @@
 	String programId = request.getParameter("programId");
 	String startStep = request.getParameter("startStep");
 	String reAdd = request.getParameter("reAdd");
+	String eventPlanId = request.getParameter("eventPlanId");
 	title = title == null ? "" : title;
 	programId = programId == null ? "-1" : programId;
 	startStep = startStep == null ? "0" : startStep;
 	reAdd = reAdd == null ? "false" : reAdd;
+	eventPlanId = eventPlanId == null ? "-1" : eventPlanId;
 	Subject subject = SecurityUtils.getSubject();
     SysUser user = (SysUser) subject.getPrincipal();
     String userId = user == null ? "" : "" + user.getUserId();
@@ -535,6 +537,7 @@
 		window.app = new Vue({
 			el: '#app',
 			data: {
+				eventPlanId: <%=eventPlanId%>,
 				programId: <%=programId%>,
 				reAdd: <%=reAdd%>,
 				loading: true,
@@ -684,6 +687,9 @@
 							//节目要求
 							content.demand = this.demand
 							content.programId = this.programId
+							if(this.eventPlanId >= 0) {
+								content.eventPlanId = this.eventPlanId
+							}
 							commit(content);
                         })
                         .catch(_ => {});

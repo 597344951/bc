@@ -343,7 +343,7 @@
 							<el-row>
 								<el-col :span="24">
 									<template>
-										<ve-funnel :data="threeData" :theme-name="chartConfig.themeName" :text-style="chartConfig.textStyle" :legend-visible="false"></ve-funnel>
+										<ve-funnel height="300px" :data="threeData" :theme-name="chartConfig.themeName" :text-style="chartConfig.textStyle" :legend-visible="false"></ve-funnel>
 									</template>
 								</el-col>
 							</el-row>
@@ -363,7 +363,7 @@
 							<el-row>
 								<el-col :span="24">标准化达标率
 									<template>
-										<ve-gauge :theme-name="chartConfig.themeName" :settings="twoSettings" :data="twoData" :text-style="chartConfig.textStyle"
+										<ve-gauge height="300px" :grid="grid" :theme-name="chartConfig.themeName" :settings="twoSettings" :data="twoData" :text-style="chartConfig.textStyle"
 										    :legend-visible="false"></ve-gauge>
 									</template>
 								</el-col>

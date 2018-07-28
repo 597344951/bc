@@ -20,7 +20,7 @@ public class PartyIntegralRecord {
 
     private Date changeTime;
     
-    private Integer changeScore;
+    private BigDecimal changeScore;
 
     private BigDecimal weightCoefficient;
 
@@ -28,11 +28,11 @@ public class PartyIntegralRecord {
 
     private Integer isMerge;
 
-    public Integer getChangeScore() {
+    public BigDecimal getChangeScore() {
 		return changeScore;
 	}
 
-	public void setChangeScore(Integer changeScore) {
+	public void setChangeScore(BigDecimal changeScore) {
 		this.changeScore = changeScore;
 	}
 

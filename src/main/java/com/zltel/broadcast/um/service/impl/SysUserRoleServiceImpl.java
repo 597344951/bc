@@ -38,9 +38,9 @@ public class SysUserRoleServiceImpl extends BaseDaoImpl<SysUserRole> implements 
      */
     @Override
     @Transactional
-    public R querySysUserRoles(SysUserRole sysUserRole, int pageNum, int pageSize) throws Exception {
+    public R querySysUserRoles(Map<String, Object> conditions, int pageNum, int pageSize) throws Exception {
 		PageHelper.startPage(pageNum, pageSize);
-		List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(sysUserRole);	//开始查询，没有条件则查询所有用户角色
+		List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(conditions);	//开始查询，没有条件则查询所有用户角色
 		PageInfo<HashMap<String, Object>> sysUserRolesForPageInfo = new PageInfo<>(sysUserRolesMap);
 		if (sysUserRolesForPageInfo.getList() != null && !sysUserRolesForPageInfo.getList().isEmpty()) {	//是否查询到数据
 			return R.ok().setData(sysUserRolesForPageInfo).setMsg("查询用户角色成功");
@@ -56,8 +56,8 @@ public class SysUserRoleServiceImpl extends BaseDaoImpl<SysUserRole> implements 
      */
     @Override
     @Transactional
-    public R querySysUserRolesNotPage(SysUserRole sysUserRole) throws Exception {
-		List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(sysUserRole);	//开始查询，没有条件则查询所有用户角色
+    public R querySysUserRolesNotPage(Map<String, Object> conditions) throws Exception {
+		List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(conditions);	//开始查询，没有条件则查询所有用户角色
 		if (sysUserRolesMap != null && !sysUserRolesMap.isEmpty()) {	//是否查询到数据
 			return R.ok().setData(sysUserRolesMap).setMsg("查询用户角色成功");
 		} else {
@@ -121,9 +121,10 @@ public class SysUserRoleServiceImpl extends BaseDaoImpl<SysUserRole> implements 
     @Transactional
     public R insertSysUserRole(SysUserRole sysUserRole) {
 		if (sysUserRole != null && sysUserRole.getUserId() != null) {
-			SysUserRole sur = new SysUserRole();
-			sur.setUserId(sysUserRole.getUserId());
-			List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(sysUserRole);
+			Map<String, Object> conditions = new HashMap<>();
+			conditions.put("userId", sysUserRole.getUserId());
+			conditions.put("isShow", 1);
+			List<HashMap<String, Object>> sysUserRolesMap = sysUserRoleMapper.querySysUserRoles(conditions);
 			List<String> haveRoles = new ArrayList<>();	//已经存在的角色
 			if (sysUserRolesMap != null && sysUserRolesMap.size() > 0) {
 				for (HashMap<String, Object> surMap : sysUserRolesMap) {
@@ -186,6 +187,36 @@ public class SysUserRoleServiceImpl extends BaseDaoImpl<SysUserRole> implements 
 		} else {	//添加一定需要一个用户角色信息
 			throw new RRException("添加一定需要一个用户角色信息");
 		}
+    }
+    
+    /**
+     * 变更内置角色
+     * @param conditions
+     * @return
+     */
+    public R updateInnerManageRols(Map<String, Object> conditions) {
+    	Map<String, Object> queryConditions = new HashMap<>();
+    	if (conditions.get("userId") == null || conditions.get("userId") == "") {
+    		throw new RuntimeException();
+    	}
+    	if (conditions.get("isShow") == null || conditions.get("isShow") == "") {
+    		throw new RuntimeException();
+    	}
+    	queryConditions.put("userId", conditions.get("userId"));
+    	queryConditions.put("isShow", conditions.get("isShow"));
+    	List<HashMap<String, Object>> haveInnerManageRoles = sysUserRoleMapper.querySysUserRoles(queryConditions);
+    	if (haveInnerManageRoles != null && haveInnerManageRoles.size() > 0) {
+    		for (HashMap<String, Object> haveInnerManageRole : haveInnerManageRoles) {
+    			sysUserRoleMapper.deleteByPrimaryKey(Long.parseLong(String.valueOf(haveInnerManageRole.get("id"))));
+			}
+    	}
+    	if (conditions.get("roleId") != null && conditions.get("roleId") != "") {
+    		SysUserRole sur = new SysUserRole();
+    		sur.setRoleId(Long.parseLong(String.valueOf(conditions.get("roleId"))));
+    		sur.setUserId(Long.parseLong(String.valueOf(conditions.get("userId"))));
+    		sysUserRoleMapper.insertSelective(sur);
+    	}
+    	return R.ok().setMsg("变更成功");
     }
 
 }

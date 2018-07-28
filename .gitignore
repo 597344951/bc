@@ -28,3 +28,6 @@
 lib/ueditor-1.1.2.jar
 broadcast*.log
 broadcast.log.*
+
+### webpack ###
+src/main/webapp/comp-webpack/node_modules/

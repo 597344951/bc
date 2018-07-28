@@ -192,8 +192,7 @@ let CostPlan = {
             });
         }
     },
-    //模版内容
-    template: ''
+    template: require("./cost-plan.view.html")
 }
 
 export default CostPlan;

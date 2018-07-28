@@ -113,7 +113,7 @@ let CreateActivityPlan = {
             });
         },
         openTemplate() {
-            this.templateView.keyword = this.plan.title;
+            this.templateView.keyword = this.plan.suggestInfo.title;
             this.templateView.display = true;
         },
         caclePlane() {
@@ -174,7 +174,8 @@ let CreateActivityPlan = {
             this.$emit("submit", this.planData, this.costPlanData)
         }
 
-    }
+    },
+    template: require("./create-activity-plan.view.html")
 }
 
 export default CreateActivityPlan;

@@ -21,6 +21,8 @@ import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
+import com.zltel.broadcast.common.validator.group.GroupSave;
+import com.zltel.broadcast.common.validator.group.GroupUpdate;
 import com.zltel.broadcast.template.bean.TemplateType;
 import com.zltel.broadcast.template.bean.TemplateTypeTreeNode;
 import com.zltel.broadcast.template.service.TemplateTypeService;
@@ -50,7 +52,7 @@ public class TemplateTypeController extends BaseController {
     @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="新增模版分类",template="新增模版分类:${tpt.name}")
     @RequiresPermissions("template:type:save")
     public R save(@RequestBody TemplateType tpt) {
-        ValidatorUtils.validateEntity(tpt);
+        ValidatorUtils.validateEntity(tpt,GroupSave.class);
         tpt.setBuiltin(false);
         tpt.setOrgid(this.getSysUser().getOrgId());
         
@@ -62,7 +64,7 @@ public class TemplateTypeController extends BaseController {
     @RequiresPermissions("template:type:update")
     @PutMapping(value = "/tptype")
     public R update(@RequestBody TemplateType tpt) {
-        ValidatorUtils.validateEntity(tpt);
+        ValidatorUtils.validateEntity(tpt,GroupUpdate.class);
         tpt.setBuiltin(null);
         tpt.setOrgid(null);
         this.templateTypeService.updateByPrimaryKeySelective(tpt);

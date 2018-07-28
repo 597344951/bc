@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-    <%
+<%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<%
     String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 					+ path + "/";
@@ -23,8 +24,10 @@
                 <div class="toolbar" style="display:flex;">
                     <div style="width: 550px;">
                         <div class="grid-content bg-purple">
-                            <el-button type="success" size="small" icon="el-icon-check" @click="verifys(true)">通过</el-button>
-                            <el-button type="danger" size="small" icon="el-icon-close" @click="verifys(false)">不通过</el-button>
+                            <shiro:hasPermission name="resource:verify:verify">
+                                <el-button type="success" size="small" icon="el-icon-check" @click="verifys(true)">通过</el-button>
+                                <el-button type="danger" size="small" icon="el-icon-close" @click="verifys(false)">不通过</el-button>
+                            </shiro:hasPermission>
                             <el-popover placement="right-start" width="400" trigger="click" style="margin-left:10px;">
                                 <el-form ref="form" :model="queryForm" label-width="80px">
                                     <el-form-item label="资源名称">
@@ -148,13 +151,17 @@
                             <el-table-column fixed="right" label="操作" width="100">
                                 <template slot-scope="props">
                                     <el-button class="control-button" type="success" size="small" icon="el-icon-view" @click="viewTemplate(props.row)">查看</el-button><br/>
-                                    <el-button class="control-button" type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(props.row)">编辑</el-button>
+                                    <shiro:hasPermission name="resource:material:update">
+                                        <el-button class="control-button" type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(props.row)">编辑</el-button>
+                                    </shiro:hasPermission>
                                 </template>
                             </el-table-column>
                             <el-table-column fixed="right" label="审核" width="100">
                                 <template slot-scope="scope">
-                                    <el-button class="control-button" type="success" size="small" icon="el-icon-check" @click="verify(scope.row,true)">通过</el-button><br/>
-                                    <el-button class="control-button" type="danger" size="small" icon="el-icon-close" @click="verify(scope.row,false)">不通过</el-button>
+                                    <shiro:hasPermission name="resource:verify:verify">
+                                        <el-button class="control-button" type="success" size="small" icon="el-icon-check" @click="verify(scope.row,true)">通过</el-button><br/>
+                                        <el-button class="control-button" type="danger" size="small" icon="el-icon-close" @click="verify(scope.row,false)">不通过</el-button>
+                                    </shiro:hasPermission>
                                 </template>
                             </el-table-column>
                         </el-table>

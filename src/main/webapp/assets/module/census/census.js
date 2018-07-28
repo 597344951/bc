@@ -21,6 +21,7 @@ var appInstince = new Vue({
             roseType: 'radius',
             offsetY: '100',
             radius:"50",
+
         },
         twoSettings: {
             dataType: {
@@ -29,9 +30,21 @@ var appInstince = new Vue({
             seriesMap: {
                 '占比': {
                     min: 0,
-                    max: 1
+                    max: 1,
+                    splitNumber:4,
+                    radius: '90%',
+                     detail:{
+                         offsetCenter: [0, '100%'],
+                         textStyle: {
+                            fontWeight: 'bolder',
+                            color: '#fff',
+                            fontSize:'15px',
+                          },
+                        show:true
+                     }
                 }
-            }
+            },
+            useDefaultOrder: false,
         },
         fourSettings: {
             yAxisType: ['percent'],

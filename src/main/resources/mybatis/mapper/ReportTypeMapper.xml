@@ -163,6 +163,7 @@
 
 		) t ON ma.type_id = t.type_id
 		<include refid="QUERY_WHERE" />
+		order by  order_num asc
 	</select>
 	<sql id="QUERY_WHERE">
 		<where>

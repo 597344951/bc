@@ -35,8 +35,9 @@ h1,h2,h3,h4,h5,h6{ text-align:left;font:normal 12px/180% "宋体";}
 .p1_content{ background:url(bg02.jpg) no-repeat; height:488px; overflow:hidden; padding-left:130px; width:850px;}
 .p1_content div{ width:380px; float:left; padding-right:20px;}
 .p1_content h2{ background:url(icon03.gif) no-repeat; height:31px; line-height:31px; font-size:14px; padding-left:15px; margin:20px auto 10px 0;}
-.p1_content h2,.p1_content h2 a,.p1_content h2 a:hover{ color:#FEEEB3;}
-.p1_content ul li{ font-size:14px;}
+.p1_content h2,.p1_content h2 a,.p1_content h2 a:hover{ color:#FEEEB3;    font-weight: bold;
+    font-family: "microsoft yahei";}
+.p1_content ul li{ font-size:14px;font-family: "microsoft yahei";}
 .p1_content .fl{ height:430px; overflow:hidden;}
 .p1_content span{ margin:10px auto; font-size:14px; display:block; text-align:center;}
 .p1_content span a{ padding:3px 6px; margin:0 10px;}

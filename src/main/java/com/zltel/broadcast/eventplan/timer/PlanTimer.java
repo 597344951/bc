@@ -51,7 +51,10 @@ public class PlanTimer {
             checkForVoting(plan);
         } else if (status == EventPlanStatus.STATUS_VOTING) {
             checkVotingEnd(plan);
-        } else if (status == EventPlanStatus.STATUS_VOTING_PASS || status == EventPlanStatus.STATUS_WAIT_FOR_START) {
+        } else if (status == EventPlanStatus.STATUS_VOTING_PASS) {
+            plan.setStatus(EventPlanStatus.STATUS_WAIT_FOR_START);
+            this.eventService.updateStatus(plan);
+        } else if (status == EventPlanStatus.STATUS_WAIT_FOR_START) {
             checkStart(plan);
         } else if (status == EventPlanStatus.STATUS_PROGRESS) {
             checkStop(plan);

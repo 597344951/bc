@@ -32,7 +32,6 @@ public class OrganizationNatureController {
 	 */
 	@RequestMapping(value="/queryOrgNaturesNotPage", method=RequestMethod.POST)
 	@LogPoint("查询组织性质")
-	@RequiresPermissions(value = {"org:nature:query"})
 	@ApiOperation(value = "查询组织性质")
 	public R queryOrgNaturesNotPage(OrganizationNature organizationNature) {
 		try {

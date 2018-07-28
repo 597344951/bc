@@ -33,7 +33,7 @@ public class PartyIntegralRecordController {
 	 * @return
 	 */
 	@RequestMapping(value="/queryPartyIntegralRecords", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"org:ic:insert"})
+	@RequiresPermissions(value = {"org:pirc:query"})
 	@ApiOperation(value = "查询积分记录")
 	public R queryPartyIntegralRecords(@RequestParam Map<String, Object> conditions, int pageNum, int pageSize) {
 		try {
@@ -49,7 +49,7 @@ public class PartyIntegralRecordController {
 	 * @return
 	 */
 	@RequestMapping(value="/insertPartyUserIntegralRecord", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"org:ic:insert"})
+	@RequiresPermissions(value = {"org:pirc:insert"})
 	@ApiOperation(value = "添加积分变更记录")
 	public R insertPartyUserIntegralRecord(PartyIntegralRecord pir) {
 		try {

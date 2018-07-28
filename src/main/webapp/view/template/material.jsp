@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-    <%
+<%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<%
     String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 					+ path + "/";
@@ -17,18 +18,26 @@
 <link href="${urls.getForLookupPath('/assets/module/template/template.css')}" rel="stylesheet">
 </head>
 
-<body >
+<body>
     <div class="height_full" id="app" v-cloak>
         <el-container>
             <el-header>
                 <div class="toolbar" style="display:flex;">
                     <div style="width: 550px;">
                         <div class="grid-content bg-purple">
-                            <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
-                            <el-button type="primary" icon="el-icon-edit" @click="updateTemplateType" size="small">修改分类</el-button>
-                            <el-button type="danger" icon="el-icon-delete" @click="deleteTemplateType" size="small">删除分类</el-button>
-                            <el-button type="success" icon="el-icon-plus" @click="addTemplate" size="small">上传素材</el-button>
-                            <el-button type="success" icon="el-icon-upload" @click="importResources" size="small">导入素材</el-button>
+                            <shiro:hasPermission name="resource:album:save">
+                                <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="resource:album:update">
+                                <el-button type="primary" icon="el-icon-edit" @click="updateTemplateType" size="small">修改分类</el-button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="resource:album:delete">
+                                <el-button type="danger" icon="el-icon-delete" @click="deleteTemplateType" size="small">删除分类</el-button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="	resource:material:save">
+                                <el-button type="success" icon="el-icon-plus" @click="addTemplate" size="small">上传素材</el-button>
+                                <el-button type="success" icon="el-icon-upload" @click="importResources" size="small">导入素材</el-button>
+                            </shiro:hasPermission>
                         </div>
                     </div>
                     <div style="text-align: left;margin-left: 30px;">
@@ -52,7 +61,7 @@
             <el-container>
                 <el-aside width="250px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu">
+                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable  @node-drop="treeDrapDrop" :allow-drag="allowDrag">
                         <span class="custom-tree-node" slot-scope="{ node, data }">
                             <span class="left-label-group">
                                 <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
@@ -66,9 +75,11 @@
                             <el-col :span="10">
                                 <!--查询-->
                                 <el-breadcrumb separator="/" style="margin-top: 10px;">
-                                    <el-breadcrumb-item><a @click="breadPathClick({parent:0})">所有类别</a></el-breadcrumb-item>
+                                    <el-breadcrumb-item>
+                                        <a @click="breadPathClick({parent:0})">所有类别</a>
+                                    </el-breadcrumb-item>
                                     <template v-for="item in breadcrumbData">
-                                        <el-breadcrumb-item >
+                                        <el-breadcrumb-item>
                                             <a @click="breadPathClick(item)">{{item.name}}</a>
                                         </el-breadcrumb-item>
                                     </template>
@@ -83,12 +94,12 @@
                             </el-col>
                         </el-row>
                         <div role="nextDirs" class="next-dirs">
-                                <el-button icon="el-icon-back" circle style="float:left;" @click="backToBefore()"></el-button>
-                                <template v-for="dir in nextDirs">
-                                    <div class="dirs" @click="dir_click(dir.data)">
-                                        <span class="title">{{dir.data.name}}</span>
-                                    </div>
-                                </template>
+                            <el-button icon="el-icon-back" circle style="float:left;" @click="backToBefore()"></el-button>
+                            <template v-for="dir in nextDirs">
+                                <div class="dirs" @click="dir_click(dir.data)">
+                                    <span class="title">{{dir.data.name}}</span>
+                                </div>
+                            </template>
                         </div>
                         <template v-for="tp in tps">
                             <el-card class="passage-conver image-card" :body-style="{ padding: '0px' }">
@@ -118,22 +129,26 @@
                                                 <p class="descript">{{tp.description}}</p>
                                                 <el-button-group>
                                                     <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
-                                                    <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
-                                                    <el-popover placement="top" width="160" v-model="tp.cfv">
-                                                        <p>是否删除这个素材?</p>
-                                                        <div style="text-align: right; margin: 0">
-                                                            <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
-                                                            <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
-                                                        </div>
-                                                        <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
-                                                    </el-popover>
+                                                    <shiro:hasPermission name="resource:material:update">
+                                                        <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
+                                                    </shiro:hasPermission>
+                                                    <shiro:hasPermission name="resource:material:delete">
+                                                        <el-popover placement="top" width="160" v-model="tp.cfv">
+                                                            <p>是否删除这个素材?</p>
+                                                            <div style="text-align: right; margin: 0">
+                                                                <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
+                                                                <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
+                                                            </div>
+                                                            <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
+                                                        </el-popover>
+                                                    </shiro:hasPermission>
                                                 </el-button-group>
                                             </div>
                                         </el-collapse-transition>
                                     </div>
                                 </div>
                             </el-card>
-                            </template>
+                        </template>
 
                     </div>
                     <!-- 模板编辑框 -->
@@ -223,13 +238,9 @@
                 </el-form-item>
                 <el-form-item label="上一级目录" v-if="tpt.update != true">
                     <el-select v-model="tpt.data.parentLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in tpt_parents"
-                          :key="item.parent"
-                          :label="item.parentLabel"
-                          :value="item.parentLabel">
+                        <el-option v-for="item in tpt_parents" :key="item.parent" :label="item.parentLabel" :value="item.parentLabel">
                         </el-option>
-                </el-select>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div class="dialog-footer" slot="footer">
@@ -295,4 +306,4 @@
 </html>
 <script charset="utf-8" type="module" src="${urls.getForLookupPath('/assets/module/template/material.js')}"></script>
 <%-- 美图开放API --%>
-<script src="http://open.web.meitu.com/sources/xiuxiu.js" type="text/javascript"></script>
+    <script src="http://open.web.meitu.com/sources/xiuxiu.js" type="text/javascript"></script>

@@ -27,7 +27,8 @@
             //console.log(`当前页: ${val}`);
             this.tpager.current = val;
         }
-    }
+    },
+    template: require("./pubed-plan-info.view.html")
  }
 
  export default PubedPlanInfo;

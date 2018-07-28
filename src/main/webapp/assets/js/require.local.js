@@ -65,3 +65,9 @@ function require_comp(resolve, reject, comp) {
         })
     }
 }
+/**
+ * fake method
+ */
+function require(){
+
+}

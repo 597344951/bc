@@ -7,12 +7,7 @@
     <result column="join_date_formal" jdbcType="TIMESTAMP" property="joinDateFormal" />
     <result column="join_date_reserve" jdbcType="TIMESTAMP" property="joinDateReserve" />
     <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
-    <result column="work_nature" jdbcType="INTEGER" property="workNature" />
-    <result column="join_work_date" jdbcType="TIMESTAMP" property="joinWorkDate" />
-    <result column="appointment_time_length" jdbcType="INTEGER" property="appointmentTimeLength" />
     <result column="join_party_branch_type_id" jdbcType="INTEGER" property="joinPartyBranchTypeId" />
-    <result column="first_line_situation" jdbcType="INTEGER" property="firstLineSituation" />
     <result column="party_staff" jdbcType="INTEGER" property="partyStaff" />
     <result column="party_representative" jdbcType="INTEGER" property="partyRepresentative" />
     <result column="volunteer" jdbcType="INTEGER" property="volunteer" />
@@ -23,8 +18,7 @@
     <result column="introduce" jdbcType="VARCHAR" property="introduce" />
   </resultMap>
   <sql id="Base_Column_List">
-    party_user_id, type, join_date_formal, join_date_reserve, status, work_unit, work_nature, 
-    join_work_date, appointment_time_length, join_party_branch_type_id, first_line_situation, 
+    party_user_id, type, join_date_formal, join_date_reserve, status, join_party_branch_type_id,
     party_staff, party_representative, volunteer, difficult_user, advanced_user, 
     develop_user, missing_user, introduce
   </sql>
@@ -40,17 +34,15 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.PartyUserInfo">
     insert into party_user_info (party_user_id, type, join_date_formal, 
-      join_date_reserve, status, work_unit, 
-      work_nature, join_work_date, appointment_time_length, 
-      join_party_branch_type_id, first_line_situation, 
+      join_date_reserve, status, 
+      join_party_branch_type_id, 
       party_staff, party_representative, volunteer, 
       difficult_user, advanced_user, 
       develop_user, missing_user, introduce
       )
     values (#{partyUserId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{joinDateFormal,jdbcType=TIMESTAMP}, 
-      #{joinDateReserve,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{workUnit,jdbcType=VARCHAR}, 
-      #{workNature,jdbcType=INTEGER}, #{joinWorkDate,jdbcType=TIMESTAMP}, #{appointmentTimeLength,jdbcType=INTEGER}, 
-      #{joinPartyBranchTypeId,jdbcType=INTEGER}, #{firstLineSituation,jdbcType=INTEGER}, 
+      #{joinDateReserve,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{joinPartyBranchTypeId,jdbcType=INTEGER}, 
       #{partyStaff,jdbcType=INTEGER}, #{partyRepresentative,jdbcType=INTEGER}, #{volunteer,jdbcType=INTEGER}, 
       #{difficultUser,jdbcType=INTEGER}, #{advancedUser,jdbcType=INTEGER},  
       #{developUser,jdbcType=INTEGER}, #{missingUser,jdbcType=INTEGER}, #{introduce,jdbcType=VARCHAR}
@@ -74,23 +66,8 @@
       <if test="status != null">
         status,
       </if>
-      <if test="workUnit != null">
-        work_unit,
-      </if>
-      <if test="workNature != null">
-        work_nature,
-      </if>
-      <if test="joinWorkDate != null">
-        join_work_date,
-      </if>
-      <if test="appointmentTimeLength != null">
-        appointment_time_length,
-      </if>
       <if test="joinPartyBranchTypeId != null">
         join_party_branch_type_id,
-      </if>
-      <if test="firstLineSituation != null">
-        first_line_situation,
       </if>
       <if test="partyStaff != null">
         party_staff,
@@ -133,23 +110,8 @@
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
-      <if test="workUnit != null">
-        #{workUnit,jdbcType=VARCHAR},
-      </if>
-      <if test="workNature != null">
-        #{workNature,jdbcType=INTEGER},
-      </if>
-      <if test="joinWorkDate != null">
-        #{joinWorkDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="appointmentTimeLength != null">
-        #{appointmentTimeLength,jdbcType=INTEGER},
-      </if>
       <if test="joinPartyBranchTypeId != null">
         #{joinPartyBranchTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="firstLineSituation != null">
-        #{firstLineSituation,jdbcType=INTEGER},
       </if>
       <if test="partyStaff != null">
         #{partyStaff,jdbcType=INTEGER},
@@ -192,23 +154,8 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
-      <if test="workUnit != null">
-        work_unit = #{workUnit,jdbcType=VARCHAR},
-      </if>
-      <if test="workNature != null">
-        work_nature = #{workNature,jdbcType=INTEGER},
-      </if>
-      <if test="joinWorkDate != null">
-        join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="appointmentTimeLength != null">
-        appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
-      </if>
       <if test="joinPartyBranchTypeId != null">
         join_party_branch_type_id = #{joinPartyBranchTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="firstLineSituation != null">
-        first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
       </if>
       <if test="partyStaff != null">
         party_staff = #{partyStaff,jdbcType=INTEGER},
@@ -243,12 +190,7 @@
       join_date_formal = #{joinDateFormal,jdbcType=TIMESTAMP},
       join_date_reserve = #{joinDateReserve,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
-      work_unit = #{workUnit,jdbcType=VARCHAR},
-      work_nature = #{workNature,jdbcType=INTEGER},
-      join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
-      appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
       join_party_branch_type_id = #{joinPartyBranchTypeId,jdbcType=INTEGER},
-      first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
       party_staff = #{partyStaff,jdbcType=INTEGER},
       party_representative = #{partyRepresentative,jdbcType=INTEGER},
       volunteer = #{volunteer,jdbcType=INTEGER},
@@ -299,11 +241,11 @@
 	  pui.join_date_formal joinDateFormal,
 	  pui.join_date_reserve joinDateReserve,
 	  pui.status status,
-	  pui.work_unit workUnit,
+	  bui.work_unit workUnit,
 	  wnt.name workNature,
 	  wnt.work_nature_id workNatureId,
-	  pui.join_work_date joinWorkDate,
-	  pui.appointment_time_length appointmentTimeLength,
+	  bui.join_work_date joinWorkDate,
+	  bui.appointment_time_length appointmentTimeLength,
 	  jpbt.join_type joinPartyBranchType,
 	  jpbt.jpbt_id joinPartyBranchTypeId,
 	  flt.first_line_type_name firstLineTypeName,
@@ -324,9 +266,10 @@
 	  left join nation_type nt on bui.nation = nt.nt_id 
 	  left join education_level el on bui.education = el.edu_level_eid 
 	  left join academic_degree_level adl on bui.academic_degree = adl.ad_d_aid 
-	  left join work_nature_type wnt on pui.work_nature = wnt.work_nature_id 
+	  left join work_nature_type wnt on bui.work_nature = wnt.work_nature_id 
 	  left join join_party_branch_type jpbt on pui.join_party_branch_type_id = jpbt.jpbt_id 
-	  left join first_line_type flt on pui.first_line_situation = flt.flt_id 
+	  left join first_line_type flt on bui.first_line_situation = flt.flt_id 
+	  left join organization_relation _or on bui.base_user_id = _or.org_rlt_user_id
 	where
 	  1 = 1
 	  <!-- bui.base_user_id = pui.party_user_id and
@@ -335,13 +278,16 @@
 		  bui.base_user_id = #{id}
 	  </if>
 	  <if test="orgInfoId != null and orgInfoId != ''"> and 
-		  oi.org_info_id = #{orgInfoId}
+		  _or.org_rlt_info_id = #{orgInfoId}
 	  </if>
 	  <if test="name != null and name != ''"> and 
 		  bui.name like CONCAT('%',#{name},'%')
 	  </if>
 	  <if test="isParty != null and isParty != ''"> and 
 		  bui.is_party = #{isParty}
+	  </if>
+	  <if test="idCard != null and idCard != ''"> and 
+		  bui.id_card = #{idCard}
 	  </if>
   </select>
   

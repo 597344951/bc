@@ -10,7 +10,7 @@
     <result column="change_describes" jdbcType="VARCHAR" property="changeDescribes" />
     <result column="change_integral_type" jdbcType="INTEGER" property="changeIntegralType" />
     <result column="change_time" jdbcType="TIMESTAMP" property="changeTime" />
-    <result column="change_score" jdbcType="INTEGER" property="changeScore" />
+    <result column="change_score" jdbcType="DECIMAL" property="changeScore" />
     <result column="weight_coefficient" jdbcType="DECIMAL" property="weightCoefficient" />
     <result column="weight_type" jdbcType="INTEGER" property="weightType" />
     <result column="is_merge" jdbcType="INTEGER" property="isMerge" />
@@ -36,7 +36,7 @@
       weight_type, is_merge)
     values (#{pirId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{partyId,jdbcType=INTEGER}, 
       #{activityId,jdbcType=INTEGER}, #{changeTypeId,jdbcType=INTEGER}, #{changeDescribes,jdbcType=VARCHAR}, 
-      #{changeIntegralType,jdbcType=INTEGER}, #{changeTime,jdbcType=TIMESTAMP}, #{changeScore,jdbcType=INTEGER}, 
+      #{changeIntegralType,jdbcType=INTEGER}, #{changeTime,jdbcType=TIMESTAMP}, #{changeScore,jdbcType=DECIMAL}, 
       #{weightCoefficient,jdbcType=DECIMAL}, 
       #{weightType,jdbcType=INTEGER}, #{isMerge,jdbcType=INTEGER})
   </insert>
@@ -106,7 +106,7 @@
         #{changeTime,jdbcType=TIMESTAMP},
       </if>
       <if test="changeScore != null">
-        #{changeScore,jdbcType=INTEGER},
+        #{changeScore,jdbcType=DECIMAL},
       </if>
       <if test="weightCoefficient != null">
         #{weightCoefficient,jdbcType=DECIMAL},
@@ -144,7 +144,7 @@
         change_time = #{changeTime,jdbcType=TIMESTAMP},
       </if>
       <if test="changeScore != null">
-        change_score = #{changeScore,jdbcType=INTEGER},
+        change_score = #{changeScore,jdbcType=DECIMAL},
       </if>
       <if test="weightCoefficient != null">
         weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
@@ -167,7 +167,7 @@
       change_describes = #{changeDescribes,jdbcType=VARCHAR},
       change_integral_type = #{changeIntegralType,jdbcType=INTEGER},
       change_time = #{changeTime,jdbcType=TIMESTAMP},
-      change_score = #{changeScore,jdbcType=INTEGER},
+      change_score = #{changeScore,jdbcType=DECIMAL},
       weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
       weight_type = #{weightType,jdbcType=INTEGER},
       is_merge = #{isMerge,jdbcType=INTEGER}

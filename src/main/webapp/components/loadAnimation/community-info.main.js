@@ -1,7 +1,7 @@
 /**
  * 社区统计信息
  */
-import chartConfig from '/assets/js/vcharts_config.js';
+import chartConfig from '../../assets/js/vcharts_config.js';
 let CommunityInfo = {
     info: {
         name: 'community-info', //注册组件名
@@ -128,7 +128,8 @@ let CommunityInfo = {
             map.openInfoWindow(infoWindow, point); //开启信息窗口
         }
 
-    }
+    },
+    template: require("./community-info.view.html")
 
 }
 export default CommunityInfo;

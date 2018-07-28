@@ -6,6 +6,8 @@
 		<id column="event_plan_id" jdbcType="INTEGER" property="eventPlanId" />
 		<id column="user_id" jdbcType="INTEGER" property="userId" />
 		<result column="yes_or_no" jdbcType="INTEGER" property="yesOrNo" />
+		<association property="userInfo" column="user_id"
+			select="com.zltel.broadcast.um.dao.SysUserMapper.selectByPrimaryKey"></association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		event_plan_id, user_id, yes_or_no
@@ -106,14 +108,18 @@
 	</sql>
 	<select id="queryVotingInfo" resultMap="BaseResultMap">
 		SELECT
-			pi.event_plan_id,
-			u.user_id,
-			vi.yes_or_no
+		pi.event_plan_id,
+		u.user_id,
+		vi.yes_or_no
 		FROM
-			sys_user u
-		LEFT JOIN event_plan_voting_item vi ON u.user_id = vi.user_id and vi.event_plan_id= #{eventPlanId,jdbcType=INTEGER}
-		RIGHT JOIN event_plan_info PI ON pi.org_id = u.org_id and PI.event_plan_id = #{eventPlanId,jdbcType=INTEGER}
-		where PI.event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+		sys_user u
+		LEFT JOIN event_plan_voting_item vi ON u.user_id = vi.user_id and vi.event_plan_id=
+		#{eventPlanId,jdbcType=INTEGER}
+		RIGHT JOIN event_plan_info PI ON pi.org_id = u.org_id and
+		PI.event_plan_id = #{eventPlanId,jdbcType=INTEGER}
+		where PI.event_plan_id =
+		#{eventPlanId,jdbcType=INTEGER}
+		order by yes_or_no desc
 	</select>
 
 

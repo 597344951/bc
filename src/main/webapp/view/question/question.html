@@ -13,7 +13,6 @@
 
         .pagination {
             float: right !important;
-            padding-top: 20px;
         }
 
         .el-menu-item.is-active {
@@ -80,11 +79,6 @@
                             <i class="el-icon-upload el-icon--right"></i>
                         </el-button>
                     </el-menu-item>
-                    <el-menu-item index="pagination" class="pagination">
-                        <el-pagination background layout="prev, pager, next" :total="questions.total" :page-size="questions.pageSize" :current-page="questions.pageNum"
-                            @current-change="handleCurrentChange">
-                        </el-pagination>
-                    </el-menu-item>
                 </el-menu>
             </el-header>
             <el-container>
@@ -106,6 +100,9 @@
                     </el-tree>
                 </el-aside>
                 <el-main>
+                    <el-pagination class="pagination" background layout="prev, pager, next" :total="questions.total" :page-size="questions.pageSize"
+                        :current-page="questions.pageNum" @current-change="handleCurrentChange">
+                    </el-pagination>
                     <el-table :data="questions.list" stripe style="width: 100%">
                         <el-table-column type="expand">
                             <template slot-scope="props">
@@ -220,7 +217,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="题库文件" prop="importFile">
-                    <el-upload class="upload-demo" :limit="1" drag action="/question/file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :on-success="handleUploadSuccess">
+                    <el-upload class="upload-demo" :limit="1" drag action="/question/file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        :on-success="handleUploadSuccess">
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或
                             <em>点击上传</em>

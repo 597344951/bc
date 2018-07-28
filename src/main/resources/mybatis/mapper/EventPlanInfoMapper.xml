@@ -12,6 +12,7 @@
 		<result column="etime" jdbcType="TIMESTAMP" property="etime" />
 		<result column="pub_task_id" jdbcType="VARCHAR" property="pubTaskId" />
 		<result column="save_time" jdbcType="TIMESTAMP" property="saveTime" />
+		<result column="participate_type" jdbcType="VARCHAR" property="participateType" />
 
 		<association property="planStatus" column="status"
 			select="com.zltel.broadcast.eventplan.dao.EventPlanStatusMapper.selectByPrimaryKey">
@@ -28,7 +29,7 @@
 	</resultMap>
 	<sql id="Base_Column_List">
 		event_plan_id, event_id, org_id, status, title, user_id,
-		stime, etime, pub_task_id
+		stime, etime, pub_task_id,participate_type
 	</sql>
 	<sql id="Blob_Column_List">
 		content
@@ -54,7 +55,7 @@
 		org_id,
 		status, title, user_id,
 		stime, etime, pub_task_id,
-		content)
+		content,participate_type)
 		values
 		(#{eventPlanId,jdbcType=INTEGER}, #{eventId,jdbcType=INTEGER},
 		#{orgId,jdbcType=INTEGER},
@@ -62,7 +63,8 @@
 		#{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
 		#{stime,jdbcType=TIMESTAMP}, #{etime,jdbcType=TIMESTAMP},
 		#{pubTaskId,jdbcType=VARCHAR},
-		#{content,jdbcType=LONGVARCHAR})
+		#{content,jdbcType=LONGVARCHAR},
+		#{participateType,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective"
 		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
@@ -98,6 +100,9 @@
 			<if test="content != null">
 				content,
 			</if>
+			<if test="participateType != null">
+			    participate_type,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="eventPlanId != null">
@@ -130,6 +135,9 @@
 			<if test="content != null">
 				#{content,jdbcType=LONGVARCHAR},
 			</if>
+			  <if test="participateType != null">
+			     #{participateType,jdbcType=VARCHAR},
+			  </if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective"
@@ -163,6 +171,9 @@
 			<if test="content != null">
 				content = #{content,jdbcType=LONGVARCHAR},
 			</if>
+			<if test="participateType != null">
+			     participate_type = #{participateType,jdbcType=VARCHAR},
+			 </if>
 		</set>
 		where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
 	</update>
@@ -182,29 +193,25 @@
 		etime =
 		#{etime,jdbcType=TIMESTAMP},
 		pub_task_id = #{pubTaskId,jdbcType=VARCHAR},
-		content =
-		#{content,jdbcType=LONGVARCHAR}
+		content = #{content,jdbcType=LONGVARCHAR},
+		participate_type = #{participateType,jdbcType=VARCHAR}
 		where event_plan_id =
 		#{eventPlanId,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey"
 		parameterType="com.zltel.broadcast.eventplan.bean.EventPlanInfo">
 		update event_plan_info
-		set event_id =
-		#{eventId,jdbcType=INTEGER},
-		org_id =
-		#{orgId,jdbcType=INTEGER},
-		status
-		= #{status,jdbcType=INTEGER},
+		set 
+		event_id = #{eventId,jdbcType=INTEGER},
+		org_id = #{orgId,jdbcType=INTEGER},
+		status = #{status,jdbcType=INTEGER},
 		title = #{title,jdbcType=VARCHAR},
 		user_id = #{userId,jdbcType=INTEGER},
-		stime =
-		#{stime,jdbcType=TIMESTAMP},
-		etime =
-		#{etime,jdbcType=TIMESTAMP},
-		pub_task_id = #{pubTaskId,jdbcType=VARCHAR}
-		where event_plan_id =
-		#{eventPlanId,jdbcType=INTEGER}
+		stime = #{stime,jdbcType=TIMESTAMP},
+		etime = #{etime,jdbcType=TIMESTAMP},
+		pub_task_id = #{pubTaskId,jdbcType=VARCHAR},
+		participate_type = #{participateType,jdbcType=VARCHAR}
+		where event_plan_id = #{eventPlanId,jdbcType=INTEGER}
 	</update>
 
 	<!-- 查询 EventPlanInfo -->
@@ -235,17 +242,11 @@
 		<if test="eventId != null">
 			AND event_id=#{eventId}
 		</if>
-		<if test="status_label != null">
-			AND status_label=#{status_label}
-		</if>
 		<if test="eventPlanId != null">
 			AND event_plan_id=#{eventPlanId}
 		</if>
 		<if test="etime != null">
 			AND etime=#{etime}
-		</if>
-		<if test="costplans != null">
-			AND costplans=#{costplans}
 		</if>
 		<if test="stime != null">
 			AND stime=#{stime}
@@ -267,6 +268,10 @@
 		</if>
 		<if test="status != null">
 			AND status=#{status}
+		</if>
+		<if test="statuss != null">
+			AND status in 
+			<foreach collection="statuss" separator="," open="(" close=")" item="item">#{item}</foreach>
 		</if>
 	</sql>
 

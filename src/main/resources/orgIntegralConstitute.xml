@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 这是组织创建时给组织分配的默认的积分结构，必须 -->
+<orgIntegralConstitutes>
+	<integralConstitute>
+		<level>1</level>
+		<insertedIcId>-1</insertedIcId>	<!-- 必须 -->
+		<type>基础积分</type>
+		<describes>这是党组织的基本积分</describes>
+		<childrens>
+			<integralConstitute>
+				<level>2</level>
+				<type>组织生活方面</type>
+				<describes>组织生活方面</describes>
+				<childrens>
+					<integralConstitute>
+						<level>3</level>
+						<type>按时足额缴纳党费</type>
+						<describes>党费必须按时缴纳，迟缴、未缴清、补缴、未缴都会被扣分并通知</describes>
+					</integralConstitute>
+					<integralConstitute>
+						<level>3</level>
+						<type>按时参加党内活动</type>
+						<describes>必须按时参加组织举办的活动、生活会、三会一课</describes>
+					</integralConstitute>
+				</childrens>
+			</integralConstitute>
+		</childrens>
+	</integralConstitute>
+</orgIntegralConstitutes>

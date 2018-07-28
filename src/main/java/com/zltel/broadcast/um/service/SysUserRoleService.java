@@ -1,5 +1,7 @@
 package com.zltel.broadcast.um.service;
 
+import java.util.Map;
+
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.um.bean.SysUserRole;
 
@@ -21,14 +23,14 @@ public interface SysUserRoleService {
      * @param sysUserRole 条件
      * @return	查询得到的用户角色
      */
-    public R querySysUserRoles(SysUserRole sysUserRole, int pageNum, int pageSize) throws Exception;
+    public R querySysUserRoles(Map<String, Object> conditions, int pageNum, int pageSize) throws Exception;
     
     /**
      * 查询用户角色
      * @param sysUserRole 条件
      * @return	查询得到的用户角色
      */
-    public R querySysUserRolesNotPage(SysUserRole sysUserRole) throws Exception;
+    public R querySysUserRolesNotPage(Map<String, Object> conditions) throws Exception;
     
     /**
      * 删除用户角色
@@ -51,4 +53,11 @@ public interface SysUserRoleService {
      * @throws Exception
      */
     public R insertSysUserRole(SysUserRole sysUserRole) throws Exception;
+    
+    /**
+     * 变更内置角色
+     * @param conditions
+     * @return
+     */
+    public R updateInnerManageRols(Map<String, Object> conditions);
 }

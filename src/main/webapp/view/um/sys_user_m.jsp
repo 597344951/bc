@@ -13,45 +13,61 @@
 <title>系统用户管理</title>
 <%@include file="/include/head_notbootstrap.jsp"%>
 <style type="text/css">
-	body {
-		margin: 20px;
+	.el-row {
+		margin-bottom: 10px;
 	}
-	#pagesdididi,#baseUser_manager_pagesdididi,#role_manager_pagesdididi {
+	#pagesdididi {
 		text-align: center;
-	}
-	#querySysUserStyle>span {
-		margin-right: 10px;
-	}
-	#baseUser_manager_queryBaseUserStyle>span {
-		margin-right: 20px;
 	}
 </style>
 </head>
 <body>
 	<div id="app">
 		<el-container>
-		  <el-header>
-		  	<el-row>
-		  		<shiro:hasPermission name="sys:user:insert">  
-			 	    <el-button size="small" type="primary" icon="el-icon-circle-plus-outline" @click="insertSysUserDialog = true">添加用户</el-button>
-			  	</shiro:hasPermission>
-			</el-row>
-		  </el-header>
-		  <el-header>
-		  	<el-row	id="querySysUserStyle">
-			  	<span>
-				  <el-select size="small" clearable v-model="sysUserStatu" @change="querySysUsersByStatus" placeholder="请选择系统用户状态">
-				   	 <el-option v-for="item in usersStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
-				  </el-select>
-				</span>
-				<span>
-				    <el-date-picker size="small" v-model="sysUsercreateTime" @change="querySysUsersBycreateTime" type="daterange" align="right" unlink-panels range-separator="至"
-				      start-placeholder="开始日期" end-placeholder="结束日期">
-				    </el-date-picker>
-				</span>
-			</el-row>
-		  </el-header>
-		  <el-main>
+		  	<el-header>
+		  		<el-row class="toolbar" :gutter="20">
+		  			<shiro:hasPermission name="sys:user:insert">  
+			 	    	<el-button class="margin-left-10" size="small" type="primary" icon="el-icon-circle-plus-outline" @click="insertSysUserDialog = true">添加用户</el-button>
+			  		</shiro:hasPermission>
+			  		<shiro:hasPermission name="sys:user:query">  
+			  			<!-- 个人用户没有查询的必要 -->
+				  		<el-popover 
+				  			v-if="signInAccountType != 'party_role'"
+				  			class="margin-left-10"
+							placement="bottom" 
+						  	width="380" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索用户
+						  	</el-button>
+						  	<div>
+						  		<el-row>
+									<el-select 
+										size="small" 
+										clearable 
+										v-model="sysUserStatu" 
+										@change="querySysUsersByStatus" 
+										placeholder="请选择系统用户状态">
+									   	<el-option v-for="item in usersStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
+									</el-select>
+								</el-row>
+								<el-row>
+									<el-date-picker 
+										size="small" 
+										v-model="sysUsercreateTime" 
+										@change="querySysUsersBycreateTime" 
+										type="daterange" align="right" 
+										unlink-panels range-separator="至"
+							      		start-placeholder="开始日期" end-placeholder="结束日期">
+							    	</el-date-picker>
+						    	</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+				</el-row>
+			</el-header>
+			<el-main>
 		  	<template>
 		  		<el-table size="mini" :data="pager.list" style="width: 100%" max-height="550">
 				    <el-table-column fixed prop="userId" label="ID" width=50>
@@ -62,12 +78,17 @@
 				    </el-table-column>
 				    <el-table-column prop="mobile" label="手机号" width=100>
 				    </el-table-column>
+				    <el-table-column label="账户类型" width=80>
+					    <template slot-scope="scope">
+					        <span>{{ scope.row.userType != 1 ? "一般账户" : "党员账户" }}</span>
+					    </template>
+				    </el-table-column>
 				    <el-table-column label="状态" width=80>
 					    <template slot-scope="scope">
 					        <span>{{ scope.row.status == 0 ? "禁用" : "可用" }}</span>
 					    </template>
 				    </el-table-column>
-				    <el-table-column prop="createTime" label="创建时间" width="300">
+				    <el-table-column prop="createTime" label="创建时间" width="270">
 				    </el-table-column>
 				    <el-table-column label="操作">
 					    <template slot-scope="scope">
@@ -77,10 +98,12 @@
 					      	<shiro:hasPermission name="sys:user:update">  
 						     	<el-button @click="openUpdateSysUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
 					      	</shiro:hasPermission>
-					      	<shiro:hasPermission name="sys:userRole:update">  
-						      	<el-button @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
+					      	<shiro:hasPermission name="sys:user:update">  
+						      	<el-button v-if="signInAccountType != 'party_role'" @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
 					      	</shiro:hasPermission>
-					      	<el-button type="text" size="small" slot="reference" @click="openSetInnerManageRolesDialog(scope.row)">赋予管理角色</el-button>
+					      	<shiro:hasPermission name="sys:user:update">  
+						      	<el-button v-if="signInAccountType == 'plant_admin' && scope.row.userType != 1" type="text" size="small" slot="reference" @click="openSetInnerManageRolesDialog(scope.row)">赋予管理角色</el-button>
+						    </shiro:hasPermission>
 					    </template>
 				    </el-table-column>
 				 </el-table>
@@ -115,6 +138,14 @@
 				</el-form-item>
 				<el-form-item label="联系邮箱" prop="email">
 				    <el-input v-model="insertSysUserForm.email" placeholder="示例：zltel@zltel.com"></el-input>
+				</el-form-item>
+				<el-form-item label="隶属组织" prop="orgInfoId">
+				    <el-tree :expand-on-click-node="false" 
+				    	:highlight-current="true" 
+				    	:data="orgInfoTreeOfJoinOrg" 
+				    	:props="orgInfoTreeOfJoinOrgProps" 
+				    	@node-click="setSysUserOrgId">
+				  	</el-tree>
 				</el-form-item>
 				<el-form-item>
 				    <el-button type="primary" @click="insertSysUser('insertSysUserForm')">添加用户</el-button>
@@ -200,6 +231,13 @@
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			orgInfoTreeOfJoinOrg: [],	/*添加党员组织树*/
+			orgInfoTreeOfJoinOrgProps: {
+				children: 'children',
+	            label: function(_data, node){
+	            	return _data.data.orgInfoName;
+	            }
+			},
 			sysUserStatu: "",	/* 用户状态下拉框选定时绑定值初始化 */
 		    sysUsercreateTime: "",
 	        insertSysUserDialog: false,		/* 新增用户弹窗默认不显示值初始化 */
@@ -225,12 +263,14 @@
 		    	pass: "",
 		    	checkPass: "",
 		    	mobile: "",
-		    	email: ""
+		    	email: "",
+		    	orgId: null
 		    },
 		    insertSysUserRules: {	/* 校验规则 */
 		    	name: [
 		            { required: true, message: '请输入用户名!', trigger: 'blur' },
-		            { pattern: "^[A-Za-z0-9]+$", message: '仅支持字母和数字的组合!'},
+		            { min: 3, message: '账户长度需大于3位!'},
+		            { pattern: "^[A-Za-z][A-Za-z0-9]+$", message: '字母开头，仅支持字母和数字的组合!'},
 		            { 	/* 重复用户名验证 */
 		        		validator: function(rule, value, callback){
 		        			setTimeout(function() {
@@ -281,6 +321,18 @@
 		        email: [
 		        	{ required: true, message: '请输入邮箱!', trigger: 'blur' },
 		            { type: "email", message: '请输入正确的邮箱!'},
+		        ],
+		        orgInfoId: [
+		        	{ 
+		        		validator: function(rule, value, callback){
+		        			if (appInstince.insertSysUserForm.orgId != null) {
+	        		            callback();
+	        		        } else {
+	        		            callback(new Error('请选择隶属组织!'));
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
 		        ]
 		    },
 		    updateSysUserForm: {	/* 初始化添加系统用户表单字段 */
@@ -335,13 +387,31 @@
 		    	userId: null,
 		    	roleId: null,
 		    	isShow: 0
-		    }
+		    },
+		    signInAccountType: null
 		},
 		created:function () {
 			this.queryUsers(1, 12); //这里定义这个方法，vue实例之后运行到这里就调用这个函数
 			this.getInnerManageRoles();
+			this.initOrgInfoTree();
+			this.getSignInAccountType();
 		},
 		methods: {
+			getSignInAccountType() {	/*得到该登录用户的类型*/
+				var obj = this;
+
+				var url = "/siat/getSignInAccountType";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.signInAccountType = data.data;
+						}
+					}
+
+				})
+			},
 			updateInnerManageRols() {
 				var obj = this;
 				var url = "/sys/userRole/updateInnerManageRols";
@@ -431,7 +501,8 @@
        						username: appInstince.insertSysUserForm.name,
        						password: appInstince.insertSysUserForm.pass,
        						email: appInstince.insertSysUserForm.email,
-       						mobile: appInstince.insertSysUserForm.mobile
+       						mobile: appInstince.insertSysUserForm.mobile,
+       						orgId: appInstince.insertSysUserForm.orgId
         				}
         				$.post(url, t, function(data, status){
         					if (data.code == 200) {
@@ -608,6 +679,30 @@
 						appInstince.queryUsers(appInstince.pager.pageNum, appInstince.pager.pageSize);
 					}
 				})
+			},
+			initOrgInfoTree() {	/*打开加入组织的窗口*/
+				var obj = this;
+
+				var url = "/org/ifmt/queryOrgInfosToTree";
+				var t = {
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.orgInfoTreeOfJoinOrg =  datas.data;
+						obj.orgInfoTreeOfJoinOrg.push({
+								data: {		/* 给根目录设置一个顶级节点，用于查询全部数据 */
+									orgInfoId: 0,
+									orgInfoName: "平台组织"
+								},
+								children: null
+						});
+					}
+					
+				})
+			},
+			setSysUserOrgId(data) {
+				var obj = this;
+				obj.insertSysUserForm.orgId = data.data.orgInfoId;
 			}
 		}
 	});

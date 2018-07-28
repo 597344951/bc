@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.question.dao.QuestionMapper">
+    <resultMap id="question" type="com.zltel.broadcast.question.bean.Question">
+        <id column="question_id" jdbcType="INTEGER" property="questionId"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="add_date" jdbcType="TIMESTAMP" property="addDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <association property="type" javaType="com.zltel.broadcast.question.bean.Type">
+            <id column="type_id" jdbcType="INTEGER" property="typeId"/>
+            <result column="type_name" jdbcType="VARCHAR" property="name"/>
+            <result column="type_description" jdbcType="VARCHAR" property="description"/>
+            <result column="type_add_date" jdbcType="TIMESTAMP" property="addDate"/>
+            <result column="type_update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        </association>
+        <association property="subject" javaType="com.zltel.broadcast.question.bean.Subject">
+            <id column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+            <result column="subject_name" jdbcType="VARCHAR" property="name"/>
+            <result column="subject_description" jdbcType="VARCHAR" property="description"/>
+            <result column="subject_add_date" jdbcType="TIMESTAMP" property="addDate"/>
+            <result column="subject_update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        </association>
+        <association property="category" javaType="com.zltel.broadcast.question.bean.Category">
+            <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
+            <result column="category_name" jdbcType="VARCHAR" property="name"/>
+            <result column="category_description" jdbcType="VARCHAR" property="description"/>
+            <result column="category_add_date" jdbcType="TIMESTAMP" property="addDate"/>
+            <result column="category_update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        </association>
+        <collection property="answers" ofType="com.zltel.broadcast.question.bean.Answer">
+            <id property="question_id" jdbcType="INTEGER" column="questionId"/>
+            <result column="answer_id" jdbcType="INTEGER" property="answerId"/>
+            <result column="answer_content" jdbcType="VARCHAR" property="content"/>
+            <result column="answer_type" jdbcType="INTEGER" property="type"/>
+            <result column="answer_add_date" jdbcType="TIMESTAMP" property="addDate"/>
+            <result column="answer_update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="questionId">
+        insert into question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">
+                question_id,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="type != null and type.typeId != null">
+                type_id,
+            </if>
+            <if test="category != null and category.categoryId != null">
+                category_id,
+            </if>
+            <if test="subject != null and subject.subjectId != null">
+                subject_id,
+            </if>
+            <if test="addDate != null">
+                add_date,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">
+                #{questionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null and type.typeId != null">
+                #{type.typeId,jdbcType=INTEGER},
+            </if>
+            <if test="category != null and category.categoryId != null">
+                #{category.categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="subject != null and subject.subjectId != null">
+                #{subject.subjectId,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null">
+                #{addDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from question
+        where question_id = #{questionId,jdbcType=INTEGER}
+    </delete>
+    <sql id="question_cols">
+        q.question_id, q.org_id, q.content, q.type_id, q.category_id, q.subject_id, q.add_date, q.update_date,
+        t.name type_name, t.description type_description, t.add_date type_add_date, t.update_date type_update_date,
+        s.name subject_name, s.description subject_description, s.add_date subject_add_date, s.update_date
+        subject_add_date,
+        c.name category_name, c.description category_description, c.add_date category_add_date, c.update_date
+        category_add_date,
+        a.answer_id, a.content answer_content, a.`type` answer_type, a.add_date answer_add_date, a.update_date
+        answer_update_date
+    </sql>
+    <select id="get" resultMap="question" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="question_cols"/>
+        where question_id = #{questionId}
+    </select>
+    <select id="query" resultMap="question">
+        SELECT
+        <include refid="question_cols"/>
+        FROM (
+        SELECT * FROM question
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="orgId != null">
+                AND org_id = #{orgId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND content LIKE concat(concat('%',#{keyword}),'%')
+            </if>
+            <if test="type != null and type.size() > 0">
+                AND type_id in
+                <foreach collection="type" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+            <if test="subject != null and subject.size() > 0">
+                AND subject_id in
+                <foreach collection="subject" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+            <if test="category != null and category.size() > 0">
+                AND category_id in
+                <foreach collection="category" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+        </trim>
+        ORDER BY update_date DESC
+        LIMIT #{rowStart}, #{pageSize} ) q
+        INNER JOIN question_type t ON t.type_id = q.type_id
+        INNER JOIN question_subject s ON s.subject_id = q.subject_id
+        INNER JOIN question_category c ON c.category_id = q.category_id
+        INNER JOIN question_answer a ON a.question_id = q.question_id
+        ORDER BY q.update_date DESC
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(1) as count from question q
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="orgId != null">
+                AND org_id = #{orgId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND q.content LIKE concat(concat('%',#{keyword}),'%')
+            </if>
+            <if test="type != null and type.size() > 0">
+                AND q.type_id in
+                <foreach collection="type" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+            <if test="subject != null and subject.size() > 0">
+                AND q.subject_id in
+                <foreach collection="subject" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+            <if test="category != null and category.size() > 0">
+                AND q.category_id in
+                <foreach collection="category" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+        </trim>
+    </select>
+    <select id="rand" resultMap="question">
+        SELECT
+        <include refid="question_cols"/>
+        FROM (
+        SELECT * FROM question
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="orgId != null">
+                AND org_id = #{orgId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND content LIKE concat(concat('%',#{keyword}),'%')
+            </if>
+            <if test="type != null and type.size() > 0">
+                AND type_id in
+                <foreach collection="type" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+            <if test="subject != null and subject.size() > 0">
+                AND subject_id in
+                <foreach collection="subject" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+            <if test="category != null and category.size() > 0">
+                AND category_id in
+                <foreach collection="category" open="(" close=")" separator="," item="i">
+                    #{i}
+                </foreach>
+            </if>
+        </trim>
+        ORDER BY RAND()
+        LIMIT #{size} ) q
+        INNER JOIN question_type t ON t.type_id = q.type_id
+        INNER JOIN question_subject s ON s.subject_id = q.subject_id
+        INNER JOIN question_category c ON c.category_id = q.category_id
+        INNER JOIN question_answer a ON a.question_id = q.question_id
+    </select>
+</mapper>

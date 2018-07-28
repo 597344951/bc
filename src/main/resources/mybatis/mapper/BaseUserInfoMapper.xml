@@ -34,6 +34,11 @@
     <result column="children_status" jdbcType="VARCHAR" property="childrenStatus" />
     <result column="is_party" jdbcType="INTEGER" property="isParty" />
     <result column="positive_user" jdbcType="INTEGER" property="positiveUser" />
+    <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+    <result column="work_nature" jdbcType="INTEGER" property="workNature" />
+    <result column="join_work_date" jdbcType="TIMESTAMP" property="joinWorkDate" />
+    <result column="appointment_time_length" jdbcType="INTEGER" property="appointmentTimeLength" />
+    <result column="first_line_situation" jdbcType="INTEGER" property="firstLineSituation" />
   </resultMap>
   <sql id="Base_Column_List">
     base_user_id, name, sex, nation, native_place, home_address_province, home_address_city, 
@@ -41,7 +46,8 @@
     present_address_area, present_address_detail, id_card, birth_date, mobile_phone, 
     email, qq, wechat, id_photo, education, academic_degree, major, enrolment_time, graduation_time, 
     graduation_school, speciality_literature, speciality_major, marriage_status, children_status, is_party,
-    positive_user
+    positive_user, work_unit, work_nature, 
+    join_work_date, appointment_time_length, first_line_situation
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -64,7 +70,9 @@
       wechat, id_photo, education, 
       academic_degree, major, enrolment_time, 
       graduation_time, graduation_school, speciality_literature, 
-      speciality_major, marriage_status, children_status, is_party, positive_user
+      speciality_major, marriage_status, children_status, is_party, positive_user, 
+      work_unit, 
+      work_nature, join_work_date, appointment_time_length, first_line_situation
       )
     values (#{baseUserId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{nation,jdbcType=INTEGER}, #{nativePlace,jdbcType=VARCHAR}, #{homeAddressProvince,jdbcType=VARCHAR}, 
@@ -77,7 +85,10 @@
       #{academicDegree,jdbcType=INTEGER}, #{major,jdbcType=VARCHAR}, #{enrolmentTime,jdbcType=TIMESTAMP}, 
       #{graduationTime,jdbcType=TIMESTAMP}, #{graduationSchool,jdbcType=VARCHAR}, #{specialityLiterature,jdbcType=VARCHAR}, 
       #{specialityMajor,jdbcType=VARCHAR}, #{marriageStatus,jdbcType=VARCHAR}, #{childrenStatus,jdbcType=VARCHAR}, 
-      #{isParty,jdbcType=INTEGER}, #{positiveUser,jdbcType=INTEGER}
+      #{isParty,jdbcType=INTEGER}, #{positiveUser,jdbcType=INTEGER},
+      #{workUnit,jdbcType=VARCHAR}, 
+      #{workNature,jdbcType=INTEGER}, #{joinWorkDate,jdbcType=TIMESTAMP}, #{appointmentTimeLength,jdbcType=INTEGER}, 
+      #{firstLineSituation,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.BaseUserInfo">
@@ -179,6 +190,21 @@
       <if test="positiveUser != null">
         positive_user,
       </if>
+      <if test="workUnit != null">
+        work_unit,
+      </if>
+      <if test="workNature != null">
+        work_nature,
+      </if>
+      <if test="joinWorkDate != null">
+        join_work_date,
+      </if>
+      <if test="appointmentTimeLength != null">
+        appointment_time_length,
+      </if>
+      <if test="firstLineSituation != null">
+        first_line_situation,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="baseUserId != null">
@@ -276,6 +302,21 @@
       </if>
       <if test="positiveUser != null">
         #{positiveUser,jdbcType=INTEGER},
+      </if>
+      <if test="workUnit != null">
+        #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="workNature != null">
+        #{workNature,jdbcType=INTEGER},
+      </if>
+      <if test="joinWorkDate != null">
+        #{joinWorkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appointmentTimeLength != null">
+        #{appointmentTimeLength,jdbcType=INTEGER},
+      </if>
+      <if test="firstLineSituation != null">
+        #{firstLineSituation,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -375,6 +416,21 @@
       <if test="positiveUser != null">
         positive_user = #{positiveUser,jdbcType=INTEGER},
       </if>
+      <if test="workUnit != null">
+        work_unit = #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="workNature != null">
+        work_nature = #{workNature,jdbcType=INTEGER},
+      </if>
+      <if test="joinWorkDate != null">
+        join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appointmentTimeLength != null">
+        appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
+      </if>
+       <if test="firstLineSituation != null">
+        first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
+      </if>
     </set>
     where base_user_id = #{baseUserId,jdbcType=INTEGER}
   </update>
@@ -410,7 +466,12 @@
       marriage_status = #{marriageStatus,jdbcType=VARCHAR},
       children_status = #{childrenStatus,jdbcType=VARCHAR},
       is_party = #{isParty,jdbcType=INTEGER},
-      positive_user = #{positiveUser,jdbcType=INTEGER}
+      positive_user = #{positiveUser,jdbcType=INTEGER},
+      work_unit = #{workUnit,jdbcType=VARCHAR},
+      work_nature = #{workNature,jdbcType=INTEGER},
+      join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
+      appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
+      first_line_situation = #{firstLineSituation,jdbcType=INTEGER}
     where base_user_id = #{baseUserId,jdbcType=INTEGER}
   </update>
   

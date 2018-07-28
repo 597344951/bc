@@ -101,6 +101,8 @@
 					  	<el-button type="text" size="small" slot="reference">公告</el-button>
 					  	<div style="font-size: 12px;">
 					  		<p>如果在这里没有找到希望的组织，可能没有对组织设置积分组成结构，请前往组织管理设置该组织的积分结构</p>
+					  		<p style="margin-top: 10px;">积分上限为该项设置的上限，下限为0，如果积分变为0时在扣分不会变成负分，不过之后有加分的情况
+					  		则会和之前扣的分相抵消，超出上限的积分不会保留下来抵消扣除的分值</p>
 					  	</div>
 					</el-popover>
                     <span style="float: right;" v-show="!dis_h_v">
@@ -148,7 +150,11 @@
 				  			<el-row>
 				  				<p style="font-size: 12px; float: left;">
 				  					该组织积分总分为 
-				  					<span style="font-size: 18px; font-weight: bold; color: red;">{{orgIntegralInfo.integralCount}}</span> 
+				  					<span style="font-size: 18px; font-weight: bold; color: red;">
+				  						<a style="color: red;" href="javascript: void(0)" @click="ic_manager_openUpdateOrgIntegralConstitute(queryPartyUserInfoAndIcInfoCondition.orgId)">
+				  							{{orgIntegralInfo.integralCount}}
+				  						</a>
+				  					</span> 
 				  					分 
 				  				</p>
 				  				<div style="font-size: 12px;">
@@ -221,45 +227,36 @@
 
 
 
-		<el-dialog title="党员积分变更" :visible.sync="ic_manage_changePartyUserIntegralDialog" width="400px">
+		<el-dialog @close="ic_manage_resetChangePartyUserIntegralScoreForm" title="党员积分变更" :visible.sync="ic_manage_changePartyUserIntegralDialog" width="400px">
 			<el-form label-width="120px" size="small" :model="changePartyUserIntegralScoreForm" status-icon 
 				ref="changePartyUserIntegralScoreForm" label-width="100px" :rules="changePartyUserIntegralScoreFormRules">
 				<div>
 					<div>
-						<el-form-item label="变更类型" prop="changeType">
-							<el-select size="small" clearable 
-									@change="ic_manage_queryICT"
-									style="width: 180px;"
-									v-model="changePartyUserIntegralScoreForm.changeType" filterable placeholder="请选择变更类型">
-								<el-option
-									v-for="item in selectBox.integralChangeType"
-								    :key="item.type"
-								    :label="item.type"
-								    :value="item.type">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</div>
-					<div>
-						<el-form-item label="变更分类" prop="changeId">
+						<el-form-item label="积分项类型" prop="icId">
 							<el-select size="small" clearable 
 									@change="ic_manage_queryICTForOperation"
 									style="width: 180px;"
-									v-model="changePartyUserIntegralScoreForm.changeId" filterable placeholder="请选择变更分类">
+									v-model="changePartyUserIntegralScoreForm.icId" filterable placeholder="请选择变更类型">
 								<el-option
-									v-for="item in selectBox.ict"
-								    :key="item.ictId"
-								    :label="item.name"
-								    :value="item.ictId">
+									v-for="item in selectBox.integralType"
+								    :key="item.icId"
+								    :label="item.type"
+								    :value="item.icId">
 								</el-option>
 							</el-select>
 						</el-form-item>
 					</div>
 					<div>
-						<el-form-item label="操作" prop="operation">
-							<el-select style="width: 180px;" :disabled="true" v-model="changePartyUserIntegralScoreForm.operation" size="small">
-								<el-option label="扣分" :value="0"></el-option>
-								<el-option label="加分" :value="1"></el-option>
+						<el-form-item label="变更操作" prop="ictId">
+							<el-select size="small" clearable 
+									style="width: 180px;"
+									v-model="changePartyUserIntegralScoreForm.ictId" filterable placeholder="请选择变更分类">
+								<el-option
+									v-for="item in selectBox.ict"
+								    :key="item.ictId"
+								    :label="item.type"
+								    :value="item.ictId">
+								</el-option>
 							</el-select>
 						</el-form-item>
 					</div>
@@ -304,7 +301,7 @@
 			</el-form>
 		</el-dialog>
 
-		<el-dialog title="初始化积分" :visible.sync="ic_manage_initOrgIntegralConstituteDialog" width="70%">
+		<el-dialog @close="ic_manage_resetOrgIntegralConstituteInfoForm" title="查看并修改积分信息" :visible.sync="ic_manage_initOrgIntegralConstituteDialog" width="70%">
 			<div style="width: 100%; margin: 0 10px;">
 				<div style="font-size: 14px; color: red; font-weight: bold; ">
 					<p>如果要使用积分系统，请初始化积分项中没有设置的的项，未设置的项标记在积分名称的后面</p>
@@ -315,16 +312,149 @@
 					<el-container>
 					  	<el-aside width="50%" style="border-right: 1px solid #ddd;">
 					  		<el-tree :expand-on-click-node="false" 
+					  			node-key="icId" 
+				    			ref="orgInfoTreeOfIntegralConstituteTree"
 						    	:highlight-current="true" 
 						    	:default-expand-all="true" 
 						    	:data="ic_manager_orgInfoTreeOfIntegralConstitute" 
 						    	:props="ic_manager_orgInfoTreeOfIntegralConstituteProps" 
-						    	@node-click="">
+						    	@node-click="ic_manage_getIntegralInfo">
 						  	</el-tree>
 					  	</el-aside>
 					  	<el-main>
 					  		<div v-show="updateIntegralInfo" style="text-align: center;font-size: 12px;">
 					  			请选择要修改的积分项进行修改操作
+					  		</div>
+					  		<div v-show="!updateIntegralInfo">
+					  			<el-form label-width="120px" size="mini" :model="updateIntegralInfoForm" status-icon 
+									ref="updateIntegralInfoForm" label-width="100px" :rules="updateIntegralInfoFormRules">
+									<div style="border-bottom: 1px solid #ddd;">
+										<div>
+											<div>
+												<el-form-item label="分值类型" prop="type">
+													<el-input 
+														clearable 
+														:disabled="updateIntegralInfoForm.isInnerIntegral == 1 ? true : false"
+														style="width: 230px;" 
+														size="mini" 
+														v-model="updateIntegralInfoForm.type" 
+														placeholder="分值类型"></el-input>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="积分值" prop="integral">
+													<el-input 
+														clearable 
+														style="width: 230px;" 
+														size="mini" 
+														v-model="updateIntegralInfoForm.integral" 
+														placeholder="必须大于零"></el-input>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="积分说明" prop="describes">
+													<el-input 
+													  	type="textarea"
+													  	size="mini"
+													  	style="width: 230px;"
+													 	:autosize="{ minRows: 1, maxRows: 2}"
+													 	placeholder="积分说明"
+														v-model="updateIntegralInfoForm.describes">
+													</el-input>
+												</el-form-item>
+											</div>
+										</div>
+									</div>
+									<div style="border-bottom: 1px solid #ddd; margin-top: 20px;" v-if="!updateIntegralInfoForm.isChildrens">
+										<div>
+											<div>
+												<el-form-item label="操作类型" prop="add_operation">
+													<el-input 
+														clearable 
+														:disabled="true"
+														style="width: 230px;" 
+														size="mini" 
+														v-model="updateIntegralInfoForm.add_operation" 
+														placeholder="操作类型"></el-input>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="建议加分值" prop="add_integral">
+													<el-input 
+														clearable 
+														style="width: 230px;" 
+														size="mini" 
+														v-model="updateIntegralInfoForm.add_integral" 
+														placeholder="分数必须要大于0"></el-input>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="加分说明" prop="add_describes">
+													<el-input 
+													  	type="textarea"
+													  	size="mini"
+													  	style="width: 230px;"
+													 	:autosize="{ minRows: 1, maxRows: 2}"
+													 	placeholder="加分说明"
+														v-model="updateIntegralInfoForm.add_describes">
+													</el-input>
+												</el-form-item>
+											</div>
+										</div>
+									</div>
+									<div style="border-bottom: 1px solid #ddd; margin-top: 20px;" v-if="!updateIntegralInfoForm.isChildrens">
+										<div>
+											<div>
+												<el-form-item label="操作类型" prop="reduce_operation">
+													<el-input 
+														clearable 
+														:disabled="true"
+														style="width: 230px;" 
+														size="mini" 
+														v-model="updateIntegralInfoForm.reduce_operation" 
+														placeholder="操作类型"></el-input>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="建议扣分值" prop="reduce_integral">
+													<el-input 
+														clearable 
+														style="width: 230px;" 
+														size="mini" 
+														v-model="updateIntegralInfoForm.reduce_integral" 
+														placeholder="分数必须要小于0"></el-input>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="扣分说明" prop="reduce_describes">
+													<el-input 
+													  	type="textarea"
+													  	size="mini"
+													  	style="width: 230px;"
+													 	:autosize="{ minRows: 1, maxRows: 2}"
+													 	placeholder="扣分说明"
+														v-model="updateIntegralInfoForm.reduce_describes">
+													</el-input>
+												</el-form-item>
+											</div>
+										</div>
+									</div>
+									<div style="margin-top: 15px; padding-left: 30px;">
+										<el-button size="small" type="primary" @click="ic_manage_updateOrgIntegral">变更</el-button>
+									</div>
+								</el-form>
 					  		</div>
 					  	</el-main>
 					</el-container>
@@ -339,6 +469,65 @@
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			updateIntegralInfoForm: {	/*修改积分信息表单*/
+				type: null,
+				integral: null,
+				describes: null,
+				add_ictId: null,
+				add_operation: "加分",
+				add_integral: null,
+				add_describes: null,
+				reduce_ictId: null,
+				reduce_operation: "扣分",
+				reduce_integral: null,
+				reduce_describes: null,
+				icId: null,
+				isChildrens: null,
+				isInnerIntegral: null,
+				currentNode: null
+			},
+			updateIntegralInfoFormRules: {
+				type: [
+					{ required: true, message: '请输入分值类型', trigger: 'blur' }
+				],
+				integral: [
+					{ required: true, message: '请输入分值', trigger: 'blur' },
+					{ pattern: /^\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'},
+					{
+						validator: function(rule, value, callback){
+							var icId = appInstince.updateIntegralInfoForm.icId;
+							var score = value;
+
+							var url = "/org/ic/integralValidator";
+	        				var t = {
+        						icId: icId,
+        						score: score
+	        				}
+	        				$.post(url, t, function(data, status){
+	        					if (data.code == 200) {
+	        						if (data.data == undefined) {
+		        						callback();
+		        					} else {
+		        						callback(new Error(data.data));
+		        					}
+	        					} else {
+	        						callback(new Error('验证出错'));
+	        					}
+	        					
+	        				})
+						},
+		        		trigger: 'blur'
+					}
+				],
+				add_integral: [
+					{ required: true, message: '请输入建议加分值', trigger: 'blur' },
+					{ pattern: /^\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
+				],
+				reduce_integral: [
+					{ required: true, message: '请输入建议扣分值', trigger: 'blur' },
+					{ pattern: /^-\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
+				]
+			},
 			dis_h_v: false,
 			updateIntegralInfo: true,
 			ic_manage_changePartyUserIntegralDialog: false,	/*党员积分变更弹窗*/
@@ -373,20 +562,19 @@
 			},
 			changePartyUserIntegralScoreForm: {
 				partyUserId: null,
-				changeType: null,	/*用于判断类型选择框是否有值，不提交*/
-				changeId: null,
-				operation: null,		/*用于获得对应分值改变类型的操作，不提交*/
+				icId: null,	/*用于判断类型选择框是否有值，不提交*/
+				ictId: null,
 				changeScore: null,
 				isMerge: null,
 				changeDescribes: null
 			},
 			selectBox: {
-				integralChangeType: [],
+				integralType: [],
 				ict: [],
 				orgInfo_Ic: []
 			},
 			changePartyUserIntegralScoreFormRules: {
-				changeId: [
+				ictId: [
 					{ required: true, message: '请选择分数变更类型', trigger: 'blur' }
 				],
 				changeScore: [
@@ -421,12 +609,13 @@
 		methods: {
 			money_manage_initSelectBox() {	/*初始化下拉框*/
 				var obj = this;
-        		var url = "/org/ict/queryICT_ChangeType";
+        		var url = "/org/ic/queryOrgIntegralInfo_IcType";
 				var t = {
+					orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId
 				}
 				$.post(url, t, function(datas, status){
 					if (datas.code == 200) {
-						obj.selectBox.integralChangeType = datas.data;
+						obj.selectBox.integralType = datas.data;
 					}
 					
 				})
@@ -505,6 +694,19 @@
 					
 				})
 			},
+
+
+
+
+
+
+
+
+
+
+
+
+			/*点击左侧组织导航栏查询组织的积分信息和组织下党员的积分信息*/
 			ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(orgId) {	/*点击组织查询组织下的成员和积分信息*/
 				var obj = this;
 				obj.queryPartyUserInfoAndIcInfoCondition.orgId = orgId;
@@ -520,9 +722,8 @@
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
 						if (data.data != undefined)  {
-							if (data.data.integralError) {	/*如果积分里有没有设置分值的*/
-								obj.orgIntegralInfo.integralCount = "NULL";
-								obj.ic_manage_initOrgIntegralConstituteDialog = true;
+							if (data.data.integralError) {	/*如果积分里有没有设置分值、加分或扣分时*/
+								obj.orgIntegralInfo.integralCount = "NULL";	/*积分值设置未null*/
 								obj.ic_manager_openUpdateOrgIntegralConstitute(obj.queryPartyUserInfoAndIcInfoCondition.orgId);
 							} else {
 								obj.orgIntegralInfo.integralCount = data.data.integralCount;
@@ -533,6 +734,7 @@
 					
 				})
 			},
+			/*打开积分初始化窗口*/
 			ic_manager_openUpdateOrgIntegralConstitute(orgId) {
 				var obj = this;
 
@@ -548,7 +750,72 @@
 					
 				})
 
-				obj.partyOrg_manager_addOrgIntegralConstituteDialog = true;
+				obj.ic_manage_initOrgIntegralConstituteDialog = true;
+			},
+			ic_manage_getIntegralInfo(data) {	/*点击积分项获取该积分项的信息*/
+				var obj = this;
+				obj.updateIntegralInfoForm.currentNode = obj.$refs.orgInfoTreeOfIntegralConstituteTree.getCurrentNode();
+				obj.$refs.updateIntegralInfoForm.resetFields();
+				obj.updateIntegralInfoForm.icId = data.data.icId;
+				obj.updateIntegralInfoForm.isChildrens = data.data.isChildrens;
+
+				var url = "/org/ic/queryOrgIntegralConstituteInfo";
+				var t = {
+					icId: obj.updateIntegralInfoForm.icId
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.updateIntegralInfoForm.type = datas.data.type;
+						obj.updateIntegralInfoForm.integral = datas.data.integral;
+						obj.updateIntegralInfoForm.describes = datas.data.describes;
+						obj.updateIntegralInfoForm.add_ictId = datas.data.add_ictId;
+						obj.updateIntegralInfoForm.add_operation = datas.data.add_operation;
+						obj.updateIntegralInfoForm.add_integral = datas.data.add_integral;
+						obj.updateIntegralInfoForm.add_describes = datas.data.add_describes;
+						obj.updateIntegralInfoForm.reduce_ictId = datas.data.reduce_ictId;
+						obj.updateIntegralInfoForm.reduce_operation = datas.data.reduce_operation;
+						obj.updateIntegralInfoForm.reduce_integral = datas.data.reduce_integral;
+						obj.updateIntegralInfoForm.reduce_describes = datas.data.reduce_describes;
+						obj.updateIntegralInfoForm.isInnerIntegral = datas.data.isInnerIntegral;
+					}
+					
+				})
+
+				obj.updateIntegralInfo = false;	/*显示修改控件*/
+			},
+			ic_manage_updateOrgIntegral() {
+				var obj = this;
+				this.$refs.updateIntegralInfoForm.validate( function(valid) {
+					if (valid) {
+						var url = "/org/ic/updateOrgIntegralConstituteInfo";
+						var t = {
+							icId: obj.updateIntegralInfoForm.icId,
+							type: obj.updateIntegralInfoForm.type,
+							integral: obj.updateIntegralInfoForm.integral,
+							describes: obj.updateIntegralInfoForm.describes,
+							add_ictId: obj.updateIntegralInfoForm.add_ictId,
+							add_operation: obj.updateIntegralInfoForm.add_operation,
+							add_integral: obj.updateIntegralInfoForm.add_integral,
+							add_describes: obj.updateIntegralInfoForm.add_describes,
+							reduce_ictId: obj.updateIntegralInfoForm.reduce_ictId,
+							reduce_operation: obj.updateIntegralInfoForm.reduce_operation,
+							reduce_integral: obj.updateIntegralInfoForm.reduce_integral,
+							reduce_describes: obj.updateIntegralInfoForm.reduce_describes
+						}
+						$.post(url, t, function(datas, status){
+							if (datas.code == 200) {
+								obj.ic_manage_getIntegralInfo(obj.updateIntegralInfoForm.currentNode);	/*从新获取该积分项的信息*/
+								obj.ic_manager_openUpdateOrgIntegralConstitute(obj.queryPartyUserInfoAndIcInfoCondition.orgId);	/*重新获取该积分结构信息*/
+								obj.ic_manage_queryOrgIntegralInfo();
+							}
+							
+						})
+					}
+				})	
+			},
+			ic_manage_resetOrgIntegralConstituteInfoForm() {	/*关闭积分修改弹窗时*/
+				var obj = this;
+				obj.updateIntegralInfo = true;
 			},
 			ic_manage_queryPartyUserInfoAndIcInfo() {	/*查询组织下的党员信息及其积分信息*/
 				var obj = this;
@@ -610,38 +877,21 @@
 
 				obj.ic_manage_changePartyUserIntegralDialog = true;
 			},
-			ic_manage_queryICT() {
+			ic_manage_queryICTForOperation() {
 				var obj = this;
 				obj.selectBox.ict = null;
-				obj.changePartyUserIntegralScoreForm.changeId = null;
-				obj.ic_manage_queryICTForOperation();
-				if (obj.changePartyUserIntegralScoreForm.changeType == null || obj.changePartyUserIntegralScoreForm.changeType == "") {
+				obj.changePartyUserIntegralScoreForm.ictId = null;
+				if (obj.changePartyUserIntegralScoreForm.icId == null || obj.changePartyUserIntegralScoreForm.icId == "") {
 					return;
 				}
+
         		url = "/org/ict/queryICT";
 				var t = {
-					type: obj.changePartyUserIntegralScoreForm.changeType
+					icId: obj.changePartyUserIntegralScoreForm.icId
 				}
 				$.post(url, t, function(datas, status){
 					if (datas.code == 200) {
 						obj.selectBox.ict = datas.data;
-					}
-					
-				})
-			},
-			ic_manage_queryICTForOperation() {
-				var obj = this;
-				obj.changePartyUserIntegralScoreForm.operation = null;
-				if (obj.changePartyUserIntegralScoreForm.changeId == null || obj.changePartyUserIntegralScoreForm.changeId == "") {
-					return;
-				}
-        		url = "/org/ict/queryICT";
-				var t = {
-					ictId: obj.changePartyUserIntegralScoreForm.changeId
-				}
-				$.post(url, t, function(datas, status){
-					if (datas.code == 200) {
-						obj.changePartyUserIntegralScoreForm.operation = datas.data[0].operation;
 					}
 					
 				})
@@ -655,7 +905,7 @@
 							orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId,
 							partyId: obj.changePartyUserIntegralScoreForm.partyUserId,
 							changeDescribes: obj.changePartyUserIntegralScoreForm.changeDescribes,
-							changeIntegralType: obj.changePartyUserIntegralScoreForm.changeId,
+							changeIntegralType: obj.changePartyUserIntegralScoreForm.ictId,
 							changeScore: obj.changePartyUserIntegralScoreForm.changeScore,
 							isMerge: obj.changePartyUserIntegralScoreForm.isMerge
 						}

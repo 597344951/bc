@@ -52,5 +52,33 @@ public interface IntegralConstituteService {
      * @return
      */
     public R queryOrgIntegralInfo(Map<String, Object> conditions);
+    
+    /**
+     * 查询组织积分信息（最后一级）
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralInfo_IcType(Map<String, Object> conditions);
+    
+    /**
+     * 查询组织积分信息
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralConstituteInfo(Map<String, Object> conditions);
+    
+    /**
+     * 修改组织积分信息
+     * @param conditions
+     * @return
+     */
+    public R updateOrgIntegralConstituteInfo(Map<String, Object> conditions);
+    
+    /**
+     * 填写积分验证
+     * @param conditions
+     * @return
+     */
+    public R integralValidator(Map<String, Object> conditions);
 
 }

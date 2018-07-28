@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 
 import com.zltel.broadcast.common.exception.RRException;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.util.Constant;
 import com.zltel.broadcast.um.bean.SysMenu;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -53,10 +54,12 @@ public class UserRealm extends AuthorizingRealm {
         SysUser user = (SysUser) principals.getPrimaryPrincipal();
         logout.info("查找{}权限",user.getUsername());
         Integer userId = user.getUserId();
-
+        //查询用户具有的角色
+        Set<String> roles = new HashSet<>(this.sysUserService.queryAllRoles(userId));
+        
         List<String> permsList = null;
-        // 系统管理员，拥有最高权限
-        if (userId == Constant.SUPER_ADMIN) {
+        // 系统管理员 | 平台管理员 ，拥有最高权限,
+        if (userId == Constant.SUPER_ADMIN || AdminRoleUtil.isPlantAdmin(roles)) {
             List<SysMenu> menuList = sysMenuService.queryForList(null);
             permsList = menuList.stream().map(SysMenu::getPerms).collect(Collectors.toList());
         } else {
@@ -68,7 +71,7 @@ public class UserRealm extends AuthorizingRealm {
                         .collect(Collectors.toSet());
 
 
-        Set<String> roles = new HashSet<>(this.sysUserService.queryAllRoles(userId));
+        
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         authorizationInfo.setRoles(roles);
         authorizationInfo.setStringPermissions(permsSet);

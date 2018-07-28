@@ -327,7 +327,7 @@
             </el-main>
         </el-container>
     </el-dialog>
-    <el-dialog :title="pgw.title" :visible.sync="pgw.visiable" :fullscreen="pgw.fullscreen" :width="pgw.fullscreen?'100%':'70%'">
+    <el-dialog :title="pgw.title" :visible.sync="pgw.visiable" :fullscreen="pgw.fullscreen" :width="pgw.fullscreen?'100%':'70%'" v-loading.lock="programLoading">
         <div slot="title">
             <span class="el-dialog__title"> {{pgw.title}}</span>
             <el-button-group style="margin-left:30px;">
@@ -335,10 +335,15 @@
                 <el-button size="small" icon="el-icon-tickets" @click="prg_dis_h_v=true" :type="prg_dis_h_v?'primary':''"></el-button>
                 <el-button size="small" icon="el-icon-rank" @click="pgw.fullscreen=!pgw.fullscreen" title="最大"></el-button>
             </el-button-group>
+            <el-button-group style="margin-left:30px;">
+                <el-button size="small"  @click="filterStatus(1)" :type="disStatus=='1'?'primary':''">正在播放({{playingCount}})</el-button>
+                <el-button size="small"  @click="filterStatus(2)" :type="disStatus=='2'?'primary':''" >暂未播放({{notPlayCount}})</el-button>
+                <el-button size="small"  @click="filterStatus(0)" :type="disStatus=='0'?'primary':''">过期节目({{expiredCount}})</el-button>
+            </el-button-group>
         </div>
 
         <div v-if="prg_dis_h_v">
-            <table class="table table-board terminal-table-dis">
+            <table class="table table-board terminal-table-dis" >
                 <thead>
                     <th>节目封面</th>
                     <th>节目信息</th>
@@ -394,6 +399,11 @@
                                         <td>：</td>
                                         <td>{{t.activeTime}}</td>
                                     </tr>
+                                    <tr>
+                                        <td>节目状态 </td>
+                                        <td>：</td>
+                                        <td>{{getStatusLabel(t)}}</td>
+                                    </tr>
                                 </table>
                             </td>
                             <td>
@@ -401,7 +411,7 @@
                                     <el-button type="button" size="mini" class="button" @click="openProgramView(t)">预览</el-button>
                                     <br/>
                                     <el-button type="danger" size="mini" class="button" @click="cancelTerminalProgram(t)">移除</el-button>
-                                    <br/>
+                                        <br/>
                                 </div>
                             </td>
                         </tr>

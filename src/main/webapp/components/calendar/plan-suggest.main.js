@@ -80,8 +80,7 @@ let PlanSuggest = {
         }
 
     },
-    //模版内容
-    template: ''
+    template: require("./plan-suggest.view.html")
 }
 
 export default PlanSuggest;

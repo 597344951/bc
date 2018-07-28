@@ -1,0 +1,14 @@
+#项目模块编译配置目录
+
+# 先安装node.js运行环境
+# 切换现在源为淘宝线路
+npm config set registry http://registry.npm.taobao.org
+
+#在本目录执行安装程序
+npm install
+
+#打包
+./build/webpack 打包
+
+#输出路径在 /components/main.js
+

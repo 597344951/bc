@@ -171,7 +171,7 @@
                 </span>
             </el-dialog>
 
-            <el-dialog title="详细进度" :visible.sync="processState.visible" width="60%">
+            <%-- <el-dialog title="详细进度" :visible.sync="processState.visible" width="60%">
                 <el-steps :space="200" :active="processState.active" finish-status="success">
                     <el-step v-for="step in processState.steps" :title="step.title"></el-step>
                 </el-steps>
@@ -182,7 +182,8 @@
                     <el-button size="mini" @click="processState.visible = false">取 消</el-button>
                     <el-button size="mini" type="primary" @click="processState.visible = false">确 定</el-button>
                 </span>
-            </el-dialog>
+            </el-dialog> --%>
+            <publish-state-dialog :visible.sync="processState.visible" :content="processState.contentId"></publish-state-dialog>
 
             <el-dialog title="审核进度" :visible.sync="verifyState.visible" width="60%">
                 <el-card shadow="never">
@@ -241,10 +242,12 @@
             </el-dialog>
 
 
-            <el-dialog title="素材验证" :visible="commitMessage.show" :show-close="false" width="300px">
+            <%-- <el-dialog title="素材验证" :visible="commitMessage.show" :show-close="false" width="300px">
                 <p style="font-size: 13px; margin: 5px 20px; color: blue" v-for="m in commitMessage.message">{{m}}</p>
-            </el-dialog>
+            </el-dialog> --%>
+            <md5-check-dialog :visible.sync="commitMessage.show"></md5-check-dialog>
     </div>
 </body>
 </html>
+<script src="${urls.getForLookupPath('/components/xx-components.js')}"></script>
 <script src="${urls.getForLookupPath('/assets/module/publish/process.js')}"></script>

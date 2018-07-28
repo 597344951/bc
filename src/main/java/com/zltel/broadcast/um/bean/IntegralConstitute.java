@@ -14,8 +14,18 @@ public class IntegralConstitute {
     private String describes;
 
     private Integer parentIcId;
+    
+    private Integer isInnerIntegral;
 
-    public Integer getOrgId() {
+    public Integer getIsInnerIntegral() {
+		return isInnerIntegral;
+	}
+
+	public void setIsInnerIntegral(Integer isInnerIntegral) {
+		this.isInnerIntegral = isInnerIntegral;
+	}
+
+	public Integer getOrgId() {
 		return orgId;
 	}
 

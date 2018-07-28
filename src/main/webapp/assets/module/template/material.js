@@ -772,6 +772,34 @@ let ins = new Vue({
       //暂停视频/音频
       $('.videoView').trigger('pause');
       $('.audioView').trigger('pause');
+    },
+    allowDrag(draggingNode) {
+      //内置数据不能拖拽
+      return !draggingNode.data.data.builtin; 
+    },
+    treeDrapDrop(from, to, dropType, ev){
+      console.log(arguments);
+      let fd = from.data.data;
+      let td = to.data.data;
+      let ins = this;
+      let data = {albumId:fd.albumId};
+      //before、after、inner
+      if(dropType == 'before'){
+        data.parent = td.parent;
+        data.orderNum = td.orderNum-1;
+      }else if(dropType == 'after'){
+        data.parent = td.parent;
+        data.orderNum = td.orderNum+1;
+      }else if(dropType == 'inner'){
+        data.parent = td.albumId;
+      }
+      console.log('拖动结果: ',data)
+      ajax_json("/MaterialAlbum/Album", "put", data, function (result) {
+        if (result.status) {
+          ins.loadTreeData();
+          $message('拖动成功','success',ins);
+        }
+      });
     }
   }
 });

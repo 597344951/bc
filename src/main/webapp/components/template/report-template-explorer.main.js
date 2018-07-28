@@ -211,7 +211,8 @@ let ReportTemplateExplorer = {
             this.$emit('chose', tp);
             this.close();
         }
-    }
+    },
+    template: require("./report-template-explorer.view.html")
 }
 
 export default ReportTemplateExplorer;

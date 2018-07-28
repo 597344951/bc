@@ -54,6 +54,8 @@ img {
 a {
     color: #4f525e;
     text-decoration: none;
+    font-size: 13px;
+    line-height: 18px;
 }
 
 a:hover {

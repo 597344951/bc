@@ -490,6 +490,35 @@ var appInstince = new Vue({
     },
     getResUrl(url) {
       return serverConfig.getUrl(url);
+    },
+    allowDrag(draggingNode) {
+      //内置数据不能拖拽
+      return !draggingNode.data.data.builtin; 
+    },
+    treeDrapDrop(from, to, dropType, ev){
+      console.log(arguments);
+      let fd = from.data.data;
+      let td = to.data.data;
+      let ins = this;
+      let data = {tpTypeId:fd.tpTypeId};
+      //before、after、inner
+      if(dropType == 'before'){
+        data.parent = td.parent;
+        data.orderNum = td.orderNum-1;
+      }else if(dropType == 'after'){
+        data.parent = td.parent;
+        data.orderNum = td.orderNum+1;
+      }else if(dropType == 'inner'){
+        data.parent = td.tpTypeId;
+      }
+      console.log('拖动结果: ',data)
+      // 更新数据
+      ajax_json("tpt/tptype", "put", data, function (result) {
+        if (result.status) {
+          ins.loadTreeData();
+          $message('拖动成功','success',ins);
+        }
+      });
     }
   }
 });

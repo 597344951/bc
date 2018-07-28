@@ -1,7 +1,7 @@
 /**
  * 党员统计信息
  */
-import chartConfig from '/assets/js/vcharts_config.js';
+import chartConfig from '../../assets/js/vcharts_config.js';
 let PmInfo = {
     info: {
         name: 'pm-info', //注册组件名
@@ -118,7 +118,8 @@ let PmInfo = {
                 }]
             }
         }
-    }
+    },
+    template: require("./pm-info.view.html")
 };
 
 export default PmInfo;

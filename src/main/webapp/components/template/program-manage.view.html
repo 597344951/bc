@@ -32,8 +32,8 @@
                             <table class="dis-info-min">
                                 <tbody>
                                 <tr>
-                                    <td> <i class="el-icon-news"></i>所属目录</td> <td></td>
-                                    <td>{{t.categoryId}}</td>
+                                    <td> <i class="el-icon-info"></i>节目状态</td> <td></td>
+                                    <td>{{t.statusLabel}}</td>
                                 </tr>
                                 <tr>
                                     <td> <i class="el-icon-time"></i>播放时长</td> <td></td>
@@ -52,9 +52,9 @@
                         <div class="bottom clearfix">
                                 <el-button type="button" size="mini" class="button" @click="openProgramView(t)">预览</el-button>
                                 <el-button type="primary" size="mini" class="button" @click="editProgram(t)">编辑</el-button>
-                                <el-button type="warning" size="mini" class="button" @click="cancleProgram(t)">停播</el-button>
                                 <el-button type="danger" size="mini" class="button" @click="deleteProgram(t)">删除</el-button>
-                                <el-button type="success" size="mini" class="button" @click="pubProgram(t)">发布</el-button>
+                                <el-button v-if="t.pubStatus == 1" type="warning" size="mini" class="button" @click="cancleProgram(t)">停播</el-button>
+                                <el-button v-if="t.pubStatus == 0" type="success" size="mini" class="button" @click="pubProgram(t)">发布</el-button>
                             </div>
                     </el-card>
                 </template>

@@ -147,7 +147,7 @@ const app = new Vue({
                 }
             }
             if (!hasCorrect) {
-                callback(new Error('亲至少勾选一个正确答案'))
+                callback(new Error('请至少勾选一个正确答案'))
             } else {
                 callback()
             }

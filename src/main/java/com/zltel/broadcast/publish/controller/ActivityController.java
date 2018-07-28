@@ -3,6 +3,7 @@ package com.zltel.broadcast.publish.controller;
 import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.publish.bean.Silhouette;
 import com.zltel.broadcast.publish.service.ActivityService;
 import com.zltel.broadcast.publish.service.MaterialService;
 import com.zltel.broadcast.um.bean.SysUser;
@@ -122,6 +123,27 @@ public class ActivityController extends BaseController {
             logout.error(e.getMessage());
             r = R.error(e.getMessage());
         }
+        return r;
+    }
+
+    @PostMapping("/activity/silhouette")
+    @ResponseBody
+    public R addSilhouette(@RequestBody Silhouette silhouette) {
+        activityService.addSilhouette(silhouette);
+        return R.ok();
+    }
+    @GetMapping("/activity/silhouette/{id}")
+    @ResponseBody
+    public R getSilhouette(@PathVariable("id") int id) {
+        R r = R.ok();
+        r.setData(activityService.getSilhouette(id));
+        return r;
+    }
+    @GetMapping("/activity/silhouette/{pageNum}/{pageSize}")
+    @ResponseBody
+    public R querySilhouette(@PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize) {
+        R r = R.ok();
+        r.setData(activityService.querySilhouette(pageNum, pageSize));
         return r;
     }
 }

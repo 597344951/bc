@@ -1,7 +1,9 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +23,18 @@ import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.tree.TreeNode;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.um.bean.IntegralChangeType;
+import com.zltel.broadcast.um.bean.IntegralConstitute;
 import com.zltel.broadcast.um.bean.OrganizationInformation;
+import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.dao.IntegralChangeTypeMapper;
 import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
 import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.service.OrganizationInformationService;
 import com.zltel.broadcast.um.util.DateUtil;
+import com.zltel.broadcast.um.util.XMLUtil;
 
 @Service
 public class OrganizationInformationServiceImpl extends BaseDaoImpl<OrganizationInformation> implements OrganizationInformationService {
@@ -35,6 +45,8 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     private OrganizationRelationMapper organizationRelationMapper;
 	@Resource
     private IntegralConstituteMapper integralConstituteMapper;
+	@Resource
+    private IntegralChangeTypeMapper integralChangeTypeMapper;
 	@Override
     public BaseDao<OrganizationInformation> getInstince() {
         return this.organizationInformationMapper;
@@ -117,6 +129,26 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
 	public R queryOrgInfosForMap(Map<String, Object> organizationInformation, int pageNum, int pageSize) throws Exception {
+		Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
+        	}
+        	organizationInformation.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getUserType() == 0) {
+        		return R.ok().setCode(100).setMsg("非党员账户请先设置管理员类型");
+        	} else if (sysUser.getUserType() == 1) {
+        		if (sysUser.getOrgId() == null) {
+            		return R.ok().setCode(100).setMsg("未成为组织成员，请加入任一组织后查看");
+            	}
+        		organizationInformation.put("orgInfoId", sysUser.getOrgId());
+            }
+        }
+		
 		PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> organizationInformations = organizationInformationMapper.queryOrgInfosForMap(organizationInformation);	//所选节点的数据
 		PageInfo<Map<String, Object>> organizationInformationsForPageInfo = new PageInfo<>(organizationInformations);
@@ -227,6 +259,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	 * @return
 	 */
 	private List<Map<String, Object>> queryThisOrgChildren(Map<String, Object> organizationInformation) {
+		
 		List<Map<String, Object>> orgChildrensAll = new ArrayList<>();	//保存子组织信息
 		List<Map<String, Object>> organizationInformations = new ArrayList<>();	//保存条件
 		organizationInformations.add(organizationInformation);
@@ -390,7 +423,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     }
     
     /**
-     * 根据条件查询组织信息并生成树
+     * 根据条件查询组织信息并生成树（使用中）
      * @param orgInfoConditions
      * @return
      * @throws Exception
@@ -398,6 +431,20 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R queryOrgInfosToTree(Map<String, Object> orgInfoConditions) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员，只查询自己组织及下属组织关系
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
+        	}
+        	orgInfoConditions.remove("orgInfoParentId");
+        	orgInfoConditions.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员，不能查看组织图关系
+        	return null;
+        }
+    	
     	List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(orgInfoConditions);
     	List<TreeNode<Map<String, Object>>> treeNodes = new ArrayList<>();
     	if (orgInfoTrees != null && orgInfoTrees.size() > 0) {
@@ -446,8 +493,19 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 		    			treeNode2.setData(map);
 		    			treeNodes2.add(treeNode2);
 					}
+				} else {
+					//当为最低级时，查看当前积分节点是否有对应的加分减分方法
+					IntegralChangeType ict = new IntegralChangeType();
+					ict.setIcId(Integer.parseInt(String.valueOf(treeNode.getData().get("icId"))));
+					ict.setOperation(0);	//是否有扣分处理方式
+					List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+					treeNode.getData().put("isReduceIntegral", (icts == null || icts.size() == 0) ? false : true);
+					ict.setOperation(1);	//是否有加分处理方式
+					icts = integralChangeTypeMapper.queryICT(ict);
+					treeNode.getData().put("isAddIntegral", (icts == null || icts.size() == 0) ? false : true);;
 				}
 				treeNode.setChildren(treeNodes2);
+				treeNode.getData().put("isChildrens", (treeNode.getChildren() == null || treeNode.getChildren().size() == 0) ? false : true);
 				toTreeNodes_IC(treeNode.getChildren());
 			}
     	}
@@ -576,6 +634,8 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 			organizationInformation.setOrgInfoId(null);	//自增，不需要设置值
 			int count = this.insertSelective(organizationInformation);	//开始添加组织信息
 			if (count == 1) {	//受影响的行数，判断是否修改成功
+				Integer insertedOrgId = organizationInformationMapper.queryInsertedOrgId();
+				insertOrgIntegralConstitutes(XMLUtil.getOrgIntegralConstitutes(), insertedOrgId);
 				return R.ok().setMsg("组织信息添加成功。");
 			} else {	//没有受影响行数表示添加失败
 				throw new Exception();
@@ -584,6 +644,54 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 			throw new Exception();
 		}
     }
+	
+	/**
+	 * 在添加组织时添加默认的积分结构
+	 * @param treeNodes
+	 * @param insertedOrgId
+	 */
+	private void insertOrgIntegralConstitutes(List<TreeNode<Map<String, String>>> treeNodes, Integer insertedOrgId) {
+		Deque<TreeNode<Map<String, String>>> nodeDeque = new ArrayDeque<>();
+		for (TreeNode<Map<String, String>> treeNode : treeNodes) {
+			nodeDeque.add(treeNode);
+		    while (!nodeDeque.isEmpty()) {
+		    	TreeNode<Map<String, String>> node = nodeDeque.pollFirst();
+		    	
+		    	Map<String, String> data = node.getData();
+				IntegralConstitute ic = new IntegralConstitute();
+				ic.setOrgId(insertedOrgId);
+				ic.setType(data.get("type"));
+				ic.setDescribes(data.get("describes"));
+				ic.setParentIcId(Integer.parseInt(data.get("insertedIcId")));
+				ic.setIsInnerIntegral(1);
+				integralConstituteMapper.insertSelective(ic);
+				Integer insertedIcId = integralConstituteMapper.queryInsertedIcId();
+		    	
+		    	List<TreeNode<Map<String, String>>> children = node.getChildren();
+		        if (children != null && !children.isEmpty()) {
+		            for (TreeNode<Map<String, String>> child : children) {
+		            	child.getData().put("insertedIcId", String.valueOf(insertedIcId));
+		                nodeDeque.add(child);
+		            }
+		        }
+		    }
+		}
+	    
+		
+		/*if (treeNodes != null && treeNodes.size() > 0) {
+			for (TreeNode<Map<String, String>> treeNode : treeNodes) {
+				Map<String, String> node = treeNode.getData();
+				IntegralConstitute ic = new IntegralConstitute();
+				ic.setOrgId(insertedOrgId);
+				ic.setType(node.get("type"));
+				ic.setDescribes(node.get("describes"));
+				ic.setParentIcId("1".equals(node.get("level")) ? -1 : insertedIcId);
+				integralConstituteMapper.insertSelective(ic);
+				insertedIcId = integralConstituteMapper.queryInsertedIcId();
+				insertOrgIntegralConstitutes(treeNode.getChildren(), insertedOrgId, insertedIcId);
+			}
+		}*/
+	}
 	
 	
 	/**
@@ -644,6 +752,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     		for (OrganizationInformation condition : organizationInformationAndChildren) {
     			deleteCount += this.deleteByPrimaryKey(condition.getOrgInfoId());	//开始递归删除组织及子组织信息
 			}
+    		integralConstituteMapper.deleteByOrgId(organizationInformation.getOrgInfoId());
     		
     		if (organizationInformationAndChildren.size() == deleteCount) {	//受影响的行数，判断是否全部删除
 				return R.ok().setMsg("共计删除组织信息 " + deleteCount + "条。");

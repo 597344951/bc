@@ -55,4 +55,11 @@ public interface OrganizationInformationMapper extends BaseDao<OrganizationInfor
      * @return
      */
     public List<OrganizationInformation> queryOrgInfosCommitteeArea(OrganizationInformation organizationInformation);
+    
+    /**
+     * 查询地区
+     * @param organizationInformation
+     * @return
+     */
+    public Integer queryInsertedOrgId();
 }

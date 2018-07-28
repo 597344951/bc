@@ -127,9 +127,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
             }
         });
         // 递归遍历 子节点
-        result.forEach(node -> {
-            handleNextNode(node, menus);
-        });
+        result.forEach(node -> handleNextNode(node, menus));
 
         return result;
     }
@@ -148,7 +146,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
 
 
         });
-        logout.info("菜单: {} 包含子节点: {}",node.toString(),childs.toString());
+        logout.debug("菜单: {} 包含子节点: {}", node, childs);
         if (childs.isEmpty()) return;
         node.setChildren(childs);
         childs.forEach(n -> {
@@ -162,14 +160,12 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         List<TreeNode<SysMenu>> result = new ArrayList<>();
         // 获取第一层
         datas.stream().filter(e -> e.getType() == Constant.MenuType.CATALOG.getValue()).forEach(n -> {
-            TreeNode<SysMenu> tn = new TreeNode<SysMenu>();
+            TreeNode<SysMenu> tn = new TreeNode<>();
             tn.setData(n);
             result.add(tn);
         });
         // 递归遍历 子节点
-        result.forEach(node -> {
-            nextNode(node, datas);
-        });
+        result.forEach(node -> nextNode(node, datas));
 
         return result;
     }
@@ -179,15 +175,13 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         // 上一级节点的子节点
         List<TreeNode<SysMenu>> childs = new ArrayList<>();
         datas.stream().filter(n -> n.getParentId() == node.getData().getMenuId()).forEach(n -> {
-            TreeNode<SysMenu> tn = new TreeNode<SysMenu>();
+            TreeNode<SysMenu> tn = new TreeNode<>();
             tn.setData(n);
             childs.add(tn);
         });
         if (childs.isEmpty()) return;
         node.setChildren(childs);
-        childs.forEach(n -> {
-            nextNode(n, datas);
-        });
+        childs.forEach(n -> nextNode(n, datas));
     }
 
     @Override

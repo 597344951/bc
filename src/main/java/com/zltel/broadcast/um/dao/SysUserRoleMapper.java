@@ -2,6 +2,7 @@ package com.zltel.broadcast.um.dao;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.um.bean.SysUserRole;
@@ -12,7 +13,7 @@ public interface SysUserRoleMapper extends BaseDao<SysUserRole> {
      * @param sysUserRole 条件
      * @return
      */
-    public List<HashMap<String, Object>> querySysUserRoles(SysUserRole sysUserRole);
+    public List<HashMap<String, Object>> querySysUserRoles(Map<String, Object> conditions);
     
     /**
      * 根据用户id删除用户角色

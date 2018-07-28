@@ -63,4 +63,15 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     		return R.error().setMsg("添加失败");
     	}
     }
+    
+    /**
+     * 活动变更积分值
+     * @param pir  积分变更信息
+     * @param icType  积分变更项
+     * @param changeIcType  变更方法（加分，扣分）
+     * @return
+     */
+    public boolean automaticIntegralRecord(PartyIntegralRecord pir, IcType icType, IcChangeType icChangeType) {
+    	return false;
+    }
 }

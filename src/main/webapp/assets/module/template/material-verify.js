@@ -570,6 +570,7 @@ window.appInstince = new Vue({
     // 类别点击
     tptTreeClick: function (_data, node) {
       var ins = this;
+      this.tpager.current = 1;
       var data = _data.data; // 类别节点数据
       this.loadTpTypeData(data, ins);
     },

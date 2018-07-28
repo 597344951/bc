@@ -1,5 +1,9 @@
 package com.zltel.broadcast.eventplan.bean;
 
+import java.util.List;
+
+import com.zltel.broadcast.plansuggest.bean.EventPlanSuggestItem;
+
 public class EventList extends EventUser{
     private Integer eventId;
   
@@ -9,6 +13,9 @@ public class EventList extends EventUser{
     private String[] froms;
     private String[] prioritys;
     private String[] statuss;
+    
+    //懒加载
+    private List<EventPlanSuggestItem> suggestItems;
     
     public static EventList from(EventUser eu) {
         EventList el = new EventList();
@@ -107,6 +114,22 @@ public class EventList extends EventUser{
      */
     public void setStatuss(String[] statuss) {
         this.statuss = statuss;
+    }
+
+
+    /**
+     * @return the suggestItems
+     */
+    public List<EventPlanSuggestItem> getSuggestItems() {
+        return suggestItems;
+    }
+
+
+    /**
+     * @param suggestItems the suggestItems to set
+     */
+    public void setSuggestItems(List<EventPlanSuggestItem> suggestItems) {
+        this.suggestItems = suggestItems;
     }
 
     

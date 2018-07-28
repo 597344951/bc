@@ -1,9 +1,11 @@
-/**https://github.com/zwhGithub/vue-calendar **/
-import timeUtil from '/components/vue-calendar/timeUtil.js';
+/** https://github.com/zwhGithub/vue-calendar * */
+import timeUtil from './timeUtil.js';
 export default {
     info: {
-        name: 'vue-calendar', //注册组件名
-        template_url: '/components/vue-calendar/vue-calendar.view.html', //模块 页面模板 url
+        name: 'vue-calendar', // 注册组件名
+        template_url: '/components/vue-calendar/vue-calendar.view.html', // 模块
+																			// 页面模板
+																			// url
         author: 'Wangch',
         descript: 'Vue日历'
     },
@@ -17,23 +19,23 @@ export default {
         };
     },
     props: {
-        //arr=['2018/4/1','2018/4/3'] 标记4月1日和4月3日 简单标记
+        // arr=['2018/4/1','2018/4/3'] 标记4月1日和4月3日 简单标记
         markDate: {
             type: Array,
             default: () => []
         },
         // 多种不同的标记
-        //第一个标记和第二个标记不能同时使用
+        // 第一个标记和第二个标记不能同时使用
         markDateMore: {
             type: Array,
             default: () => []
         },
-        // :agoDayHide='1514937600' //某个日期以前的不允许点击  时间戳10位
+        // :agoDayHide='1514937600' //某个日期以前的不允许点击 时间戳10位
         agoDayHide: {
             type: String,
             default: `0`
         },
-        // :futureDayHide='1525104000' //某个日期以后的不允许点击  时间戳10位
+        // :futureDayHide='1525104000' //某个日期以后的不允许点击 时间戳10位
         futureDayHide: {
             type: String,
             default: `2554387200`
@@ -109,16 +111,16 @@ export default {
                 k.chooseDay = false;
                 const nowTime = k.date;
                 const t = new Date(nowTime).getTime() / 1000;
-                //看每一天的class
+                // 看每一天的class
                 for (const c of markDateMore) {
                     if (c.date === nowTime) {
                         markClassName = c.className || '';
                     }
                 }
-                //标记选中某些天 设置class
+                // 标记选中某些天 设置class
                 k.markClassName = markClassName;
                 k.isMark = markDate.indexOf(nowTime) > -1;
-                //无法选中某天
+                // 无法选中某天
                 k.dayHide = t < this.agoDayHide || t > this.futureDayHide;
                 if (k.isToday) {
                     this.$emit('isToday', nowTime);
@@ -155,5 +157,6 @@ export default {
             this.futureDayHide = parseInt(val);
             this.getList(this.myDate);
         }
-    }
+    },
+    template: require("./vue-calendar.view.html")
 };

@@ -3,17 +3,22 @@ package com.zltel.broadcast.template.bean;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.zltel.broadcast.common.validator.group.GroupDelete;
+import com.zltel.broadcast.common.validator.group.GroupSave;
+import com.zltel.broadcast.common.validator.group.GroupUpdate;
+
 public class TemplateType {
+    @NotNull(message="分类id不能为空",groups={GroupUpdate.class,GroupDelete.class})
     private Integer tpTypeId;
-    @NotBlank(message="分类名称不能为空")
+    @NotBlank(message="分类名称不能为空",groups={GroupSave.class})
     private String name;
-    @NotBlank(message="分类描述不能为空")
+    @NotBlank(message="分类描述不能为空",groups={GroupSave.class})
     private String remark;
     
     private Integer orgid;
-    @NotNull(message="分类上一级信息不能为空")
+    @NotNull(message="分类上一级信息不能为空",groups={GroupSave.class})
     private Integer parent;
-    @NotNull(message="分类排序序号不能为空")
+    @NotNull(message="分类排序序号不能为空",groups={GroupSave.class})
     private Integer orderNum;
 
     private Boolean builtin;

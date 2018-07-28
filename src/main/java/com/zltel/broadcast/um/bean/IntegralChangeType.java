@@ -1,5 +1,7 @@
 package com.zltel.broadcast.um.bean;
 
+import java.math.BigDecimal;
+
 public class IntegralChangeType {
     private Integer ictId;
 
@@ -10,8 +12,28 @@ public class IntegralChangeType {
     private String describes;
 
     private Integer operation;
+    
+    private Integer icId;
+    
+    private BigDecimal changeProposalIntegral;
 
-    public Integer getIctId() {
+    public BigDecimal getChangeProposalIntegral() {
+		return changeProposalIntegral;
+	}
+
+	public void setChangeProposalIntegral(BigDecimal changeProposalIntegral) {
+		this.changeProposalIntegral = changeProposalIntegral;
+	}
+
+	public Integer getIcId() {
+		return icId;
+	}
+
+	public void setIcId(Integer icId) {
+		this.icId = icId;
+	}
+
+	public Integer getIctId() {
         return ictId;
     }
 

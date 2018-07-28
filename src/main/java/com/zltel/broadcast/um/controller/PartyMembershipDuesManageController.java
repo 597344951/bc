@@ -118,7 +118,7 @@ public class PartyMembershipDuesManageController {
 	 * @return
 	 */
 	@RequestMapping(value="/importPMDMsExcel", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"party:pmdm:query"})
+	@RequiresPermissions(value = {"party:pmdm:insert"})
 	@ApiOperation(value = "批量导入党费缴纳记录")
 	public R importPMDMsExcel(HttpServletResponse response, MultipartFile file) {
 		try {

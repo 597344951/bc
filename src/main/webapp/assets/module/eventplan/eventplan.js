@@ -101,6 +101,7 @@ window.appInstince = new Vue({
                 });
             });
         },
+        //设置日历上 选中标识 
         setCalendarMarker(data) {
             this.markDate = data.map(it => it.stime);
         },
@@ -160,6 +161,9 @@ window.appInstince = new Vue({
                     ins.planEditorDialog.visiable = false;
                 }
             });
+        },
+        getPlanTheme(plan){
+            return Activities.filter(item=>item.title == plan.suggestInfo.title).map(item=>item.className).join(' ');
         }
     },
     components: {}

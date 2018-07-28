@@ -24,8 +24,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void addMessage(int type, String title, String content, int userId, int sourceId) {
-        addMessage(new Message(type, title, content, userId, sourceId));
+    public void addMessage(int type, String title, String content, int userId, int sourceId, String url) {
+        addMessage(new Message(type, title, content, userId, sourceId, url));
     }
 
     @Override

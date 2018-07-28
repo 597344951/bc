@@ -18,7 +18,11 @@ import com.zltel.broadcast.eventplan.dao.EventPlanVotingItemMapper;
 import com.zltel.broadcast.eventplan.service.EventPlanVotingService;
 import com.zltel.broadcast.message.bean.Message;
 import com.zltel.broadcast.message.service.MessageService;
+import com.zltel.broadcast.um.bean.PartyIntegralRecord;
 import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.service.PartyIntegralRecordService;
+import com.zltel.broadcast.um.service.PartyIntegralRecordService.IcChangeType;
+import com.zltel.broadcast.um.service.PartyIntegralRecordService.IcType;
 
 @Service
 public class EventPlanVotingServiceImpl implements EventPlanVotingService {
@@ -29,6 +33,8 @@ public class EventPlanVotingServiceImpl implements EventPlanVotingService {
     private EventPlanInfoMapper planMapper;
     @Resource
     private MessageService messageService;
+    @Resource
+    private PartyIntegralRecordService partyIntegralRecordService;
 
     @Override
     public int deleteByPrimaryKey(EventPlanVotingItemKey key) {
@@ -105,20 +111,32 @@ public class EventPlanVotingServiceImpl implements EventPlanVotingService {
     public void voting(EventPlanVotingItem record) {
         EventPlanInfo plan = this.planMapper.selectByPrimaryKey(record.getEventPlanId());
         if (null == plan) {
-            RRException.makeThrow("没有找到投票活动");
-            return;
+            this.clearNoticeMsg(record);
+            throw RRException.makeThrow("没有找到投票活动");
         }
         if (plan.getStatus() != EventPlanStatus.STATUS_VOTING) RRException.makeThrow("当前活动投票未开始或已截止");
         if (this.votingMapper.updateByPrimaryKey(record) == 0) {
             this.votingMapper.insert(record);
+            // 计算积分
+            PartyIntegralRecord pir = new PartyIntegralRecord();
+            pir.setActivityId(plan.getEventPlanId());
+            pir.setPartyId(record.getUserId());
+            pir.setOrgId(plan.getOrgId());
+            pir.setIsMerge(1);
+            this.partyIntegralRecordService.automaticIntegralRecord(pir, IcType.ACTIVE, IcChangeType.ADD);
         }
-        //处理 关于投票的消息
+
+        this.clearNoticeMsg(record);
+
+    }
+
+    public void clearNoticeMsg(EventPlanVotingItem record) {
+        // 处理 关于投票的消息
         Message msg = new Message();
         msg.setUpdateDate(new Date());
         SysUser user = new SysUser();
         user.setUserId(record.getUserId());
         messageService.handleMessage(user, record.getEventPlanId());
-
     }
 
 

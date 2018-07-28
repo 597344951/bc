@@ -145,6 +145,7 @@ window.appInstince = new Vue({
       title: "文章模板编辑",
       visible: false,
       update: false,
+      yesBtnLabel:'确定',
       data: {
         title: "",
         content: "",
@@ -228,6 +229,10 @@ window.appInstince = new Vue({
   methods: {
     getTypeName(target) {
       let bp = breadPath(target, this.tpt_data, item => item.children, item => item.parent, item => item.typeId, item => item.data);
+      if(bp.length == 0){
+        console.error('未找到目录数据',target.typeId);
+        return '未知分类';
+      }
       return bp[bp.length - 1].name;
     },
     loadSubmitedReport() {
@@ -572,6 +577,7 @@ window.appInstince = new Vue({
     tptTreeClick: function (_data, node) {
       var ins = this;
       var data = _data.data; // 类别节点数据
+      this.tpager.current = 1;
       this.loadTpTypeData(data, ins);
     },
     //预览模板
@@ -586,7 +592,7 @@ window.appInstince = new Vue({
     // 新增模板
     addTemplate: function () {
       this.resetTemplate();
-
+      this.tp.yesBtnLabel = '确定';
       this.tp.visible = true;
       this.tp.update = false;
       this.tp.title = "新建模版";
@@ -641,6 +647,7 @@ window.appInstince = new Vue({
       this.tp.title = "创建报告";
       this.tp.data = tp;
       this.tp.update = false;
+      this.tp.yesBtnLabel = '提交';
       if (tp.content) _editor.setContent(tp.content);
       var ids = getTpTypeIds(this.tp.data, this.tpt_data);
       this.tp.data.albumIds = ids;
@@ -800,11 +807,11 @@ window.appInstince = new Vue({
     },
     handleSizeChange(val) {
       this.tpager.size = val;
-      this.loadTpTypeData();
+      this.loadTpTypeData(this.currentCategory);
     },
     handleCurrentChange(val) {
       this.tpager.current = val;
-      this.loadTpTypeData();
+      this.loadTpTypeData(this.currentCategory);
     },
     crSizeChange(val) {
       this.crpager.size = val;
@@ -822,6 +829,36 @@ window.appInstince = new Vue({
     },
     httpRequestTest() {
       console.log('http request test', arguments);
+    },
+    allowDrag(draggingNode) {
+      //内置数据不能拖拽
+      return !draggingNode.data.data.builtin; 
+    },
+    treeDrapDrop(from, to, dropType, ev){
+      console.log(arguments);
+      let fd = from.data.data;
+      let td = to.data.data;
+      let ins = this;
+      let data = {typeId:fd.typeId};
+      //before、after、inner
+      if(dropType == 'before'){
+        data.parent = td.parent;
+        data.orderNum = td.orderNum-1;
+      }else if(dropType == 'after'){
+        data.parent = td.parent;
+        data.orderNum = td.orderNum+1;
+      }else if(dropType == 'inner'){
+        data.parent = td.typeId;
+      }
+      console.log('拖动结果: ',data)
+      
+      ajax_json("/report/type", "put", data, function (result) {
+        if (result.status) {
+          ins.loadTreeData();
+          $message('拖动成功','success',ins);
+        }
+      });
+     
     }
   }
 });

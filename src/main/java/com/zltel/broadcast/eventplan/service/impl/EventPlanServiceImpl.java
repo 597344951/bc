@@ -94,11 +94,20 @@ public class EventPlanServiceImpl extends BaseDaoImpl<EventPlanInfo> implements 
         msg.setContent(plan.getTitle() + "活动投票通知");
         msg.setUpdateDate(new Date());
         msg.setUserId(item.getUserId());
-        msg.setTitle("活动投票:"+plan.getTitle());
+        msg.setTitle("活动投票:" + plan.getTitle());
         msg.setState(Message.STATE_UNPROCESSED);
         msg.setSourceId(plan.getEventPlanId());
 
         msg.setUrl("/event/plan/view/" + item.getEventPlanId());
         this.messageService.addMessage(msg);
+    }
+
+
+    @Override
+    public void pubTaskIdBackFill(Integer eventPlanId, String pubTaskId) {
+        EventPlanInfo plan = new EventPlanInfo();
+        plan.setEventPlanId(eventPlanId);
+        plan.setPubTaskId(pubTaskId);
+        this.eventPlanInfoMapper.updateByPrimaryKeySelective(plan);
     }
 }

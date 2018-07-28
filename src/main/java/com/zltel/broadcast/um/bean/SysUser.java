@@ -30,7 +30,27 @@ public class SysUser implements Serializable {
     
     private Date afterTime;		//用于时间区间查询
     
-    /**主题颜色**/
+    private Integer userType;
+    
+    private Date lastSignInTime;
+    
+    public Integer getUserType() {
+		return userType;
+	}
+
+	public void setUserType(Integer userType) {
+		this.userType = userType;
+	}
+
+	public Date getLastSignInTime() {
+		return lastSignInTime;
+	}
+
+	public void setLastSignInTime(Date lastSignInTime) {
+		this.lastSignInTime = lastSignInTime;
+	}
+
+	/**主题颜色**/
     private String theme = "";
     
 

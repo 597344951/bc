@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.publish.dao.SilhouetteMapper">
+    <resultMap id="BaseResultMap" type="com.zltel.broadcast.publish.bean.Silhouette">
+        <id column="silhouette_id" jdbcType="INTEGER" property="silhouetteId"/>
+        <result column="activity_id" jdbcType="INTEGER" property="activityId"/>
+        <result column="material" jdbcType="VARCHAR" property="material"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="add_date" jdbcType="TIMESTAMP" property="addDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+    </resultMap>
+    <resultMap id="ResourceMaterial" type="com.zltel.broadcast.resource.bean.ResourceMaterial">
+        <id column="material_id" jdbcType="INTEGER" property="materialId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="cover_url" jdbcType="VARCHAR" property="coverUrl" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="content_type" jdbcType="VARCHAR" property="contentType" />
+        <result column="time_length" jdbcType="VARCHAR" property="timeLength" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="org_id" jdbcType="INTEGER" property="orgId" />
+        <result column="album_id" jdbcType="INTEGER" property="albumId" />
+        <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+        <result column="verify" jdbcType="TINYINT" property="verify" />
+        <result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        silhouette_id, activity_id, material, title, add_date, update_date
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from activity_silhouette
+        where silhouette_id = #{silhouetteId,jdbcType=INTEGER}
+    </select>
+    <select id="query" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from activity_silhouette
+        order by update_date desc
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from activity_silhouette
+        where silhouette_id = #{silhouetteId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.zltel.broadcast.publish.bean.Silhouette">
+        insert into activity_silhouette (silhouette_id, activity_id, material,
+        title, add_date, update_date
+        )
+        values (#{silhouetteId,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{material,jdbcType=VARCHAR},
+        #{title,jdbcType=VARCHAR}, #{addDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.zltel.broadcast.publish.bean.Silhouette">
+        insert into activity_silhouette
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="silhouetteId != null">
+                silhouette_id,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="material != null">
+                material,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="addDate != null">
+                add_date,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="silhouetteId != null">
+                #{silhouetteId,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="material != null">
+                #{material,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="addDate != null">
+                #{addDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.publish.bean.Silhouette">
+        update activity_silhouette
+        <set>
+            <if test="activityId != null">
+                activity_id = #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="material != null">
+                material = #{material,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="addDate != null">
+                add_date = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where silhouette_id = #{silhouetteId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.publish.bean.Silhouette">
+        update activity_silhouette
+        set activity_id = #{activityId,jdbcType=INTEGER},
+        material = #{material,jdbcType=VARCHAR},
+        title = #{title,jdbcType=VARCHAR},
+        add_date = #{addDate,jdbcType=TIMESTAMP},
+        update_date = #{updateDate,jdbcType=TIMESTAMP}
+        where silhouette_id = #{silhouetteId,jdbcType=INTEGER}
+    </update>
+
+    <select id="queryMaterials" resultMap="ResourceMaterial">
+        select * from resource_material
+        where material_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

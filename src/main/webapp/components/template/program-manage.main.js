@@ -54,6 +54,17 @@ let ProgramTemplate = {
                 this.loading = false;
                 this.tpager.total = result.pager.total;
                 this.programTemplates = result.data;
+                this.programTemplates.forEach(item => {
+                    if(item.pubStatus == 0) {
+                        item.statusLabel = "过期"
+                    } else if(item.pubStatus == 1) {
+                        item.statusLabel = "正在播放"
+                    } else if(item.pubStatus == 2) {
+                        item.statusLabel = "待播放"
+                    } else {
+                        item.statusLabel = "未知"
+                    }
+                });
             });
         },
         //打开节目预览
@@ -100,7 +111,8 @@ let ProgramTemplate = {
             this.$emit('publish', p);
         }
 
-    }
+    },
+    template: require("./program-manage.view.html")
 }
 
 export default ProgramTemplate;

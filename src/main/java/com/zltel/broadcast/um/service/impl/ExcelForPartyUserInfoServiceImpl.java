@@ -12,7 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,6 +41,7 @@ import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
+import com.zltel.broadcast.common.util.PasswordHelper;
 import com.zltel.broadcast.um.bean.AcademicDegreeLevel;
 import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.bean.EducationLevel;
@@ -49,6 +52,9 @@ import com.zltel.broadcast.um.bean.OrganizationDuty;
 import com.zltel.broadcast.um.bean.OrganizationInformation;
 import com.zltel.broadcast.um.bean.OrganizationRelation;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
+import com.zltel.broadcast.um.bean.SysRole;
+import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.bean.SysUserRole;
 import com.zltel.broadcast.um.bean.WorkNatureType;
 import com.zltel.broadcast.um.dao.AcademicDegreeLevelMapper;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
@@ -60,6 +66,9 @@ import com.zltel.broadcast.um.dao.OrganizationDutyMapper;
 import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
+import com.zltel.broadcast.um.dao.SysRoleMapper;
+import com.zltel.broadcast.um.dao.SysUserMapper;
+import com.zltel.broadcast.um.dao.SysUserRoleMapper;
 import com.zltel.broadcast.um.dao.WorkNatureTypeMapper;
 import com.zltel.broadcast.um.service.ExcelForPartyUserInfoService;
 import com.zltel.broadcast.um.util.DateUtil;
@@ -94,6 +103,13 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	private OrganizationInformationMapper organizationInformationMapper;
 	@Autowired
 	private OrganizationDutyMapper organizationDutyMapper;
+	@Resource
+	private SysUserMapper sysUserMapper;
+	@Resource
+	private SysRoleMapper sysRoleMapper;
+	
+	@Resource
+	private SysUserRoleMapper sysUserRoleMapper;
 
 	private final static String OFFICE_EXCEL_2003 = "XLS";
 	private final static String OFFICE_EXCEL_2010 = "XLSX";
@@ -117,9 +133,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 		Map<Integer, BaseUserInfo> baseUserInfoMaps = new HashMap<>();
 		Map<Integer, PartyUserInfo> partyUserInfoMaps = new HashMap<>();
 		Map<Integer, OrganizationRelation> orgRelationMaps = new HashMap<>();
+		Map<Integer, SysUser> sysUsersMaps = new HashMap<>();
 		StringBuffer validataErrorMsg = new StringBuffer();	//保存错误信息
 		boolean thisValidateSuccess = validateImportPartyUserInfosExcel(hs, baseUserInfoMaps
-				, partyUserInfoMaps, orgRelationMaps, validataErrorMsg);	//本次验证是否通过
+				, partyUserInfoMaps, orgRelationMaps, validataErrorMsg, sysUsersMaps);	//本次验证是否通过
 		if(!thisValidateSuccess) {
 			return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt").setData(validataErrorMsg);
 		}
@@ -139,6 +156,30 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				if (partyUserInfoCount != 1) {
 					throw new Exception();
 				}
+				
+				SysUser su = sysUsersMaps.get(num);
+				if (su != null) {
+					int count = sysUserMapper.insertSelective(su);
+					if (count != 1) {
+						throw new Exception();
+					}
+				}
+				//赋予默认角色
+				SysRole sysRole = new SysRole();
+				sysRole.setRoleName("party_role");
+				List<SysRole> srs = sysRoleMapper.querySysRoles(sysRole);
+				if (srs != null && srs.size() == 1) {
+					SysUserRole sur = new SysUserRole();
+					sur.setUserId((long)su.getUserId());
+					sur.setRoleId(srs.get(0).getRoleId());
+					int count = sysUserRoleMapper.insertSelective(sur);
+					if (count != 1) {
+						throw new Exception();
+					}
+				} else {
+					throw new Exception();
+				}
+				
 				OrganizationRelation orgR = orgRelationMaps.get(num);
 				if (orgR != null) {
 					orgR.setOrgRltUserId(bui.getBaseUserId());
@@ -162,7 +203,8 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	 * @return
 	 */
 	private boolean validateImportPartyUserInfosExcel(Sheet hs, Map<Integer, BaseUserInfo> baseUserInfoMaps, 
-			Map<Integer, PartyUserInfo> partyUserInfoMaps, Map<Integer, OrganizationRelation> orgRelationMaps, StringBuffer validataErrorMsg) throws Exception {
+			Map<Integer, PartyUserInfo> partyUserInfoMaps, Map<Integer, OrganizationRelation> orgRelationMaps, StringBuffer validataErrorMsg, 
+			Map<Integer, SysUser> sysUsersMaps) throws Exception {
 		boolean thisValidateSuccess = true;
 		for (int i = 3; ; i++) {	//从第4行开始读取
 			Row row = hs.getRow(i);
@@ -476,7 +518,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			}
 			//工作单位
 			if (row.getCell(25) != null) {				
-				partyUserInfo.setWorkUnit(row.getCell(25).getStringCellValue());
+				baseUserInfo.setWorkUnit(row.getCell(25).getStringCellValue());
 			}
 			//工作性质
 			if (row.getCell(26) != null && StringUtil.isNotEmpty(row.getCell(26).getStringCellValue())) {
@@ -484,31 +526,31 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				wnt.setName(row.getCell(26).getStringCellValue());
 				List<WorkNatureType> wnts = workNatureTypeMapper.queryWorkNatureTypes(wnt);
 				if (wnts != null && wnts .size() == 1) {
-					partyUserInfo.setWorkNature(wnts.get(0).getWorkNatureId());
+					baseUserInfo.setWorkNature(wnts.get(0).getWorkNatureId());
 				} else {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行工作性质选择有误。\r\n");
 				}
 			} else {
-				partyUserInfo.setWorkNature(null);
+				baseUserInfo.setWorkNature(null);
 			}
 			//参加工作时间
 			if (row.getCell(27) != null) {
-				partyUserInfo.setJoinWorkDate(row.getCell(27).getDateCellValue());
+				baseUserInfo.setJoinWorkDate(row.getCell(27).getDateCellValue());
 			} else {
-				partyUserInfo.setJoinWorkDate(null);
+				baseUserInfo.setJoinWorkDate(null);
 			}
 			//参加工作时长
 			if (row.getCell(28) != null) {
 				try {
-					partyUserInfo.setAppointmentTimeLength(Integer.parseInt(row.getCell(28).getStringCellValue()));
+					baseUserInfo.setAppointmentTimeLength(Integer.parseInt(row.getCell(28).getStringCellValue()));
 				} catch (Exception e) {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行请填写正确的工作时长。\r\n");
 					logout.error(e.getMessage(),e);
 				}
 			} else {
-				partyUserInfo.setAppointmentTimeLength(null);
+				baseUserInfo.setAppointmentTimeLength(null);
 			}
 			//如何加入党支部
 			if (row.getCell(29) != null && StringUtil.isNotEmpty(row.getCell(29).getStringCellValue())) {
@@ -530,13 +572,13 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				flt.setFirstLineTypeName(row.getCell(30).getStringCellValue());
 				List<FirstLineType> flts = firstLineTypeMapper.queryFirstLineTypes(flt);
 				if (flts != null && flts .size() == 1) {
-					partyUserInfo.setFirstLineSituation(flts.get(0).getFltId());
+					baseUserInfo.setFirstLineSituation(flts.get(0).getFltId());
 				} else {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行加工作一线情况选择有误。\r\n");
 				}
 			} else {
-				partyUserInfo.setFirstLineSituation(null);
+				baseUserInfo.setFirstLineSituation(null);
 			}
 			//是否党务工作者
 			if (row.getCell(31) != null && StringUtil.isNotEmpty(row.getCell(31).getStringCellValue())) {
@@ -684,6 +726,22 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			}
 			
 			baseUserInfo.setIsParty(1);
+			
+			if (baseUserInfo.getIsParty() == 1) {
+				SysUser su = new SysUser();
+	        	su.setUsername(baseUserInfo.getIdCard());
+	        	su.setPassword(baseUserInfo.getIdCard().substring(baseUserInfo.getIdCard().length() - 6));
+	        	String salt = UUID.randomUUID().toString();
+	        	su.setSalt(salt);	//保存盐
+	        	su.setPassword(PasswordHelper.encryptPassword(su.getPassword(), salt));	//加密
+	        	su.setEmail(baseUserInfo.getEmail());
+	        	su.setMobile(baseUserInfo.getMobilePhone());
+	        	su.setStatus(true);
+	        	su.setUserType(1);
+	        	su.setCreateTime(new Date());
+	        	sysUsersMaps.put(i, su);
+			}
+			
 			baseUserInfoMaps.put(i, baseUserInfo);
 			partyUserInfoMaps.put(i, partyUserInfo);
 			if (orgRelation.getOrgRltDutyId() != null && orgRelation.getOrgRltInfoId() != null) {

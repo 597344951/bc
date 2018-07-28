@@ -67,7 +67,57 @@ public class BaseUserInfo {
     
     private Integer positiveUser;
     
-    public Integer getPositiveUser() {
+    private String workUnit;
+
+    private Integer workNature;
+
+    private Date joinWorkDate;
+
+    private Integer appointmentTimeLength;
+    
+    private Integer firstLineSituation;
+    
+    public String getWorkUnit() {
+		return workUnit;
+	}
+
+	public void setWorkUnit(String workUnit) {
+		this.workUnit = workUnit;
+	}
+
+	public Integer getWorkNature() {
+		return workNature;
+	}
+
+	public void setWorkNature(Integer workNature) {
+		this.workNature = workNature;
+	}
+
+	public Date getJoinWorkDate() {
+		return joinWorkDate;
+	}
+
+	public void setJoinWorkDate(Date joinWorkDate) {
+		this.joinWorkDate = joinWorkDate;
+	}
+
+	public Integer getAppointmentTimeLength() {
+		return appointmentTimeLength;
+	}
+
+	public void setAppointmentTimeLength(Integer appointmentTimeLength) {
+		this.appointmentTimeLength = appointmentTimeLength;
+	}
+
+	public Integer getFirstLineSituation() {
+		return firstLineSituation;
+	}
+
+	public void setFirstLineSituation(Integer firstLineSituation) {
+		this.firstLineSituation = firstLineSituation;
+	}
+
+	public Integer getPositiveUser() {
         return positiveUser;
     }
 

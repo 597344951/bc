@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-    <%
+<%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<%
     String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 					+ path + "/";
@@ -23,16 +24,24 @@
                 <div class="toolbar" style="display:flex;">
                     <div style="width: 550px;">
                         <div class="grid-content bg-purple">
-                            <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
-                            <el-button type="primary" icon="el-icon-edit" @click="updateTemplateType" size="small">修改分类</el-button>
-                            <el-button type="danger" icon="el-icon-delete" @click="deleteTemplateType" size="small">删除分类</el-button>
-                            <el-button type="success" icon="el-icon-plus" @click="addTemplate" size="small">新增模板</el-button>
+                            <shiro:hasPermission name="template:type:save">
+                                <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="template:type:update">
+                                <el-button type="primary" icon="el-icon-edit" @click="updateTemplateType" size="small">修改分类</el-button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="template:type:delete">
+                                <el-button type="danger" icon="el-icon-delete" @click="deleteTemplateType" size="small">删除分类</el-button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="template:template:save">
+                                <el-button type="success" icon="el-icon-plus" @click="addTemplate" size="small">新增模板</el-button>
+                            </shiro:hasPermission>
                         </div>
                     </div>
-                    <div   style="text-align: left;">
+                    <div style="text-align: left;">
                         <el-form :inline="true" class="demo-form-inline">
                             <el-form-item label="搜索模板">
-                                <el-input placeholder="搜索模板" v-model="keyword" ></el-input>
+                                <el-input placeholder="搜索模板" v-model="keyword"></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="searchTemplate">搜索</el-button>
@@ -43,8 +52,8 @@
             </el-header>
             <el-container>
                 <el-aside width="200px">
-                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" :default-expand-all="false" :expand-on-click-node="true"
-                        @node-click="tptTreeClick" class="menu-tree"  @node-contextmenu="treeContextmenu" accordion> 
+                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id"  default-expand-all :expand-on-click-node="true"
+                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable  @node-drop="treeDrapDrop" :allow-drag="allowDrag">
                     </el-tree>
                 </el-aside>
                 <el-main>
@@ -55,7 +64,9 @@
                                 <el-breadcrumb separator="/" style="margin-top: 10px;">
                                     <el-breadcrumb-item>所有类别</el-breadcrumb-item>
                                     <template v-for="item in breadcrumbData">
-                                        <el-breadcrumb-item ><a @click="breadPathClick(item)">{{item.name}}</a></el-breadcrumb-item>
+                                        <el-breadcrumb-item>
+                                            <a @click="breadPathClick(item)">{{item.name}}</a>
+                                        </el-breadcrumb-item>
                                     </template>
                                 </el-breadcrumb>
                             </el-col>
@@ -69,15 +80,19 @@
                         </el-row>
                         <template v-for="tp in tps">
                             <el-card class="passage-conver" :body-style="{ padding: '0px' }" shadow="never">
-                                <div class="background-img" :style="{'background-image':'url('+getResUrl(tp.previewPicture)+')'}" @mouseenter="card_hover(tp)" @mouseleave="card_leave(tp)">
+                                <div class="background-img" :style="{'background-image':'url('+getResUrl(tp.previewPicture)+')'}" @mouseenter="card_hover(tp)"
+                                    @mouseleave="card_leave(tp)">
                                     <!--<img src="tp.previewPicture" class="image">-->
                                     <div class="control ">
-                                            <span class="title">{{tp.title}}</span>
-                                            <el-collapse-transition>
-                                                <div v-show="tp.showtoolbar"  class="bottom clearfix">
-                                                    <el-button-group>
-                                                        <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
+                                        <span class="title">{{tp.title}}</span>
+                                        <el-collapse-transition>
+                                            <div v-show="tp.showtoolbar" class="bottom clearfix">
+                                                <el-button-group>
+                                                    <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
+                                                    <shiro:hasPermission name="template:template:update">
                                                         <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
+                                                    </shiro:hasPermission>
+                                                    <shiro:hasPermission name="template:template:delete">
                                                         <el-popover placement="top" width="160" v-model="tp.cfv">
                                                             <p>是否删除这个模板?</p>
                                                             <div style="text-align: right; margin: 0">
@@ -86,10 +101,11 @@
                                                             </div>
                                                             <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
                                                         </el-popover>
-                                                    </el-button-group>
-                                                </div>
-                                            </el-collapse-transition>
-                                        </div>
+                                                    </shiro:hasPermission>
+                                                </el-button-group>
+                                            </div>
+                                        </el-collapse-transition>
+                                    </div>
                                 </div>
                             </el-card>
                         </template>
@@ -162,12 +178,8 @@
                 </el-form-item>
                 <el-form-item label="上一级目录" v-if="tpt.update != true">
                     <el-select v-model="tpt.data.parentLabel" placeholder="请选择">
-                            <el-option
-                              v-for="item in tpt_parents"
-                              :key="item.parent"
-                              :label="item.parentLabel"
-                              :value="item.parentLabel">
-                            </el-option>
+                        <el-option v-for="item in tpt_parents" :key="item.parent" :label="item.parentLabel" :value="item.parentLabel">
+                        </el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -183,9 +195,11 @@
         </el-dialog>
         <!--节目模版选择-->
         <!--Tree 右键菜单-->
-        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick" @close="contextMenuClose"></context-menu>
+        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"
+            @close="contextMenuClose"></context-menu>
         <!--Tree 右键菜单-->
     </div>
 </body>
+
 </html>
 <script type="module" charset="utf-8" src="${urls.getForLookupPath('/assets/module/template/template.js')}"></script>

@@ -122,7 +122,7 @@
 										:key="item.id"
 										:label="item.name"
 										:value="item.id">
-										<img :src="getPaidImg(item.name)" style="width: 50px;height: 20px;float: left;" />
+										<img :src="getPaidImg(item.name)" style="width: 55px;height: 25px;float: left; padding-top: 4px;" />
 										<span style="float: right;">{{item.name}}</span>
 									</el-option>
 								</el-select>
@@ -173,6 +173,7 @@
 					  	</el-button>
 					  	<div>
 							<el-button type="text" @click="money_manage_exportPMDMExcelExample">下载Excel模板</el-button>，按照模板填写
+							<p>党费缴纳会使用组织积分系统，如果没有初始化积分，请到积分管理初始化</p>
 					  		<el-upload
 					  			action="" 
 					 	   		:http-request="money_manage_importPMDMsExcel"

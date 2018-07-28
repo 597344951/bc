@@ -1,6 +1,5 @@
 package com.zltel.broadcast.um.controller;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +32,6 @@ public class OrganizationTypeController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgTypes", method=RequestMethod.POST)
 	@LogPoint("查询组织类型")
-	@RequiresPermissions(value = {"org:type:query"})
 	@ApiOperation(value = "查询组织类型")
 	public R queryOrgTypes(OrganizationType organizationType, int pageNum, int pageSize) {
 		try {
@@ -51,7 +49,6 @@ public class OrganizationTypeController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgTypesNotPage", method=RequestMethod.POST)
 	@LogPoint("查询组织类型")
-	@RequiresPermissions(value = {"org:type:query"})
 	@ApiOperation(value = "查询组织类型")
 	public R queryOrgTypesNotPage(OrganizationType organizationType) {
 		try {

@@ -8,9 +8,10 @@
     <result column="integral" jdbcType="DECIMAL" property="integral" />
     <result column="describes" jdbcType="VARCHAR" property="describes" />
     <result column="parent_ic_id" jdbcType="INTEGER" property="parentIcId" />
+    <result column="is_inner_integral" jdbcType="INTEGER" property="isInnerIntegral" />
   </resultMap>
   <sql id="Base_Column_List">
-    ic_id, org_id, type, integral, describes, parent_ic_id
+    ic_id, org_id, type, integral, describes, parent_ic_id, is_inner_integral
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -24,9 +25,9 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.IntegralConstitute">
     insert into integral_constitute (ic_id, org_id, type, integral, 
-      describes, parent_ic_id)
+      describes, parent_ic_id, is_inner_integral)
     values (#{icId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{integral,jdbcType=DECIMAL}, 
-      #{describes,jdbcType=VARCHAR}, #{parentIcId,jdbcType=INTEGER})
+      #{describes,jdbcType=VARCHAR}, #{parentIcId,jdbcType=INTEGER}, #{isInnerIntegral,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.IntegralConstitute">
     insert into integral_constitute
@@ -49,6 +50,9 @@
       <if test="parentIcId != null">
         parent_ic_id,
       </if>
+      <if test="isInnerIntegral != null">
+        is_inner_integral,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="icId != null">
@@ -68,6 +72,9 @@
       </if>
       <if test="parentIcId != null">
         #{parentIcId,jdbcType=INTEGER},
+      </if>
+      <if test="isInnerIntegral != null">
+        #{isInnerIntegral,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -89,6 +96,9 @@
       <if test="parentIcId != null">
         parent_ic_id = #{parentIcId,jdbcType=INTEGER},
       </if>
+      <if test="isInnerIntegral != null">
+        is_inner_integral = #{isInnerIntegral,jdbcType=INTEGER},
+      </if>
     </set>
     where ic_id = #{icId,jdbcType=INTEGER}
   </update>
@@ -98,7 +108,8 @@
       type = #{type,jdbcType=VARCHAR},
       integral = #{integral,jdbcType=DECIMAL},
       describes = #{describes,jdbcType=VARCHAR},
-      parent_ic_id = #{parentIcId,jdbcType=INTEGER}
+      parent_ic_id = #{parentIcId,jdbcType=INTEGER},
+      is_inner_integral = #{isInnerIntegral,jdbcType=INTEGER}
     where ic_id = #{icId,jdbcType=INTEGER}
   </update>
   
@@ -110,7 +121,8 @@
 	  ic.type type,
 	  ic.integral integral,
 	  ic.describes describes,
-	  ic.parent_ic_id parentIcId
+	  ic.parent_ic_id parentIcId,
+	  ic.is_inner_integral isInnerIntegral
 	from
 	  integral_constitute ic 
 	  inner join organization_information _oi on ic.org_id = _oi.org_info_id
@@ -121,6 +133,15 @@
       </if>
       <if test="parentIcId != null and parentIcId != ''"> and
        	ic.parent_ic_id = #{parentIcId}
+      </if>
+      <if test="icId != null and icId != ''"> and
+       	ic.ic_id = #{icId}
+      </if>
+      <if test="type != null and type != ''"> and
+       	ic.type = #{type}
+      </if>
+      <if test="isInnerIntegral != null and isInnerIntegral != ''"> and
+       	ic.is_inner_integral = #{isInnerIntegral}
       </if>
   </select>
   
@@ -135,6 +156,9 @@
 	  1 = 1
 	  <if test="orgInfoName != null and orgInfoName != ''"> and
           _oi.org_info_name like CONCAT('%',#{orgInfoName},'%')
+      </if>
+      <if test="orgInfoId != null and orgInfoId != ''"> and
+          _oi.org_info_id = #{orgInfoId}
       </if>
   </select>
   
@@ -154,4 +178,13 @@
        	ic.org_id = #{orgId}
       </if>
   </select>
+  
+  <select id="queryInsertedIcId" resultType="java.lang.Integer">
+		select LAST_INSERT_ID()
+  </select>
+  
+  <delete id="deleteByOrgId" parameterType="java.lang.Integer">
+    delete from integral_constitute
+    where org_id = #{orgId,jdbcType=INTEGER}
+  </delete>
 </mapper>

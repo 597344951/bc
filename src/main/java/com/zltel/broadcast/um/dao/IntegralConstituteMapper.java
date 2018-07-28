@@ -39,4 +39,12 @@ public interface IntegralConstituteMapper extends BaseDao<IntegralConstitute> {
      * @return
      */
     public List<Map<String, Object>> queryPartyUserInfoAndIcInfo(Map<String, Object> conditions);
+    
+    /**
+     * 
+     * @return
+     */
+    public Integer queryInsertedIcId();
+    
+    public int deleteByOrgId(Integer icId);
 }

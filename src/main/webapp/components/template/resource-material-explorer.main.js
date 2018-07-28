@@ -1,4 +1,3 @@
-import serverConfig from '/environment/resourceUploadConfig.jsp';
 let ResourceMaterialExplorer = {
     info: {
         name: 'resource-material-explorer', //注册组件名
@@ -106,7 +105,7 @@ let ResourceMaterialExplorer = {
             this.loadTpTypeData(item);
         },
         getResUrl(url) {
-            return serverConfig.getUrl(url);
+            return '/media-server/url?url='+url;
         },
         setFullscreen() {
             this.config.fullscreen = !this.config.fullscreen;
@@ -219,7 +218,8 @@ let ResourceMaterialExplorer = {
                 this.tps.forEach(item => item.chose=false)
             }
         }
-    }
+    },
+    template: require("./resource-material-explorer.view.html")
 }
 
 export default ResourceMaterialExplorer

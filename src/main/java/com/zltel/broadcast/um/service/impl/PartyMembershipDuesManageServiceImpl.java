@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +23,10 @@ import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.um.bean.PartyMembershipDuesManage;
 import com.zltel.broadcast.um.bean.PartyMembershipDuesStatus;
+import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.dao.PartyMembershipDuesManageMapper;
 import com.zltel.broadcast.um.dao.PartyMembershipDuesStatusMapper;
 import com.zltel.broadcast.um.service.PartyMembershipDuesManageService;
@@ -65,6 +69,16 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
 		}
     	conditionMaps.put("paidDateStart", startTime);
 		conditionMaps.put("paidDateEnd", endTime);
+		
+		Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	conditionMaps.put("idCard", sysUser.getUsername());
+        }
     	
     	PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> partyMembershipDues = partyMembershipDuesManageMapper.queryPartyMembershipDues(conditionMaps);	//开始查询，没有条件则查询所有
@@ -95,6 +109,18 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
      * @return
      */
     public R queryOrgInfoOfPMDM(Map<String, Object> conditionMaps, int pageNum, int pageSize) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        	}
+        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        }
     	PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> orgInfos = partyMembershipDuesManageMapper.queryOrgInfoOfPMDM(conditionMaps);	//开始查询，没有条件则查询所有组织关系
 		PageInfo<Map<String, Object>> orgInfosForPageInfo = new PageInfo<>(orgInfos);
@@ -111,6 +137,18 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
      * @return
      */
     public R queryOrgInfoOfPMDMNotPage(Map<String, Object> conditionMaps) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        	}
+        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        }
     	List<Map<String, Object>> orgInfos = partyMembershipDuesManageMapper.queryOrgInfoOfPMDM(conditionMaps);
     	if (orgInfos != null && !orgInfos.isEmpty()) {	//是否查询到数据
 			return R.ok().setData(orgInfos).setMsg("查询党组织成功");

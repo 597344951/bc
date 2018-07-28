@@ -7,9 +7,11 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="describes" jdbcType="VARCHAR" property="describes" />
     <result column="operation" jdbcType="INTEGER" property="operation" />
+    <result column="ic_id" jdbcType="INTEGER" property="icId" />
+    <result column="change_proposal_integral" jdbcType="DECIMAL" property="changeProposalIntegral" />
   </resultMap>
   <sql id="Base_Column_List">
-    ict_id, type, name, describes, operation
+    ict_id, type, name, describes, operation, ic_id, change_proposal_integral
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,9 +25,9 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
     insert into integral_change_type (ict_id, type, name, 
-      describes, operation)
+      describes, operation, ic_id, change_proposal_integral)
     values (#{ictId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{describes,jdbcType=VARCHAR}, #{operation,jdbcType=INTEGER})
+      #{describes,jdbcType=VARCHAR}, #{operation,jdbcType=INTEGER}, #{icId,jdbcType=INTEGER}, #{changeProposalIntegral,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
     insert into integral_change_type
@@ -45,6 +47,12 @@
       <if test="operation != null">
         operation,
       </if>
+      <if test="icId != null">
+        ic_id,
+      </if>
+      <if test="changeProposalIntegral != null">
+        change_proposal_integral,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="ictId != null">
@@ -61,6 +69,12 @@
       </if>
       <if test="operation != null">
         #{operation,jdbcType=INTEGER},
+      </if>
+      <if test="icId != null">
+        #{icId,jdbcType=INTEGER},
+      </if>
+      <if test="changeProposalIntegral != null">
+        #{changeProposalIntegral,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -79,6 +93,12 @@
       <if test="operation != null">
         operation = #{operation,jdbcType=INTEGER},
       </if>
+      <if test="icId != null">
+        ic_id = #{icId,jdbcType=INTEGER},
+      </if>
+      <if test="changeProposalIntegral != null">
+        change_proposal_integral = #{changeProposalIntegral,jdbcType=DECIMAL},
+      </if>
     </set>
     where ict_id = #{ictId,jdbcType=INTEGER}
   </update>
@@ -87,7 +107,9 @@
     set type = #{type,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       describes = #{describes,jdbcType=VARCHAR},
-      operation = #{operation,jdbcType=INTEGER}
+      operation = #{operation,jdbcType=INTEGER},
+      ic_id = #{icId,jdbcType=INTEGER},
+      change_proposal_integral = #{changeProposalIntegral,jdbcType=DECIMAL}
     where ict_id = #{ictId,jdbcType=INTEGER}
   </update>
   
@@ -110,6 +132,12 @@
       </if>
       <if test="ictId != null"> and 
         ict.ict_id = #{ictId}
+      </if>
+      <if test="icId != null"> and 
+        ict.ic_id = #{icId}
+      </if>
+      <if test="operation != null"> and 
+        ict.operation = #{operation}
       </if>
   </select>
 </mapper>

@@ -9,6 +9,17 @@ public class EventPlanVotingItemKey {
     @NotNull(message="投票投票用户不能为空")
     private Integer userId;
 
+    public EventPlanVotingItemKey(@NotNull(message = "投票活动不能为空") Integer eventPlanId,
+            @NotNull(message = "投票投票用户不能为空") Integer userId) {
+        super();
+        this.eventPlanId = eventPlanId;
+        this.userId = userId;
+    }
+
+    public EventPlanVotingItemKey() {
+        super();
+    }
+
     public Integer getEventPlanId() {
         return eventPlanId;
     }

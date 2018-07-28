@@ -1,10 +1,10 @@
 /**
  * 加载 报告
  */
-import CommunityInfo from '/components/loadAnimation/community-info.main.js';
-import PmInfo from '/components/loadAnimation/pm-info.main.js';
-import FestivalInfo from '/components/loadAnimation/festival-info.main.js';
-import HotNews from '/components/loadAnimation/hot-news.main.js';
+import CommunityInfo from './community-info.main.js';
+import PmInfo from './pm-info.main.js';
+import FestivalInfo from './festival-info.main.js';
+import HotNews from './hot-news.main.js';
 
 let routes = [];
 let comps = [CommunityInfo, PmInfo, FestivalInfo, HotNews];
@@ -88,7 +88,8 @@ let LoadReport = {
             this.empty_dis = false;
             this.$router.push(r);
         }
-    }
+    },
+    template: require("./load-report.view.html")
 };
 
 export default LoadReport;

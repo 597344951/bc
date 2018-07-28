@@ -11,9 +11,19 @@ public interface EventPlanService extends BaseDao<EventPlanInfo> {
 
     /** 查询 未结束活动 **/
     List<EventPlanInfo> queryUnStop(EventPlanInfo eventplan);
-    /**更新状态信息**/
+
+    /** 更新状态信息 **/
     public void updateStatus(EventPlanInfo plan);
-    /**像用户发送投票信息**/
+
+    /** 像用户发送投票信息 **/
     public void sendVotingToUser(EventPlanInfo plan);
+
+    /**
+     * 活动 投屏任务id回填
+     * 
+     * @param eventPlanId 活动任务id
+     * @param pubTaskId   发布任务id
+     */
+    public void pubTaskIdBackFill(Integer eventPlanId, String pubTaskId);
 
 }

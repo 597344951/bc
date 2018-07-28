@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>----------</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background-image: url(../../assets/img/xingkong.jpg);
+            overflow: hidden;
+        }
+        .question-box {
+            min-height: 420px;
+            height: 50%;
+            width: 80%;
+            position: absolute;
+            left: 10%;
+            top: 20%;
+            overflow: auto;
+        }
+        .score {
+            margin: 210px auto;
+            height: 300px; 
+            width: 350px;
+            text-align: center;
+            background-color: rgba(255,255,255,.8);
+        }
+        .el-card.is-always-shadow{
+            box-shadow: 0px 0px 24px 3px #ddd;
+        }
+        .score p{
+            margin-top: 70px;
+        }
+        .score p img{
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .question {
+            padding: 0px 50px;
+            height: 100%;
+            overflow: auto;
+
+        }
+
+        .topic {
+            text-indent: 2em;
+            line-height: 28px;
+        }
+
+        .answers {
+            padding: 0px 20px;
+        }
+
+        .timer {
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+
+        .index {
+            margin-left: 40%;
+            font-weight: bold;
+        }
+
+        .pre {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+        }
+        .next {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+
+        }
+
+        .next:active+.topic{
+            opacity: 0.5;
+            animation:an 2s;
+        }
+        @keyframe an{
+            0%{opacity: 0;}
+            25%{opacity: 0.25;}
+            50%{opacity: 0.5;}
+            100%{opacity: 1;}
+        }
+        .submit {
+            position: absolute;
+            right: 30px;
+            bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-card class="question-box" v-if="!scoreShow">
+            <div slot="header" class="clearfix">
+                <span>{{title}}</span>
+                <span class="index">{{curIndex + 1}}/{{questions.length}}</span>
+                <span class="timer">{{time()}}</span>
+            </div>
+            <div class="question">
+                <el-button v-show="curIndex > 0" icon="el-icon-arrow-left" circle class="pre" @click="pre"></el-button>
+                <el-button v-show="curIndex < questions.length-1" icon="el-icon-arrow-right" circle class="next" @click="next"></el-button>
+                <div class="topic">
+                    <p>{{curQuestion.content}}</p>
+                </div>
+                <div class="answers">
+                    <h3 v-for="answer in curQuestion.answers">
+                        <el-radio v-model="curQuestion.picked" :label="answer.answerId">{{answer.content}}</el-radio>
+                    </h3>
+                </div>
+                <el-button type="primary" class="submit" @click="submit">提交</el-button>
+            </div>
+        </el-card>
+        <el-card v-if="scoreShow" class="score">
+            <h3>您本次答题的得分是： {{score}} 分</h2>
+            <p><img src="../../assets/img/em298.gif" alt="">额，分数太低了，请继续努力！</p> 
+            <!-- <p><img src="../../assets/img/em52.gif" alt="">马马虎虎，再接再厉！</p>    -->
+            <!-- <p><img src="../../assets/img/em256.gif" alt="">百尺竿头更进一步！</p>  -->
+            <!-- <p><img src="../../assets/img/em68.gif" alt="">Very Good！你已经秒杀了百分之九十的小伙伴！</p>       -->
+        </el-card>
+    </div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            scoreShow: false,
+            score: 0,
+            timeLimit: 30 * 60,
+            title: '',
+            questions: [],
+            curQuestion: {},
+            curIndex: 0
+        },
+        mounted() {
+            this.loadRandQuestion()
+        },
+        methods: {
+            time() {
+                return `${preZeroFill(Math.floor(this.timeLimit / 60 / 60) % 60, 2)}:${preZeroFill(Math.floor(this.timeLimit / 60) % 60, 2)}:${preZeroFill(this.timeLimit % 60, 2)}`
+            },
+            timeGo() {
+                let go = setInterval(() => {
+                    this.timeLimit--
+                    if (this.timeLimit <= 0) {
+                        window.clearInterval(go)
+                    }
+                }, 1000)
+            },
+            loadRandQuestion() {
+                postJson('/question/rand', { size: 20 }, reps => {
+                    if (reps.status) {
+                        app.questions = [];
+                        reps.data.forEach(item => {
+                            item.picked = ''
+                            let i = 0
+                            item.answers.forEach(a => {
+                                a.content = `${String.fromCharCode(65 + i)}：${a.content}` 
+                                if (a.type == 1) {
+                                    item.correct = a.answerId
+                                }
+                                i ++
+                            })
+                            app.questions.push(item)
+                        })
+                        app.curQuestion = app.questions[0]
+                        app.timeGo()
+                    } else {
+                        app.$message.error(reps.msg)
+                    }
+                })
+            },
+            pre() {
+                if (this.curIndex > 0) {
+                    this.curIndex--
+                    this.curQuestion = this.questions[this.curIndex]
+                }
+            },
+            next() {
+                if (this.curIndex < this.questions.length - 1) {
+                    this.curIndex++
+                    this.curQuestion = this.questions[this.curIndex]
+                }
+            },
+            submit() {
+                let correctCount = 0
+                let nonePickCount = 0
+                this.questions.forEach(item => {
+                    if (!item.picked) {
+                        nonePickCount++
+                    } else if (item.picked == item.correct) {
+                        correctCount++
+                    }
+                })
+                let msg
+                if (nonePickCount > 0) {
+                    msg = `你还有${nonePickCount}道题还未回答, 确认提交?`
+                }
+                this.$confirm(msg, '确认提交', {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '返回答题',
+                    type: 'warning'
+                }).then(() => {
+                    this.score = correctCount / this.questions.length * 100
+                    this.scoreShow = true
+                }).catch(() => { })
+            }
+        }
+    })
+    function preZeroFill(val, size) {
+        return (new Array(size).join('0') + val).slice(-size);
+    }
+    function postJson(url, postData, callback) {
+        $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'json',
+            data: JSON.stringify(postData),
+            contentType: 'application/json',
+            success: function (reps) {
+                if (callback) callback(reps)
+            },
+            error: function (err) {
+                app.$message.error('系统错误')
+            }
+        });
+    }
+</script>
+
+</html>

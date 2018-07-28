@@ -1,12 +1,15 @@
 package com.zltel.broadcast.um.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
@@ -14,14 +17,22 @@ import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.um.bean.IntegralChangeType;
 import com.zltel.broadcast.um.bean.IntegralConstitute;
+import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.dao.IntegralChangeTypeMapper;
 import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
 import com.zltel.broadcast.um.service.IntegralConstituteService;
+import com.zltel.broadcast.um.util.IntegralErrorException;
+import com.zltel.broadcast.um.util.IntegralNullException;
 
 @Service
 public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitute> implements IntegralConstituteService  {
 	@Resource
     private IntegralConstituteMapper integralConstituteMapper;
+	@Resource
+    private IntegralChangeTypeMapper integralChangeTypeMapper;
 	@Override
     public BaseDao<IntegralConstitute> getInstince() {
         return this.integralConstituteMapper;
@@ -48,6 +59,19 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @return
      */
     public R queryOrgInfoForIc(Map<String, Object> conditions, int pageNum, int pageSize) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditions.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        	}
+        	conditions.put("orgInfoId", sysUser.getOrgId());
+        }
+    	
     	PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> orgInfoForIcs = integralConstituteMapper.queryOrgInfoForIc(conditions);
 		PageInfo<Map<String, Object>> orgInfoForIcsForPageInfo = new PageInfo<>(orgInfoForIcs);
@@ -65,6 +89,19 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @return
      */
     public R queryOrgInfoForIcNotPage(Map<String, Object> conditions) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditions.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        	}
+        	conditions.put("orgInfoId", sysUser.getOrgId());
+        }
+    	
     	List<Map<String, Object>> orgInfoForIcs = integralConstituteMapper.queryOrgInfoForIc(conditions);
     	if (orgInfoForIcs != null &&  orgInfoForIcs.size() > 0) {
 			return R.ok().setData(orgInfoForIcs).setMsg("查询组织信息成功");
@@ -79,6 +116,19 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @return
      */
     public R queryPartyUserInfoAndIcInfo(Map<String, Object> conditions, int pageNum, int pageSize) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditions.put("orgId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        	}
+        	conditions.put("orgId", sysUser.getOrgId());
+        }
+    	
     	PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> partyUserInfoAndIcInfos = integralConstituteMapper.queryPartyUserInfoAndIcInfo(conditions);
 		PageInfo<Map<String, Object>> partyUserInfoAndIcInfosPageInfo = new PageInfo<>(partyUserInfoAndIcInfos);
@@ -91,39 +141,231 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     }
     
     /**
-     * 查询组织积分信息
+     * 查询组织积分信息（为了查询总分）
+     * 点击左侧组织导航时，查询该组织积分信息，如果信息异常则报异常提示初始化积分信息
      * @param conditions
      * @return
      */
     public R queryOrgIntegralInfo(Map<String, Object> conditions) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	conditions.put("orgId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        	}
+        	conditions.put("orgId", sysUser.getOrgId());
+        }
+    	
     	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
     	Double integralCount = new Double(0.0);
     	Map<String, Object> results = new HashMap<>();
     	results.put("integralCount", integralCount);
-    	getIntegralInfoChildrens(ics, results, conditions);
+    	try {
+			getIntegralInfoChildrens(ics, results, conditions);
+			results.put("integralError", false);
+		} catch (IntegralErrorException e) {	//如果发现积分有为空的，则要设置积分
+			results.put("integralError", true);
+		}
     	
     	return R.ok().setData(results);
+    }
+    
+    /**
+     * 查询组织积分信息（最后一级）
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralInfo_IcType(Map<String, Object> conditions) {
+    	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    	Map<String, Map<String, Object>> icsMap = new HashMap<>();
+    	List<Map<String, Object>> result = new ArrayList<>();
+    	if (ics != null && ics.size() > 0) {
+			for (Map<String, Object> ic : ics) {
+				icsMap.put(String.valueOf(ic.get("parentIcId")), ic);
+			}
+			for (Map<String, Object> ic : ics) {
+				if (icsMap.get(String.valueOf(ic.get("icId"))) == null) {
+					result.add(ic);
+				}
+			} 
+		}
+		return R.ok().setMsg("查询成功").setData(result);
     }
     
     /**
      * 得到积分的子节点信息
      * @param ics
      * @param count
+     * @throws IntegralNullException 
      */
-    private void getIntegralInfoChildrens(List<Map<String, Object>> ics, Map<String, Object> results, Map<String, Object> conditions) {
+    private void getIntegralInfoChildrens(List<Map<String, Object>> ics, Map<String, Object> results, Map<String, Object> conditions) throws IntegralErrorException {
     	if (ics != null && ics.size() > 0) {
     		for (Map<String, Object> ic : ics) {
 				Map<String, Object> condition = new HashMap<>();
 				condition.put("orgId", conditions.get("orgId"));
 				condition.put("parentIcId", ic.get("icId"));
 				
+				if (ic.get("integral") == null) throw new IntegralErrorException();	//某一节点如果没有设置积分值，抛异常
+				
 				List<Map<String, Object>> icChildrens = integralConstituteMapper.queryOrgIntegralConstitute(condition);
 				if (icChildrens == null || icChildrens.size() == 0) {		
+					//当为最低级时，查看当前积分节点是否有对应的加分减分方法
+					IntegralChangeType ict = new IntegralChangeType();
+					ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
+					ict.setOperation(0);	//是否有扣分处理方式
+					List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+					if (icts == null || icts.size() == 0) throw new IntegralErrorException();
+					icts.clear();
+					ict.setOperation(1);	//是否有加分处理方式
+					icts = integralChangeTypeMapper.queryICT(ict);
+					if (icts == null || icts.size() == 0) throw new IntegralErrorException();
+					
 					BigDecimal bd = new BigDecimal(ic.get("integral").toString());
 					results.put("integralCount", Double.parseDouble(results.get("integralCount").toString()) + bd.doubleValue());
 				}
 				getIntegralInfoChildrens(icChildrens, results, condition);
 			}
     	}
+    } 
+    
+    /**
+     * 查询组织积分信息（为修改积分服务）
+     * @param conditions
+     * @return
+     */
+    public R queryOrgIntegralConstituteInfo(Map<String, Object> conditions) {
+    	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    	if (ics != null && ics.size() == 1) {
+    		Map<String, Object> ic = ics.get(0);
+    		IntegralChangeType ict = new IntegralChangeType();
+			ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
+			ict.setOperation(0);	//是否有扣分处理方式
+			List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+			ic.put("reduce_operation", "扣分");
+			ic.put("add_operation", "加分");
+			if (icts != null && icts.size() == 1) {
+				IntegralChangeType _ict = icts.get(0);
+				ic.put("reduce_ictId", _ict.getIctId());
+				ic.put("reduce_integral", _ict.getChangeProposalIntegral());
+				ic.put("reduce_describes", _ict.getDescribes() == null ? "" : _ict.getDescribes());
+			}
+			icts.clear();
+			ict.setOperation(1);	//是否有加分处理方式
+			icts = integralChangeTypeMapper.queryICT(ict);
+			if (icts != null && icts.size() == 1) {
+				IntegralChangeType _ict = icts.get(0);
+				ic.put("add_ictId", _ict.getIctId());
+				ic.put("add_integral", _ict.getChangeProposalIntegral());
+				ic.put("add_describes", _ict.getDescribes() == null ? "" : _ict.getDescribes());
+			}
+			return R.ok().setData(ic);
+    	} else {
+    		return R.error().setMsg("出现错误");
+    	}
+    }
+    
+    /**
+     * 修改组织积分信息
+     * @param conditions
+     * @return
+     */
+    public R updateOrgIntegralConstituteInfo(Map<String, Object> conditions) {
+    	IntegralConstitute ic = new IntegralConstitute();
+    	ic.setIcId(Integer.parseInt(String.valueOf(conditions.get("icId"))));
+    	ic.setType(conditions.get("type") == null ? null : String.valueOf(conditions.get("type")));
+    	ic.setIntegral(new BigDecimal(String.valueOf(conditions.get("integral"))));
+    	ic.setDescribes(conditions.get("describes") == null ? null : String.valueOf(conditions.get("describes")));
+    	integralConstituteMapper.updateByPrimaryKeySelective(ic);
+    	
+    	if (conditions.get("add_integral") != null && conditions.get("add_integral") != "") {
+			IntegralChangeType add_ict = new IntegralChangeType();
+			add_ict.setIcId(ic.getIcId());
+			add_ict.setType("加分");
+			add_ict.setChangeProposalIntegral(new BigDecimal(String.valueOf(conditions.get("add_integral"))));
+			add_ict.setDescribes(conditions.get("add_describes") == null ? null : String.valueOf(conditions.get("add_describes")));
+			add_ict.setOperation(1);
+			if (conditions.get("add_ictId") != null && conditions.get("add_ictId") != "") {
+				add_ict.setIctId(Integer.parseInt(String.valueOf(conditions.get("add_ictId"))));
+				integralChangeTypeMapper.updateByPrimaryKeySelective(add_ict);
+			} else {
+				integralChangeTypeMapper.insertSelective(add_ict);
+			} 
+		}
+    	
+		if (conditions.get("reduce_integral") != null && conditions.get("reduce_integral") != "") {
+			IntegralChangeType reduce_ict = new IntegralChangeType();
+			reduce_ict.setIcId(ic.getIcId());
+			reduce_ict.setType("扣分");
+			reduce_ict.setChangeProposalIntegral(new BigDecimal(String.valueOf(conditions.get("reduce_integral"))));
+			reduce_ict.setDescribes(conditions.get("reduce_describes") == null ? null : String.valueOf(conditions.get("reduce_describes")));
+			reduce_ict.setOperation(0);
+			if (conditions.get("reduce_ictId") != null && conditions.get("reduce_ictId") != "") {
+				reduce_ict.setIctId(Integer.parseInt(String.valueOf(conditions.get("reduce_ictId"))));
+				integralChangeTypeMapper.updateByPrimaryKeySelective(reduce_ict);
+			} else {
+				integralChangeTypeMapper.insertSelective(reduce_ict);
+			} 
+		}
+		return R.ok().setMsg("修改成功");
+    }
+    
+    /**
+     * 填写积分验证
+     * @param conditions
+     * @return
+     */
+    public R integralValidator(Map<String, Object> conditions) {
+    	Integer score = Integer.parseInt(String.valueOf(conditions.get("score")));
+    	Integer icId = Integer.parseInt(String.valueOf(conditions.get("icId")));
+    	conditions.clear();
+    	conditions.put("icId", icId);
+    	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    	if (ics != null && ics.size() == 1) {
+    		Map<String, Object> ic = ics.get(0);
+    		Integer _icId = Integer.parseInt(String.valueOf(ic.get("parentIcId")));
+    		if (_icId == -1) {
+    			return R.ok();
+    		} else {
+    			conditions.put("icId", _icId);
+    			List<Map<String, Object>> ics_parents = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    			if (ics_parents != null && ics_parents.size() == 1) {
+    				Map<String, Object> ics_parent = ics_parents.get(0);
+    				Double count = 0.0;
+    				Double addCount = 0.0;
+    				if (ics_parent.get("integral") != null && ics_parent.get("integral") != "") {
+    					count = new BigDecimal(ics_parent.get("integral").toString()).doubleValue();
+    					conditions.clear();
+    					conditions.put("parentIcId", ics_parent.get("icId"));
+    					List<Map<String, Object>> ics_child = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+    					if (ics_child != null && ics_child.size() > 0) {
+    						for (Map<String, Object> map : ics_child) {
+    							if (Integer.parseInt(String.valueOf(map.get("icId"))) != icId) {
+    								if (map.get("integral") != null && map.get("integral") != "") {    									
+    									addCount += new BigDecimal(map.get("integral").toString()).doubleValue();
+    								}
+    							}
+    						}
+    					} 
+    					addCount += score;
+						if (addCount > count) {
+							return R.ok().setData("子项总分大于父项的分值");
+						} else {
+							return R.ok();
+						}
+    				} else {
+    					return R.ok().setData("请设置上级积分项的分值");
+    				}
+    			} else {
+    				return R.ok().setData("错误");
+    			}
+    		}
+    	} else {
+    		return R.ok().setData("错误");
+    	}
+    	
     }
 }

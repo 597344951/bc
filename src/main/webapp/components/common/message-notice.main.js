@@ -92,7 +92,7 @@ var MessageNotice = {
 
 
     },
-    template: '<h1>Message Notice loading</h1>'
+    template: require("./message-notice.view.html")
 };
 
 export default MessageNotice;

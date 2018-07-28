@@ -64,13 +64,15 @@
                                         <i class="el-icon-warning"></i>公示状态</td>
                                     <td></td>
                                     <td>
-                                        <el-popover placement="top-start" title="公示投票结果" width="250" trigger="hover">
-                                            <el-progress :text-inside="true" :stroke-width="18" :percentage="100" status="success"></el-progress>
+                                        <el-popover placement="top-start" title="公示投票结果" width="250" trigger="hover" @show="showVotingInfo(data)">
+                                            <el-progress :text-inside="true" :stroke-width="18" :percentage="votingResult.yesCount*100/votingResult.total" status="success"></el-progress>
                                             <ul style="margin-top:12px;">
-                                                <li>赞成: 100票</li>
-                                                <li>反对: 0 票</li>
+                                                <li>赞成: {{votingResult.yesCount}}票</li>
+                                                <li>反对: {{votingResult.noCount}} 票</li>
+                                                <li>总共: {{votingResult.total}} 票</li>
                                             </ul>
-                                            <el-tag size="mini" slot="reference" :type="getStatusType(data)">{{getStatusName(data)}}</el-tag>
+                                            <el-button size="small" @click="votingDetailView">投票详情</el-button>
+                                            <el-tag slot="reference" :type="getStatusType(data)">{{getStatusName(data)}}</el-tag>
                                         </el-popover>
                                     </td>
                                 </tr>
@@ -124,10 +126,16 @@
                                     <td></td>
                                     <td>
                                         <el-popover placement="top-start" title="投屏推广" width="250" trigger="hover">
-                                            <el-progress :text-inside="true" :stroke-width="18" :percentage="80" status="success"></el-progress>
-                                            <p></p>
-                                            <p>投屏任务已创建</p>
-                                            <p>当前状态: 审核中</p>
+                                            <template v-if="!data.pubTaskId">
+                                                <p>投屏推广任务没有创建!</p>
+                                                <p>你可以
+                                                    <el-button type="text" size="small" @click="createPubTask(data)">创建投屏任务</el-button>
+                                                </p>
+                                            </template>
+                                            <template v-if="data.pubTaskId">
+                                                投屏任务已创建
+                                                <el-button type="text" @click="showPubState(data)">查看进度</el-button>
+                                            </template>
                                             <el-button slot="reference" type="text" size="small">投屏推广</el-button>
                                         </el-popover>
                                         <el-popover placement="top-start" title="微信推广" width="250" trigger="hover">
@@ -174,26 +182,28 @@
                             <td>{{getUserName(data)}}</td>
                             <td>{{data.stime | date}}</td>
                             <td>
-                                <el-popover placement="top-start" title="公示投票结果" width="250" trigger="hover">
-                                    <el-progress :text-inside="true" :stroke-width="18" :percentage="100" status="success"></el-progress>
+                                <el-popover placement="top-start" title="公示投票结果" width="250" trigger="hover" @show="showVotingInfo(data)">
+                                    <el-progress :text-inside="true" :stroke-width="18" :percentage="votingResult.yesCount*100/votingResult.total" status="success"></el-progress>
                                     <ul style="margin-top:12px;">
-                                        <li>赞成: 100票</li>
-                                        <li>反对: 0 票</li>
+                                        <li>赞成: {{votingResult.yesCount}}票</li>
+                                        <li>反对: {{votingResult.noCount}} 票</li>
+                                        <li>总共: {{votingResult.total}} 票</li>
                                     </ul>
-                                    <el-tag slot="reference"  :type="getStatusType(data)">{{getStatusName(data)}}</el-tag>
+                                    <el-button size="small" @click="votingDetailView">投票详情</el-button>
+                                    <el-tag slot="reference" :type="getStatusType(data)">{{getStatusName(data)}}</el-tag>
                                 </el-popover>
                             </td>
                             <td>
-                                    <el-dropdown>
-                                            <span class="el-dropdown-link">
-                                                已提交
-                                                <i class="el-icon-arrow-down el-icon--right"></i>
-                                            </span>
-                                            <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="viewPlan(data)">查看方案</el-dropdown-item>
-                                                <el-dropdown-item @click.native="editPlan(data)">修改方案</el-dropdown-item>
-                                            </el-dropdown-menu>
-                                        </el-dropdown>
+                                <el-dropdown>
+                                    <span class="el-dropdown-link">
+                                        已提交
+                                        <i class="el-icon-arrow-down el-icon--right"></i>
+                                    </span>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item @click.native="viewPlan(data)">查看方案</el-dropdown-item>
+                                        <el-dropdown-item @click.native="editPlan(data)">修改方案</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
                             </td>
                             <td>
                                 <el-dropdown>
@@ -219,10 +229,16 @@
                             </td>
                             <td>
                                 <el-popover placement="top-start" title="投屏推广" width="250" trigger="hover">
-                                    <el-progress :text-inside="true" :stroke-width="18" :percentage="80" status="success"></el-progress>
-                                    <p></p>
-                                    <p>投屏任务已创建</p>
-                                    <p>当前状态: 审核中</p>
+                                    <template v-if="!data.pubTaskId">
+                                        <p>投屏推广任务没有创建!</p>
+                                        <p>你可以
+                                            <el-button type="text" size="small" @click="createPubTask(data)">创建投屏任务</el-button>
+                                        </p>
+                                    </template>
+                                    <template v-if="data.pubTaskId">
+                                        投屏任务已创建
+                                        <el-button type="text" @click="showPubState(data)">查看进度</el-button>
+                                    </template>
                                     <el-button slot="reference" type="text" size="small">投屏推广</el-button>
                                 </el-popover>
                                 <el-popover placement="top-start" title="微信推广" width="250" trigger="hover">
@@ -253,7 +269,34 @@
         <el-dialog title="费用计划" :visible.sync="costPlanDataDialog.visiable" append-to-body>
             <cost-plan :cost-plan-data="costPlanData" :mode="costPlanDataDialog.mode" @complete="costPlanDataComplete"></cost-plan>
         </el-dialog>
+        <el-dialog title="投票详情" :visible.sync="votingDetail.visible" append-to-body>
+            <el-table :data="votingResult.datas" show-summary :summary-method="votingSummary">
+                <el-table-column label="投票人">
+                    <template slot-scope="scope">
+                        <span>{{ scope.row.userInfo.username }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="投票状态">
+                    <template slot-scope="scope" prop="yesOrNo">
+                        <span>{{ scope.row.yesOrNo==null?'未投票':'已投票' }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="投票">
+                    <template slot-scope="scope" prop="yesOrNo">
+                        <template v-if="scope.row.yesOrNo == '1'">
+                            <el-tag type="success">赞成</el-tag>
+                        </template>
+                        <template v-if="scope.row.yesOrNo == '-1'">
+                            <el-tag type="danger">反对</el-tag>
+                        </template>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
+        <publish-state-dialog :visible.sync="publish.visible" :content="publish.contentId"></publish-state-dialog>
     </div>
 </body>
+<script type="module" src="${urls.getForLookupPath('/components/xx-components.js')}"></script>
 <script type="module" src="${urls.getForLookupPath('/assets/module/eventplan/eventtracking.js')}"></script>
+
 </html>

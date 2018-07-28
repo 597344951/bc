@@ -100,8 +100,7 @@ let EventCalendar = {
                 });
         }
     },
-    //模版内容
-    template: ''
+    template: require("./event-calendar.view.html")
 }
 
 function initCalendarData(datas) {

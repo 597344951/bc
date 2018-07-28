@@ -255,7 +255,7 @@ public class PublishServiceImpl implements PublishService {
                     verifyCompleted = false;
                     // 顺位审核
                     // TODO: 2018/5/13 添加审核待办
-                    messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) exu.get("user_id"), contentId);
+                    messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) exu.get("user_id"), contentId, "/publish/process");
                     break;
                 }
             }
@@ -280,7 +280,7 @@ public class PublishServiceImpl implements PublishService {
             if (processState.get(Constant.VERIFY) == null) {
                 // 通知所有编辑人员
                 // TODO: 2018/7/2 添加待办
-                messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, Message.USER_ALL, contentId);
+                messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, Message.USER_ALL, contentId, "/publish/process");
             } else {
                 // 回退清除提交标记
                 List<Map<String, Object>> meUsers = getMoreEditUser(contentId);
@@ -291,7 +291,7 @@ public class PublishServiceImpl implements PublishService {
                     queryParam.put("more_edit_user_id", meUser.get("more_edit_user_id"));
                     simpleDao.update("publish_more_edit_user", meUser, queryParam);
                     // TODO: 2018/7/2 添加待办
-                    messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, (Integer) meUser.get("user_id"), contentId);
+                    messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待编辑", null, (Integer) meUser.get("user_id"), contentId, "/publish/process");
                 }
             }
 
@@ -309,13 +309,13 @@ public class PublishServiceImpl implements PublishService {
                 queryParam.put("examine_user_id", exu.get("examine_user_id"));
                 simpleDao.update("publish_examine_user", exu, queryParam);
                 // 通知顺序一
-                messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) content.get("user_id"), contentId);
+                messageService.addMessage(Message.TYPE_VERIFY_PENDING, content.get("title") + ": 待审核", null, (Integer) content.get("user_id"), contentId, "/publish/process");
             }
 
         } else if (Constant.PUBLISHABLE == processItemId) {
             // 通知发起人
             // TODO: 2018/7/2 添加待办
-            messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待发布", null, (Integer) content.get("user_id"), contentId);
+            messageService.addMessage(Message.TYPE_HANDLE_PENDING, content.get("title") + ": 待发布", null, (Integer) content.get("user_id"), contentId, "/publish/process");
         }
         // 更改状态
         content = new HashMap<>();
@@ -339,6 +339,7 @@ public class PublishServiceImpl implements PublishService {
         int addType;
         if(StringUtils.isNotEmpty(programTemplateId) && StringUtils.isNotEmpty(programTemplateCategoryId)) {
             //使用模板添加节目
+            program.put("title", content.get("title"));
             program.put("templetId", programTemplateId);
             program.put("categoryId", programTemplateCategoryId);
             program.put("des", content.get("demand")==null ? "" : content.get("demand"));
@@ -869,8 +870,10 @@ public class PublishServiceImpl implements PublishService {
     @Override
     public Map<String, Object> getShowProcessState(int contentTypeId, int contentId) {
         Map<String, Object> state = new HashMap<String, Object>();
-        state.put("steps", publishDao.queryProcess(contentTypeId));
+        Map<String, Object> content = publishDao.get(contentId);
+        state.put("steps", publishDao.queryProcess((Integer) content.get("content_type_id")));
         state.put("log", publishDao.queryProcessState(contentId));
+        state.put("curProcess", content.get("process_item_id"));
         return state;
     }
 

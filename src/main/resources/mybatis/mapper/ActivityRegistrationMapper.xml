@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.planjoin.dao.ActivityRegistrationMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.planjoin.bean.ActivityRegistration">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="event_plan_id" jdbcType="INTEGER" property="eventPlanId" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="time" jdbcType="TIMESTAMP" property="time" />
+		<result column="verify" jdbcType="INTEGER" property="verify" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, event_plan_id, user_id, time, verify
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from activity_registration
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from activity_registration
+		where id =
+		#{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.planjoin.bean.ActivityRegistration">
+		insert into activity_registration (id, event_plan_id,
+		user_id,
+		time, verify)
+		values (#{id,jdbcType=INTEGER}, #{eventPlanId,jdbcType=INTEGER},
+		#{userId,jdbcType=INTEGER},
+		#{time,jdbcType=TIMESTAMP}, #{verify,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.planjoin.bean.ActivityRegistration">
+		insert into activity_registration
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="eventPlanId != null">
+				event_plan_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="time != null">
+				time,
+			</if>
+			<if test="verify != null">
+				verify,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="eventPlanId != null">
+				#{eventPlanId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="time != null">
+				#{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verify != null">
+				#{verify,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.planjoin.bean.ActivityRegistration">
+		update activity_registration
+		<set>
+			<if test="eventPlanId != null">
+				event_plan_id = #{eventPlanId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="time != null">
+				time = #{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verify != null">
+				verify = #{verify,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.planjoin.bean.ActivityRegistration">
+		update activity_registration
+		set event_plan_id = #{eventPlanId,jdbcType=INTEGER},
+		user_id = #{userId,jdbcType=INTEGER},
+		time = #{time,jdbcType=TIMESTAMP},
+		verify =
+		#{verify,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete">
+		delete from activity_registration
+		<include refid="ActivityRegistrationWhere" />
+	</delete>
+	<!-- 查询 ActivityRegistration -->
+	<select id="query" parameterType="com.zltel.broadcast.planjoin.bean.ActivityRegistration"
+		resultMap="BaseResultMap">
+		select * from activity_registration
+		<include refid="ActivityRegistrationWhere" />
+	</select>
+	<select id="queryCanJoinEventPlanId"
+		parameterType="com.zltel.broadcast.planjoin.bean.UserPlanJoin" resultType="int">
+		SELECT plan.event_plan_id
+		FROM
+		event_plan_info plan
+		WHERE plan.org_id = #{orgId}
+		and 5 > plan.status
+		and plan.event_plan_id not in (select
+		event_plan_id from activity_registration reg where
+		reg.user_id = #{userId})
+		<include refid="filter_Event" />
+	</select>
+	<select id="queryRegistedEventPlanId"
+		parameterType="com.zltel.broadcast.planjoin.bean.UserPlanJoin" resultType="int">
+		SELECT plan.event_plan_id
+		FROM
+		event_plan_info plan
+		WHERE plan.org_id = #{orgId}
+		and plan.status in
+		(4,5)
+		and plan.event_plan_id in (select
+		event_plan_id from activity_registration reg where
+		reg.user_id = #{userId})
+		<include refid="filter_Event" />
+	</select>
+	<select id="queryRegistStopedEventPlanId"
+		parameterType="com.zltel.broadcast.planjoin.bean.UserPlanJoin" resultType="int">
+		SELECT plan.event_plan_id
+		FROM
+		event_plan_info plan
+		WHERE plan.org_id = #{orgId}
+		and plan.status = 6
+		and plan.event_plan_id in (select
+		event_plan_id from activity_registration reg where reg.user_id =
+		#{userId})
+		<include refid="filter_Event" />
+	</select>
+
+	<sql id="filter_Event">
+		<if test="stime != null">
+			AND stime > #{stime}
+		</if>
+		<if test="etime != null">
+			AND #{etime} > stime
+		</if>
+	</sql>
+
+	<!-- 查询条件 ActivityRegistration -->
+	<sql id="ActivityRegistrationWhere">
+		<where>
+			<if test="eventPlanId != null">
+				AND event_plan_id=#{eventPlanId}
+			</if>
+			<if test="verify != null">
+				AND verify=#{verify}
+			</if>
+			<if test="id != null">
+				AND id=#{id}
+			</if>
+			<if test="time != null">
+				AND time=#{time}
+			</if>
+			<if test="userId != null">
+				AND user_id=#{userId}
+			</if>
+		</where>
+	</sql>
+</mapper>

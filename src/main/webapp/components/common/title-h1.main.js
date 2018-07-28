@@ -17,7 +17,7 @@ var TitleH1 = {
     watch: {},
     computed: {},
     methods: { },
-    template: '<h1>{{data}}</h1>'
+    template: '<h1>this is h1 style : {{data}}</h1>'
 };
 
 export default TitleH1;

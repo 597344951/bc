@@ -1,9 +1,12 @@
 package com.zltel.broadcast.um.controller;
 
+import java.util.Map;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.annotation.LogPoint;
@@ -35,9 +38,9 @@ public class SysUserRoleController extends BaseController {
 	@LogPoint("查询用户角色信息")
 	@RequiresPermissions(value = {"sys:userRole:query"})
 	@ApiOperation(value = "查询用户角色信息")
-	public R querySysUserRoles(SysUserRole sysUserRole, int pageNum, int pageSize) {
+	public R querySysUserRoles(@RequestParam Map<String, Object> conditions, int pageNum, int pageSize) {
 		try {
-			return sysUserRoleService.querySysUserRoles(sysUserRole, pageNum, pageSize);
+			return sysUserRoleService.querySysUserRoles(conditions, pageNum, pageSize);
 		} catch (Exception e) {
 			return R.error().setMsg("查询用户角色信息失败");
 		}
@@ -52,9 +55,9 @@ public class SysUserRoleController extends BaseController {
 	@LogPoint("查询用户角色信息")
 	@RequiresPermissions(value = {"sys:userRole:query"})
 	@ApiOperation(value = "查询用户角色信息")
-	public R querySysUserRolesNotPage(SysUserRole sysUserRole) {
+	public R querySysUserRolesNotPage(@RequestParam Map<String, Object> conditions) {
 		try {
-			return sysUserRoleService.querySysUserRolesNotPage(sysUserRole);
+			return sysUserRoleService.querySysUserRolesNotPage(conditions);
 		} catch (Exception e) {
 			return R.error().setMsg("查询用户角色信息失败");
 		}
@@ -92,6 +95,22 @@ public class SysUserRoleController extends BaseController {
 			return sysUserRoleService.insertSysUserRole(sysUserRole);
 		} catch (Exception e) {
 			return R.error().setMsg("变更用户角色信息失败。");
+		}
+	}
+	
+	/**
+	 * 变更内置角色
+	 * @param conditions 要变更的需要的信息
+	 * @return
+	 */
+	@RequestMapping(value="/updateInnerManageRols", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"sys:userRole:update"})
+	@ApiOperation(value = "变更内置角色")
+	public R updateInnerManageRols(@RequestParam Map<String, Object> conditions) {
+		try {
+			return sysUserRoleService.updateInnerManageRols(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("变更内置角色失败。");
 		}
 	}
 }

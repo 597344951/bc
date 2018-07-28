@@ -39,12 +39,13 @@ public class Message {
 
     public Message() {}
 
-    public Message(Integer type, String title, String content, Integer userId, Integer sourceId) {
+    public Message(Integer type, String title, String content, Integer userId, Integer sourceId, String url) {
         this.type = type;
         this.title = title;
         this.content = content;
         this.userId = userId;
         this.sourceId = sourceId;
+        this.url = url;
         this.state = STATE_UNPROCESSED;
         this.updateDate = this.addDate = new Date();
     }

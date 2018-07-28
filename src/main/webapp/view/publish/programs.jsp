@@ -22,7 +22,7 @@
                 publish(program) {
                     let url = '/view/publish/new.jsp?title=' + program.name + '&programId=' + program.programId + '&reAdd=true&startStep=2'
                     if(parent.addTab) {
-						parent.addTab({menuId: 28, name: '内容制作', url: url})
+						parent.addTab({menuId: -4, name: '内容在发布', url: url})
 					} else {
 						window.location.href = url
 					}

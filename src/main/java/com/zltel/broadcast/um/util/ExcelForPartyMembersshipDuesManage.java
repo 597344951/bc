@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -32,12 +31,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.github.pagehelper.util.StringUtil;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.um.bean.IntegralChangeType;
 import com.zltel.broadcast.um.bean.OrganizationInformation;
+import com.zltel.broadcast.um.bean.PartyIntegralRecord;
 import com.zltel.broadcast.um.bean.PartyMembershipDuesManage;
 import com.zltel.broadcast.um.bean.PartyMembershipDuesPaidWay;
 import com.zltel.broadcast.um.bean.PartyMembershipDuesStatus;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
+import com.zltel.broadcast.um.dao.IntegralChangeTypeMapper;
+import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
 import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
+import com.zltel.broadcast.um.dao.PartyIntegralRecordMapper;
 import com.zltel.broadcast.um.dao.PartyMembershipDuesManageMapper;
 import com.zltel.broadcast.um.dao.PartyMembershipDuesPaidWayMapper;
 import com.zltel.broadcast.um.dao.PartyMembershipDuesStatusMapper;
@@ -58,6 +62,12 @@ public class ExcelForPartyMembersshipDuesManage {
     private PartyMembershipDuesManageMapper partyMembershipDuesManageMapper;
     @Resource
     private PartyMembershipDuesStatusMapper partyMembershipDuesStatusMapper;
+    @Resource
+    private IntegralConstituteMapper integralConstituteMapper;
+    @Resource
+    private IntegralChangeTypeMapper integralChangeTypeMapper;
+    @Resource
+    private PartyIntegralRecordMapper partyIntegralRecordMapper;
 
     /**
      * 批量导入党费缴纳记录
@@ -84,6 +94,50 @@ public class ExcelForPartyMembersshipDuesManage {
         if (pmdms.size() > 0) {
             for (PartyMembershipDuesManage pmdm : pmdms) {
                 int pmdmCount = partyMembershipDuesManageMapper.insertSelective(pmdm);
+                //根据党费缴纳记录自动变更分值时需验证更此党费缴纳记录分值后不能超过该设置的上限也不能低于0
+                Map<String, Object> conditions = new HashMap<>();
+                conditions.put("orgId", pmdm.getOrgId());
+                conditions.put("type", "按时足额缴纳党费");
+                conditions.put("isInnerIntegral", 1);
+                List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
+                if (ics != null && ics.size() == 1) {	//如果该组织有积分
+                	Map<String, Object> ic = ics.get(0);	//积分信息
+                	
+                	IntegralChangeType ict = new IntegralChangeType();
+					ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
+					ict.setOperation(0);	//是否有扣分处理方式
+					List<IntegralChangeType> reduce_icts = integralChangeTypeMapper.queryICT(ict);
+					ict.setOperation(1);	//是否有加分处理方式
+					List<IntegralChangeType> add_icts = integralChangeTypeMapper.queryICT(ict);
+					
+					if (reduce_icts != null && reduce_icts.size() == 1 && add_icts != null && add_icts.size() == 1) {
+						//单项的积分不可能为0，当党员积分为0时，这时在扣分会记录下来，虽然显示是0分，但是会和后来的加分相抵消
+						PartyIntegralRecord pir = new PartyIntegralRecord();
+						pir.setOrgId(pmdm.getOrgId());
+						pir.setPartyId(pmdm.getUserId());
+						PartyMembershipDuesStatus pmds = partyMembershipDuesStatusMapper.selectByPrimaryKey(pmdm.getPayStatus());
+						if ("按时缴清".equals(pmds.getName())) {	//加分
+							pir.setChangeIntegralType(add_icts.get(0).getIctId());
+							pir.setChangeDescribes(pmds.getName() + "党费，加" + add_icts.get(0).getChangeProposalIntegral() + "分");
+							pir.setChangeScore(add_icts.get(0).getChangeProposalIntegral());
+						} else {	//扣分
+							pir.setChangeIntegralType(reduce_icts.get(0).getIctId());
+							pir.setChangeDescribes(pmds.getName() + "党费，扣" + reduce_icts.get(0).getChangeProposalIntegral() + "分");
+							pir.setChangeScore(reduce_icts.get(0).getChangeProposalIntegral());
+						}
+						pir.setIsMerge(1);
+						
+						pir.setChangeTime(new Date());
+				    	int count = partyIntegralRecordMapper.insertSelective(pir);
+				    	if(count != 1) {
+				    		return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt").setData("请完善组织积分信息以使用导入党员积分并自动更新积分");
+				    	} 
+					} else {
+						return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt").setData("该组织党费缴纳积分没有相应的加扣分设置");
+					}
+                } else {
+                	return R.error().setMsg("导入失败，请查看失败信息 ：导入错误信息.txt").setData("该组织积分结构中没有关于党费缴纳的积分信息");
+                }
                 if (pmdmCount != 1) {
                     throw new RuntimeException();
                 }
@@ -263,6 +317,7 @@ public class ExcelForPartyMembersshipDuesManage {
             conditionMaps.put("userId", pmdm.getUserId());
             conditionMaps.put("shouldPayDateStart", pmdm.getShouldPayDateStart());
             conditionMaps.put("shouldPayDateEnd", pmdm.getShouldPayDateEnd());
+            conditionMaps.put("orgInfoId", pmdm.getOrgId());
             List<Map<String, Object>> partyMembershipDues =
                     partyMembershipDuesManageMapper.queryPartyMembershipDues(conditionMaps);
             PartyMembershipDuesStatus partyMembershipDuesStatus = new PartyMembershipDuesStatus();

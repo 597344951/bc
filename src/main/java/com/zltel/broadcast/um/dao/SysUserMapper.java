@@ -24,4 +24,11 @@ public interface SysUserMapper extends BaseDao<SysUser> {
      * @return
      */
     public List<SysUser> querySysUsers(SysUser sysUser);
+    
+    /**
+     * 根据条件查询系统用户
+     * @param sysUser
+     * @return
+     */
+    public int deleteByUserName(SysUser sysUser);
 }

@@ -263,7 +263,7 @@
 	  oi.org_info_nature_id orgInfoNatureId
 	from
 	  organization_information oi 
-	  inner join organization_type ot on oi.org_info_type_id = ot.org_type_id
+	  inner join organization_type ot on oi.org_info_type_id = ot.org_type_id 
     where
     	1 = 1
     	<if test="orgInfoTypeId != null and orgInfoTypeId != ''"> and
@@ -338,5 +338,9 @@
       <if test="orgInfoId != null and orgInfoId != ''"> and
           oi.org_info_parent_id = #{orgInfoId}
       </if>
+  </select>
+  
+  <select id="queryInsertedOrgId" resultType="java.lang.Integer">
+		select LAST_INSERT_ID()
   </select>
 </mapper>

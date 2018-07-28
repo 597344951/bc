@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.zltel.broadcast.eventplan.service.EventPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -43,6 +44,9 @@ public class PublishController extends BaseController{
     private MaterialService materialService;
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private EventPlanService eventPlanService;
+
     @Value("${material.file.dir}")
     private String uploadFileDir;
     @Value("${material.temp.dir}")
@@ -87,8 +91,13 @@ public class PublishController extends BaseController{
             materialService.transferMaterial(user, (List<Map<String, Object>>) content.get("material"), uploadTempDir, uploadFileDir);
             materialService.saveUeditorMaterial(user, content, ueditorDir, uploadFileDir);
             Map<String, Object> detail = publishService.create(user, content);
-
+            //判断活动
+            String eventPlanId = (String) content.get("eventPlanId");
+            if(eventPlanId != null) {
+                eventPlanService.pubTaskIdBackFill(Integer.parseInt(eventPlanId), detail.get("id").toString());
+            }
             r = R.ok();
+            r.put("contentId", detail.get("id"));
         } catch (Exception e) {
             logout.error(e.getMessage(),e);
             r = R.error(e.toString());

@@ -14,7 +14,7 @@
 <%@include file="/include/head_notbootstrap.jsp"%>
 <style type="text/css">
 	body {
-		margin: 20px;
+		
 	}
 	#pagesdididi,#baseUser_manager_pagesdididi,#role_manager_pagesdididi {
 		text-align: center;
@@ -31,9 +31,9 @@
 	<div id="app">
 		<el-container>
 			<el-header>
-				<el-row>
+				<el-row class="toolbar" :gutter="20">
 			  		<shiro:hasPermission name="sys:role:insert">  
-				 	    <el-button size="small" type="primary" icon="el-icon-circle-plus-outline" @click="role_manager_showInsertSysRoleDialog">新建角色</el-button>
+				 	    <el-button class="margin-left-10" size="small" type="primary" icon="el-icon-circle-plus-outline" @click="role_manager_showInsertSysRoleDialog">新建角色</el-button>
 				  	</shiro:hasPermission>
 				</el-row>
 			</el-header>
@@ -42,22 +42,23 @@
 			  		<el-table size="mini" stripe :data="role_manager_pager.list" style="width: 100%" max-height="550">
 					    <el-table-column fixed prop="roleId" label="角色ID" width="100">
 					    </el-table-column>
-					    <el-table-column prop="roleName" label="角色名" width="120">
+					    <el-table-column prop="roleName" label="角色名（英）" width="120">
 					    </el-table-column>
-					    <el-table-column prop="remark" label="角色备注" width="200">
+					    <el-table-column prop="remark" label="角色名（中）" width="200">
 					    </el-table-column>
 					    <el-table-column prop="createTime" label="创建时间" width="300">
 					    </el-table-column>
-					    <el-table-column fixed="right" label="操作" width=180>
+					    <el-table-column label="操作" width=180>
 						    <template slot-scope="scope">
 						      <shiro:hasPermission name="sys:role:delete">  
-							      <el-button @click="role_manager_deleteSysRole(scope.row)" type="text" size="small">删除</el-button>
+							      <el-button v-if="signInAccountType != 'party_role'" @click="role_manager_deleteSysRole(scope.row)" type="text" size="small">删除</el-button>
 						      </shiro:hasPermission>
 						      <shiro:hasPermission name="sys:role:update">  
 							      <el-button @click="role_manager_openUpdateSysRoleDialog(scope.row)" type="text" size="small">修改信息</el-button>
 						      </shiro:hasPermission>
-						      <shiro:hasPermission name="sys:roleMenu:update">  
-							      <el-button @click="role_manager_openChangeSysRoleMenuDialog(scope.row)" type="text" size="small">权限变更</el-button>
+						      <!-- 不仅有权限还的是平台或组织管理员才有权限修改 -->
+						      <shiro:hasPermission name="sys:role:update">  
+							      <el-button v-if="signInAccountType != 'party_role'" @click="role_manager_openChangeSysRoleMenuDialog(scope.row)" type="text" size="small">权限变更</el-button>
 						      </shiro:hasPermission>
 						    </template>
 					    </el-table-column>
@@ -80,10 +81,10 @@
 		<el-dialog @close="role_manager_resetinsertSysRoleForm('role_manager_insertSysRoleForm')" title="新建角色" :visible.sync="role_manager_insertSysRoleDialog">
 			<el-form size="mini" label-position="left" :model="role_manager_insertSysRoleForm" status-icon :rules="role_manager_insertSysRoleRules" 
 				ref="role_manager_insertSysRoleForm" label-width="100px">
-				<el-form-item label="角色名称" prop="roleName">
+				<el-form-item label="角色名>英" prop="roleName">
 				    <el-input v-model="role_manager_insertSysRoleForm.roleName" placeholder="仅支持字母和数字组合成的用户名填写"></el-input>
 				</el-form-item>
-				<el-form-item label="角色描述" prop="remark">
+				<el-form-item label="角色名>中" prop="remark">
 				    <el-input v-model="role_manager_insertSysRoleForm.remark"></el-input>
 				</el-form-item>
 				<el-form-item>
@@ -99,10 +100,10 @@
 				<el-form-item label="角色ID" prop="roleId">
 				    <el-input :disabled="true" v-model="role_manager_updateSysRoleForm.roleId"></el-input>
 				</el-form-item>
-				<el-form-item label="角色名称" prop="roleName">
+				<el-form-item label="角色名>英" prop="roleName">
 				    <el-input v-model="role_manager_updateSysRoleForm.roleName" placeholder="仅支持字母和数字组合成的用户名填写"></el-input>
 				</el-form-item>
-				<el-form-item label="角色描述" prop="remark">
+				<el-form-item label="角色名>中" prop="remark">
 				    <el-input v-model="role_manager_updateSysRoleForm.remark"></el-input>
 				</el-form-item>
 				<el-form-item label="创建时间" prop="createTime">
@@ -175,6 +176,9 @@
 		    	roleName: [
 		    		{ required: true, message: '请输入角色名!', trigger: 'blur' },
 		    		{ pattern: "^[A-Za-z0-9_]+$", message: '仅支持字母、下划线和数字的组合!'}
+		    	],
+		    	remark: [
+		    		{ required: true, message: '请输入角色名!', trigger: 'blur' }
 		    	]
 		    },
 		    
@@ -182,6 +186,9 @@
 		    	roleName: [
 		    		{ required: true, message: '请输入角色名!', trigger: 'blur' },
 		    		{ pattern: "^[A-Za-z0-9_]+$", message: '仅支持字母、下划线和数字的组合!'}
+		    	],
+		    	remark: [
+		    		{ required: true, message: '请输入角色名!', trigger: 'blur' }
 		    	]
 		    }
 		},

@@ -16,6 +16,16 @@ public class SysRole {
 	private Date beforeTime; // 用于时间区间查询
 
 	private Date afterTime; // 用于时间区间查询
+	
+	private Integer isShow;
+
+	public Integer getIsShow() {
+		return isShow;
+	}
+
+	public void setIsShow(Integer isShow) {
+		this.isShow = isShow;
+	}
 
 	public Date getBeforeTime() {
 		return beforeTime;

@@ -1,8 +1,11 @@
 package com.zltel.broadcast.publish.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.publish.Constant;
+import com.zltel.broadcast.publish.bean.Silhouette;
 import com.zltel.broadcast.publish.dao.ActivityDao;
+import com.zltel.broadcast.publish.dao.SilhouetteMapper;
 import com.zltel.broadcast.publish.service.ActivityService;
 import com.zltel.broadcast.um.bean.SysUser;
 import org.slf4j.Logger;
@@ -13,10 +16,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ActivityServiceImpl class
@@ -32,6 +32,8 @@ public class ActivityServiceImpl implements ActivityService {
     private SimpleDao simpleDao;
     @Autowired
     private ActivityDao activityDao;
+    @Autowired
+    private SilhouetteMapper silhouetteMapper;
 
     @Override
     public Map<String, Object> getActivityAddition(int contentId) {
@@ -148,5 +150,41 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public List<Map<String, Object>> queryFinishedActivity(int pageNum, int pageSize) {
         return activityDao.queryFinishedActivity(pageNum, pageSize);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public int addSilhouette(Silhouette silhouette) {
+        silhouette.setAddDate(new Date());
+        silhouette.setUpdateDate(new Date());
+        return silhouetteMapper.insertSelective(silhouette);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public int deleteSilhouette(int silhouetteId) {
+        return silhouetteMapper.deleteByPrimaryKey(silhouetteId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public int updateSilhouette(Silhouette silhouette) {
+        return silhouetteMapper.updateByPrimaryKeySelective(silhouette);
+    }
+
+    @Override
+    public Silhouette getSilhouette(int silhouetteId) {
+        Silhouette silhouette = silhouetteMapper.selectByPrimaryKey(silhouetteId);
+        List<Integer> ids = new ArrayList<>();
+        Arrays.stream(silhouette.getMaterial().split(",")).forEach(s -> {
+            ids.add(Integer.parseInt(s));
+        });
+        silhouette.setMaterials(silhouetteMapper.queryMaterials(ids));
+        return silhouette;
+    }
+
+    @Override
+    public PageInfo<Silhouette> querySilhouette(int pageNum, int pageSize) {
+        return new PageInfo<Silhouette>(silhouetteMapper.query(pageNum, pageSize));
     }
 }

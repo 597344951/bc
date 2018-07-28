@@ -16,8 +16,12 @@ import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
+import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.bean.OrganizationRelation;
+import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
+import com.zltel.broadcast.um.dao.SysUserMapper;
 import com.zltel.broadcast.um.service.OrganizationRelationService;
 import com.zltel.broadcast.um.util.DateUtil;
 
@@ -27,6 +31,10 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 	
 	@Resource
     private OrganizationRelationMapper organizationRelationMapper;
+	@Resource
+    private SysUserMapper sysUserMapper;
+	@Resource
+    private BaseUserInfoMapper baseUserInfoMapper;
 	
 	@Override
     public BaseDao<OrganizationRelation> getInstince() {
@@ -248,6 +256,7 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
     @Transactional(rollbackFor=java.lang.Exception.class)
     public R insertOrgRelation(OrganizationRelation organizationRelation, List<Integer> orgRltDutys) throws Exception {
 		if (organizationRelation != null) {
+			//删除所有组织关系，确保只能加入一个组织
 			organizationRelationMapper.deleteOrgRelationByUserId(organizationRelation.getOrgRltUserId());
 			int count = 0;
 			if (orgRltDutys != null && orgRltDutys.size() > 0) {
@@ -256,6 +265,18 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 					organizationRelation.setOrgRltId(null);	//自增，不需要设置值
 					organizationRelation.setOrgRltDutyId(orgDuty);
 					count += this.insertSelective(organizationRelation);	//开始添加组织关系
+				}
+				//在党员账号里更新加入组织id
+				BaseUserInfo bui = baseUserInfoMapper.selectByPrimaryKey(organizationRelation.getOrgRltUserId());
+				SysUser su = new SysUser();
+				su.setUsername(bui.getIdCard());
+				List<SysUser> sus = sysUserMapper.querySysUsers(su);
+				if (sus != null && sus.size() == 1) {
+					su = sus.get(0);
+					su.setOrgId(organizationRelation.getOrgRltInfoId());
+					sysUserMapper.updateByPrimaryKeySelective(su);
+				} else {
+					throw new Exception();
 				}
 				if (count == orgRltDutys.size()) {	//受影响的行数，判断是否修改成功
 					return R.ok().setMsg("组织关系添加成功。");

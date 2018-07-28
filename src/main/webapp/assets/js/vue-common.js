@@ -48,6 +48,10 @@ Vue.filter('secToMin', value => {
 	}
 });
 
+Vue.filter('toJsonString', value => {
+	return JSON.stringify(value);
+});
+
 function bytesToSize(bytes) {
 	if(!bytes) return '';
 	if (bytes === 0) return '0 B';

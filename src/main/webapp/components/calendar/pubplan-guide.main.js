@@ -25,8 +25,7 @@ let PubplanGuide = {
     },
     computed: {},
     methods: {},
-    //模版内容
-    template: ''
+    template: require("./pubplan-guide.view.html")
 }
 
 export default PubplanGuide;

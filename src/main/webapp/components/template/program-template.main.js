@@ -74,7 +74,8 @@ let ProgramTemplate = {
             this.$emit('chose', pt)
         }
 
-    }
+    },
+    template: require("./program-template.view.html")
 }
 
 export default ProgramTemplate;

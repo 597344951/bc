@@ -7,6 +7,10 @@ let ins = new Vue({
     data: {},
     data() {
         return {
+            publish:{
+                visible:false,
+                contentId:19
+            },
             costPlanData: [],
             costPlanDataDialog: {
                 from: {},
@@ -57,7 +61,16 @@ let ins = new Vue({
                     "name": "结束"
                 }
             ],
-            costTypeGroup: []
+            costTypeGroup: [],
+            votingResult:{
+                yesCount:0,
+                total:1,
+                data:[]
+            },
+            votingDetail:{
+                visible:false,
+                datas:[]
+            }
         }
     },
     mounted() {
@@ -65,6 +78,10 @@ let ins = new Vue({
         this.loadOrgUsers();
     },
     methods: {
+        showPubState(data){
+            this.publish.visible = true;
+            this.publish.contentId = data.pubTaskId
+        },
         //新建花费
         newCostPlan(item) {
             this.costPlanData = [{}];
@@ -169,6 +186,35 @@ let ins = new Vue({
         handleCurrentChange(val) {
             //console.log(`当前页: ${val}`);
             this.tpager.current = val;
+        },
+        //加载投票信息
+        showVotingInfo(dt){
+            let eventPlanId = dt.eventPlanId;
+            let url = `/event/voting/${eventPlanId}`;
+            ajax_promise(url,'get',{}).then(result=>{
+                this.votingResult = result.data;
+            });
+        },
+        votingDetailView(){
+            this.votingDetail.visible = true;
+        },
+        votingSummary(){
+            const sums = [];
+            sums[0] = "赞成: " + this.votingResult.yesCount + " 票";
+            sums[1] = "反对: " + this.votingResult.noCount + " 票";
+            sums[2] = "总共: " + this.votingResult.total + " 票";
+            return sums;
+        },//投屏任务创建 
+        createPubTask(data){
+            let eventPlanId = data.eventPlanId;
+            let url = `/view/publish/new.jsp?eventPlanId=${eventPlanId}`
+            let name = '创建投屏任务';
+            if(top.addTab){
+                let obj = {menuId:'pubTask_${eventPlanId}',name:name,url:url,closable:true,icon:''};
+                top.addTab(obj);
+            }else{
+                openwindow(url,name,800,600);
+            }
         }
     }
 });

@@ -1,6 +1,5 @@
 package com.zltel.broadcast.um.controller;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,7 +29,6 @@ public class IntegralChangeTypeController {
 	 * @return
 	 */
 	@RequestMapping(value="/queryICT_ChangeType", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"org:ic:insert"})
 	@ApiOperation(value = "查询积分变更类型")
 	public R queryICT_ChangeType(IntegralChangeType ict) {
 		try {
@@ -46,7 +44,6 @@ public class IntegralChangeTypeController {
 	 * @return
 	 */
 	@RequestMapping(value="/queryICT", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"org:ic:insert"})
 	@ApiOperation(value = "查询分值变更分类")
 	public R queryICT(IntegralChangeType ict) {
 		try {

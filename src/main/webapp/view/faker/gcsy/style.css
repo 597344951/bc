@@ -379,7 +379,8 @@ body {
     top: .373333rem;
     font-size: .28rem;
     color: #fff;
-    text-indent: .56rem
+    text-indent: .56rem;
+    font-size: 18px;
 }
 
 ul .audio-wrap .img-box-wrap {
@@ -435,7 +436,8 @@ ul .audio-detail {
     font-size: .28rem;
     color: #5d5d5d;
     line-height: .426667rem;
-    margin-bottom: .426667rem
+    margin-bottom: .426667rem;
+    font-size: 18px;
 }
 
 ul .audio-detail i {

@@ -123,10 +123,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		<el-container>
 			<el-header>
 				<el-row class="toolbar" :gutter="20">
-					<el-button size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">
-						<i class="el-icon-circle-plus-outline"></i>
-						添加人员
-					</el-button>
+					<shiro:hasPermission name="party:user:insert">
+						<el-button size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">
+							<i class="el-icon-circle-plus-outline"></i>
+							添加人员
+						</el-button>
+					</shiro:hasPermission>
 				  	<shiro:hasPermission name="party:user:insert">  
 				  		<el-popover class="margin-0-10"
 							placement="bottom" 
@@ -149,31 +151,34 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						  	</div>
 						</el-popover>
 				  	</shiro:hasPermission>
-			  		<el-popover 
-						placement="bottom" 
-					  	width="200" 
-					  	trigger="hover" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索人员
-					  	</el-button>
-					  	<div>
-							<el-row>
-								<el-input size="small" clearable
-									@change="partyUser_manager_queryPartyUserInfos()"
-									v-model="partyUser_manager_queryPartyUserInfosCondition.name" placeholder="请输入用户名"></el-input>
-							</el-row>
-							<el-row>
-								<el-select @change="partyUser_manager_queryPartyUserInfos()" 
-										clearable v-model="partyUser_manager_queryPartyUserInfosCondition.isParty"
-										size="small"
-										placeholder="是否党员">
-									<el-option label="否" :value="0"></el-option>
-									<el-option label="是" :value="1"></el-option>
-								</el-select>
-							</el-row>
-					  	</div>
-					</el-popover>
+				  	<shiro:hasPermission name="party:user:query">  
+				  		<el-popover 
+				  			v-if="signInAccountType != 'party_role'"
+							placement="bottom" 
+						  	width="200" 
+						  	trigger="hover" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索人员
+						  	</el-button>
+						  	<div>
+								<el-row>
+									<el-input size="small" clearable
+										@change="partyUser_manager_queryPartyUserInfos()"
+										v-model="partyUser_manager_queryPartyUserInfosCondition.name" placeholder="请输入用户名"></el-input>
+								</el-row>
+								<el-row>
+									<el-select @change="partyUser_manager_queryPartyUserInfos()" 
+											clearable v-model="partyUser_manager_queryPartyUserInfosCondition.isParty"
+											size="small"
+											placeholder="是否党员">
+										<el-option label="否" :value="0"></el-option>
+										<el-option label="是" :value="1"></el-option>
+									</el-select>
+								</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
 					<el-button-group class="margin-0-10">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
@@ -249,6 +254,21 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									<el-col :span="4"><img :src="getPath(scope.row)" width="100" /></el-col>
 									<el-button size="small" @click="partyUser_manager_exportPartyUserInfo(scope.row)" type="primary">导出此党员信息</el-button>
 									<el-button size="small" @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="primary">信息修改</el-button>
+									<el-popover
+										placement="bottom" 
+										style="margin-left: 10px;"
+									  	width="200" 
+									  	trigger="click" >
+									  	<el-button size="small" type="primary" slot="reference">
+									  		生成履历
+									  	</el-button>
+									  	<div>
+											<el-row>
+												<el-button size="small" type="text" @click="openPartyUserLL(scope.row, 1920, 1080)">1920*1080</el-button>
+												<el-button size="small" type="text" @click="openPartyUserLL(scope.row, 1080, 1920)">1080*1920</el-button>
+											</el-row>
+									  	</div>
+									</el-popover>
 								</el-row>
 								<el-row :gutter="20">
 									<el-col :span="24">用户ID：{{scope.row.id}}</el-col>
@@ -256,79 +276,476 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								<el-row :gutter="20">
 									<el-col :span="24"><span class="partyUserTitleFont">基本信息</span></el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="3">姓名：{{scope.row.name}}</el-col>
-									<el-col :span="3">性别：{{scope.row.sex}}</el-col>
-									<el-col :span="3">籍贯：{{scope.row.nativePlace}}</el-col>
-									<el-col :span="3">生日：{{scope.row.birthDate}}</el-col>
-									<el-col :span="3">年龄：{{scope.row.age}}</el-col>
-									<el-col :span="3">民族：{{scope.row.nation}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												姓名：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.name}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												性别：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.sex}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="6">身份证号码：{{scope.row.idCard}}</el-col>
-									<el-col :span="3">手机号码：{{scope.row.mobilePhone}}</el-col>
-									<el-col :span="6">电子邮箱：{{scope.row.email}}</el-col>
-									<el-col :span="6">QQ号：{{scope.row.qq}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												籍贯：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.nativePlace}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												生日：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.birthDate}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="12">现住址：{{scope.row.presentAddressProvince}}&nbsp;&nbsp;{{scope.row.presentAddressCity}}&nbsp;&nbsp;{{scope.row.presentAddressArea}}&nbsp;&nbsp;{{scope.row.presentAddressDetail}}</el-col>
-									<el-col :span="12">家庭住址：{{scope.row.homeAddressProvince}}&nbsp;&nbsp;{{scope.row.homeAddressCity}}&nbsp;&nbsp;{{scope.row.homeAddressArea}}&nbsp;&nbsp;{{scope.row.homeAddressDetail}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												年龄：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.age}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												民族：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.nation}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="6">微信号：{{scope.row.wechat}}</el-col>
-									<el-col :span="6">学历：{{scope.row.education}}</el-col>
-									<el-col :span="6">学位：{{scope.row.academicDegree}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												毕业学校：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.graduationSchool}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												学习专业：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.major}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="6">入学时间：{{scope.row.enrolmentTime}}</el-col>
-									<el-col :span="6">毕业时间：{{scope.row.graduationTime}}</el-col>
-									<el-col :span="6">毕业学校：{{scope.row.graduationSchool}}</el-col>
-									<el-col :span="6">学习专业：{{scope.row.major}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												学历：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.education}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												学位：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.academicDegree}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="6">特长（文艺）：{{scope.row.specialityLiterature}}</el-col>
-									<el-col :span="6">特长（专业）：{{scope.row.specialityMajor}}</el-col>
-									<el-col :span="3">婚姻状况：{{scope.row.marriageStatus}}</el-col>
-									<el-col :span="6">子女状况：{{scope.row.childrenStatus}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												特长（文艺）：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.specialityLiterature}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												特长（专业）：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.specialityMajor}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
-								<el-row :gutter="20">
-									<el-col :span="3">是否积极份子：{{scope.row.positiveUserName}}</el-col>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												身份证号码：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.idCard}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												手机号码：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.mobilePhone}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												电子邮箱：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.email}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												QQ号：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.qq}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												微信号：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.wechat}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												入学时间：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.enrolmentTime}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												毕业时间：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.graduationTime}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												婚姻状况：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.marriageStatus}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												子女状况：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.childrenStatus}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												是否积极份子：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.positiveUserName}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												工作单位：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.workUnit}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												工作性质：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.workNature}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													加入工作时间：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.joinWorkDate}}
+												</el-col>
+											</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												聘任时长：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.appointmentTimeLength}} 年
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												一线情况：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.firstLineTypeName}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												现住址：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.presentAddressProvince}}&nbsp;&nbsp;
+												{{scope.row.presentAddressCity}}&nbsp;&nbsp;
+												{{scope.row.presentAddressArea}}&nbsp;&nbsp;
+												{{scope.row.presentAddressDetail}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												家庭住址：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.homeAddressProvince}}&nbsp;&nbsp;
+												{{scope.row.homeAddressCity}}&nbsp;&nbsp;
+												{{scope.row.homeAddressArea}}&nbsp;&nbsp;
+												{{scope.row.homeAddressDetail}}
+											</el-col>
+										</el-row>
+									</el-col>
 								</el-row>
 								<template v-if="scope.row.isParty == 1">
 									<el-row :gutter="20">
 										<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
 									</el-row>
-									<el-row :gutter="20">
-										<el-col :span="3">党员类型：{{scope.row.typeName}}</el-col>
-										<el-col :span="3">党员状态：{{scope.row.statusName}}</el-col>
-										<el-col :span="6">加入或批准入党时间：{{scope.row.joinDateFormal}}</el-col>
-										<el-col :span="6">预备党员批准时间：{{scope.row.joinDateReserve}}</el-col>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													党员类型：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.typeName}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													党员状态：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.statusName}}
+												</el-col>
+											</el-row>
+										</el-col>
 									</el-row>
-									<el-row :gutter="20">
-										<el-col :span="6">工作单位：{{scope.row.workUnit}}</el-col>
-										<el-col :span="6">工作性质：{{scope.row.workNature}}</el-col>
-										<el-col :span="6">加入工作时间：{{scope.row.joinWorkDate}}</el-col>
-										<el-col :span="6">聘任时长：{{scope.row.appointmentTimeLength}} 年</el-col>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													入党时间 (正式)：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.joinDateFormal}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													入党时间 (预备)：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.joinDateReserve}}
+												</el-col>
+											</el-row>
+										</el-col>
 									</el-row>
-									<el-row :gutter="20">
-										<el-col :span="6">如何加入党支部：{{scope.row.joinPartyBranchType}}</el-col>
-										<el-col :span="6">一线情况：{{scope.row.firstLineTypeName}}</el-col>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													如何加入党支部：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.joinPartyBranchType}}
+												</el-col>
+											</el-row>
+										</el-col>
 									</el-row>
-									<el-row :gutter="20">
-										<el-col :span="3">是否党务工作者：{{scope.row.partyStaffName}}</el-col>
-										<el-col :span="3">是否党代表：{{scope.row.partyRepresentativeName}}</el-col>
-										<el-col :span="3">是否志愿者：{{scope.row.volunteerName}}</el-col>
-										<el-col :span="3">是否困难党员：{{scope.row.difficultUserName}}</el-col>
-										<el-col :span="3">是否先进党员：{{scope.row.advancedUserName}}</el-col>
-										<el-col :span="3">是否发展党员：{{scope.row.developUserName}}</el-col>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否党务工作者：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.partyStaffName}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否党代表：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.partyRepresentativeName}}
+												</el-col>
+											</el-row>
+										</el-col>
 									</el-row>
-									<el-row :gutter="20">
-										<el-col :span="3">是否失联党员：{{scope.row.missingUserName}}</el-col>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否志愿者：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.volunteerName}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否困难党员：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.difficultUserName}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否先进党员：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.advancedUserName}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否发展党员：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.developUserName}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否失联党员：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.missingUserName}}
+												</el-col>
+											</el-row>
+										</el-col>
 									</el-row>
 									<el-row :gutter="20">
 										<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
 									</el-row>
-									<el-row :gutter="20">
+									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="22">{{scope.row.introduce}}</el-col>
 									</el-row>
 								</template>
@@ -663,7 +1080,54 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-select>
 						</el-form-item>
 					</el-col>
+					<el-col :span="6">
+						<el-form-item label="工作单位：" prop="workUnit">
+							<el-input clearable v-model="partyUser_manager_insertPartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="6">
+						<el-form-item label="工作性质：" prop="workNature">
+							<el-select clearable v-model="partyUser_manager_insertPartyUserForm.workNature" filterable placeholder="请选择工作性质">
+								<el-option
+									v-for="workNatureType in partyUser_manager_workNatureTypes"
+									:key="workNatureType.name"
+									:label="workNatureType.name"
+									:value="workNatureType.workNatureId">
+								</el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
 				</el-row>
+				<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="工作时间：" prop="joinWorkDate">
+								<el-date-picker
+									clearable
+							    	v-model="partyUser_manager_insertPartyUserForm.joinWorkDate"
+							    	type="date" 
+							    	value-format="yyyy-MM-dd" 
+							    	placeholder="选择开始工作时间">
+							    </el-date-picker>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="聘任时长" prop="appointmentTimeLength">
+								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="一线情况：" prop="firstLineTypeName">
+								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
+									<el-option
+										v-for="firstLineType in partyUser_manager_firstLineTypes"
+										:key="firstLineType.firstLineTypeName"
+										:label="firstLineType.firstLineTypeName"
+										:value="firstLineType.fltId">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 				
 				<template v-if="partyUser_manager_insertPartyUserForm.isParty == 1">
 					<el-row :gutter="20">
@@ -714,42 +1178,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-tooltip>
 						</el-col>
 					</el-row>
-					
-					<el-row :gutter="20">
-						<el-col :span="6">
-							<el-form-item label="工作单位：" prop="workUnit">
-								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
-							<el-form-item label="工作性质：" prop="workNature">
-								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.workNature" filterable placeholder="请选择工作性质">
-									<el-option
-										v-for="workNatureType in partyUser_manager_workNatureTypes"
-										:key="workNatureType.name"
-										:label="workNatureType.name"
-										:value="workNatureType.workNatureId">
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
-							<el-form-item label="工作时间：" prop="joinWorkDate">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_insertPartyUserForm.joinWorkDate"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="选择开始工作时间">
-							    </el-date-picker>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
-							<el-form-item label="聘任时长" prop="appointmentTimeLength">
-								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
-							</el-form-item>
-						</el-col>
-					</el-row>
 
 					<el-row :gutter="20">
 						<el-col :span="6">
@@ -767,18 +1195,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-tooltip>
 						</el-col>
 						<el-col :span="6">
-							<el-form-item label="一线情况：" prop="firstLineTypeName">
-								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
-									<el-option
-										v-for="firstLineType in partyUser_manager_firstLineTypes"
-										:key="firstLineType.firstLineTypeName"
-										:label="firstLineType.firstLineTypeName"
-										:value="firstLineType.fltId">
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
 							<el-form-item label="党务工作者：" prop="partyStaff">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.partyStaff">
 									<el-option label="是" :value="1"></el-option>
@@ -794,9 +1210,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</el-select>
 							</el-form-item>
 						</el-col>
-					</el-row>
-
-					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="志愿者：" prop="volunteer">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.volunteer">
@@ -805,6 +1218,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</el-select>
 							</el-form-item>
 						</el-col>
+					</el-row>
+
+					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="困难党员：" prop="difficultUser">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.difficultUser">
@@ -829,9 +1245,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</el-select>
 							</el-form-item>
 						</el-col>
-					</el-row>
-
-					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="失联党员：" prop="missingUser">
 								<el-select clearable v-model="partyUser_manager_insertPartyUserForm.missingUser">
@@ -1119,7 +1532,55 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-select>
 						</el-form-item>
 					</el-col>
+					<el-col :span="6">
+						<el-form-item label="工作单位：" prop="workUnit">
+							<el-input clearable v-model="partyUser_manager_updatePartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="6">
+						<el-form-item label="工作性质：" prop="workNature">
+							<el-select clearable v-model="partyUser_manager_updatePartyUserForm.workNature" filterable placeholder="请选择工作性质">
+								<el-option
+									v-for="workNatureType in partyUser_manager_workNatureTypes"
+									:key="workNatureType.name"
+									:label="workNatureType.name"
+									:value="workNatureType.workNatureId">
+								</el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
 				</el-row>
+
+				<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="工作时间：" prop="joinWorkDate">
+								<el-date-picker
+									clearable
+							    	v-model="partyUser_manager_updatePartyUserForm.joinWorkDate"
+							    	type="date" 
+							    	value-format="yyyy-MM-dd" 
+							    	placeholder="选择开始工作时间">
+							    </el-date-picker>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="聘任时长" prop="appointmentTimeLength">
+								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="一线情况：" prop="firstLineTypeName">
+								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
+									<el-option
+										v-for="firstLineType in partyUser_manager_firstLineTypes"
+										:key="firstLineType.firstLineTypeName"
+										:label="firstLineType.firstLineTypeName"
+										:value="firstLineType.fltId">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
 				
 				<template v-if="partyUser_manager_updatePartyUserForm.isParty == 1">
 					<el-row :gutter="20">
@@ -1170,42 +1631,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-tooltip>
 						</el-col>
 					</el-row>
-					
-					<el-row :gutter="20">
-						<el-col :span="6">
-							<el-form-item label="工作单位：" prop="workUnit">
-								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.workUnit" placeholder="请输工作单位"></el-input>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
-							<el-form-item label="工作性质：" prop="workNature">
-								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.workNature" filterable placeholder="请选择工作性质">
-									<el-option
-										v-for="workNatureType in partyUser_manager_workNatureTypes"
-										:key="workNatureType.name"
-										:label="workNatureType.name"
-										:value="workNatureType.workNatureId">
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
-							<el-form-item label="工作时间：" prop="joinWorkDate">
-								<el-date-picker
-									clearable
-							    	v-model="partyUser_manager_updatePartyUserForm.joinWorkDate"
-							    	type="date" 
-							    	value-format="yyyy-MM-dd" 
-							    	placeholder="选择开始工作时间">
-							    </el-date-picker>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
-							<el-form-item label="聘任时长" prop="appointmentTimeLength">
-								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.appointmentTimeLength" placeholder="请输公司聘任时长"></el-input>
-							</el-form-item>
-						</el-col>
-					</el-row>
 
 					<el-row :gutter="20">
 						<el-col :span="6">
@@ -1223,18 +1648,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							</el-tooltip>
 						</el-col>
 						<el-col :span="6">
-							<el-form-item label="一线情况：" prop="firstLineTypeName">
-								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.firstLineTypeName" filterable placeholder="请选择一线情况">
-									<el-option
-										v-for="firstLineType in partyUser_manager_firstLineTypes"
-										:key="firstLineType.firstLineTypeName"
-										:label="firstLineType.firstLineTypeName"
-										:value="firstLineType.fltId">
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="6">
 							<el-form-item label="党务工作者：" prop="partyStaff">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.partyStaff">
 									<el-option label="是" :value="1"></el-option>
@@ -1250,9 +1663,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</el-select>
 							</el-form-item>
 						</el-col>
-					</el-row>
-
-					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="志愿者：" prop="volunteer">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.volunteer">
@@ -1261,6 +1671,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</el-select>
 							</el-form-item>
 						</el-col>
+					</el-row>
+
+					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="困难党员：" prop="difficultUser">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.difficultUser">
@@ -1285,9 +1698,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</el-select>
 							</el-form-item>
 						</el-col>
-					</el-row>
-
-					<el-row :gutter="20">
 						<el-col :span="6">
 							<el-form-item label="失联党员：" prop="missingUser">
 								<el-select clearable v-model="partyUser_manager_updatePartyUserForm.missingUser">
@@ -1638,7 +2048,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_firstLineTypes: [],	/*一线情况*/
 			partyUser_manager_joinPartyBranchTypes: [],	/*加入党支部方式*/
 			partyUser_manager_workNatureTypes: [],	/*工作性质*/
-			partyUser_manager_uploadPartyUserIdPhotoTempFileName: ""
+			partyUser_manager_uploadPartyUserIdPhotoTempFileName: "",
+			signInAccountType: null
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -1652,9 +2063,24 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			this.partyUser_manager_queryWorkNatureTypes();	/*初始化工作性质下拉框*/
 			this.partyUser_manager_queryJoinPartyBranchTypes();	/*初始化加入党支部方式下拉框*/
 			this.partyUser_manager_queryFirstLineTypes();	/*初始化一线情况下拉框*/
-
+			this.getSignInAccountType();
 		},
 		methods: {
+			getSignInAccountType() {	/*得到该登录用户的类型*/
+				var obj = this;
+
+				var url = "/siat/getSignInAccountType";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.signInAccountType = data.data;
+						}
+					}
+
+				})
+			},
 			getScreenHeightForPageSize() {	/*根据屏幕分辨率个性化每页数据记录数*/
 				var obj = this;
 				var height = window.innerHeight;
@@ -1682,7 +2108,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						} else {
 							obj.partyUser_manager_pager = data.data;
 						}
-					}
+					} 
 
 				})
 			},
@@ -2204,6 +2630,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				} else {
 					return "/view/pm/img/women.jpg?t=" + Math.random();
 				}
+			},
+			openPartyUserLL(row, width, height) {
+				window.open ('/view/pm/Horizontal.html', 'newwindow', 'height='+ height +', width='+ width +', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no');
 			}
 		}
 	});

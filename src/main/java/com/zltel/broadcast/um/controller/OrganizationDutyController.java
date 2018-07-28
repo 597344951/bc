@@ -1,6 +1,5 @@
 package com.zltel.broadcast.um.controller;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +32,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgDutys", method=RequestMethod.POST)
 	@LogPoint("查询组织职责")
-	@RequiresPermissions(value = {"org:duty:query"})
 	@ApiOperation(value = "查询组织职责")
 	public R queryOrgDutys(OrganizationDuty organizationDuty, int pageNum, int pageSize) {
 		try {
@@ -51,7 +49,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgDutyForOrgInfoClick", method=RequestMethod.POST)
 	@LogPoint("查询组织职责")
-	@RequiresPermissions(value = {"org:duty:query"})
 	@ApiOperation(value = "查询组织职责")
 	public R queryOrgDutyForOrgInfoClick(OrganizationDuty organizationDuty) {
 		try {
@@ -69,7 +66,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgDutyTreeForOrgInfo", method=RequestMethod.POST)
 	@LogPoint("查询组织职责")
-	@RequiresPermissions(value = {"org:duty:query"})
 	@ApiOperation(value = "查询组织职责")
 	public R queryOrgDutyTreeForOrgInfo(OrganizationDuty organizationDuty) {
 		try {
@@ -87,7 +83,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgDutysOfQueryRelations", method=RequestMethod.POST)
 	@LogPoint("查询组织职责")
-	@RequiresPermissions(value = {"org:duty:query"})
 	@ApiOperation(value = "查询组织职责")
 	public R queryOrgDutysOfQueryRelations() {
 		try {
@@ -105,7 +100,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/queryOrgDutysNotPage", method=RequestMethod.POST)
 	@LogPoint("查询组织职责")
-	@RequiresPermissions(value = {"org:duty:query"})
 	@ApiOperation(value = "查询组织职责")
 	public R queryOrgDutysNotPage(OrganizationDuty organizationDuty) {
 		try {
@@ -123,7 +117,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/updateOrgDuty", method=RequestMethod.POST)
 	@LogPoint("修改组织职责")
-	@RequiresPermissions(value = {"org:duty:update"})
 	@ApiOperation(value = "修改组织职责")
 	public R updateOrgDuty(OrganizationDuty organizationDuty) {
 		try {
@@ -141,7 +134,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/deleteOrgDuty", method=RequestMethod.POST)
 	@LogPoint("批量删除组织职责")
-	@RequiresPermissions(value = {"org:duty:delete"})
 	@ApiOperation(value = "批量删除组织职责")
 	public R deleteOrgDuty(OrganizationDuty organizationDuty) {
 		try {
@@ -160,7 +152,6 @@ public class OrganizationDutyController extends BaseController {
 	 */
 	@RequestMapping(value="/insertOrgDuty", method=RequestMethod.POST)
 	@LogPoint("添加组织职责")
-	@RequiresPermissions(value = {"org:duty:insert"})
 	@ApiOperation(value = "添加组织职责")
 	public R insertOrgDuty(OrganizationDuty organizationDuty) {
 		try {

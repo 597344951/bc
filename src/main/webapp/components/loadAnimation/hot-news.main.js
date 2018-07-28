@@ -8,7 +8,8 @@ let HotNews = {
     props: {},
     data() {
         return {}
-    }
+    },
+    template: require("./hot-news.view.html")
 };
 
 export default HotNews;

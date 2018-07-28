@@ -110,7 +110,8 @@ var ContextMenu = {
             this.$emit('close');
             this.$emit('update:visiable', false);
         }
-    }
+    },
+    template:require("./context-menu.view.html")
 }
 
 export default ContextMenu;

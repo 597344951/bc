@@ -28,8 +28,8 @@
                     <vue-calendar :mark-date="markDate" @changemonth="changeMonth" @choseday="choseDay"></vue-calendar>
                 </div>
                 <div class="plane-chose">
-                        <el-button type="primary" @click="planGuide.visiable = true">宏观信息</el-button>
-                    </div>
+                    <el-button type="primary" @click="planGuide.visiable = true">宏观信息</el-button>
+                </div>
                 <div class="plane-chose">
                     <h3>展示计划类型</h3>
                     <div class="item">
@@ -110,11 +110,11 @@
                                                     <span>主推活动</span>
                                                 </div>
                                                 <div class="main-content">
-                                                    <template v-for="plan in getActivities(eventdata)">
-                                                        <div class="box" :class="plan.className">
+                                                    <template v-for="plan in eventdata.suggestItems.filter(item=>item.type==1)">
+                                                        <div class="box" :class="getPlanTheme(plan)">
                                                             <div class="box-up">
                                                                 <h3>
-                                                                    <i></i>{{plan.title}}
+                                                                    <i></i>{{plan.suggestInfo.title}}
                                                                     <el-button class="btn" type="primary" icon="el-icon-edit" circle @click="showAddActivityPlan(eventdata,plan)"> </el-button>
                                                                 </h3>
                                                                 <p>
@@ -153,13 +153,12 @@
                                                     <span>辅推活动</span>
                                                 </div>
                                                 <div class="main-content">
-                                                    <template v-for=" plan in getActivities(eventdata)">
-                                                        <div class="box" :class="plan.className" @click="showAddActivityPlan">
+                                                    <template v-for=" plan in eventdata.suggestItems.filter(item=>item.type==2)">
+                                                        <div class="box" :class="getPlanTheme(plan)" @click="showAddActivityPlan(eventdata,plan)">
                                                             <div class="box-up">
                                                                 <h3>
-                                                                    <i></i>{{plan.title}}
-                                                                    <el-button class="btn" type="primary"
-                                                                        icon="el-icon-edit" circle @click="showAddActivityPlan">
+                                                                    <i></i>{{plan.suggestInfo.title}}
+                                                                    <el-button class="btn" type="primary" icon="el-icon-edit" circle @click="showAddActivityPlan">
                                                                     </el-button>
                                                                 </h3>
                                                                 <p>
@@ -210,11 +209,12 @@
         <el-dialog title="新建活动策划" :visible.sync="createActivityPlanDialog.visiable" :fullscreen="true" :modal="false">
             <create-activity-plan ref="activityPlan" :time-info="eventdata" :plan="sugPlan" @submit="addActivityPlan"></create-activity-plan>
         </el-dialog>
-        <el-dialog custom-class="no-title" :visible.sync="planGuide.visiable" :fullscreen="true" >
+        <el-dialog custom-class="no-title" :visible.sync="planGuide.visiable" :fullscreen="true">
             <load-report @save="createPlanGuidSave"></load-report>
         </el-dialog>
         <!--dialog-->
     </div>
 </body>
 <script type="module" src="${urls.getForLookupPath('/assets/module/eventplan/eventplan.js')}"></script>
+
 </html>

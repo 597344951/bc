@@ -77,7 +77,6 @@ var TextViewEdit = {
             }else{
                 me.$refs['ueditor'] .setContent(defaultValue)
             }
-           
         },
         setFullscreen() {
             this.config.fullscreen = !this.config.fullscreen;
@@ -88,13 +87,16 @@ var TextViewEdit = {
             this.config.visiable = false;
         },
         submit() {
-            this.$emit('submit', this.$refs['ueditor'].getContent());
+            if(this.mode == 'edit'){
+             this.$emit('submit', this.$refs['ueditor'].getContent());
+            }
             this.close();
         },
         chose(tp) {
             this.$emit('chose', tp);
             this.close();
         }
-    }
+    },
+    template: require("./text-view-edit.view.html")
 }
 export default TextViewEdit;

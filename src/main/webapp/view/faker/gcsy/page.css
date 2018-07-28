@@ -76,14 +76,14 @@ em,i{font-style:normal;}
 .top_nav b{ float:left; font-size:18px; color:#BE140B; font-family:\9ED41\4F53; margin-left:10px;}
 
 
-.banner{ height:480px;}
+.banner{ height:160px;}
 .banner span{ display:none;}
-.p1_con{ overflow:hidden; width:1200px;  }
-.p1_con ul li{ float:left; background:url(pic_bg.png) no-repeat; width:577px; height:153px; margin:15px 5px 20px 5px;}
+.p1_con{ overflow:hidden; width:100%;  }
+.p1_con ul li{ float:left; background:url(pic_bg.png) no-repeat; width:49%; height:153px; margin:5px;}
 .p1_con ul li img{ float:left; margin:9px;}
-.p1_con ul li div{ float:right; width:410px; height:100px; margin-right:10px;margin-top:25px;}
-.p1_con ul li div b{ display:block; font-size:18px; color:#b22316; line-height:30px;}
-.p1_con ul li div p{ display:block; font-size:14px; color:#000; line-height:22px;}
+.p1_con ul li div{ width:100%; height:100px; margin-top:30px;}
+.p1_con ul li div b{font-family: "microsoft yahei"; display:block; font-size:18px; color:#b22316; line-height:30px;}
+.p1_con ul li div p{font-family: "microsoft yahei"; display:block; font-size:14px; color:#000; line-height:22px;width: 96%;}
 
 
 /*======= copyright========*/
@@ -111,7 +111,7 @@ body{ background-image:none;background:#f6ebd9;}
 .p1_con ul li{ width:96%; height: auto; margin:15px auto; float:left; margin-left:2%; background:none;background-color:#fff;border-radius:10px;}
 
 .p1_con ul li img{ float:left; margin:1%; width:30%; height:auto; border:#dd433b 5px solid; border-radius:65px;}
-.p1_con ul li div{ float:right; width:62%; padding:1% 1% 3%; height: auto; margin-right:0;margin-top:0;}
+/*.p1_con ul li div{ float:right; width:62%; padding:1% 1% 3%; height: auto; margin-right:0;margin-top:0;}*/
 
 .banner{ height:auto;}
 .banner span{ display: block;}

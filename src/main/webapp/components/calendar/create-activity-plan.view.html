@@ -3,7 +3,7 @@
         
     </div>
     <div>
-        <el-form ref="form" :model="planData" label-width="80px">
+        <el-form ref="form" :model="planData" label-width="120px">
             <el-form-item label="活动名称">
                 <el-col :span="5">
                     <el-input v-model="planData.title"></el-input>
@@ -29,6 +29,18 @@
                     <div id="editor">
 
                     </div>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="活动参与人限定">
+                <el-col :span="5">
+                    <el-select v-model="planData.participateType" placeholder="请选择">
+                        <el-option
+                          v-for="item in [{label:'所有人',value:'all'},{label:'党员',value:'pm'}]"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
                 </el-col>
             </el-form-item>
             <el-form-item label="费用计划">
@@ -61,7 +73,7 @@
         </el-form>
     </div>
     <el-dialog title="费用计划编辑" :visible.sync="costPlanDataDialog.visiable" append-to-body>
-        <cost-plan :cost-plan-data="costPlanData" @complete="costPlanDataDialog.visiable=false"></cost-plan>
+        <cost-plan :cost-plan-data="costPlanData" mode="edit" @complete="costPlanDataDialog.visiable=false"></cost-plan>
     </el-dialog>
     <report-template-explorer :display.sync="templateView.display" :title="templateView.title" :keyword="templateView.keyword" @chose="tpChoseChange"></report-template-explorer>
 </div>

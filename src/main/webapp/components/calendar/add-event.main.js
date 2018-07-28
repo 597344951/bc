@@ -32,7 +32,6 @@ let AddEvent = {
             this.$emit("added-data", data) //触发事件
         }
     },
-    //模版内容
-    template: ''
+    template: require("./add-event.view.html")
 }
 export default AddEvent;

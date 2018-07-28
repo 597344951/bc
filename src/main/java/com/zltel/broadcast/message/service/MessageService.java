@@ -6,7 +6,7 @@ import com.zltel.broadcast.um.bean.SysUser;
 
 public interface MessageService {
     public void addMessage(Message message);
-    public void addMessage(int type, String title, String content, int userId, int sourceId);
+    public void addMessage(int type, String title, String content, int userId, int sourceId, String url);
 
     public PageInfo<Message> queryPending(SysUser user);
     public PageInfo<Message> queryNotice(SysUser user, int pageNum, int pageSize);

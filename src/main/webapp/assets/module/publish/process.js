@@ -1,27 +1,28 @@
-window.onFocus = function() {
+window.onFocus = function () {
     window.location.reload()
 }
 
 let app = new Vue({
     el: '#app',
-    data:{
+    data: {
         tpager: {
             total: 0,
             current: 1,
             size: 10
         },
-        dis_h_v:false,
+        dis_h_v: false,
         processContent: [],
         snapshot: '',
         isMoreEditCommit: false,
         isVerify: false,
         opinion: '',
         postData: {},
-        url:'',
+        url: '',
         processState: {
             visible: false,
+            contentId: 9,
             active: 0,
-            steps:[],
+            steps: [],
             detail: []
         },
         verifyState: {
@@ -70,10 +71,10 @@ let app = new Vue({
             this.tpager.current = val;
         },
         startMoreEdit(row) {
-            var url = '/publish/process/start_me/'+row.id;
+            var url = '/publish/process/start_me/' + row.id;
             get(url, reps => {
                 init();
-                if(reps.status) {
+                if (reps.status) {
                     window.open("/sola/edit/" + reps.editId, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
                 } else {
                     app.$message('编辑失败, 该内容已被其他人编辑 !');
@@ -94,7 +95,7 @@ let app = new Vue({
             }
             this.isMoreEditCommit = false;
             post(this.url, this.postData, reps => {
-                if(reps.status) {
+                if (reps.status) {
                     init();
                     app.$message('提交成功 !');
                 } else {
@@ -108,7 +109,7 @@ let app = new Vue({
                 type: row.type,
                 isAdopt: isAdopt
             }
-            if(isAdopt == 2) {
+            if (isAdopt == 2) {
                 this.isVerify = true;
             } else {
                 this.verify();
@@ -118,7 +119,7 @@ let app = new Vue({
             this.isVerify = false;
             this.postData.opinion = this.opinion;
             post(this.url, this.postData, reps => {
-                if(reps.status) {
+                if (reps.status) {
                     init();
                     app.$message('审核完成 !');
                 } else {
@@ -134,21 +135,21 @@ let app = new Vue({
             this.$refs[form].validate((valid) => {
                 if (valid) {
                     this.$confirm('确认选择时间并发布？')
-                    .then(_ => {
-                        app.publishPeriod.show = false
-                        let postData = this.publishPeriod.period
-                        postData.period = postData.time[0] + '-' + postData.time[1]
-                        postData.weeks = postData.week.join(',')
-                        postJson(this.url, postData, reps => {
-                            if(reps.status) {
-                                init()
-                                commitMessage(() => {
-                                    app.$message('发布成功 !')
-                                })
-                            }
+                        .then(_ => {
+                            app.publishPeriod.show = false
+                            let postData = this.publishPeriod.period
+                            postData.period = postData.time[0] + '-' + postData.time[1]
+                            postData.weeks = postData.week.join(',')
+                            postJson(this.url, postData, reps => {
+                                if (reps.status) {
+                                    init()
+                                    commitMessage(() => {
+                                        app.$message('发布成功 !')
+                                    })
+                                }
+                            })
                         })
-                    })
-                    .catch(_ => {});
+                        .catch(_ => { });
                 } else {
                     return false;
                 }
@@ -161,7 +162,7 @@ let app = new Vue({
             this.url = '/publish/process/discard/' + row.id;
             get(this.url, reps => {
                 init();
-                if(reps.status) {
+                if (reps.status) {
                     app.$message('移除成功 !');
                 } else {
                     app.$message('移除失败 !');
@@ -169,40 +170,40 @@ let app = new Vue({
             })
         },
         //show 是否默认显示dialog
-        getProcessState(row,show) {
-            this.url = '/publish/process/state/' + row.type + '/' + row.id;
-            get(this.url, reps => {
-                if(reps.status) {
-                    this.processState.detail = [];
-                    var msg, processItem;
-                    for(var i in reps.data.log) {
-                        msg = reps.data.log[i];
-                        this.processState.detail.push(msg.add_date + ': ' + msg.label + '  ' + msg.msg + ' [ '+ (msg.remark ? msg.remark : '') +' ] ');
-                    }
-                    this.processState.steps = [];
-                    for(var i in reps.data.steps) {
-                        processItem = reps.data.steps[i];
-                        this.processState.steps.push({
-                            index: i,
-                            title: reps.data.steps[i].label
-                        });
-                        if(row.processItem == processItem.process_item_id) {
-                            this.processState.active = Number.parseInt(i);
+        getProcessState(row, show) {
+            if (show === false) {
+                this.url = '/publish/process/state/' + row.type + '/' + row.id;
+                get(this.url, reps => {
+                    if (reps.status) {
+                        this.processState.detail = [];
+                        var msg, processItem;
+                        for (var i in reps.data.log) {
+                            msg = reps.data.log[i];
+                            this.processState.detail.push(msg.add_date + ': ' + msg.label + '  ' + msg.msg + ' [ ' + (msg.remark ? msg.remark : '') + ' ] ');
                         }
+                        this.processState.steps = [];
+                        for (var i in reps.data.steps) {
+                            processItem = reps.data.steps[i];
+                            this.processState.steps.push({
+                                index: i,
+                                title: reps.data.steps[i].label
+                            });
+                            if (row.processItem == processItem.process_item_id) {
+                                this.processState.active = Number.parseInt(i);
+                            }
+                        }
+                    } else {
+                        app.$message('获取进度信息失败!!!');
                     }
-                    if(show === false){}
-                    else{
-                        this.processState.visible = true;
-                    }
-                } else {
-                    app.$message('获取进度信息失败!!!');
-                }
-            })
+                })
+            } else {
+                this.processState.visible = true;
+            }
         },
         getVerifyState(row) {
             this.url = '/publish/verifyState/' + row.id
             get(this.url, reps => {
-                if(reps.status) {
+                if (reps.status) {
                     this.verifyState.list = reps.data
                     this.verifyState.visible = true
                 } else {
@@ -211,14 +212,14 @@ let app = new Vue({
             })
         },
         viewTemplate(row) {
-            window.open ('/publish/template/' + row.id, 'template', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+            window.open('/publish/template/' + row.id, 'template', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
         },
         view(row) {
-            if(!row.snapshot) {
+            if (!row.snapshot) {
                 this.$message("预览还未提交, 无法预览.");
                 return;
             }
-            window.open ('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+            window.open('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
         },
         viewTerminal(row) {
             let url = '/publish/publishTerminal/' + row.id
@@ -234,10 +235,10 @@ let app = new Vue({
 init();
 function init() {
     get('/publish/process/content', reps => {
-        if(reps.status) {
+        if (reps.status) {
             var d;
             app.processContent = [];
-            for(var i in reps.data) {
+            for (var i in reps.data) {
                 d = reps.data[i];
                 app.processContent.push({
                     id: d.content_id,
@@ -247,8 +248,8 @@ function init() {
                     snapshot: d.snapshot,
                     date: d.add_date,
                     startDate: d.start_date,
-                    endDate:d.end_date,
-                    period:d.period,
+                    endDate: d.end_date,
+                    period: d.period,
                     processItem: d.process_item_id,
                     state: d.label,
                     operate: d.operate
@@ -265,7 +266,7 @@ function init() {
 }
 
 function commitMessage(callback) {
-    app.commitMessage.show = true
+    /* app.commitMessage.show = true
     message = [
                 '敏感词检测...',
                 '完成, 未发现敏感词',
@@ -288,15 +289,16 @@ function commitMessage(callback) {
             }
             
         }
-    }, 2*1000);
+    }, 2*1000); */
+    app.commitMessage.show = true;
 }
 
 function get(url, callback) {
     $.ajax({
-        type:'GET',
-        url:url,
-        dataType:'json',
-        success: function(reps){
+        type: 'GET',
+        url: url,
+        dataType: 'json',
+        success: function (reps) {
             callback(reps);
         },
         error: function (err) {
@@ -311,15 +313,15 @@ function get(url, callback) {
 
 function post(url, postData, callback) {
     var postStr = '';
-    for(var key in postData) {
+    for (var key in postData) {
         postStr += key + '=' + postData[key] + '&';
     }
     $.ajax({
-        type:'POST',
-        url:url,
-        dataType:'json',
+        type: 'POST',
+        url: url,
+        dataType: 'json',
         data: postStr,
-        success: function(reps){
+        success: function (reps) {
             callback(reps);
         },
         error: function (err) {
@@ -334,12 +336,12 @@ function post(url, postData, callback) {
 
 function postJson(url, postData, callback) {
     $.ajax({
-        type:'POST',
-        url:url,
-        dataType:'json',
+        type: 'POST',
+        url: url,
+        dataType: 'json',
         data: JSON.stringify(postData),
         contentType: 'application/json',
-        success: function(reps){
+        success: function (reps) {
             callback(reps);
         },
         error: function (err) {

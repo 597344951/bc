@@ -11,7 +11,8 @@ let FestivalInfo = {
     props: {},
     data() {
         return {}
-    }
+    },
+    template: require("./festival-info.view.html")
 };
 
 export default FestivalInfo;

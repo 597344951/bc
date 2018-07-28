@@ -182,6 +182,7 @@
 		 
 		) t ON ma.album_id = t.album_id
 		<include refid="QUERY_WHERE" />
+		order by order_num asc
 	</select>
 
 	<sql id="QUERY_WHERE">
