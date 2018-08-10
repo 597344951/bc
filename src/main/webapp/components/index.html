@@ -18,6 +18,7 @@
     <link rel="import" href="/html/include/vc.html">
     <link rel="import" href="/html/include/db.html">
     <link rel="import" href="/html/include/ue.html">
+    <script type="module" src="/components/main.js"></script>
  
     <title>已注册组件</title>
     <style>
@@ -59,13 +60,13 @@
                 </thead>
                 <tbody>
                     <tr v-for=" c in comps">
-                        <td>{{c.info.name}}</td>
-                        <td>{{c.info.author}}</td>
-                        <td>{{c.info.descript}}</td>
-                        <td>{{c.info.template_url}}</td>
+                        <td>{{c.name}}</td>
+                        <td>{{c.author}}</td>
+                        <td>{{c.descript}}</td>
+                        <td>{{c.template_url}}</td>
                         <td>
                             <el-button type="text"   @click="disComp(c)">显示</el-button>
-                            <el-button type="text"><a :href="'router.html#/'+c.info.name" target="_blank">新页面显示</a> </el-button>
+                            <el-button type="text"><a :href="'router.html#/'+c.name" target="_blank">新页面显示</a> </el-button>
                            
                         </td>
                     </tr>
@@ -199,26 +200,23 @@ var ins = new Vue({
 </body>
 
 <script type="module">
-    import {comps,init_components} from '/components/index.js'; 
-    var components = init_components(); 
     var ins = new Vue({
 		el: '#app',
 		data: {
-			comps: comps,
+			comps: window.componentInfos,
 			which_to_show: '',
 			showIdx: '1'
 		},
 		methods: {
 			disComp(comp) {
-				this.which_to_show = comp.info.name;
+				this.which_to_show = comp.name;
 			},
 			handleSelect() {
 				let idx = arguments[0];
 				this.showIdx
-					 = idx;
+					 = idx; 
 			}
-		},
-		components: components
+		} 
 	});
 
 </script>

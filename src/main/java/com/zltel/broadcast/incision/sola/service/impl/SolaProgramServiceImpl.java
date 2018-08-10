@@ -58,6 +58,7 @@ public class SolaProgramServiceImpl implements SolaProgramService {
 
     public static final int ADD_PROGRAM_WITH_TEMPLATE = 1;
     public static final int ADD_PROGRAM_NO_TEMPLATE = 2;
+    public static final int ADD_PROGRAM_WITH_URL = 3;
 
     private static final Logger log = LoggerFactory.getLogger(SolaProgramServiceImpl.class);
 
@@ -79,6 +80,8 @@ public class SolaProgramServiceImpl implements SolaProgramService {
             ret = execute(program, "TempletProgram");
         } else if (ADD_PROGRAM_NO_TEMPLATE == type) {
             ret = execute(program, "AddProgram");
+        } else if (ADD_PROGRAM_WITH_URL == type) {
+            ret = execute(program, "AddHtmlProgram");
         } else {
             ret = "-10:未知节目创建类型";
         }
@@ -253,7 +256,7 @@ public class SolaProgramServiceImpl implements SolaProgramService {
 
         program.put("ServiceName", serviceName);
         program.put("Sign", sign);
-
+        log.debug("query data: {}", program);
         return HttpUtil.post(url, "data=" + JsonUtils.serialization(program));
     }
 

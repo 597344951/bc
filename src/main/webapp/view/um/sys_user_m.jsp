@@ -99,7 +99,7 @@
 						     	<el-button @click="openUpdateSysUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
 					      	</shiro:hasPermission>
 					      	<shiro:hasPermission name="sys:user:update">  
-						      	<el-button v-if="signInAccountType != 'party_role'" @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
+						      	<el-button v-if="signInAccountType != 'party_role' && scope.row.userType != 1" @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
 					      	</shiro:hasPermission>
 					      	<shiro:hasPermission name="sys:user:update">  
 						      	<el-button v-if="signInAccountType == 'plant_admin' && scope.row.userType != 1" type="text" size="small" slot="reference" @click="openSetInnerManageRolesDialog(scope.row)">赋予管理角色</el-button>
@@ -188,7 +188,7 @@
 				    <el-input v-model="updateSysUserForm.mobile" placeholder="联系手机"></el-input>
 				</el-form-item>
 				<el-form-item label="用户状态" prop="status">
-				    <el-select v-model="updateSysUserForm.status">
+				    <el-select :disabled="signInAccountType == 'plant_admin' ? 'true' : 'false'" v-model="updateSysUserForm.status">
 				      <el-option label="禁用" value="0"></el-option>
 				      <el-option label="可用" value="1"></el-option>
 				    </el-select>

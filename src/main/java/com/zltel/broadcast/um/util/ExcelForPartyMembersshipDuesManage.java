@@ -115,6 +115,7 @@ public class ExcelForPartyMembersshipDuesManage {
 						PartyIntegralRecord pir = new PartyIntegralRecord();
 						pir.setOrgId(pmdm.getOrgId());
 						pir.setPartyId(pmdm.getUserId());
+						pir.setChangeTypeId(Integer.parseInt(String.valueOf(ic.get("icId"))));
 						PartyMembershipDuesStatus pmds = partyMembershipDuesStatusMapper.selectByPrimaryKey(pmdm.getPayStatus());
 						if ("按时缴清".equals(pmds.getName())) {	//加分
 							pir.setChangeIntegralType(add_icts.get(0).getIctId());
@@ -232,6 +233,10 @@ public class ExcelForPartyMembersshipDuesManage {
 
             // 应缴纳金额
             if (row.getCell(2) != null && StringUtil.isNotEmpty(row.getCell(2).getStringCellValue())) {
+            	if (new BigDecimal(row.getCell(2).getStringCellValue()).doubleValue() < 0) {
+            		thisValidateSuccess = false;
+                    validataErrorMsg.append("第" + (i + 1) + "行应缴纳金额不能为负数\r\n");
+            	}
                 BigDecimal shouldPayMoney = new BigDecimal(row.getCell(2).getStringCellValue());
                 pmdm.setShouldPayMoney(shouldPayMoney);
             } else {
@@ -266,6 +271,10 @@ public class ExcelForPartyMembersshipDuesManage {
 
             // 实缴纳金额
             if (row.getCell(5) != null && StringUtil.isNotEmpty(row.getCell(5).getStringCellValue())) {
+            	if (new BigDecimal(row.getCell(5).getStringCellValue()).doubleValue() < 0) {
+            		thisValidateSuccess = false;
+                    validataErrorMsg.append("第" + (i + 1) + "行实缴纳金额不能为负数\r\n");
+            	}
                 BigDecimal paidMoney = new BigDecimal(row.getCell(5).getStringCellValue());
                 pmdm.setPaidMoney(paidMoney);
             } else {
@@ -284,8 +293,10 @@ public class ExcelForPartyMembersshipDuesManage {
                 }
                 pmdm.setPaidDate(paidDate);
             } else {
-                thisValidateSuccess = false;
-                validataErrorMsg.append("第" + (i + 1) + "行实缴纳日期是必须的\r\n");
+            	if (pmdm.getPaidMoney().doubleValue() > 0) {
+            		thisValidateSuccess = false;
+                    validataErrorMsg.append("第" + (i + 1) + "行实缴纳日期是必须的\r\n");
+            	}
             }
 
             // 缴纳备注
@@ -311,32 +322,35 @@ public class ExcelForPartyMembersshipDuesManage {
                 pmdm.setPaidWay(padpWay.getId());
                 validataErrorMsg.append("第" + (i + 1) + "行缴费方式已默认为 其他，（本条消息为提示消息，对导入不造成影响）\r\n");
             }
+            
+            if (thisValidateSuccess) {	//正确的情况下在设置缴纳状态
+            	// 缴纳状态
+                Map<String, Object> conditionMaps = new HashMap<>();
+                conditionMaps.put("userId", pmdm.getUserId());
+                conditionMaps.put("shouldPayDateStart", pmdm.getShouldPayDateStart());
+                conditionMaps.put("shouldPayDateEnd", pmdm.getShouldPayDateEnd());
+                conditionMaps.put("orgInfoId", pmdm.getOrgId());
+                List<Map<String, Object>> partyMembershipDues =
+                        partyMembershipDuesManageMapper.queryPartyMembershipDues(conditionMaps);
+                PartyMembershipDuesStatus partyMembershipDuesStatus = new PartyMembershipDuesStatus();
 
-            // 缴纳状态
-            Map<String, Object> conditionMaps = new HashMap<>();
-            conditionMaps.put("userId", pmdm.getUserId());
-            conditionMaps.put("shouldPayDateStart", pmdm.getShouldPayDateStart());
-            conditionMaps.put("shouldPayDateEnd", pmdm.getShouldPayDateEnd());
-            conditionMaps.put("orgInfoId", pmdm.getOrgId());
-            List<Map<String, Object>> partyMembershipDues =
-                    partyMembershipDuesManageMapper.queryPartyMembershipDues(conditionMaps);
-            PartyMembershipDuesStatus partyMembershipDuesStatus = new PartyMembershipDuesStatus();
-
-            if (partyMembershipDues != null && !partyMembershipDues.isEmpty()) { // 该时间段已有数据，补缴
-                partyMembershipDuesStatus.setName("补缴");
-            } else if (pmdm.getPaidDate().after(pmdm.getShouldPayDateStart()) // 按时缴清
-                    && pmdm.getPaidDate().before(pmdm.getShouldPayDateEnd())
-                    && (pmdm.getPaidMoney().compareTo(pmdm.getShouldPayMoney()) > 0
-                            || pmdm.getPaidMoney().compareTo(pmdm.getShouldPayMoney()) == 0)) {
-                partyMembershipDuesStatus.setName("按时缴清");
-            } else if (pmdm.getPaidMoney().compareTo(new BigDecimal(0)) == 0) { // 未缴
-                partyMembershipDuesStatus.setName("未缴");
-            } else if (pmdm.getPaidMoney().compareTo(pmdm.getShouldPayMoney()) < 0) { // 未缴清
-                partyMembershipDuesStatus.setName("未缴清");
-            } else if (pmdm.getPaidDate().after(pmdm.getShouldPayDateEnd())) { // 迟缴
-                partyMembershipDuesStatus.setName("迟缴");
+                if (partyMembershipDues != null && !partyMembershipDues.isEmpty()) { // 该时间段已有数据，补缴
+                    partyMembershipDuesStatus.setName("补缴");
+                } else if (pmdm.getPaidMoney().compareTo(new BigDecimal(0)) == 0) { // 未缴
+                    partyMembershipDuesStatus.setName("未缴");
+                } else if (pmdm.getPaidMoney().compareTo(pmdm.getShouldPayMoney()) < 0) { // 未缴清
+                    partyMembershipDuesStatus.setName("未缴清");
+                } else if (pmdm.getPaidDate().after(pmdm.getShouldPayDateEnd())) { // 迟缴
+                    partyMembershipDuesStatus.setName("迟缴");
+                } else if (pmdm.getPaidDate().after(pmdm.getShouldPayDateStart()) // 按时缴清
+                        && pmdm.getPaidDate().before(pmdm.getShouldPayDateEnd())
+                        && (pmdm.getPaidMoney().compareTo(pmdm.getShouldPayMoney()) > 0
+                                || pmdm.getPaidMoney().compareTo(pmdm.getShouldPayMoney()) == 0)) {
+                    partyMembershipDuesStatus.setName("按时缴清");
+                }
+                pmdm.setPayStatus(partyMembershipDuesStatusMapper.queryPMDSs(partyMembershipDuesStatus).get(0).getId());
             }
-            pmdm.setPayStatus(partyMembershipDuesStatusMapper.queryPMDSs(partyMembershipDuesStatus).get(0).getId());
+            
 
             pmdms.add(pmdm);
         }

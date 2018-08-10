@@ -27,19 +27,7 @@ window.appInstince = new Vue({
       event: null
     },
     //菜单数据
-    contextMenuData: [{
-      label: '增加分类',
-      icon: 'el-icon-plus',
-      type: 'success'
-    }, {
-      label: '修改分类',
-      icon: 'el-icon-edit',
-      type: 'primary'
-    }, {
-      label: '删除分类',
-      icon: 'el-icon-delete',
-      type: 'danger'
-    }],
+    contextMenuData: window.menuData,
     resource_server_url: '',
     resource_menu: [{
       label: '素材管理',
@@ -145,7 +133,7 @@ window.appInstince = new Vue({
       title: "文章模板编辑",
       visible: false,
       update: false,
-      yesBtnLabel:'确定',
+      yesBtnLabel: '确定',
       data: {
         title: "",
         content: "",
@@ -229,8 +217,8 @@ window.appInstince = new Vue({
   methods: {
     getTypeName(target) {
       let bp = breadPath(target, this.tpt_data, item => item.children, item => item.parent, item => item.typeId, item => item.data);
-      if(bp.length == 0){
-        console.error('未找到目录数据',target.typeId);
+      if (bp.length == 0) {
+        console.error('未找到目录数据', target.typeId);
         return '未知分类';
       }
       return bp[bp.length - 1].name;
@@ -377,12 +365,11 @@ window.appInstince = new Vue({
       this.importResource.data.albumIds = [];
     },
     treeContextmenu(event, data, node, ins) {
-      console.log('right click', arguments);
-      this.contextMenu.visiable = true;
-      this.contextMenu.event = event;
+      this.$refs.treeContextMenu.showMenu(event,data.data);
       this.curContextData = data.data;
     },
-    contextMenuClick(menuItem) {
+    contextMenuClick(menuItem,datas) {
+      this.curContextData = datas[0];
       console.log('菜单点击事件', menuItem);
       if (menuItem.label == '增加分类') {
         this.addTemplateType();
@@ -558,7 +545,7 @@ window.appInstince = new Vue({
         $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
-      this.$confirm("此操作将永久该分类数据, 是否继续?", "提示", {
+      this.$confirm(`此操作将『${nodedata.name}』, 是否继续?`, "提示", {
         type: "warning"
       }).then(function () {
         // 删除数据
@@ -575,6 +562,10 @@ window.appInstince = new Vue({
     },
     // 类别点击
     tptTreeClick: function (_data, node) {
+      if (this.tp.visible) {
+        $message('请先关闭当前正在编辑的内容', 'info', this);
+        return;
+      }
       var ins = this;
       var data = _data.data; // 类别节点数据
       this.tpager.current = 1;
@@ -832,33 +823,40 @@ window.appInstince = new Vue({
     },
     allowDrag(draggingNode) {
       //内置数据不能拖拽
-      return !draggingNode.data.data.builtin; 
+      return !draggingNode.data.data.builtin;
     },
-    treeDrapDrop(from, to, dropType, ev){
+    treeDrapDrop(from, to, dropType, ev) {
       console.log(arguments);
       let fd = from.data.data;
       let td = to.data.data;
       let ins = this;
-      let data = {typeId:fd.typeId};
+      let data = {
+        typeId: fd.typeId
+      };
       //before、after、inner
-      if(dropType == 'before'){
+      if (dropType == 'before') {
         data.parent = td.parent;
-        data.orderNum = td.orderNum-1;
-      }else if(dropType == 'after'){
+        data.orderNum = td.orderNum - 1;
+      } else if (dropType == 'after') {
         data.parent = td.parent;
-        data.orderNum = td.orderNum+1;
-      }else if(dropType == 'inner'){
+        data.orderNum = td.orderNum + 1;
+      } else if (dropType == 'inner') {
         data.parent = td.typeId;
       }
-      console.log('拖动结果: ',data)
-      
+      console.log('拖动结果: ', data)
+
       ajax_json("/report/type", "put", data, function (result) {
         if (result.status) {
           ins.loadTreeData();
-          $message('拖动成功','success',ins);
+          $message('拖动成功', 'success', ins);
         }
       });
-     
+
+    },
+    tpClose() {
+      this.tp.visible = false
+      this.tp.data = {};
+      _editor.setContent("");
     }
   }
 });

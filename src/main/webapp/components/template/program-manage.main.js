@@ -56,11 +56,11 @@ let ProgramTemplate = {
                 this.programTemplates = result.data;
                 this.programTemplates.forEach(item => {
                     if(item.pubStatus == 0) {
-                        item.statusLabel = "过期"
+                        item.statusLabel = "待审核"
                     } else if(item.pubStatus == 1) {
-                        item.statusLabel = "正在播放"
+                        item.statusLabel = "审核通过"
                     } else if(item.pubStatus == 2) {
-                        item.statusLabel = "待播放"
+                        item.statusLabel = "审核未通过"
                     } else {
                         item.statusLabel = "未知"
                     }
@@ -71,7 +71,7 @@ let ProgramTemplate = {
         openProgramView(pt) {
             let url = '/sola/view/' + pt.programId;
             //window.open(url, "_blank", "width=800 height=600");
-            openwindow(url,'节目预览',1024,768);
+            openwindow(url,'节目预览');
         },
         handleSizeChange(val) {
             this.tpager.size = val;

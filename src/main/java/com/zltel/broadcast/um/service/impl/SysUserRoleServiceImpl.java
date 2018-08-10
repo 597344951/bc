@@ -195,6 +195,8 @@ public class SysUserRoleServiceImpl extends BaseDaoImpl<SysUserRole> implements 
      * @return
      */
     public R updateInnerManageRols(Map<String, Object> conditions) {
+    	if (conditions == null) 
+    		return R.error().setMsg("发生错误");
     	Map<String, Object> queryConditions = new HashMap<>();
     	if (conditions.get("userId") == null || conditions.get("userId") == "") {
     		throw new RuntimeException();

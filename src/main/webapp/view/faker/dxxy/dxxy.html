@@ -27,8 +27,9 @@
 		height: 150px;
 		background: url(images/header.jpg) ;
 	    background-position: -290px -100px;
-
+		position: relative;
 	}
+
 	.content{
 		width: 85%;
 		margin:0 auto;
@@ -97,11 +98,35 @@
 		width: 100%;
 		height: 100%;
 	}
+	.make-program{
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		background-color: cornflowerblue;
+		padding:6px 14px;
+		border-radius: 6px;
+		color:#fff;
+		font-weight: bold;
+		font-size: 14px;
+		font-family: "microsoft yahei";
+	}
+	.make-program:hover{
+		color: #fff;
+		background-color: #5582d4;
+		text-decoration: none;
+	}
+	.make-program:active{
+		font-size: 15px;
+	}
 	</style>
 </head>
 <body>
 	<div class="box">
-		<div class="header"></div>
+		<div class="header">
+			<a class="make-program" href="/view/publish/new.jsp?startStep=2&title=uri&url=/view/faker/dxxy/dxxy.html">
+    节目制作
+  </a>
+		</div>
 		<div class="content">
 			<div class="content-box">
 				<p class="content-title">思想建设</p>

@@ -25,7 +25,7 @@
                             </span>
                         </div>
                         <div class="cover-image-container">
-                            <img :src="t.coverImageUrl" class="image">
+                            <img :src="t.coverImageUrl" class="image" onerror="onerror=null;src='/assets/img/nocontent.png'">
                             <div class="descript">{{t.resolution}}</div>
                         </div>
                         <div class="content">
@@ -54,7 +54,7 @@
                                 <el-button type="primary" size="mini" class="button" @click="editProgram(t)">编辑</el-button>
                                 <el-button type="danger" size="mini" class="button" @click="deleteProgram(t)">删除</el-button>
                                 <el-button v-if="t.pubStatus == 1" type="warning" size="mini" class="button" @click="cancleProgram(t)">停播</el-button>
-                                <el-button v-if="t.pubStatus == 0" type="success" size="mini" class="button" @click="pubProgram(t)">发布</el-button>
+                                <el-button v-if="t.pubStatus == 1" type="success" size="mini" class="button" @click="pubProgram(t)">发布</el-button>
                             </div>
                     </el-card>
                 </template>

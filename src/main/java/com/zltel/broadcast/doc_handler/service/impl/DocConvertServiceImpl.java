@@ -18,6 +18,7 @@ import com.zltel.broadcast.common.util.UUID;
 import com.zltel.broadcast.doc_handler.service.DocConvertService;
 import com.zltel.broadcast.doc_handler.util.WordToHtmlUtil;
 import com.zltel.broadcast.incision.sola.utils.HttpUtil;
+import com.zltel.broadcast.incision.sola.utils.HttpUtil.Result;
 
 @Service
 public class DocConvertServiceImpl implements DocConvertService {
@@ -74,8 +75,11 @@ public class DocConvertServiceImpl implements DocConvertService {
                 String url = burl + "/" + pp.getName() + "/" + p.getName();
                 logout.debug("提交资源服务器地址： {}", url);
                 // 文件
-                Object data = HttpUtil.postFile(url, "file", fd);
-                logout.debug("上传结果: {}", JSON.toJSONString(data));
+                Result result = HttpUtil.postFile(url, "file", fd);
+                if(result.getCode()!=200) {
+                    logout.error("上传资源到服务器失败!{}",result);
+                }
+                logout.debug("上传结果:{}", result);
             }
         }
     }

@@ -1,4 +1,4 @@
-<ul @mouseleave="mouseleave" @mouseenter="mouseenter" v-show="visiable" :style="{top:position.y+'px',left:position.x+'px'}" class="el-dropdown-menu el-popper context-menu">
+<ul @mouseleave="mouseleave" @mouseenter="mouseenter" v-show="show" :style="{top:position.y+'px',left:position.x+'px'}" class="el-dropdown-menu el-popper context-menu">
     <template v-for="item in data">
         <!--分隔符-->
         <li class="" :class="getTypeClass(item.type)" >

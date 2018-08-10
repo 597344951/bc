@@ -35,18 +35,10 @@ var ContextMenu = {
             type: Number,
             default: 1000
         },
-        //是否显示菜单
         visiable: {
             type: Boolean,
             default: true
-        },
-        mouseEvent: {
-            type: MouseEvent,
-            default: () => {
-                return {};
-            }
         }
-
     },
     data() {
         return {
@@ -54,18 +46,21 @@ var ContextMenu = {
             position: {
                 x: 333,
                 y: 444
-            }
+            },
+            show: this.visiable,
+            mouseEvent: {},
+            datas: {}
         };
     },
     watch: {
         mouseEvent(val, oldVal) {
-            this.position.x = val.x - 10;
-            this.position.y = val.y - 10;
-            console.log('change', this.position);
+            if (val) {
+                this.position.x = val.x - 10;
+                this.position.y = val.y - 10;
+            }
         }
     },
-    computed: {
-    },
+    computed: {},
     methods: {
         getTypeClass(type) {
             if (type == 'primary') return 'el-button--primary';
@@ -98,20 +93,28 @@ var ContextMenu = {
         },
         menuItemClick(item) {
             console.debug('menu item click', arguments);
+            this.$emit('click', item, this.datas);
             if (this.hideOnClick) {
                 this.hideMenu();
             }
-            this.$emit('click', item);
+        },
+        showMenu() {
+            let [event, ...data] = arguments;
+            console.debug('显示菜单');
+            this.show = true;
+            this.mouseEvent = event;
+            this.datas = data;
         },
         //隐藏菜单
         hideMenu() {
             console.debug('隐藏菜单');
             this.clearTimer();
-            this.$emit('close');
-            this.$emit('update:visiable', false);
+            this.show = false;
+            this.mouseEvent = null;
+            this.datas = null;
         }
     },
-    template:require("./context-menu.view.html")
+    template: require("./context-menu.view.html")
 }
 
 export default ContextMenu;

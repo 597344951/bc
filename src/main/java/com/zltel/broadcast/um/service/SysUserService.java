@@ -47,6 +47,14 @@ public interface SysUserService {
      * @return 查询得到的系统用户
      */
     public R querySysUsersNotPage(SysUser sysUser) throws Exception;
+    
+    /**
+     * 查询系统用户信息
+     * 
+     * @param sysUser 条件
+     * @return 查询得到的系统用户
+     */
+    public R querySysUsersProgram(SysUser sysUser);
 
     /**
      * 修改系统用户信息

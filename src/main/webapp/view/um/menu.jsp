@@ -115,8 +115,8 @@
                 <el-row>
                     <el-col :span="5">
                         <el-form-item label="菜单图标">
-                            <el-select v-model="form.icon" placeholder="请选择">
-                                <el-option v-for="item in icon_chose" :key="item.icon" :label="item.label" :value="item.icon">
+                            <el-select v-model="form.icon" placeholder="请选择" @change="formIconChange">
+                                <el-option v-for="item in icon_chose" :key="item.icon" :label="item.label" :value="item.icon" @click="formIconClick(item)">
                                     <span :class="item.icon"></span>
                                     <span>{{ item.label }}</span>
                                 </el-option>
@@ -254,6 +254,11 @@ var appInstince = new Vue({
 			}
 		},
 		methods: {
+			formIconChange(icon){
+				let label = this.icon_chose.filter(item=>item.icon == icon).map(item=>item.label).join('');
+				console.log(label);
+				this.form.name = this.form.name.split('_')[0]+'_'+label+'权限';
+			},
 			//过滤权限
 			filterPermsButton(data) {
 				function next(obj, chi) {
@@ -299,6 +304,7 @@ var appInstince = new Vue({
 				} else if (selectMenu.type == 1 || selectMenu.type == 2) {
 					this.form.type = 2;
 				}
+				this.form.name = selectMenu.name;
 				let temp = breadPath(this.selectMenu, this.menuDataNormal, item => item.children, item => item.parentId, self => self.menuId, item => item);
 				this.form.parentIds = temp.filter(item => item.type != 2).map(item => item.menuId);
 				console.log('parendIds ', this.form.parentIds);

@@ -177,25 +177,26 @@
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="video">视频</el-radio>
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="text">文字</el-radio>
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="images">图片万花筒</el-radio>
+                                            <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="pageshot">网页截图</el-radio>
                                         </el-form-item>
                                         <el-form-item label="素材正文" v-show="tp.data.type == 'text'">
                                             <div class="editerContainer" id="templateText" type="textarea" style="height: 300px;"></div>
                                         </el-form-item>
                                         <el-form-item label="素材截图" v-show="tp.data.type == 'text'">
                                             <el-upload class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
-                                                :before-upload="beforeAvatarUpload">
+                                                :before-upload="beforeAvatarUpload"  :on-error="handleError">
                                                 <div style="display:flex;">
                                                     <img v-show="tp.data.coverUrl" :src="getResUrl(tp.data.coverUrl)" class="avatar">
                                                     <i class="el-icon-plus avatar-uploader-icon"></i>
                                                 </div>
                                             </el-upload>
                                         </el-form-item>
-                                        <el-form-item label="上传素材" v-show="tp.data.type != 'text' && tp.data.type != 'images'">
-                                            <el-upload class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
-                                                :before-upload="beforeResourceUpload">
+                                        <el-form-item label="上传素材" v-show="tp.data.type == 'image' || tp.data.type == 'audio' || tp.data.type == 'video'">
+                                            <el-upload :disabled="tp.data.typeDisable" class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
+                                                :before-upload="beforeResourceUpload" :on-error="handleError">
                                                 <div style="display:flex;">
                                                     <img v-show="tp.data.coverUrl" :src="tp.data.type == 'audio' ? tp.data.coverUrl:getResUrl(tp.data.coverUrl)" class="avatar">
-                                                    <i class="el-icon-plus avatar-uploader-icon"></i>
+                                                    <i v-if="!tp.data.typeDisable" class="el-icon-plus avatar-uploader-icon"></i>
                                                 </div>
                                             </el-upload>
                                         </el-form-item>
@@ -205,7 +206,12 @@
                                             </div>
                                             <img v-show="!tp.m3Visible" :src="getResUrl(tp.data.coverUrl)" class="avatar" @click="openM3">
                                         </el-form-item>
-
+                                        <el-form-item label="上传素材" v-show="tp.data.type == 'pageshot'">
+                                            <el-input placeholder="请输入网页地址(http://|https://)" v-model="tp.data.pageLink">
+                                                <el-button slot="append" icon="el-icon-search" @click="catchPage"></el-button>
+                                            </el-input>
+                                            <img v-show="tp.data.coverUrl" :src="getResUrl(tp.data.coverUrl)" class="avatar">
+                                        </el-form-item>
                                         <el-form-item label="所属分类" prop="albumIds">
                                             <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="true" filterable
                                                 change-on-select></el-cascader>
@@ -267,12 +273,12 @@
                 </el-form-item>
                 <el-form-item label="选取文件">
                     <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" :on-preview="handlePreview" :on-success="handleSuccess"
-                        :on-remove="handleRemove" :auto-upload="false" :multiple="true">
+                        :on-remove="handleRemove" :auto-upload="false" :multiple="true" :on-error="handleError">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="danger" @click="clearChose">清空文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>
                         <el-checkbox style="margin-left: 10px;" v-model="importResource.commitOnUpload">上传完成后自动提交</el-checkbox>
-                        <div slot="tip" class="el-upload__tip">上传文件大小不能超过200M</div>
+                        <div slot="tip" class="el-upload__tip"> </div>
                     </el-upload>
                 </el-form-item>
             </el-form>
@@ -284,7 +290,7 @@
         <!--导入资源-->
 
         <!--Tree 右键菜单-->
-        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
+        <context-menu ref="treeContextMenu" :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
         <!--Tree 右键菜单-->
         <el-dialog class="resourceView" :title="resourceView.title" :visible.sync="resourceView.visible" @close="resourceViewClose">
             <template v-if="resourceView.type == 'video'">
@@ -304,6 +310,19 @@
 </body>
 
 </html>
+<script>
+    let menuData = [];
+<shiro:hasPermission name="resource:album:save">
+    menuData.push({ label: '增加分类', icon: 'el-icon-plus', type: 'success' });
+</shiro:hasPermission>
+<shiro:hasPermission name="resource:album:update">
+    menuData.push({ label: '修改分类', icon: 'el-icon-edit', type: 'primary' });
+</shiro:hasPermission>
+<shiro:hasPermission name="resource:album:delete">
+    menuData.push({ label: '删除分类', icon: 'el-icon-delete', type: 'danger' });
+</shiro:hasPermission>
+    window.menuData = menuData;
+</script>
 <script charset="utf-8" type="module" src="${urls.getForLookupPath('/assets/module/template/material.js')}"></script>
-<%-- 美图开放API --%>
-    <script src="http://open.web.meitu.com/sources/xiuxiu.js" type="text/javascript"></script>
+<!-- 美图开放API -->
+<script src="http://open.web.meitu.com/sources/xiuxiu.js" type="text/javascript"></script>

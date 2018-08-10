@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.applicationform.dao.ApplicationFormFieldsValuesMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.applicationform.bean.ApplicationFormFieldsValues">
+    <id column="vid" jdbcType="INTEGER" property="vid" />
+    <result column="field_id" jdbcType="INTEGER" property="fieldId" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    vid, field_id, label, value, sort_num
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from application_form_fields_values
+    where vid = #{vid,jdbcType=INTEGER}
+  </select>
+   <select id="selectByFieldId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from application_form_fields_values
+    where field_id = #{fieldId,jdbcType=INTEGER}
+    order by sort_num asc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from application_form_fields_values
+    where vid = #{vid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.applicationform.bean.ApplicationFormFieldsValues">
+    insert into application_form_fields_values (vid, field_id, label, 
+      value, sort_num)
+    values (#{vid,jdbcType=INTEGER}, #{fieldId,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR}, 
+      #{value,jdbcType=VARCHAR}, #{sortNum,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.applicationform.bean.ApplicationFormFieldsValues">
+    insert into application_form_fields_values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="vid != null">
+        vid,
+      </if>
+      <if test="fieldId != null">
+        field_id,
+      </if>
+      <if test="label != null">
+        label,
+      </if>
+      <if test="value != null">
+        value,
+      </if>
+      <if test="sortNum != null">
+        sort_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="vid != null">
+        #{vid,jdbcType=INTEGER},
+      </if>
+      <if test="fieldId != null">
+        #{fieldId,jdbcType=INTEGER},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        #{sortNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.applicationform.bean.ApplicationFormFieldsValues">
+    update application_form_fields_values
+    <set>
+      <if test="fieldId != null">
+        field_id = #{fieldId,jdbcType=INTEGER},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        value = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        sort_num = #{sortNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where vid = #{vid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.applicationform.bean.ApplicationFormFieldsValues">
+    update application_form_fields_values
+    set field_id = #{fieldId,jdbcType=INTEGER},
+      label = #{label,jdbcType=VARCHAR},
+      value = #{value,jdbcType=VARCHAR},
+      sort_num = #{sortNum,jdbcType=INTEGER}
+    where vid = #{vid,jdbcType=INTEGER}
+  </update>
+</mapper>

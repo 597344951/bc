@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,11 @@ public class ReportTemplateController extends BaseController {
             rt.setOrgid(user.getOrgId());
             rt.setUid(user.getUserId());
             rt.setCreatetime(new Date());
-            if (null == rt.getTitle()) rt.setTitle(file.getOriginalFilename());
+            if (StringUtils.isBlank(rt.getTitle())) {
+                String fn = file.getOriginalFilename();
+                int last = fn.lastIndexOf('.');
+                rt.setTitle(fn.substring(0, last != -1 ? last : fn.length()));
+            }
             this.reportTemplateservice.insert(rt);
 
             return R.ok(file.getOriginalFilename() + "导入成功");

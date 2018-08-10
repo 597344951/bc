@@ -18,19 +18,7 @@ var appInstince = new Vue({
       event: null
     },
     //菜单数据
-    contextMenuData: [{
-      label: '增加分类',
-      icon: 'el-icon-plus',
-      type: 'success'
-    }, {
-      label: '修改分类',
-      icon: 'el-icon-edit',
-      type: 'primary'
-    }, {
-      label: '删除分类',
-      icon: 'el-icon-delete',
-      type: 'danger'
-    }],
+    contextMenuData: window.menuData,
     resource_menu: [{
       label: '素材管理',
       children: [{
@@ -199,14 +187,14 @@ var appInstince = new Vue({
     },
     treeContextmenu(event, data, node, ins) {
       console.log('right click', arguments);
-      this.contextMenu.visiable = true;
-      this.contextMenu.event = event;
+      this.$refs.treeContextMenu.showMenu(event, data.data);
       this.curContextData = data.data;
     },
     contextMenuClose() {
       this.curContextData = null;
     },
-    contextMenuClick(menuItem) {
+    contextMenuClick(menuItem, datas) {
+      this.curContextData = datas[0];
       console.log('菜单点击事件', menuItem);
       if (menuItem.label == '增加分类') {
         this.addTemplateType();
@@ -349,7 +337,7 @@ var appInstince = new Vue({
         $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
-      this.$confirm("此操作将永久该分类数据, 是否继续?", "提示", {
+      this.$confirm(`此操作将『${data.name}』, 是否继续?`, "是否删除", {
         type: "warning"
       }).then(function () {
         // 删除数据
@@ -365,6 +353,10 @@ var appInstince = new Vue({
     },
     // 类别点击
     tptTreeClick: function (_data, node) {
+      if (this.tp.visible) {
+        $message('请先关闭当前正在编辑的内容', 'info', this);
+        return;
+      }
       var ins = this;
       var data = _data.data; // 类别节点数据
       this.loadTpTypeData(data, ins);
@@ -493,32 +485,39 @@ var appInstince = new Vue({
     },
     allowDrag(draggingNode) {
       //内置数据不能拖拽
-      return !draggingNode.data.data.builtin; 
+      return !draggingNode.data.data.builtin;
     },
-    treeDrapDrop(from, to, dropType, ev){
+    treeDrapDrop(from, to, dropType, ev) {
       console.log(arguments);
       let fd = from.data.data;
       let td = to.data.data;
       let ins = this;
-      let data = {tpTypeId:fd.tpTypeId};
+      let data = {
+        tpTypeId: fd.tpTypeId
+      };
       //before、after、inner
-      if(dropType == 'before'){
+      if (dropType == 'before') {
         data.parent = td.parent;
-        data.orderNum = td.orderNum-1;
-      }else if(dropType == 'after'){
+        data.orderNum = td.orderNum - 1;
+      } else if (dropType == 'after') {
         data.parent = td.parent;
-        data.orderNum = td.orderNum+1;
-      }else if(dropType == 'inner'){
+        data.orderNum = td.orderNum + 1;
+      } else if (dropType == 'inner') {
         data.parent = td.tpTypeId;
       }
-      console.log('拖动结果: ',data)
+      console.log('拖动结果: ', data)
       // 更新数据
       ajax_json("tpt/tptype", "put", data, function (result) {
         if (result.status) {
           ins.loadTreeData();
-          $message('拖动成功','success',ins);
+          $message('拖动成功', 'success', ins);
         }
       });
+    },
+    tpClose() {
+      this.tp.visible = false
+      this.tp.data = {};
+      _editor.setContent("");
     }
   }
 });
@@ -531,10 +530,12 @@ var _editor = UE.getEditor("templateText", {
 
 function getTpTypeIds(data, tpt_data) {
   let ay = breadPath(data, tpt_data, item => item.children, item => item.parent, item => item.tpTypeId, item => item.data);
-
-  return ay.reverse().map(function (a) {
+  let r = ay.reverse().map(function (a) {
     return a.tpTypeId;
   });
+  //增加自身的信息
+  r.push(data.tpTypeId);
+  return r
 }
 
 // 深度遍历路径

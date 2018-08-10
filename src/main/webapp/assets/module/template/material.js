@@ -29,19 +29,7 @@ let ins = new Vue({
       event: null
     },
     //菜单数据
-    contextMenuData: [{
-      label: '增加分类',
-      icon: 'el-icon-plus',
-      type: 'success'
-    }, {
-      label: '修改分类',
-      icon: 'el-icon-edit',
-      type: 'primary'
-    }, {
-      label: '删除分类',
-      icon: 'el-icon-delete',
-      type: 'danger'
-    }],
+    contextMenuData: window.menuData,
     resource_server_url: '',
     resource_menu: [{
       label: '素材管理',
@@ -154,7 +142,8 @@ let ins = new Vue({
         description: '',
         viewUrl: '',
         typeDisable: false,
-        coverUrl: ''
+        coverUrl: '',
+        pageLink: ''
       }
     },
     tpt: {
@@ -217,7 +206,7 @@ let ins = new Vue({
     },
     loadOrgUsers() {
       let orgId = window.sysInfo.orgId;
-      let url = `/sys/user/querySysUsersNotPage`;
+      let url = `/sys/user/querySysUsersProgram`;
       ajax_json_promise(url, 'post', { orgId: orgId }).then(result => {
         orgUsers = result.data;
       });
@@ -260,6 +249,32 @@ let ins = new Vue({
     }
   },
   methods: {
+    catchPage() {
+      if(this.tp.data.pageLink) {
+        let url = this.getResUrl('/image/catch?page=' + this.tp.data.pageLink);
+        $.ajax({
+            type: 'GET',
+            url: url,
+            contentType: 'application/json;charset=utf-8',
+            complete: () => {
+              //nothing...
+            },
+            success: reps => {
+              if(reps.state == 'SUCCESS') {
+                this.tp.data.coverUrl = this.tp.data.url = this.tp.data.viewUrl = reps.url;
+                this.tp.data.type = 'image';
+              } else {
+                this.$message.error(reps.msg)
+              }
+            },
+            error: (xhr, status, _error) => {
+              this.$message.error('系统错误.')
+            }
+        })
+      } else {
+        this.$message.error('请输入网页链接地址.')
+      }
+    },
     backToBefore(){
       let bp = breadPath(this.currentCategory, this.tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
       let item = null;
@@ -321,6 +336,10 @@ let ins = new Vue({
         console.log('所有文件上传完成');
         if (this.importResource.commitOnUpload) this.saveResources();
       }
+    },
+    handleError(err, file, fileList){
+      let msg = JSON.parse(err.message).msg;
+      $message(msg,'error',this);
     },
     handleRemove(file, fileList) {
       console.log('remove file ', arguments);
@@ -391,12 +410,11 @@ let ins = new Vue({
       this.importResource.data.albumIds = [];
     },
     treeContextmenu(event, data, node, ins) {
-      console.log('right click', arguments);
-      this.contextMenu.visiable = true;
-      this.contextMenu.event = event;
+      this.$refs.treeContextMenu.showMenu(event,data.data);
       this.curContextData = data.data;
     },
-    contextMenuClick(menuItem) {
+    contextMenuClick(menuItem,datas) {
+      this.curContextData = datas[0];
       console.log('菜单点击事件', menuItem);
       if (menuItem.label == '增加分类') {
         this.addTemplateType();
@@ -449,7 +467,7 @@ let ins = new Vue({
           chi.forEach(v => {
             let o = v.data;
             ay.push(o);
-            next(o);
+            next(o,v.children);
           });
           obj.children = ay;
         } else {
@@ -576,7 +594,7 @@ let ins = new Vue({
         $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
-      this.$confirm("此操作将永久该分类数据, 是否继续?", "提示", {
+      this.$confirm(`此操作将『${nodedata.name}』, 是否继续?`, "提示", {
         type: "warning"
       }).then(function () {
         // 删除数据
@@ -812,9 +830,12 @@ var _editor = UE.getEditor("templateText", {
 
 function getTpTypeIds(data, tpt_data) {
   let ay = breadPath(data, tpt_data, item => item.children, item => item.parent, item => item.albumId, item => item.data);
-  return ay.reverse().map(function (a) {
+  let r = ay.reverse().map(function (a) {
     return a.albumId;
   });
+  //增加自身的信息
+  r.push(data.albumId);
+  return r;
 }
 
 window.appInstince = ins;

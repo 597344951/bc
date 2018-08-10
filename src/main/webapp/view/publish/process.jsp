@@ -12,7 +12,9 @@
         .period-input {
             width: 300px;
         }
-       
+       body{
+        overflow: auto!important;
+       }
     </style>
 </head>
 <body>

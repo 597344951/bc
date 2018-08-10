@@ -56,6 +56,7 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
     public R queryPartyMembershipDues(Map<String, Object> conditionMaps, int pageNum, int pageSize) {
     	Date startTime = null;
     	Date endTime = null;
+    	if (conditionMaps == null) conditionMaps = new HashMap<>();
     	if (conditionMaps.get("paidDateStart") != null && conditionMaps.get("paidDateStart") != "") {
     		startTime = DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)conditionMaps.get("paidDateStart"));
     		startTime = DateUtil.getDateOfMonthStartDayTime(startTime);
@@ -75,9 +76,16 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
+        	}
         	conditionMaps.put("orgInfoId", sysUser.getOrgId());
         } else {	//个人用户，即党员
-        	conditionMaps.put("idCard", sysUser.getUsername());
+        	if (sysUser.getUserType() == 0) {
+        		return R.ok().setCode(100).setMsg("非党员账户请先设置管理员类型");
+        	} else if (sysUser.getUserType() == 1) {
+        		conditionMaps.put("idCard", sysUser.getUsername());
+            }
         }
     	
     	PageHelper.startPage(pageNum, pageSize);
@@ -111,15 +119,16 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
     public R queryOrgInfoOfPMDM(Map<String, Object> conditionMaps, int pageNum, int pageSize) {
     	Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (conditionMaps == null) conditionMaps = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
-        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
-        } else {	//个人用户，即党员
         	if (sysUser.getOrgId() == null) {
-        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	return null;
         }
     	PageHelper.startPage(pageNum, pageSize);
 		List<Map<String, Object>> orgInfos = partyMembershipDuesManageMapper.queryOrgInfoOfPMDM(conditionMaps);	//开始查询，没有条件则查询所有组织关系
@@ -139,15 +148,16 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
     public R queryOrgInfoOfPMDMNotPage(Map<String, Object> conditionMaps) {
     	Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (conditionMaps == null) conditionMaps = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
-        	conditionMaps.put("orgInfoId", sysUser.getOrgId());
-        } else {	//个人用户，即党员
         	if (sysUser.getOrgId() == null) {
-        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	conditionMaps.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	return null;
         }
     	List<Map<String, Object>> orgInfos = partyMembershipDuesManageMapper.queryOrgInfoOfPMDM(conditionMaps);
     	if (orgInfos != null && !orgInfos.isEmpty()) {	//是否查询到数据
@@ -163,7 +173,8 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
      * @return
      */
     public R queryPMDMChartForOrgInfo(Map<String, Object> conditionMaps) {
-    	if (conditionMaps.get("orgInfoId") == null && conditionMaps.get("orgInfoId") == "") return R.ok().setMsg("没有查询到数据");
+    	if (conditionMaps == null || conditionMaps.get("orgInfoId") == null || conditionMaps.get("orgInfoId") == "") 
+    		return R.ok().setMsg("没有查询到数据");
     	Date startTime = null;
     	Date endTime = null;
     	if (conditionMaps.get("paidDateStart") != null && conditionMaps.get("paidDateStart") != "") {
@@ -209,8 +220,6 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
     		Calendar ca = Calendar.getInstance();
     		ca.setTime(startTime);
     		dateLines.add(String.valueOf(ca.get(Calendar.YEAR)) + "-" + (ca.get(Calendar.MONTH) + 1) + "月");
-    		conditionMaps.put("paidDateStart", startTime);
-    		conditionMaps.put("paidDateEnd", temporaryEndTime);
     		int i = 0;
     		for (i = 0; i < paidStatus.size(); i++) {	//查询每个月的支付状态
     			if (datas.size() == i) {
@@ -219,6 +228,17 @@ public class PartyMembershipDuesManageServiceImpl extends BaseDaoImpl<PartyMembe
     			}
     			PartyMembershipDuesStatus pmds = paidStatus.get(i);
 				conditionMaps.put("payStatus", pmds.getId());
+				if ("未缴".equals(pmds.getName())) {	//如果未缴，则没有缴费日期，按应缴日期查询
+					conditionMaps.remove("paidDateStart");
+					conditionMaps.remove("paidDateEnd");
+					conditionMaps.put("shouldPayDateStart", startTime);
+		    		conditionMaps.put("shouldPayDateEnd", temporaryEndTime);
+				} else {
+					conditionMaps.remove("shouldPayDateStart");
+					conditionMaps.remove("shouldPayDateEnd");
+		    		conditionMaps.put("paidDateStart", startTime);
+		    		conditionMaps.put("paidDateEnd", temporaryEndTime);
+				}
 				List<Map<String, Object>> paidStatusCount = partyMembershipDuesManageMapper.queryPartyMembershipDues(conditionMaps);
 				datas.get(i).add(paidStatusCount == null ? 0 : paidStatusCount.size());
 			}

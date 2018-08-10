@@ -26,6 +26,7 @@ public interface PublishService {
 
     public void reCreate(SysUser user, Map<String, Object> content);
 
+    public void urlCreate(SysUser user, Map<String, Object> content);
     /**
      * 流程进行
      * @param contentId

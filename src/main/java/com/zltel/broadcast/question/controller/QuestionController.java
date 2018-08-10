@@ -92,11 +92,11 @@ public class QuestionController extends BaseController {
         return r;
     }
 
-    @PostMapping("/rand")
+    @PostMapping("/rand/{orgId}")
     @ResponseBody
-    public R rand(@RequestBody Map<String, Object> filter) {
+    public R rand(@RequestBody Map<String, Object> filter, @PathVariable("orgId") int orgId) {
         R r = R.ok();
-        r.setData(questionService.randomQuestion(getSysUser().getOrgId(),
+        r.setData(questionService.randomQuestion(orgId,
                 (String) filter.get("keyword"),
                 (List<Integer>) filter.get("type"),
                 (List<Integer>) filter.get("subject"),

@@ -136,7 +136,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
     private void handleNextNode(SysMenuTreeNode node, List<SysMenu> datas) {
         // 上一级节点的子节点
         List<SysMenuTreeNode> childs = new ArrayList<>();
-        datas.stream().filter(n -> n.getParentId() == node.getMenuId()).forEach(n -> {
+        datas.stream().filter(n -> n.getParentId().equals(node.getMenuId())).forEach(n -> {
             try {
                 SysMenuTreeNode tn = SysMenuTreeNode.from(n);
                 childs.add(tn);
@@ -146,7 +146,6 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
 
 
         });
-        logout.debug("菜单: {} 包含子节点: {}", node, childs);
         if (childs.isEmpty()) return;
         node.setChildren(childs);
         childs.forEach(n -> {

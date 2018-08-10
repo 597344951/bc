@@ -124,13 +124,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			<el-header>
 				<el-row class="toolbar" :gutter="20">
 					<shiro:hasPermission name="party:user:insert">
-						<el-button size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">
+						<el-button class="margin-left-10" size="small" type="primary" @click="partyUser_manager_openInsertPartyUserDialog()">
 							<i class="el-icon-circle-plus-outline"></i>
 							添加人员
 						</el-button>
 					</shiro:hasPermission>
 				  	<shiro:hasPermission name="party:user:insert">  
-				  		<el-popover class="margin-0-10"
+				  		<el-popover class="margin-left-10"
 							placement="bottom" 
 						  	width="400" 
 						  	trigger="click" >
@@ -153,10 +153,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				  	</shiro:hasPermission>
 				  	<shiro:hasPermission name="party:user:query">  
 				  		<el-popover 
+				  			class="margin-left-10"
 				  			v-if="signInAccountType != 'party_role'"
 							placement="bottom" 
 						  	width="200" 
-						  	trigger="hover" >
+						  	trigger="click" >
 						  	<el-button size="small" type="primary" slot="reference">
 						  		<i class="el-icon-search"></i>
 						  		搜索人员
@@ -176,10 +177,19 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										<el-option label="是" :value="1"></el-option>
 									</el-select>
 								</el-row>
+								<el-row>
+									<el-select @change="partyUser_manager_queryPartyUserInfos()" 
+											clearable v-model="partyUser_manager_queryPartyUserInfosCondition.sex"
+											size="small"
+											placeholder="性别">
+										<el-option label="男" value="男"></el-option>
+										<el-option label="女" value="女"></el-option>
+									</el-select>
+								</el-row>
 						  	</div>
 						</el-popover>
 					</shiro:hasPermission>
-					<el-button-group class="margin-0-10">
+					<el-button-group class="margin-left-10">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
@@ -209,7 +219,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								</span> <span class="title">民族</span> <span class="han">{{item.nation}}</span></p>
 							<p><span class="title">出生</span>  <span class="content">{{item.birthDate}}</span></p>
 							<p>
-								<span class="title">党员类型</span>  
+								<span class="title">类型</span>  
 								<span 
 										class="content" 
 										:style="item.typeName == '正式党员' 
@@ -220,7 +230,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									{{item.typeName == null ? "普通人员" : item.typeName}}
 								</span>
 							</p>
-							<p><span class="title">党龄</span>  <span class="content">{{item.joinDateFormalAge}} 年</span></p>
+							<p v-if="item.isParty == 1"><span class="title">党龄</span>  <span class="content">{{item.joinDateFormalAge}} 年</span></p>
 							<p><span class="title">学历</span>  <span class="content">{{item.education}}</span></p>
 							<p><span class="title">现住址</span>  
 								<span class="content">
@@ -252,23 +262,49 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								<el-row :gutter="20">
 									<el-col :span="0.1"><span class="partyUserTitleFont">个人照片：</span></el-col>
 									<el-col :span="4"><img :src="getPath(scope.row)" width="100" /></el-col>
-									<el-button size="small" @click="partyUser_manager_exportPartyUserInfo(scope.row)" type="primary">导出此党员信息</el-button>
-									<el-button size="small" @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="primary">信息修改</el-button>
-									<el-popover
-										placement="bottom" 
-										style="margin-left: 10px;"
-									  	width="200" 
-									  	trigger="click" >
-									  	<el-button size="small" type="primary" slot="reference">
-									  		生成履历
-									  	</el-button>
-									  	<div>
-											<el-row>
-												<el-button size="small" type="text" @click="openPartyUserLL(scope.row, 1920, 1080)">1920*1080</el-button>
-												<el-button size="small" type="text" @click="openPartyUserLL(scope.row, 1080, 1920)">1080*1920</el-button>
-											</el-row>
-									  	</div>
-									</el-popover>
+									<shiro:hasPermission name="party:user:query">  
+										<el-button 
+											v-if="signInAccountType != 'party_role'"
+											size="small" 
+											@click="partyUser_manager_exportPartyUserInfo(scope.row)" 
+											type="primary">导出此党员信息
+										</el-button>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="party:user:update">  
+										<el-button 
+											v-if="signInAccountType != 'party_role'"
+											size="small" 
+											@click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" 
+											type="primary">信息修改
+										</el-button>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="party:user:query">  
+										<el-popover
+											v-if="signInAccountType != 'party_role' && 1 == 2"
+											placement="bottom" 
+											style="margin-left: 10px;"
+										  	width="50" 
+										  	trigger="click" >
+										  	<el-button size="small" type="primary" slot="reference">
+										  		个人风采
+										  	</el-button>
+										  	<div>
+												<el-row>
+													<el-button size="small" type="text" @click="openPartyUserLL(scope.row, 192, 108)">横屏</el-button>
+													<el-button size="small" type="text" @click="openPartyUserLL(scope.row, 108, 192)">竖屏</el-button>
+												</el-row>
+										  	</div>
+										</el-popover>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="party:user:insert">  
+										<el-button 
+											v-if="signInAccountType != 'party_role'"
+											size="small" 
+											style="margin-left: 10px;"
+											@click="partyUser_manager_openDeedsUserDialog(scope.row)" 
+											type="primary">人物事迹
+										</el-button>
+									</shiro:hasPermission>
 								</el-row>
 								<el-row :gutter="20">
 									<el-col :span="24">用户ID：{{scope.row.id}}</el-col>
@@ -297,8 +333,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -309,6 +343,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -319,8 +355,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -363,8 +397,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -375,6 +407,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -385,8 +419,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -429,8 +461,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -438,16 +468,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 											<el-col :span="15">
 												{{scope.row.email}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												QQ号：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.qq}}
 											</el-col>
 										</el-row>
 									</el-col>
@@ -460,6 +480,16 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 											<el-col :span="15">
 												{{scope.row.wechat}}
+											</el-col>
+										</el-row>
+									</el-col>
+									<el-col :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												QQ号：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.qq}}
 											</el-col>
 										</el-row>
 									</el-col>
@@ -485,8 +515,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -497,6 +525,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -507,8 +537,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -519,8 +547,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -531,6 +557,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
+								</el-row>
+								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -541,8 +569,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -575,8 +601,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-col>
 										</el-row>
 									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
@@ -629,8 +653,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 												</el-col>
 											</el-row>
 										</el-col>
-									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -641,6 +663,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 												</el-col>
 											</el-row>
 										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -651,8 +675,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 												</el-col>
 											</el-row>
 										</el-col>
-									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -663,8 +685,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 												</el-col>
 											</el-row>
 										</el-col>
-									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -675,6 +695,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 												</el-col>
 											</el-row>
 										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -685,8 +707,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 												</el-col>
 											</el-row>
 										</el-col>
-									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
@@ -712,6 +732,18 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										<el-col :span="6">
 											<el-row :gutter="20">
 												<el-col :span="9" style="text-align: right;">
+													是否失联党员：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.missingUserName}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row v-if="signInAccountType != 'party_role'" :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
 													是否先进党员：
 												</el-col>
 												<el-col :span="15">
@@ -730,24 +762,48 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-row>
 										</el-col>
 									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否失联党员：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.missingUserName}}
-												</el-col>
-											</el-row>
-										</el-col>
-									</el-row>
-									<el-row :gutter="20">
+									<el-row v-if="false" :gutter="20">
 										<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
 									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
+									<el-row v-if="false" :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="22">{{scope.row.introduce}}</el-col>
 									</el-row>
+									
+									<template v-if="signInAccountType != 'party_role'">
+										<div v-for="item in scope.row.shiji" style="margin-bottom: 50px;">
+											<el-row v-if="item.个人经历 != null && item.个人经历.length != 0">
+												<el-col :span="24"><span class="partyUserTitleFont">个人经历</span></el-col>
+											</el-row>
+											<el-row v-for="it in item.个人经历">
+												<p style="text-indent:2em; font-weight: bold;">{{it.deedsTitle}}</p>
+												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+											</el-row>
+											
+											<el-row v-if="item.获得荣誉 != null && item.获得荣誉.length != 0">
+												<el-col :span="24"><span class="partyUserTitleFont">获得荣誉</span></el-col>
+											</el-row>
+											<el-row v-for="it in item.获得荣誉">
+												<p style="text-indent:2em;">时间：{{it.occurrenceTime}}</p>
+												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+											</el-row>
+
+											<el-row v-if="item.个人感言 != null && item.个人感言.length != 0">
+												<el-col :span="24"><span class="partyUserTitleFont">个人感言</span></el-col>
+											</el-row>
+											<el-row v-for="it in item.个人感言">
+												<p style="text-indent:2em; font-weight: bold;">{{it.deedsTitle}}</p>
+												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+											</el-row>
+
+											<el-row v-if="item.他人评价 != null && item.他人评价.length != 0">
+												<el-col :span="24"><span class="partyUserTitleFont">他人评价</span></el-col>
+											</el-row>
+											<el-row v-for="it in item.他人评价">
+												<p style="text-indent:2em; font-weight: bold;">{{it.deedsTitle}}</p>
+												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+											</el-row>
+										</div>
+									</template>
 								</template>
 							</template>
 						</el-table-column>
@@ -826,7 +882,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="24">
-						<el-form-item label="对应职责" prop="orgRltDutyIds">
+						<el-form-item label="对应身份" prop="orgRltDutyIds">
 						    <el-tree :default-expand-all="true" 
 						    	node-key="id" 
 						    	ref="partyUser_manager_joinOrgInfoTree"
@@ -1255,11 +1311,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-col>
 					</el-row>
 
-					<el-row :gutter="20">
+					<el-row v-if="false" :gutter="20">
 						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
 					</el-row>
 
-					<el-row :gutter="20">
+					<el-row v-if="false" :gutter="20">
 						<el-col :span="24">
 							<el-form-item label="简介：" prop="introduce">
 								<el-input
@@ -1708,11 +1764,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-col>
 					</el-row>
 
-					<el-row :gutter="20">
+					<el-row v-if="false" :gutter="20">
 						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
 					</el-row>
 
-					<el-row :gutter="20">
+					<el-row v-if="false" :gutter="20">
 						<el-col :span="24">
 							<el-form-item label="简介：" prop="introduce">
 								<el-input
@@ -1729,6 +1785,184 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				<el-form-item>
 					<el-button type="primary" @click="partyUser_manager_updatePartyUser()">更新信息</el-button>
 				</el-form-item>
+			</el-form>
+		</el-dialog>
+
+
+		<el-dialog @close="partyUser_manager_resetDeedsUserForm" title="人物事迹" :visible.sync="partyUser_manager_updateDeedsUserDialog">
+			<el-form size="small" :model="partyUser_manager_deedsUserForm" status-icon :rules="partyUser_manager_deedsUserRules" 
+				ref="partyUser_manager_deedsUserForm" label-width="100px">
+				<!-- <el-row>
+					<el-form-item label="事迹类型：" prop="deedsType">
+						<el-select style="width: 220px;" clearable v-model="partyUser_manager_deedsUserForm.deedsType" filterable placeholder="请选择，可搜索">
+							<el-option
+								v-for="item in partyUser_manager_deedsUserForm.deedsTypes"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-form-item label="标题：" prop="deedsTitle">
+						<el-input 
+							style="width: 220px;" clearable 
+							v-model="partyUser_manager_deedsUserForm.deedsTitle"
+							placeholder="事迹的标题"></el-input>
+					</el-form-item>
+				</el-row>
+				<el-row v-if="partyUser_manager_deedsUserForm.deedsType == 2">
+					<el-form-item label="发生时间：" prop="occurrenceTime">
+						<el-date-picker
+							clearable
+					    	v-model="partyUser_manager_deedsUserForm.occurrenceTime"
+					    	type="date" 
+					    	value-format="yyyy-MM-dd" 
+					    	placeholder="请选择时间">
+					    </el-date-picker>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-col :span="24">
+						<el-form-item label="详细描述：" prop="deedsDetail">
+							<el-input
+							  	type="textarea"
+							 	:autosize="{ minRows: 4}"
+							 	placeholder="请输入内容"
+								v-model="partyUser_manager_deedsUserForm.deedsDetail">
+							</el-input>
+						</el-form-item>
+					</el-col>
+				</el-row> -->
+				<el-row>
+					<span style="color: red;">
+						以下步骤至少填写一项
+					</span>
+				</el-row>
+				<el-steps :active="stepNum">
+				  	<el-step title="个人经历"></el-step>
+				  	<el-step title="获得荣誉"></el-step>
+				  	<el-step title="个人感言"></el-step>
+				  	<el-step title="他人评价"></el-step>
+				</el-steps>
+				<el-row v-show="stepNum == 1">
+					<el-form-item label="经历标题：" prop="deedsTitle_jl">
+						<el-input 
+							clearable 
+							v-model="partyUser_manager_deedsUserForm.deedsTitle_jl"
+							placeholder="请填写，没有请点击下一步"></el-input>
+					</el-form-item>
+					<el-form-item label="详细描述：" prop="deedsDetail_jl">
+						<el-input
+						  	type="textarea"
+						 	:autosize="{ minRows: 4}"
+						 	placeholder="请输入经历的详细细节，没有请点击下一步"
+							v-model="partyUser_manager_deedsUserForm.deedsDetail_jl">
+						</el-input>
+					</el-form-item>
+					<el-form-item label="经历剪影：" prop="imgs_jl">
+						<el-upload
+							class="shijiUpload"
+						  	ref="upload_jl"
+						  	action=""
+						  	:auto-upload="false"
+						  	:multiple="true"
+						  	list-type="picture-card">
+						  	<div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件</div>
+						</el-upload>
+					</el-form-item>
+				</el-row>
+				<el-row v-show="stepNum == 2">
+					<el-form-item label="获奖时间：" prop="occurrenceTime_ry">
+						<el-date-picker
+							clearable
+							style="width: 100%;"
+					    	v-model="partyUser_manager_deedsUserForm.occurrenceTime_ry"
+					    	type="date" 
+					    	value-format="yyyy-MM-dd" 
+					    	placeholder="请选择时间">
+					    </el-date-picker>
+					</el-form-item>
+					<el-form-item label="所获荣誉：" prop="deedsDetail_ry">
+						<el-input
+						  	type="textarea"
+						 	:autosize="{ minRows: 4}"
+						 	placeholder="请填写，没有请点击下一步"
+							v-model="partyUser_manager_deedsUserForm.deedsDetail_ry">
+						</el-input>
+					</el-form-item>
+					<el-form-item label="荣誉时刻：" prop="imgs_ry">
+						<el-upload
+							class="shijiUpload"
+						  	ref="upload_ry"
+						  	action=""
+						  	:auto-upload="false"
+						  	:multiple="true"
+						  	list-type="picture-card">
+						  	<div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件</div>
+						</el-upload>
+					</el-form-item>
+				</el-row>
+				<el-row v-show="stepNum == 3">
+					<el-form-item label="标题：" prop="deedsTitle_gy">
+						<el-input 
+							clearable 
+							v-model="partyUser_manager_deedsUserForm.deedsTitle_gy"
+							placeholder="请填写，没有请点击下一步"></el-input>
+					</el-form-item>
+					<el-form-item label="个人感言：" prop="deedsDetail_gy">
+						<el-input
+						  	type="textarea"
+						 	:autosize="{ minRows: 4}"
+						 	placeholder="请输入个人感言的详细细节，没有请点击下一步"
+							v-model="partyUser_manager_deedsUserForm.deedsDetail_gy">
+						</el-input>
+					</el-form-item>
+					<el-form-item label="个人感言：" prop="imgs_gy">
+						<el-upload
+							class="shijiUpload"
+						  	ref="upload_gy"
+						  	action=""
+						  	:auto-upload="false"
+						  	:multiple="true"
+						  	list-type="picture-card">
+						  	<div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件</div>
+						</el-upload>
+					</el-form-item>
+				</el-row>
+				<el-row v-show="stepNum == 4">
+					<el-form-item label="标题：" prop="deedsTitle_pj">
+						<el-input 
+							clearable 
+							v-model="partyUser_manager_deedsUserForm.deedsTitle_pj"
+							placeholder="请填写，没有请点击下一步"></el-input>
+					</el-form-item>
+					<el-form-item label="他人评价：" prop="deedsDetail_pj">
+						<el-input
+						  	type="textarea"
+						 	:autosize="{ minRows: 4}"
+						 	placeholder="请输入他人评价的详细细节，没有请点击下一步"
+							v-model="partyUser_manager_deedsUserForm.deedsDetail_pj">
+						</el-input>
+					</el-form-item>
+					<el-form-item label="他人评价：" prop="imgs_pj">
+						<el-upload
+							class="shijiUpload"
+						  	ref="upload_pj"
+						  	action=""
+						  	:auto-upload="false"
+						  	:multiple="true"
+						  	list-type="picture-card">
+						  	<div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件</div>
+						</el-upload>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-button v-if="stepNum != 1" size="small" @click="deedsUserStepSet('s')">上一步</el-button>
+					<el-button v-if="stepNum != 4" size="small" type="primary" @click="deedsUserStepSet('x')">下一步</el-button>
+					<el-button v-if="stepNum == 4" size="small" type="primary" @click="partyUser_manager_insertDeedsUser">提交</el-button>
+				</el-row>
 			</el-form>
 		</el-dialog>
 	</div>
@@ -1778,7 +2012,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			partyUser_manager_queryPartyUserInfosCondition: {
 				name: null,
-				isParty: null
+				isParty: null,
+				sex: null
 			},
 			partyUser_manager_address_pca: pca,	/* 省市区三级联动数据 */
 			partyUser_manager_address_prop: {	/* 地址prop */
@@ -2049,7 +2284,152 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_joinPartyBranchTypes: [],	/*加入党支部方式*/
 			partyUser_manager_workNatureTypes: [],	/*工作性质*/
 			partyUser_manager_uploadPartyUserIdPhotoTempFileName: "",
-			signInAccountType: null
+			signInAccountType: null,
+			partyUser_manager_updateDeedsUserDialog: false,
+			stepNum: 1,
+			partyUser_manager_deedsUserForm: {
+				deedsTypes: [],
+				deedsType: null,
+				deedsTitle_jl: null,
+				deedsTitle_gy: null,
+				deedsTitle_pj: null,
+				deedsDetail_jl: null,
+				deedsDetail_ry: null,
+				deedsDetail_gy: null,
+				deedsDetail_pj: null,
+				occurrenceTime_ry: null,
+				userId: null,
+
+				imgs_jl: []
+			},
+			partyUser_manager_deedsUserRules: {
+				deedsTitle_jl: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.deedsTitle_jl != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsTitle_jl != null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_jl == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_jl == null)) {
+		        				callback(new Error('请填写经历的详细信息'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+				deedsDetail_jl: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.deedsTitle_jl == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsTitle_jl == null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_jl != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_jl != null)) {
+		        				callback(new Error('请填写经历的标题'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+
+
+				occurrenceTime_ry: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.occurrenceTime_ry != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.occurrenceTime_ry != null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_ry == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_ry == null)) {
+		        				callback(new Error('请填写荣誉的详细信息'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+				deedsDetail_ry: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.occurrenceTime_ry == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.occurrenceTime_ry == null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_ry != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_ry != null)) {
+		        				callback(new Error('请填写获得荣誉的时间'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+
+
+				deedsTitle_gy: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.deedsTitle_gy != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsTitle_gy != null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_gy == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_gy == null)) {
+		        				callback(new Error('请填写个人感言的详细信息'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+				deedsDetail_gy: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.deedsTitle_gy == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsTitle_gy == null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_gy != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_gy != null)) {
+		        				callback(new Error('请填写个人感言的标题'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+
+
+				deedsTitle_pj: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.deedsTitle_pj != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsTitle_pj != null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_pj == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_pj == null)) {
+		        				callback(new Error('请填写他人评价的详细信息'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				],
+				deedsDetail_pj: [
+					{ 
+		        		validator: function(rule, value, callback){
+		        			if ((appInstince.partyUser_manager_deedsUserForm.deedsTitle_pj == "" ||
+		        					appInstince.partyUser_manager_deedsUserForm.deedsTitle_pj == null)
+		        				&& (appInstince.partyUser_manager_deedsUserForm.deedsDetail_pj != "" &&
+		        					appInstince.partyUser_manager_deedsUserForm.deedsDetail_pj != null)) {
+		        				callback(new Error('请填写他人评价的标题'));
+	        		        } else {
+	        		            callback();
+	        		        }
+		        		},
+		        		trigger: 'blur'
+		        	}
+				]
+			}
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -2066,6 +2446,160 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			this.getSignInAccountType();
 		},
 		methods: {
+			validataUploadShijiImg(imgs) {
+				if (imgs.length != 0) {
+					for (var i = 0; i < imgs.length; i++) {
+						var img = imgs[i];
+
+						var fileFormat = img.name.split(".");
+						var fileSuffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+						if (fileSuffix == "jpg" || fileSuffix == "jpeg" || fileSuffix == "png") {
+							continue; 
+						}
+						toast('格式错误',"只能上传jpg、jpeg或png格式的文件，请检查选中的文件",'error');
+						return false;
+					}
+				}
+				return true;
+			},
+			uploadShijiImg(fileList) {
+				if (fileList.length > 0) {
+					for (var i = 0; i < fileList.length; i++) {
+						var formData = new FormData();
+						formData.append("file", fileList[0]);
+						$.ajax({
+		                   	url: "http://192.168.1.119:3000/image",
+		                   	data: formData,
+		                   	type: "Post",
+		                   	dataType: "json",
+		                   	cache: false,//上传文件无需缓存
+		                   	processData: false,//用于对data参数进行序列化处理 这里必须false
+		                   	contentType: false, //必须
+		                   	success: function (data) {
+		                   		if (data != null && data != undefined) {
+		                   			if (data.state == "SUCCESS") {
+		                   				obj.partyUser_manager_deedsUserForm.imgs_jl = data;
+			                	   	} else {
+			                		   	return false;
+			                	   	}
+		                   		} else {
+		                   			return false;
+		                   		}
+		                   	}
+		               })
+					}
+				}
+				return true;
+			},
+			deedsUserStepSet(step) {	//设置步骤条
+				var obj = this;
+
+				if (step == 's') {
+					obj.stepNum--;
+				} else {
+					var imgs = new Array();
+					if (obj.stepNum == 1) {
+						imgs = obj.$refs.upload_jl.uploadFiles;
+					} else if (obj.stepNum == 2) {
+						imgs = obj.$refs.upload_ry.uploadFiles;
+					} else if (obj.stepNum == 3) {
+						imgs = obj.$refs.upload_gy.uploadFiles;
+					} 
+					if (!obj.validataUploadShijiImg(imgs)) {
+						return;
+					}
+
+					
+					obj.stepNum++;
+				}
+			},
+			partyUser_manager_resetDeedsUserForm() {	//重置表单
+				var obj = this;
+				obj.$refs["partyUser_manager_deedsUserForm"].resetFields();
+				obj.stepNum = 1;
+
+
+				obj.$refs.upload_jl.uploadFiles = [];
+				obj.$refs.upload_ry.uploadFiles = [];
+				obj.$refs.upload_gy.uploadFiles = [];
+				obj.$refs.upload_pj.uploadFiles = [];
+			},
+			partyUser_manager_insertDeedsUser() {	//添加事迹
+				var obj = this;
+
+				var imgs = obj.$refs.upload_pj.uploadFiles;
+				if (!obj.validataUploadShijiImg(imgs)) {
+					return;
+				}
+
+				var fileList = obj.$refs.upload_jl.uploadFiles;	//开始经历图片上传
+				if (!obj.uploadShijiImg(fileList)) {
+					toast('错误','图片上传失败' ,'error');
+					return;
+				}
+				
+
+
+
+				this.$refs["partyUser_manager_deedsUserForm"].validate( function(valid) {
+					if (valid) {
+						if ((obj.partyUser_manager_deedsUserForm.deedsTitle_pj != null &&
+							obj.partyUser_manager_deedsUserForm.deedsTitle_pj != "") ||
+							(obj.partyUser_manager_deedsUserForm.deedsTitle_gy != null &&
+							obj.partyUser_manager_deedsUserForm.deedsTitle_gy != "") ||
+							(obj.partyUser_manager_deedsUserForm.deedsTitle_jl != null &&
+							obj.partyUser_manager_deedsUserForm.deedsTitle_jl != "") ||
+							obj.partyUser_manager_deedsUserForm.occurrenceTime_ry != null) {
+
+							var url = "/user/duc/insertDeedsUser";
+							var t = {
+								userId: obj.partyUser_manager_deedsUserForm.userId,
+								deedsTitle_jl: obj.partyUser_manager_deedsUserForm.deedsTitle_jl,
+								deedsTitle_gy: obj.partyUser_manager_deedsUserForm.deedsTitle_gy,
+								deedsTitle_pj: obj.partyUser_manager_deedsUserForm.deedsTitle_pj,
+								deedsDetail_jl: obj.partyUser_manager_deedsUserForm.deedsDetail_jl,
+								deedsDetail_ry: obj.partyUser_manager_deedsUserForm.deedsDetail_ry,
+								deedsDetail_gy: obj.partyUser_manager_deedsUserForm.deedsDetail_gy,
+								deedsDetail_pj: obj.partyUser_manager_deedsUserForm.deedsDetail_pj,
+								occurrenceTime_ry: obj.partyUser_manager_deedsUserForm.occurrenceTime_ry
+							}
+							if (obj.partyUser_manager_deedsUserForm.occurrenceTime_ry != null) {
+								t.occurrenceTime_ry = new Date(obj.partyUser_manager_deedsUserForm.occurrenceTime_ry).getTime();
+							}
+							$.post(url, t, function(data, status){
+								if (data.code == 200) {
+									toast('添加成功',data.msg,'success');
+									obj.partyUser_manager_resetDeedsUserForm();
+									obj.partyUser_manager_updateDeedsUserDialog = false;
+									obj.partyUser_manager_queryPartyUserInfos();
+								}
+
+							})
+						} else {
+							toast('提示','至少填写一项' ,'error');
+						}
+					} else {
+						toast('提示','部分项未填，请填写后在提交' ,'error');
+					}
+				});
+			},
+			partyUser_manager_openDeedsUserDialog(row) {	//打开添加事迹弹窗
+				var obj = this;
+
+				var url = "/user/dtc/queryDeedsTypes";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.partyUser_manager_deedsUserForm.deedsTypes = data.data;
+						}
+					}
+
+				})
+				obj.partyUser_manager_deedsUserForm.userId = row.id;
+				obj.partyUser_manager_updateDeedsUserDialog = true;
+			},
 			getSignInAccountType() {	/*得到该登录用户的类型*/
 				var obj = this;
 
@@ -2099,7 +2633,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					pageNum: obj.partyUser_manager_pager.pageNum,
 					pageSize: obj.partyUser_manager_pager.pageSize,
 					name: obj.partyUser_manager_queryPartyUserInfosCondition.name,
-					isParty: obj.partyUser_manager_queryPartyUserInfosCondition.isParty
+					isParty: obj.partyUser_manager_queryPartyUserInfosCondition.isParty,
+					sex: obj.partyUser_manager_queryPartyUserInfosCondition.sex
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
@@ -2632,7 +3167,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				}
 			},
 			openPartyUserLL(row, width, height) {
-				window.open ('/view/pm/Horizontal.html', 'newwindow', 'height='+ height +', width='+ width +', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no');
+				if (width == 192 && height == 108) {
+					window.open ('/view/pm/tp/001/index.jsp?id='+row.id, 'newwindow', 'height='+ height, 'width='+ width);
+				} else if (width == 108 && height == 192) {
+					window.open ('/view/pm/tp/002/index.jsp?id='+row.id, 'newwindow', 'height='+ height, 'width='+ width);
+				}
+				
 			}
 		}
 	});

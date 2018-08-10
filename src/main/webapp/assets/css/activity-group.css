@@ -145,5 +145,10 @@ h3{
     width: 15px;
     height: 15px;
     margin: 0px 5px;
-    background-color: #ccc;
+    /*background-color: #ccc;*/
+    text-align: center;
+    font-size: 14px;
+}
+.box-up p .title{
+    font-size: 13px;    
 }

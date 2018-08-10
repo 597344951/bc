@@ -38,6 +38,7 @@ import com.zltel.broadcast.um.dao.PartyUserMapper;
 import com.zltel.broadcast.um.service.ExcelService;
 
 @Service
+@Deprecated
 public class ExcelServiceImpl extends BaseDaoImpl<PartyUser> implements ExcelService {
     @Resource
     private PartyUserMapper partyUserMapper;
@@ -64,6 +65,8 @@ public class ExcelServiceImpl extends BaseDaoImpl<PartyUser> implements ExcelSer
     @Transactional(rollbackFor = java.lang.Exception.class)
     public synchronized R importPartyUsersExcel(HttpServletResponse response, MultipartFile file) throws Exception {
         Workbook wb = null;
+        if (file == null)
+        	return R.error().setMsg("请选择导入文件");
         wb = this.createWorkboot(this.getExcelSuffix(file.getOriginalFilename()), file.getInputStream());
         if (wb == null) throw new RRException("找不到:" + file.getOriginalFilename());
         Sheet hs = wb.getSheetAt(0); // 得到第一页

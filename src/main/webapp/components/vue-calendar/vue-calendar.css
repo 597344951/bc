@@ -12,7 +12,7 @@
 
 .wh_container {
     max-width: 410px;
-    margin: auto;
+    margin: 0;
 }
 
 li {
@@ -70,7 +70,7 @@ wh_content_item_tag {
 }
 
 .wh_content_item {
-    height: 30px;
+    height: 40px;
 }
 
 .wh_top_tag {

@@ -11,6 +11,15 @@
 <%@include file="/include/fullcalendar.jsp"%>
 
 <%@include file="/include/mock.jsp"%>
+<style>
+    .el-tag{
+        height: 24px;
+        line-height: 24px;
+    }
+    .card-item .title{
+        padding-bottom: 2px;
+    }
+</style>
 </head>
 
 <body>

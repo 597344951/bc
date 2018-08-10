@@ -64,129 +64,144 @@
 		<el-container>
 			<el-header>
 				<el-row class="toolbar" :gutter="20" style="margin:0;">
-					<el-popover
-						placement="bottom" 
-					  	width="200" 
-					  	v-show="!dis_h_v"
-					  	trigger="click" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索组织
-					  	</el-button>
-					  	<div>
-							<el-row>
-								<el-input size="small" clearable
-									@change="money_manage_queryPartyMembershipDuesOfConditionForOrgInfo"
-									v-model="queryConditionForOrgInfo.orgInfoName" placeholder="请输入组织名"></el-input>
-							</el-row>
-					  	</div>
-					</el-popover>
-					<el-popover
-						placement="bottom" 
-						v-show="dis_h_v"
-					  	width="200" 
-					  	trigger="click" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索记录
-					  	</el-button>
-					  	<div>
-							<el-row>
-								<el-input size="small" clearable
-									@change="money_manage_queryPartyMembershipDuesOfCondition"
-									v-model="queryCondition.partyUserName" placeholder="请输入党员名称"></el-input>
-							</el-row>
-							<el-row>
-								<el-input size="small" clearable
-									@change="money_manage_queryPartyMembershipDuesOfCondition"
-									v-model="queryCondition.idCard" placeholder="请输入党员身份证号码"></el-input>
-							</el-row>
-							<el-row>
-								<el-select size="small" clearable 
-										@change="money_manage_queryPartyMembershipDuesOfCondition()"
-										v-model="queryCondition.payStatus" placeholder="缴纳状态">
-									<el-option
-										v-for="item in queryCondition.PMDSs"
-										:key="item.id"
-										:label="item.name"
-										:value="item.id">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row>
-								<el-select size="small" clearable 
-										@change="money_manage_queryPartyMembershipDuesOfCondition()"
-										v-model="queryCondition.paidWay" placeholder="缴纳方式">
-									<el-option
-										v-for="item in queryCondition.PMDWs"
-										:key="item.id"
-										:label="item.name"
-										:value="item.id">
-										<img :src="getPaidImg(item.name)" style="width: 55px;height: 25px;float: left; padding-top: 4px;" />
-										<span style="float: right;">{{item.name}}</span>
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row>
-								<el-select size="small" clearable filterable 
-										@change="money_manage_queryPartyMembershipDuesOfCondition()"
-										v-model="queryCondition.orgInfoId" placeholder="组织，如果太多可搜索组织">
-									<el-option
-										v-for="item in queryCondition.orgInfo_PMDM"
-										:key="item.orgId"
-										:label="item.orgInfoName"
-										:value="item.orgId">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row>
-								<el-date-picker
-							      	v-model="queryCondition.paidDateStart" 
-							      	@change="money_manage_queryPartyMembershipDuesOfCondition()" 
-							      	type="month"
-							      	size="small"
-							      	style="width: 100%;"
-							      	value-format="yyyy-MM-dd" 
-							      	placeholder="起始时间">
-							    </el-date-picker>
-							</el-row>
-							<el-row>
-								<el-date-picker
-							      	v-model="queryCondition.paidDateEnd" 
-							      	@change="money_manage_queryPartyMembershipDuesOfCondition()" 
-							      	type="month"
-							      	size="small"
-							      	style="width: 100%;"
-							      	value-format="yyyy-MM-dd" 
-							      	placeholder="结束时间">
-							    </el-date-picker>
-							</el-row>
-					  	</div>
-					</el-popover>
-					<el-popover class="margin-0-10"
-						placement="bottom" 
-					  	width="400" 
-					  	trigger="click" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-upload2"></i>
-					  		导入记录
-					  	</el-button>
-					  	<div>
-							<el-button type="text" @click="money_manage_exportPMDMExcelExample">下载Excel模板</el-button>，按照模板填写
-							<p>党费缴纳会使用组织积分系统，如果没有初始化积分，请到积分管理初始化</p>
-					  		<el-upload
-					  			action="" 
-					 	   		:http-request="money_manage_importPMDMsExcel"
-					 	   		:multiple="true" 
-					 	   		:before-upload="money_manage_validatePMDMsExcel" >
-						      	<el-button type="text">点击上传excel文件</el-button>
-							</el-upload>
-							<el-button type="text" @click="money_manage_showImportPMDMsExcelErrorMsgDialog">显示导入错误信息</el-button>
-					  	</div>
-					</el-popover>
-					<el-button v-show="dis_h_v" size="small" icon="el-icon-download"
-						type="primary" @click="money_manage_exportPMDMExcel">下载记录</el-button>
-					<el-button-group :class="dis_h_v ? 'margin-0-10' : ''">
+					<shiro:hasPermission name="party:pmdm:query">
+						<el-popover
+							class="margin-left-10"
+							v-if="signInAccountType != 'party_role'"
+							placement="bottom" 
+						  	width="200" 
+						  	v-show="!dis_h_v"
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索组织
+						  	</el-button>
+						  	<div>
+								<el-row>
+									<el-input size="small" clearable
+										@change="money_manage_queryPartyMembershipDuesOfConditionForOrgInfo"
+										v-model="queryConditionForOrgInfo.orgInfoName" placeholder="请输入组织名"></el-input>
+								</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="party:pmdm:query">
+						<el-popover
+							class="margin-left-10"
+							placement="bottom" 
+							v-show="dis_h_v"
+						  	width="200" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索记录
+						  	</el-button>
+						  	<div>
+								<el-row>
+									<el-input size="small" clearable
+										@change="money_manage_queryPartyMembershipDuesOfCondition"
+										v-model="queryCondition.partyUserName" placeholder="请输入党员名称"></el-input>
+								</el-row>
+								<el-row>
+									<el-input size="small" clearable
+										@change="money_manage_queryPartyMembershipDuesOfCondition"
+										v-model="queryCondition.idCard" placeholder="请输入党员身份证号码"></el-input>
+								</el-row>
+								<el-row>
+									<el-select size="small" clearable 
+											@change="money_manage_queryPartyMembershipDuesOfCondition()"
+											v-model="queryCondition.payStatus" placeholder="缴纳状态">
+										<el-option
+											v-for="item in queryCondition.PMDSs"
+											:key="item.id"
+											:label="item.name"
+											:value="item.id">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row>
+									<el-select size="small" clearable 
+											@change="money_manage_queryPartyMembershipDuesOfCondition()"
+											v-model="queryCondition.paidWay" placeholder="缴纳方式">
+										<el-option
+											v-for="item in queryCondition.PMDWs"
+											:key="item.id"
+											:label="item.name"
+											:value="item.id">
+											<img :src="getPaidImg(item.name)" style="width: 55px;height: 25px;float: left; padding-top: 4px;" />
+											<span style="float: right;">{{item.name}}</span>
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row>
+									<el-select size="small" clearable filterable 
+											@change="money_manage_queryPartyMembershipDuesOfCondition()"
+											v-model="queryCondition.orgInfoId" placeholder="组织，如果太多可搜索组织">
+										<el-option
+											v-for="item in queryCondition.orgInfo_PMDM"
+											:key="item.orgId"
+											:label="item.orgInfoName"
+											:value="item.orgId">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row>
+									<el-date-picker
+								      	v-model="queryCondition.paidDateStart" 
+								      	@change="money_manage_queryPartyMembershipDuesOfCondition()" 
+								      	type="month"
+								      	size="small"
+								      	style="width: 100%;"
+								      	value-format="yyyy-MM-dd" 
+								      	placeholder="起始时间">
+								    </el-date-picker>
+								</el-row>
+								<el-row>
+									<el-date-picker
+								      	v-model="queryCondition.paidDateEnd" 
+								      	@change="money_manage_queryPartyMembershipDuesOfCondition()" 
+								      	type="month"
+								      	size="small"
+								      	style="width: 100%;"
+								      	value-format="yyyy-MM-dd" 
+								      	placeholder="结束时间">
+								    </el-date-picker>
+								</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="party:pmdm:query">
+						<el-popover class="margin-left-10"
+							v-if="signInAccountType != 'party_role'"
+							placement="bottom" 
+						  	width="400" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-upload2"></i>
+						  		导入记录
+						  	</el-button>
+						  	<div>
+								<el-button type="text" @click="money_manage_exportPMDMExcelExample">下载Excel模板</el-button>，按照模板填写
+								<p>党费缴纳会使用组织积分系统，如果没有初始化积分，请到积分管理初始化</p>
+						  		<el-upload
+						  			action="" 
+						 	   		:http-request="money_manage_importPMDMsExcel"
+						 	   		:multiple="true" 
+						 	   		:before-upload="money_manage_validatePMDMsExcel" >
+							      	<el-button type="text">点击上传excel文件</el-button>
+								</el-upload>
+								<el-button type="text" @click="money_manage_showImportPMDMsExcelErrorMsgDialog">显示导入错误信息</el-button>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="party:pmdm:query">
+						<el-button v-if="signInAccountType != 'party_role'" 
+							class="margin-left-10" v-show="dis_h_v" 
+							size="small" icon="el-icon-download"
+							type="primary" @click="money_manage_exportPMDMExcel">下载记录
+						</el-button>
+					</shiro:hasPermission>
+					<el-button-group v-if="signInAccountType != 'party_role'"  class="margin-left-10">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
@@ -211,7 +226,7 @@
 				</el-row>
 			</el-header>
 			<el-main>
-				<div v-show="!dis_h_v">
+				<div v-show="!dis_h_v" v-if="signInAccountType != 'party_role'">
 					<el-container>
 					  	<el-aside width="15%">
 					  		<div>
@@ -368,7 +383,8 @@
 				orgInfoId: null,
 				paidDateStart: null,
 				paidDateEnd: null
-			}
+			},
+			signInAccountType: null
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -377,8 +393,27 @@
 			this.money_manage_queryPartyMembershipDues();	/*查询组织信息*/
 			this.money_manage_initSelectBox();
 			this.money_manage_queryOrgInfoOfPMDM();
+			this.getSignInAccountType();
 		},
 		methods: {
+			getSignInAccountType() {	/*得到该登录用户的类型*/
+				var obj = this;
+
+				var url = "/siat/getSignInAccountType";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.signInAccountType = data.data;
+							if (obj.signInAccountType == "party_role") {
+								obj.dis_h_v = true;
+							}
+						}
+					}
+
+				})
+			},
 			money_manage_initSelectBox() {	/*记录下拉选择框*/
 				var obj = this;
         		url = "/party/pmdw/queryPMDWs";

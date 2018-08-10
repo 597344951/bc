@@ -5,77 +5,108 @@
 <title>党史百科</title>
 <!-- 调用样式表 -->
 <link rel="stylesheet"  href="page.css" type="text/css" media="all"  />
+<link rel="stylesheet"  href="mask.css" type="text/css" media="all"  />
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
 </head>
 
 <body>
-  <!--top-->
-
+  <a href="/view/publish/new.jsp?startStep=2&title=uri&url=/view/faker/dsbk/index-2.html">
+    节目制作
+  </a>
+<div id="app">
   <div class="top02 clear w980">
     <img src="top01.jpg" width="488" height="167" />
     <img src="top02.jpg" width="492" height="167" />
   </div>
+  <div class="content-mask" id="mask" >
 
+    <h5 >{{title}}</h5>
+    <p >{{content}}</p>
 
+</div>
   <div class="clearfix p1_content">
     <div>
-    <h2>1950—1978</h2>
-    <ul><li><a href=''>中共八大</a></li>
-  <li><a href=''>反右 </a></li>
-  <li><a href=''>“大跃进”</a></li>
-  <li><a href=''>庐山会议 </a></li>
-  <li><a href=''>四个现代化</a></li>
-  <li><a href=''>“文化大革命”</a></li>
-  <li><a href=''>中共九大</a></li>
-  <li><a href=''>九一三事件</a></li>
-  <li><a href=''>中共十大</a></li>
-  <li><a href=''>天安门事件</a></li>
-  <li><a href=''>中共十一大</a></li>
-  <li><a href=''>平反冤假错案</a></li>
-  <li><a href=''>拨乱反正</a></li>
-  <li><a href=''>真理标准问题大讨论</a></li>
-  <li><a href=''>中共十一届三中全会</a></li>
-  </ul>
-    
+    <h2>1921-1949</h2>
+    <ul><li><a href='##' @click="show('中共八大')" >中共八大</a></li>
+      <li><a href='##' @click="show('')" >反右 </a></li>
+      <li><a href='##' @click="show('')" >“大跃进”</a></li>
+      <li><a href='##' @click="show('')" >庐山会议 </a></li>
+      <li><a href='##' @click="show('')" >四个现代化</a></li>
+      <li><a href='##' @click="show('')" >“文化大革命”</a></li>
+      <li><a href='##' @click="show('')" >中共九大</a></li>
+      <li><a href='##' @click="show('')" >九一三事件</a></li>
+      <li><a href='##' @click="show('')" >中共十大</a></li>
+      <li><a href='##' @click="show('')" >天安门事件</a></li>
+      <li><a href='##' @click="show('')" >中共十一大</a></li>
+      <li><a href='##' @click="show('')" >平反冤假错案</a></li>
+      <li><a href='##' @click="show('')" >拨乱反正</a></li>
+      <li><a href='##' @click="show('')" >真理标准问题大讨论</a></li>
+      <li><a href='##' @click="show('')" >中共十一届三中全会</a></li>
+      </ul>
+        
+        </div>
+        <div class="fl">
+        <h2>1979—1989</h2>
+        <ul><li><a href='##' @click="show('四项基本原则')" >四项基本原则</a></li>
+      <li><a href='##' @click="show('')" >《关于党内政治生活的若干准则》</a></li>
+      <li><a href='##' @click="show('')" >《关于建国以来党的若干历史问题的决议》</a></li>
+      <li><a href='##' @click="show('')" >中共十二大</a></li>
+      <li><a href='##' @click="show('')" >废除领导干部职务终身制</a></li>
+      <li><a href='##' @click="show('')" >中共十三大</a></li>
+      </ul>
+        <h2>1990—1999</h2>
+        <ul><li><a href='##' @click="show('')" >邓小平南方谈话</a></li>
+      <li><a href='##' @click="show('')" >中共十四大</a></li>
+      <li><a href='##' @click="show('社会主义市场经济体制')" >社会主义市场经济体制</a></li>
+      <li><a href='##' @click="show('')" >邓小平病逝</a></li>
+      <li><a href='##' @click="show('')" >依法治国</a></li>
+      <li><a href='##' @click="show('')" >中共十五大</a></li>
+      </ul>
     </div>
-    <div class="fl">
-    <h2>1979—1989</h2>
-    <ul><li><a href=''>四项基本原则</a></li>
-  <li><a href=''>《关于党内政治生活的若干准则》</a></li>
-  <li><a href=''>《关于建国以来党的若干历史问题的决议》</a></li>
-  <li><a href=''>中共十二大</a></li>
-  <li><a href=''>废除领导干部职务终身制</a></li>
-  <li><a href=''>中共十三大</a></li>
-  </ul>
-    <h2>1990—1999</h2>
-    <ul><li><a href=''>邓小平南方谈话</a></li>
-  <li><a href=''>中共十四大</a></li>
-  <li><a href=''>社会主义市场经济体制</a></li>
-  <li><a href=''>邓小平病逝</a></li>
-  <li><a href=''>依法治国</a></li>
-  <li><a href=''>中共十五大</a></li>
-  </ul>
-    </div>
-<div>
+ <div>
   <span>
-    <a href="index.html" >1</a>
-    <a href="index-1.html">2</a>
+    <a href="index.html">1</a>
+    <a href="index-1.html" >2</a>
     <a href="index-2.html" class="onpage">3</a>
     <a href="index-3.html">4</a>
   </span>
-</div>
+ </div>
   </div>
+
   <div class="line w980 clear"></div>
-  <style type="text/css">
-    #copyright {
-      width: 980px;
-      margin: 0px auto;
-      font-size: 12px;
-      text-align: center;
-      padding: 20px 0;
-      line-height: 180%;
-      clear: both;
-    }
-  </style>
+</div>
+
 </body>
+<script >
+  var appInstince = new Vue({
+    el: '#app',	
+    data:{
+      title:'中共八大',
+      content:'1956年9月15日至27日在北京举行。大会通过了第二个五年计划的建议和新党章。规定了党和全国人民当前的主要任务是：集中力量发展社会生产力，实现国家工业化，逐步满足人民日益增长的物质和文化需要。强调要坚持民主集中制和集体领导制度，加强党和群众的联系。这次大会为新时期的社会主义事业的发展和党的建设指明了方向',
+    },
+    methods:{
+      show(t){
+        var title=appInstince.title;
+        var content=appInstince.content;
+        var a=t;
+        if(a=='四项基本原则'){
+         this.title=a;
+         this.content="粉碎“四人帮”后，社会上和党内出现一些思想动向，造成了一部分人思想混乱。针对这种情况，1979年3月30日，邓小平代表中共中央在北京召开的理论工作务虚会上作了题为《坚持四项基本原则》的讲话。邓小平在讲话中提出必须坚持的“四项基本原则”。即“第一，必须坚持社会主义道路；第二，必须坚持无产阶级专政（1981年华国锋同志辞去中共中央主席后，邓小平同志通过人大将《中华人民共和国宪法》中的“无产阶级专政”改为“人民民主专政”）；第三，必须坚持共产党的领导；第四，必须坚持马列主义、毛泽东思想。.";
+        };
+        if(a=='中共八大'){
+         this.title=a;
+         this.content="1956年9月15日至27日在北京举行。大会通过了第二个五年计划的建议和新党章。规定了党和全国人民当前的主要任务是：集中力量发展社会生产力，实现国家工业化，逐步满足人民日益增长的物质和文化需要。强调要坚持民主集中制和集体领导制度，加强党和群众的联系。这次大会为新时期的社会主义事业的发展和党的建设指明了方向.";
+        };
+        if(a=='社会主义市场经济体制'){
+         this.title=a;
+         this.content="社会主义市场经济体制是中国改革开放所建立的市场经济体制。建立和完善社会主义市场经济体制是中国进一步深化经济体制改革的一项重要内容。1992年邓小平南巡讲话时提出要建立社会主义市场经济体制改革，中共十四大正式建立社会主义市场经济体制。2017年10月18日，习近平同志在十九大报告中指出，要加快完善社会主义市场经济体制。经济体制改革必须以完善产权制度和要素市场化配置为重点，实现产权有效激励、要素自由流动、价格反应灵活、竞争公平有序、企业优胜劣汰。.";
+        };
+      },
+    },
+  });
+</script>
 </html>
+
 

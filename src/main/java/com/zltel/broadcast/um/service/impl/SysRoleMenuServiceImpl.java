@@ -125,7 +125,7 @@ public class SysRoleMenuServiceImpl extends BaseDaoImpl<SysRoleMenu> implements 
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R insertSysRoleMenu(SysRoleMenu sysRoleMenu, List<Integer> menuIds) throws Exception {
-		if (menuIds != null && menuIds.size() > 0) {
+		if (menuIds != null && menuIds.size() > 0 && sysRoleMenu != null) {
 			//删除此角色之前的权限
 			this.deleteSysRoleMenus(sysRoleMenu);
 			

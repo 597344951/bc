@@ -1,0 +1,78 @@
+@charset "utf-8";
+/* CSS Document */
+html, body, menu, ul, ol, li, p, div, form, h1, h2, h3, h4, h5, h6, img, a img, input, button, textarea, fieldset{ padding: 0; margin: 0; border: 0;font-family:"\5FAE\8F6F\96C5\9ED1"; }
+ul, ol, li { list-style: none }
+h1, h2, h3, h4, h5, h6, b, i, em {
+: 1em; font-weight: normal; font-style: normal }
+body, input, button, textarea, select { -webkit-text-size-adjust: none; font: normal 14px/1.5 helvetica, verdana, san-serif; outline: 0; color: #000 }
+body { margin: 0 auto; background:url(bg.jpg) /*min-width:320px; width:320px*/ }
+input[type="text"], input[type="password"], input[type="button"], input[type="submit"], button, textarea { -webkit-appearance: none }
+option { height: 24px }
+a { text-decoration: none; color: #000; }
+a { blr:expression(this.onFocus=this.blur())}/*去掉a标签的虚线框，避免出现奇怪的选中区域*/
+.img img, video { vertical-align: middle }
+.btn { display: inline-block; vertical-align: middle }
+a:hover { color: #000; text-decoration: underline }
+img { border: none }
+ol, ul, li { list-style: none; }
+i, em { font-style: normal; }
+.t_c{ text-align:center}
+.body_all{width:100%;transform-origin:0 0;-webkit-transform-origin: 0 0;overflow:hidden;margin:0 auto;}
+
+
+
+.red,.red a:link,.red a:visited,.red a:hover{ color:#b13535;}
+.gray,.gray a:link,.gray a:visited,.gray a:hover{ color:#767579;}
+.blue,.blue a:link,.blue a:visited,.blue a:hover{ color:#2c82ea;}
+
+/*clear*/
+.clearfix:before,.clearfix:after {content:"";display:table;}
+.clearfix:after{clear:both;overflow:hidden;}
+.clearfix{zoom:1;}
+
+.pic img{ width:100%; height:auto;}
+
+.w640{ width:640px; margin:0 auto;}
+.banner{overflow: hidden;text-align: center;background-image: url(b1.jpg);}
+.banner a{ display:block; float:right; margin:20px 25px auto auto; width:100px; height:50px;}
+/*tw*/
+.tw1 { width:92%; margin:0 auto}
+.tw1 ul li{ clear:both; font-size:24px;font-family:\9ED1\4F53; line-height:40px; overflow:hidden; border-bottom:1px solid #ccc; padding:40px 0 0px 0}
+.tw1 ul li .fl img{ float:left; background:url(bg1.png) no-repeat top left; padding:5px 11px 10px 0; margin-right:30px;}
+.tw1 ul li .fr strong{ font-size:28px; line-height:36px; font-weight:normal}
+.tw1 ul li .fr b{ display:block; padding:10px 0 0 0}
+.tw1 ul li .fr p{ font-size:18px; line-height:28px; text-indent:2em; background:url(icon2.png) no-repeat top right; padding-top:40px; margin-top:10px;}
+.tw1 ul li span{ display:block; width:100%; padding:10px 0}
+
+
+/*tw*/
+.tw1 { width:80%; margin:0 auto}
+.tw1 ul li{ clear:both; font-size:24px;font-family:\9ED1\4F53; line-height:40px; overflow:hidden; border-bottom:1px solid #ccc; padding:40px 0 0px 0}
+.tw1 ul li .fl img{ float:left; background:url(bg1.png) no-repeat top left; padding:5px 11px 10px 0; margin-right:30px; }
+.tw1 ul li em{ float:left;}
+.tw1 ul li em img{ float:left; background:url(bg1.png) no-repeat top left; padding:5px 11px 10px 0; margin-right:30px;width:120px;height:175px;    background-size: contain; /*height:270px*/}
+.tw1 ul li .con{}
+.tw1 ul li .con h3{ font-size:20px; line-height:36px; font-weight:bold;}
+.tw1 ul li .con span{ font-size:16px; line-height:28px;padding-top:40px; margin-top:10px; background:url(icon2.png) no-repeat top right;}
+/* padding-top:40px; margin-top:10px; background:url(icon2.png) no-repeat top right;*/
+
+.tw1 ul li div.more{ text-align:center;float: right;width: 100px; }
+.tw1 ul li div.more img{ margin:0 20px 20px 0; float:right;border: 1px solid #dadada; width: 20px;height: 24px;}
+
+
+.bshare-custom{float: right ;line-height: 2;}
+.bshare-custom .bshare-more.more-style-addthis{display: block;color: #ffffff;padding: 1px 8px;background: red;border-radius: 4px;font-size: 12px;}
+
+.tw1 ul li .fr strong{ font-size:28px; line-height:36px; font-weight:normal}
+.tw1 ul li .fr b{ display:block; padding:10px 0 0 0}
+.tw1 ul li .fr p{ font-size:18px; line-height:28px; text-indent:2em; background:url(icon2.png) no-repeat top right; padding-top:40px; margin-top:10px;}
+.tw1 ul li span{ display:block; width:100%; padding:10px 0}
+
+
+.go_top{ position:fixed;_position:absolute;background-position:0 -40px;display:block;width:67px; height:67px; background:url(up.png) no-repeat;right:18px;_right:-47px;bottom:32px;filter:alpha(opacity=80)}
+.go_top:hover{filter:alpha(opacity=100)}
+.topnav{ height:57px; background:#c51d12; padding:10px 20px; text-align:center}
+.topnav img{ vertical-align:middle}
+.topnav i{ padding-top:5px;}
+.topnav em{ padding-top:15px;}
+.copyright { text-align:center; padding:30px 0; color:#b4b4b4; font-size:18px;}

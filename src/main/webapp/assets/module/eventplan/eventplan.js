@@ -11,10 +11,10 @@ window.appInstince = new Vue({
         },
         //建议的活动计划
         sugPlan: {},
-        eventdata:{},//关联事件信息
+        eventdata: {}, //关联事件信息
         activeMonth: '',
         curDate: new Date(),
-        markDate: [],//日期标记
+        markDate: [], //日期标记
         monthPlans: [],
         //新增计划对话框
         addEventDialog: {
@@ -23,6 +23,12 @@ window.appInstince = new Vue({
         },
         createActivityPlanDialog: {
             visiable: false
+        },
+        //事件过滤查询表单
+        event_filter_form: {
+            froms: ['system', 'user'], //显示来源
+            prioritys: ['1', '2', '3', '4'], //显示优先级
+            statuss: ['0', '1', '2'] //显示状态
         }
     },
     mounted() {
@@ -32,7 +38,7 @@ window.appInstince = new Vue({
     computed: {},
     methods: {
         showAddActivityPlan(eventdata, plan) {
-            console.log('show Add Activity Plan: ',arguments);
+            console.log('show Add Activity Plan: ', arguments);
             this.sugPlan = plan;
             this.eventdata = eventdata;
             console.log(eventdata, plan)
@@ -60,12 +66,14 @@ window.appInstince = new Vue({
             this.addEventDialog.visiable = true;
         },
         addEventCallback(data) {
-            this.$message({
-                message: '成功增加活动计划',
-                type: 'success'
+            let ins = this;
+            ajax_json_promise('/event/user/user-event', 'post', data).then((result) => {
+                if (result.status) {
+                    $message('增加成功!', 'success', ins);
+                    ins.addEventDialog.visiable = false;
+                    ins.addEventDialog.data = {};
+                }
             });
-            this.addEventDialog.visiable = false;
-            console.log('已增加事件', data)
         },
         getActivities(data) {
             let ay = [];
@@ -85,10 +93,10 @@ window.appInstince = new Vue({
         },
         loadEvents() {
             let me = this;
-            let formData = {};//查询最近两个月活动
+            let formData = this.event_filter_form; //查询最近两个月活动
             formData.stime = moment(this.curDate).date(1).hour(0).minute(0).second(0);
             formData.etime = moment(this.curDate).add(2, "months").date(1).hour(0).minute(0).second(0);
- 
+
             //加载事件数据
             ajax_json_promise('/event/list', 'post', formData).then((result) => {
                 let dt = result.data;
@@ -162,8 +170,11 @@ window.appInstince = new Vue({
                 }
             });
         },
-        getPlanTheme(plan){
-            return Activities.filter(item=>item.title == plan.suggestInfo.title).map(item=>item.className).join(' ');
+        getPlanTheme(plan) {
+            return Activities.filter(item => item.title == plan.suggestInfo.title).map(item => item.className).join(' ');
+        },
+        event_filter_change() {
+            this.loadEvents();
         }
     },
     components: {}

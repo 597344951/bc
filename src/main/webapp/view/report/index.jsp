@@ -137,7 +137,7 @@
                     <transition name="el-zoom-in-bottom">
                         <el-row v-show="tp.visible">
                             <el-col :span="2" style="width:60px;">
-                                <el-button type="primary" icon="el-icon-close" circle @click="tp.visible = false"></el-button>
+                                <el-button type="primary" icon="el-icon-close" circle @click="tpClose"></el-button>
                             </el-col>
                             <el-col :span="22">
                                 <div class="editTp">
@@ -227,7 +227,7 @@
         <!--导入资源-->
 
         <!--Tree 右键菜单-->
-        <context-menu :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
+        <context-menu ref="treeContextMenu" :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
         <!--Tree 右键菜单-->
         <el-dialog class="templateView" :title="resourceView.title" :visible.sync="resourceView.visible" width="80%">
             <div v-html="resourceView.content"></div>
@@ -269,4 +269,17 @@
 </body>
 
 </html>
+<script>
+    let menuData = [];
+<shiro:hasPermission name="report:type:save">
+    menuData.push({ label: '增加分类', icon: 'el-icon-plus', type: 'success' });
+</shiro:hasPermission>
+<shiro:hasPermission name="report:type:update">
+    menuData.push( { label: '修改分类', icon: 'el-icon-edit', type: 'primary' });
+</shiro:hasPermission>
+<shiro:hasPermission name="report:type:delete">
+    menuData.push( { label: '删除分类', icon: 'el-icon-delete', type: 'danger' });
+</shiro:hasPermission>
+    window.menuData = menuData;
+</script>
 <script charset="utf-8" type="module" src="${urls.getForLookupPath('/assets/module/report/report.js')}"></script>

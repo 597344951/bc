@@ -79,6 +79,11 @@
                             <i class="el-icon-upload el-icon--right"></i>
                         </el-button>
                     </el-menu-item>
+                    <el-menu-item index="question">
+                        <el-button size="mini" type="danger" @click="share">知识问道投屏显示
+                            <i class="el-icon-share el-icon--right"></i>
+                        </el-button>
+                    </el-menu-item>
                 </el-menu>
             </el-header>
             <el-container>
@@ -121,7 +126,11 @@
                         <el-table-column prop="subject.name" label="科目" width="120"></el-table-column>
                         <el-table-column prop="category.name" label="类别" width="120"></el-table-column>
                         <el-table-column prop="content" label="题目内容"></el-table-column>
-                        <el-table-column prop="addDate" label="收录时间" width="170"></el-table-column>
+                        <el-table-column prop="addDate" label="收录时间" width="200">
+                            <template slot-scope="scope">
+                                {{new Date(scope.row.addDate).toLocaleString()}}
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="operate" label="操作" width="50">
                             <template slot-scope="scope">
                                 <el-button type="text" size="small" @click="removeQuestion(scope.row)">移除</el-button>

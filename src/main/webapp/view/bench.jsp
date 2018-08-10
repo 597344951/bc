@@ -12,7 +12,25 @@
         #app {
             min-width: 1150px;
             padding-right: 30px;
-            margin-bottom: 30px;
+            padding-bottom: 30px;
+            /*margin-top: -5px;*/
+        }
+        .min-icons{
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .el-icon-date{
+            color: #d82a00;
+        }
+        .fa-play-circle{
+            color: cornflowerblue;
+        }
+        .fa-user-plus{
+            color: darkseagreen;
+        }
+        .fa-arrow-circle-right{
+            color: yellowgreen;
         }
         .el-row {
             margin-top: 5px;
@@ -65,6 +83,11 @@
         .line-chart-3 {
             height: 200px;
             width: 35%;
+            float: left;
+        }
+        .line-chart-6 {
+            height: 200px;
+            width: 60%;
             float: left;
         }
         .activity-item {
@@ -161,7 +184,10 @@
         .data-box-total2{
             color:#ff8300;
         }
-
+        .el-tabs__content{
+            overflow: auto;
+            height: 80%;
+        }
     </style>
 </head>
 <body>
@@ -173,13 +199,13 @@
                 <el-tabs v-model="pending.active">
                     <el-tab-pane name="handle">
                         <template slot="label">
-                            <el-badge :value="pending.handling.list.length" class="item">待办理事项</el-badge>
+                            <el-badge :value="pending.handling.list.length" class="item"><i class="min-icons el-icon-bell"></i>待办理事项</el-badge>
                         </template>
                         <a v-for="l in pending.handling.list" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
                     </el-tab-pane>
                     <el-tab-pane name="verify">
                         <template slot="label">
-                            <el-badge :value="pending.verifying.list.length" class="item">待审核内容</el-badge>
+                            <el-badge :value="pending.verifying.list.length" class="item"><i class="min-icons el-icon-view"></i>待审核内容</el-badge>
                         </template>
                         <a v-for="l in pending.verifying.list" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
                     </el-tab-pane>
@@ -190,7 +216,7 @@
         <el-col :span="8">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
-                    <span>通知告示</span>
+                    <span><i class="min-icons el-icon-date"></i>通知告示</span>
                     <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
                 <a v-for="l in notice" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
@@ -200,7 +226,7 @@
         <el-col :span="8">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
-                    <span>正在播放内容</span>
+                    <span><i class="min-icons fa fa-play-circle"></i>正在播放内容</span>
                     <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
                 <a v-for="l in playlist" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
@@ -211,66 +237,73 @@
         <el-col :span="16">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
-                    <span>党员发展</span>
+                    <span><i class="min-icons fa fa-user-plus"></i>党员发展</span>
                     <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                 </div>
-                <div class="pie-chart-3">
-                    <ve-pie :data="partyMembers.constitute" :settings="pieChartSettings"></ve-pie>
-                </div>
-                <div class="line-chart-3">
-                    <%-- <ve-line :data="partyMembers.trend" width="300px" height="250px"></ve-line> --%>
-                    <ve-pie :data="partyMembers.dues" :settings="pieChartSettings"></ve-pie>
-                </div>
-                <div class="party-change-list">
-
-                   <!--  <a v-for="l in partyMembers.items" class="list-item" :href="l.href" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a> -->
-                    <el-row :gutter="10">
-                        <el-col :span="12">
-                            <div class="list-left-box">
-                                <div class="icon-box icon-activity"></div>
-                                <div class="data-box">
-                                    <label>党建活动</label><br>
-                                    <label for=""><span class="data-box-total data-box-total1">10</span><span>次</span></label>
+                <shiro:hasAnyRoles name="plant_admin, org_admin">
+                    <div class="pie-chart-3">
+                        <ve-pie :data="partyMembers.constitute" :settings="pieChartSettings"></ve-pie>
+                    </div>
+                    <div class="line-chart-3">
+                        <ve-pie :data="partyMembers.dues" :settings="pieChartSettings"></ve-pie>
+                    </div>
+                    <div class="party-change-list">
+                        <el-row :gutter="10">
+                            <el-col :span="12">
+                                <div class="list-left-box">
+                                    <div class="icon-box icon-activity"></div>
+                                    <div class="data-box">
+                                        <label>党建活动</label><br>
+                                        <label for=""><span class="data-box-total data-box-total1">10</span><span>次</span></label>
+                                    </div>
                                 </div>
-                            </div>
-                        </el-col>
-                        <el-col :span="12">
-                            <div class="list-left-box">
-                                <div class="icon-box icon-learn"></div>
-                                <div class="data-box">
-                                    <label>教育学习</label><br>
-                                    <label for=""><span class="data-box-total data-box-total2">50</span><span>次</span></label>
+                            </el-col>
+                            <el-col :span="12">
+                                <div class="list-left-box">
+                                    <div class="icon-box icon-learn"></div>
+                                    <div class="data-box">
+                                        <label>教育学习</label><br>
+                                        <label for=""><span class="data-box-total data-box-total2">50</span><span>次</span></label>
+                                    </div>
                                 </div>
-                            </div>
-                        </el-col>
-                    </el-row>
-                    <el-row :gutter="10">
-                        <el-col :span="12">
-                            <div class="list-left-box">
-                                <div class="icon-box icon-experience"></div>
-                                <div class="data-box">
-                                    <label>心得体会数</label><br>
-                                    <label for=""><span class="data-box-total data-box-total1">60</span>篇<span></span></span></label>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10">
+                            <el-col :span="12">
+                                <div class="list-left-box">
+                                    <div class="icon-box icon-experience"></div>
+                                    <div class="data-box">
+                                        <label>心得体会数</label><br>
+                                        <label for=""><span class="data-box-total data-box-total1">60</span>篇<span></span></span></label>
+                                    </div>
                                 </div>
-                            </div>
-                        </el-col>
-                        <el-col :span="12">
-                            <div class="list-left-box">
-                                <div class="icon-box icon-standardization"></div>
-                                <div class="data-box">
-                                    <label>思想汇报数</label><br>
-                                    <label for=""><span class="data-box-total data-box-total2">10</span><span>篇</span></label>
+                            </el-col>
+                            <el-col :span="12">
+                                <div class="list-left-box">
+                                    <div class="icon-box icon-standardization"></div>
+                                    <div class="data-box">
+                                        <label>思想汇报数</label><br>
+                                        <label for=""><span class="data-box-total data-box-total2">10</span><span>篇</span></label>
+                                    </div>
                                 </div>
-                            </div>
-                        </el-col>
-                    </el-row>
-                </div>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </shiro:hasAnyRoles>
+                <shiro:hasAnyRoles name="org_admin, party_role">
+                    <div class="line-chart-6">
+                        <ve-line :data="partyMember.dues" :grid="grid"></ve-pie>
+                    </div>
+                    <div class="line-chart-3">
+                        <ve-pie :data="partyMember.integral" :settings="pieChartSettings"></ve-pie>
+                    </div>
+                </shiro:hasAnyRoles>
             </el-card>
         </el-col>
         <el-col :span="8">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
-                    <span>便捷入口</span>
+                    <span><i class="min-icons fa fa-arrow-circle-right" aria-hidden="true"></i>便捷入口</span>
                 </div>
                 <div class="shortcuts">
                     <div class="shortcut" v-for="shortcut in shortcuts" @click="link(shortcut.target)">
@@ -321,6 +354,9 @@
     const app = new Vue({
         el: '#app',
         data: {
+            grid: {
+                height: 135
+            },
             pieChartSettings: {
                 /* roseType: 'radius', */
                 radius: 70,
@@ -363,6 +399,28 @@
                     { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' }
                 ]
             },
+            partyMember: {
+                dues: {
+                    columns: ['日期', '党费'],
+                    rows: [
+                        {'日期': '1月', '党费': 100},
+                        {'日期': '2月', '党费': 100},
+                        {'日期': '3月', '党费': 100},
+                        {'日期': '4月', '党费': 100},
+                        {'日期': '6月', '党费': 100},
+                        {'日期': '7月', '党费': 100},
+                    ]
+                },
+                integral: {
+                    columns: ['积分来源', '积分数'],
+                    rows: [
+                        {'积分来源': '其他', '积分数': 10},
+                        {'积分来源': '活动参加', '积分数': 20},
+                        {'积分来源': '心得提交', '积分数': 15},
+                        {'积分来源': '教育学习', '积分数': 16},
+                    ]
+                }
+            },
             activity: [
                 {title: '欢度五一', date: '2018-05-01', state: '已结束', replied: 100, really: 100, summary: '五一劳动节, 劳动我光荣（放假了，放假了，放假了，放假了，放假了，放假了 。。。）' },
                 {title: '欢度五一', date: '2018-05-01', state: '已结束', replied: 100, really: 100, summary: '' },
@@ -387,12 +445,8 @@
             },
             shortcuts: [
                 {
-                    title: '制作节目',
-                    target: {menuId: 28, name: '内容制作', url: '/publish/new'}
-                },
-                {
                     title: '困难党员帮扶',
-                    target: {menuId: 120, name: '活动策划', url: '/html/calendar/index2.html'}
+                    target: {menuId: 96, name: '文档中心', url: '/view/report/index.jsp'}
                 },
                 {
                     title: '素材提交',

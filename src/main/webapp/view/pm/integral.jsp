@@ -44,57 +44,65 @@
 		<el-container>
 			<el-header>
 				<el-row class="toolbar" :gutter="20" style="margin:0;">
-					<el-popover
-						placement="bottom" 
-						v-show="!dis_h_v"
-					  	width="200" 
-					  	trigger="click" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索组织
-					  	</el-button>
-					  	<div>
-							<el-row>
-								<el-input size="small" clearable
-									@change="ic_manage_queryOrgInfoForIc"
-									v-model="queryOrgInfoForIcCondition.orgInfoName" placeholder="请输入组织名"></el-input>
-							</el-row>
-					  	</div>
-					</el-popover>
-					<el-popover
-						placement="bottom" 
-						v-show="dis_h_v"
-					  	width="200" 
-					  	trigger="click" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索记录
-					  	</el-button>
-					  	<div>
-							<el-row>
-								<el-select size="small" clearable 
+					<shiro:hasPermission name="org:ic:query">
+						<el-popover
+							class="margin-left-10"
+							placement="bottom" 
+							v-show="!dis_h_v"
+						  	width="200" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索组织
+						  	</el-button>
+						  	<div>
+								<el-row>
+									<el-input size="small" clearable
+										@change="ic_manage_queryOrgInfoForIc"
+										v-model="queryOrgInfoForIcCondition.orgInfoName" placeholder="请输入组织名"></el-input>
+								</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="org:ic:query">
+						<el-popover
+							v-if="signInAccountType != 'party_role'"
+							class="margin-left-10"
+							placement="bottom" 
+							v-show="dis_h_v"
+						  	width="200" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索记录
+						  	</el-button>
+						  	<div>
+								<el-row>
+									<el-select size="small" clearable 
+											@change="ic_manage_queryPartyIntegralRecords"
+											v-model="queryPartyIntegralRecordsCondition.orgId" placeholder="所在组织">
+										<el-option
+											v-for="item in selectBox.orgInfo_Ic"
+											:key="item.orgId"
+											:label="item.orgInfoName"
+											:value="item.orgId">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row>
+									<el-input size="small" clearable
 										@change="ic_manage_queryPartyIntegralRecords"
-										v-model="queryPartyIntegralRecordsCondition.orgId" placeholder="所在组织">
-									<el-option
-										v-for="item in selectBox.orgInfo_Ic"
-										:key="item.orgId"
-										:label="item.orgInfoName"
-										:value="item.orgId">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row>
-								<el-input size="small" clearable
-									@change="ic_manage_queryPartyIntegralRecords"
-									v-model="queryPartyIntegralRecordsCondition.idCard" placeholder="请输入身份证号码"></el-input>
-							</el-row>
-					  	</div>
-					</el-popover>
-					<el-button-group class="margin-0-10">
+										v-model="queryPartyIntegralRecordsCondition.idCard" placeholder="请输入身份证号码"></el-input>
+								</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+					<el-button-group class="margin-left-10" v-if="signInAccountType != 'party_role'">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
                     <el-popover
+                    	class="margin-left-10"
 						placement="bottom" 
 					  	width="300" 
 					  	trigger="hover" >
@@ -126,7 +134,7 @@
 				</el-row>
 			</el-header>
 			<el-main>
-				<div v-show="!dis_h_v">
+				<div v-show="!dis_h_v" v-if="signInAccountType != 'party_role'">
 					<el-container>
 						<el-aside width="15%">
 							<div>
@@ -206,12 +214,15 @@
 						<el-table-column label="组织" prop="orgInfoName"></el-table-column>
 						<el-table-column label="姓名" prop="name"></el-table-column>
 						<el-table-column label="积分变更类型" prop="changeType"></el-table-column>
-						<el-table-column label="积分变更原因" prop="changeName"></el-table-column>
+						<el-table-column label="积分变更项" prop="type"></el-table-column>
 						<el-table-column label="积分变更说明" prop="changeDescribes"></el-table-column>
 						<el-table-column label="积分变更时间" prop="changeTime" width=200></el-table-column>
 						<el-table-column label="积分变更操作">
 							<template slot-scope="scope">
-								<span :style="getChangeOperation(scope.row.changeOperation)">{{scope.row.changeOperation == 1 ? "加分" : "扣分"}}</span>
+								<span 
+									:style="getChangeOperation(scope.row.changeOperation)">
+									{{scope.row.changeOperation == 1 ? "加分" : "扣分"}}
+								</span>
 							</template>
 						</el-table-column>
 						<el-table-column label="积分变更" prop="changeScore"></el-table-column>
@@ -597,6 +608,7 @@
 	            		(_data.data.isChildrens ? "" : (_data.data.isAddIntegral ? "" : " / 加分未设置"));
 	            }
 			},
+			signInAccountType: null
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -605,21 +617,29 @@
 			this.ic_manage_queryOrgInfoForIc();
 			this.ic_manage_queryPartyIntegralRecords();	/*搜索积分变更记录*/
 			this.money_manage_initSelectBox();
+			this.getSignInAccountType();
 		},
 		methods: {
+			getSignInAccountType() {	/*得到该登录用户的类型*/
+				var obj = this;
+
+				var url = "/siat/getSignInAccountType";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.signInAccountType = data.data;
+							if (obj.signInAccountType == "party_role") {
+								obj.dis_h_v = true;
+							}
+						}
+					}
+
+				})
+			},
 			money_manage_initSelectBox() {	/*初始化下拉框*/
 				var obj = this;
-        		var url = "/org/ic/queryOrgIntegralInfo_IcType";
-				var t = {
-					orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId
-				}
-				$.post(url, t, function(datas, status){
-					if (datas.code == 200) {
-						obj.selectBox.integralType = datas.data;
-					}
-					
-				})
-
 				url = "/org/ic/queryOrgInfoForIcNotPage";
 				t = {
 
@@ -873,6 +893,17 @@
 			ic_manage_openChangePartyUserIntegralDialog(row) {
 				var obj = this;
 
+        		var url = "/org/ic/queryOrgIntegralInfo_IcType";
+				var t = {
+					orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.selectBox.integralType = datas.data;
+					}
+					
+				})
+
 				obj.changePartyUserIntegralScoreForm.partyUserId = row.orgRltUserId;
 
 				obj.ic_manage_changePartyUserIntegralDialog = true;
@@ -907,7 +938,8 @@
 							changeDescribes: obj.changePartyUserIntegralScoreForm.changeDescribes,
 							changeIntegralType: obj.changePartyUserIntegralScoreForm.ictId,
 							changeScore: obj.changePartyUserIntegralScoreForm.changeScore,
-							isMerge: obj.changePartyUserIntegralScoreForm.isMerge
+							isMerge: obj.changePartyUserIntegralScoreForm.isMerge,
+							changeTypeId: obj.changePartyUserIntegralScoreForm.icId
 						}
 						$.post(url, t, function(datas, status){
 							if (datas.code == 200) {

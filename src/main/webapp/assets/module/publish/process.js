@@ -75,14 +75,14 @@ let app = new Vue({
             get(url, reps => {
                 init();
                 if (reps.status) {
-                    window.open("/sola/edit/" + reps.editId, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+                    window.open("/sola/edit/" + reps.editId, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
                 } else {
                     app.$message('编辑失败, 该内容已被其他人编辑 !');
                 }
             })
         },
         moreEdit(row) {
-            window.open("/sola/edit/" + row.snapshot, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+            window.open("/sola/edit/" + row.snapshot, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
         },
         preCommitMoreEdit(row) {
             this.isMoreEditCommit = true;
@@ -212,14 +212,14 @@ let app = new Vue({
             })
         },
         viewTemplate(row) {
-            window.open('/publish/template/' + row.id, 'template', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+            window.open('/publish/template/' + row.id, 'template', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
         },
         view(row) {
             if (!row.snapshot) {
                 this.$message("预览还未提交, 无法预览.");
                 return;
             }
-            window.open('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+            window.open('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
         },
         viewTerminal(row) {
             let url = '/publish/publishTerminal/' + row.id

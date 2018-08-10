@@ -15,6 +15,8 @@
 <script type="text/javascript" src="/json/address-pca.json"></script>
 <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&key=b8db1a2a77d2226ba663235353e3546b&plugin=AMap.Geocoder"></script>
 <%@include file="/include/echarts.jsp"%>
+<script type="text/javascript" src="/js/jquery.orgchart.js"></script>
+<link rel="stylesheet" href="/css/jquery.orgchart.css" />
 <style type="text/css">
 	body {
 		
@@ -46,7 +48,7 @@
 		color: red;
 	}
 	div[id*="container"] {	/*地图*/
-		width: 92%;
+		width: 100%;
 		height: 230px;
 		margin: 10px 0;
 		border-radius: 10px;
@@ -72,8 +74,11 @@
 		cursor: pointer;
 		
 	}
-
-	.title{
+	.xszz {
+		float: right;
+		margin-right: 0px;
+	}
+	.zzcy .title, .xszz .title{
 		margin:10px ;
 		font-size: 18px;
 		font-weight: bold;
@@ -187,95 +192,98 @@
 			<el-header>
 				<el-row class="toolbar" :gutter="20">
 			  		<shiro:hasPermission name="org:info:insert">  
-				 	    <el-button size="small" type="primary" @click="partyOrg_manager_openInsertOrgInfoDialog">
+				 	    <el-button class="margin-left-10" size="small" type="primary" @click="partyOrg_manager_openInsertOrgInfoDialog">
 				 	    	<i class="el-icon-circle-plus-outline"></i>
 				 	    	添加组织
 				 	    </el-button>
 				  	</shiro:hasPermission>
-					<el-popover class="margin-0-10"
-						placement="bottom" 
-					  	width="200" 
-					  	trigger="hover" >
-					  	<el-button size="small" type="primary" slot="reference">
-					  		<i class="el-icon-search"></i>
-					  		搜索组织
-					  	</el-button>
-					  	<div>
-							<el-row v-show="dis_h_v">
-								<el-select size="small" clearable 
-										@change="partyOrg_manager_queryOrgInfosForOrgType"
-										v-model="queryCondition.partyOrg_manager_orgInfoType" filterable placeholder="请选择组织类型">
-									<el-option
-										v-for="item in partyOrg_manager_orgInfoTypes"
-									    :key="item.value"
-									    :label="item.orgTypeName"
-									    :value="item.orgTypeId">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row v-show="dis_h_v">
-								<el-select size="small" clearable 
-										@change="partyOrg_manager_queryOrgInfosForOrgType"
-										v-model="queryCondition.partyOrg_manager_orgInfoNature" filterable placeholder="请选择组织性质">
-									<el-option
-										v-for="item in partyOrg_manager_orgInfoNatures"
-									    :key="item.value"
-									    :label="item.orgNatureName"
-									    :value="item.orgNatureId">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row v-show="dis_h_v">
-								<el-select size="small" clearable 
-										@change="partyOrg_manager_queryOrgInfosForProvince"
-										@clear="resetCityAndArea"
-										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvince" filterable placeholder="请选择组织所在省份">
-									<el-option
-										v-for="addressProvince in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvinces"
-										:key="addressProvince.orgInfoCommitteeProvince"
-										:label="addressProvince.orgInfoCommitteeProvince"
-										:value="addressProvince.orgInfoCommitteeProvince">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row v-show="dis_h_v">
-								<el-select size="small" clearable 
-										@change="partyOrg_manager_queryOrgInfosForCity"
-										@clear="resetArea"
-										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCity" filterable placeholder="请选择组织所在城市">
-									<el-option
-										v-for="addressCity in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCitys"
-										:key="addressCity.orgInfoCommitteeCity"
-										:label="addressCity.orgInfoCommitteeCity"
-										:value="addressCity.orgInfoCommitteeCity">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row v-show="dis_h_v">
-								<el-select size="small" clearable 
-										@change="partyOrg_manager_queryOrgInfosForArea"
-										v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea" filterable placeholder="请选择组织所在区域">
-									<el-option
-										v-for="addressArea in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeAreas"
-										:key="addressArea.orgInfoCommitteeArea"
-										:label="addressArea.orgInfoCommitteeArea"
-										:value="addressArea.orgInfoCommitteeArea">
-									</el-option>
-								</el-select>
-							</el-row>
-							<el-row v-show="dis_h_v">
-								<el-input size="small" clearable
-									@change="partyOrg_manager_queryOrgInfosForInfoName"
-									v-model="queryCondition.partyOrg_manager_orgInfoName" placeholder="请输入组织名"></el-input>
-							</el-row>
-							<el-row v-show="!dis_h_v">
-								<el-input size="small" clearable
-									@change="partyOrg_manager_getOrgInfoTreesForZMD"
-									v-model="queryConditionForCharts.orgInfoName" placeholder="请输入组织名"></el-input>
-							</el-row>
-					  	</div>
-					</el-popover>
-					<el-button-group v-if="signInAccountType != 'party_role'">
+				  	<shiro:hasPermission name="org:info:query">  
+						<el-popover class="margin-left-10"
+							placement="bottom" 
+							v-if="signInAccountType != 'party_role'"
+						  	width="200" 
+						  	trigger="hover" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-search"></i>
+						  		搜索组织
+						  	</el-button>
+						  	<div>
+								<el-row v-show="dis_h_v">
+									<el-select size="small" clearable 
+											@change="partyOrg_manager_queryOrgInfosForOrgType"
+											v-model="queryCondition.partyOrg_manager_orgInfoType" filterable placeholder="请选择组织类型">
+										<el-option
+											v-for="item in partyOrg_manager_orgInfoTypes"
+										    :key="item.value"
+										    :label="item.orgTypeName"
+										    :value="item.orgTypeId">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row v-show="dis_h_v">
+									<el-select size="small" clearable 
+											@change="partyOrg_manager_queryOrgInfosForOrgType"
+											v-model="queryCondition.partyOrg_manager_orgInfoNature" filterable placeholder="请选择组织性质">
+										<el-option
+											v-for="item in partyOrg_manager_orgInfoNatures"
+										    :key="item.value"
+										    :label="item.orgNatureName"
+										    :value="item.orgNatureId">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row v-show="dis_h_v">
+									<el-select size="small" clearable 
+											@change="partyOrg_manager_queryOrgInfosForProvince"
+											@clear="resetCityAndArea"
+											v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvince" filterable placeholder="请选择组织所在省份">
+										<el-option
+											v-for="addressProvince in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeProvinces"
+											:key="addressProvince.orgInfoCommitteeProvince"
+											:label="addressProvince.orgInfoCommitteeProvince"
+											:value="addressProvince.orgInfoCommitteeProvince">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row v-show="dis_h_v">
+									<el-select size="small" clearable 
+											@change="partyOrg_manager_queryOrgInfosForCity"
+											@clear="resetArea"
+											v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCity" filterable placeholder="请选择组织所在城市">
+										<el-option
+											v-for="addressCity in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeCitys"
+											:key="addressCity.orgInfoCommitteeCity"
+											:label="addressCity.orgInfoCommitteeCity"
+											:value="addressCity.orgInfoCommitteeCity">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row v-show="dis_h_v">
+									<el-select size="small" clearable 
+											@change="partyOrg_manager_queryOrgInfosForArea"
+											v-model="partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeArea" filterable placeholder="请选择组织所在区域">
+										<el-option
+											v-for="addressArea in partyOrg_manager_address.partyOrg_manager_orgInfoCommitteeAreas"
+											:key="addressArea.orgInfoCommitteeArea"
+											:label="addressArea.orgInfoCommitteeArea"
+											:value="addressArea.orgInfoCommitteeArea">
+										</el-option>
+									</el-select>
+								</el-row>
+								<el-row v-show="dis_h_v">
+									<el-input size="small" clearable
+										@change="partyOrg_manager_queryOrgInfosForInfoName"
+										v-model="queryCondition.partyOrg_manager_orgInfoName" placeholder="请输入组织名"></el-input>
+								</el-row>
+								<el-row v-show="!dis_h_v">
+									<el-input size="small" clearable
+										@change="partyOrg_manager_getOrgInfoTreesForZMD"
+										v-model="queryConditionForCharts.orgInfoName" placeholder="请输入组织名"></el-input>
+								</el-row>
+						  	</div>
+						</el-popover>
+					</shiro:hasPermission>
+					<el-button-group class="margin-left-10" v-if="signInAccountType != 'party_role'">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
                     </el-button-group>
@@ -295,16 +303,15 @@
 					<div style="text-align: center;">
 						<p style="margin-bottom: 20px; font-size: 20px; font-weight: bold;">党委结构一览</p>
 					</div>
-				  	<el-carousel :interval="5000" type="card" :height="partyOrg_manager_CarouselHeight">
-				    	<el-carousel-item :key="item.orgInfoId" v-for="item in partyOrg_manager_orgInfoTreesForZMD" :key="item">
+				  	<el-carousel :interval="1500" :height="partyOrg_manager_CarouselHeight">
+				    	<el-carousel-item :key="item.data.orgInfoId" v-for="item in partyOrg_manager_orgInfoTreesForZMD">
 				      		<div style="text-align: center;">
 								<p style="margin-top: 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold;">{{item.data.orgInfoName}}</p>
 							</div>
-							<div onload="" :id="'orgInfoTree'+item.data.orgInfoId" 
+							<div :load="getItaf(item)" :id="'orgInfoTree'+item.data.orgInfoId" 
 								style="width: 100%; height: 80%; text-align: center; overflow: auto; background-image: url(/view/pm/img/orgInfoChartBg.png); background-size: 100%">
 								
 							</div>
-							{{getItaf(item)}}
 				    	</el-carousel-item>
 				  	</el-carousel>
 				</div>
@@ -320,6 +327,16 @@
 						<el-table-column type="expand">
 							<template slot-scope="scope">
 								<div style="width: 60%; margin: 0 auto;">
+									<el-row :gutter="20">
+										<el-col :span="12">组织名称：{{scope.row.orgInfoName}}</el-col>
+										<el-col :span="12">组织类型：{{scope.row.orgTypeName}}</el-col>
+									</el-row>
+									<el-row :gutter="20" v-for="item in scope.row.orgLevel1s">
+										<el-col :span="5">{{item.orgDutyName}}：{{item.name}}</el-col>
+										<el-col :span="3">性别：{{item.sex}}</el-col>
+										<el-col :span="3">年龄：{{item.age}}</el-col>
+										<el-col :span="6">联系电话：{{item.mobilePhone}}</el-col>
+									</el-row>
 									<el-row :gutter="20" v-if="scope.row.orgLevel1s.length != 0">
 										<el-col :span="24">
 											<el-collapse>
@@ -366,16 +383,6 @@
 										</el-col>
 									</el-row>
 									<el-row :gutter="20">
-										<el-col :span="12">组织名称：{{scope.row.orgInfoName}}</el-col>
-										<el-col :span="12">组织类型：{{scope.row.orgTypeName}}</el-col>
-									</el-row>
-									<el-row :gutter="20" v-for="item in scope.row.orgLevel1s">
-										<el-col :span="5">{{item.orgDutyName}}：{{item.name}}</el-col>
-										<el-col :span="3">性别：{{item.sex}}</el-col>
-										<el-col :span="3">年龄：{{item.age}}</el-col>
-										<el-col :span="6">联系电话：{{item.mobilePhone}}</el-col>
-									</el-row>
-									<el-row :gutter="20">
 										<el-col :span="24">
 											管委会地址：
 											{{scope.row.orgInfoCommitteeProvince}}-
@@ -385,7 +392,7 @@
 										</el-col>
 									</el-row>
 									<div :id="'container'+scope.row.orgInfoId"></div>	<!-- 地图信息 -->
-									<div class="zzcy">
+									<div class="zzcy" v-if="signInAccountType != 'party_role'">
 										<p class="title">组织成员 <span style="color: red;">{{scope.row.orgMemberNum}}</span> 人</p>
 										<p style="text-align: left; padding-left: 10px; margin-bottom: 5px;">今日新增成员：</p>
 										<div class="woman">
@@ -414,7 +421,7 @@
 										</div>
 									</div>
 
-									<div class="xszz">
+									<div class="xszz" v-if="signInAccountType != 'party_role'">
 										<p class="title">下属组织</p>
 										<div class="total">
 											共有下属组织：
@@ -446,8 +453,18 @@
 								<shiro:hasPermission name="party:user:update">  
 									<el-button @click="partyOrg_manager_openUpdateOrgInfoDialog(scope.row)" type="text" size="small">修改信息</el-button>
 								</shiro:hasPermission>
-								<el-button @click="partyOrg_manager_openInsertOrgDutyDialog(scope.row)" type="text" size="small">添加职责</el-button>
-								<el-button @click="partyOrg_manager_openAddOrgIntegralConstituteDialog(scope.row)" type="text" size="small">添加积分结构</el-button>
+								<shiro:hasPermission name="party:user:update">  
+									<el-button 
+										@click="partyOrg_manager_openInsertOrgDutyDialog(scope.row)" 
+										type="text" size="small">添加职责
+									</el-button>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="party:user:update">  
+									<el-button 
+										@click="partyOrg_manager_openAddOrgIntegralConstituteDialog(scope.row)" 
+										type="text" size="small">添加积分结构
+									</el-button>
+								</shiro:hasPermission>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -980,7 +997,7 @@
 			partyOrg_manager_orgInfoDutyTreesProps: {
 				children: 'children',
 	            label: function(_data, node){
-	            	return _data.data.orgDutyName;
+	            	return _data.data.orgDutyName + '  职责id：' + _data.data.orgDutyId;
 	            }
 			},
 			partyOrg_manager_insertOrgInfoDutyRules: {
@@ -1015,7 +1032,8 @@
 			},
 			count: 0,
 			realCount: 0,
-			signInAccountType: null
+			signInAccountType: null,
+			loadedOrgInfoId: []
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -1926,6 +1944,26 @@
 			},
 			getItaf(item) {
 				var obj = this;
+
+				var flag = true;
+				if (obj.loadedOrgInfoId.length == 0) {
+					obj.loadedOrgInfoId[0] = item.data.orgInfoId;
+				} else {
+					for (var i = 0; i < obj.loadedOrgInfoId.length; i++) {
+						var loadedId = obj.loadedOrgInfoId[i];
+						if (item.data.orgInfoId == loadedId) {
+							flag = false;
+						}
+					}
+
+					if (flag) {
+						obj.loadedOrgInfoId.push(item.data.orgInfoId);
+					} else {
+						return;
+					}
+				}
+				
+
 				var trees = new Array;
 				var items = new Array;
 				item.count = 0;
@@ -1933,16 +1971,23 @@
 				obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(items, items, trees);
 
 				setTimeout(()=>{
-					obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true, items[0].count);
+					//obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true, items[0].count);
+					var oc = $("#orgInfoTree"+item.data.orgInfoId).orgchart({
+				      	'data' : trees[0],
+      					'nodeContent': 'title',
+      					'pan': true,
+      					'zoom': true
+				    });
 				},200)
 			},
 			partyOrg_manager_getOrgChildrensTreeAndAddCount(addCountOrgInfosRelationTree, orgInfosRelationTree, trees) {
 				var obj = this;
 				if (orgInfosRelationTree != null && orgInfosRelationTree.length > 0) {
 					for (var i = 0; i < orgInfosRelationTree.length; i++) {
-						var tree = {name: null, children: null}
+						var tree = {name: null, title: null, children: null}
 						tree.id = orgInfosRelationTree[i].data.orgInfoId;
-						tree.name = orgInfosRelationTree[i].data.orgInfoName;
+						tree.name = orgInfosRelationTree[i].data.orgTypeName;
+						tree.title = orgInfosRelationTree[i].data.orgInfoName;
 						if (orgInfosRelationTree[i].data.count > addCountOrgInfosRelationTree[0].count) {
 							addCountOrgInfosRelationTree[0].count = orgInfosRelationTree[i].data.count;
 						}

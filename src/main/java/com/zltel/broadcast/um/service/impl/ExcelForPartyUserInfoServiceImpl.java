@@ -128,6 +128,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R importPartyUserInfosExcel(HttpServletResponse response, MultipartFile file) throws Exception {
 		Workbook wb = null;
+		if (file == null) return R.error().setMsg("导入失败").setData("请选择导入文件");
 		wb = this.createWorkboot(this.getExcelSuffix(file.getOriginalFilename()), file.getInputStream());
 		Sheet hs = wb.getSheetAt(0);	//得到第一页
 		Map<Integer, BaseUserInfo> baseUserInfoMaps = new HashMap<>();
@@ -438,92 +439,26 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				baseUserInfo.setPresentAddressArea(null);
 				baseUserInfo.setPresentAddressDetail(null);
 			}
-			//是否积极份子
-			if (row.getCell(16) != null && StringUtil.isNotEmpty(row.getCell(16).getStringCellValue())) {
-				if ("是".equals(row.getCell(16).getStringCellValue())) {
-					baseUserInfo.setPositiveUser(1);
-				} else if ("否".equals(row.getCell(16).getStringCellValue())) {
-					baseUserInfo.setPositiveUser(0);
-				} else {
-					thisValidateSuccess = false;
-					validataErrorMsg.append("第" + (i + 1) + "行是否积极党员选择有误。\r\n");
-				}
-			} else {
-				baseUserInfo.setPositiveUser(null);
+			if (row.getCell(16) != null) {
+				baseUserInfo.setSpecialityLiterature(row.getCell(16).getStringCellValue());
 			}
 			if (row.getCell(17) != null) {
-				baseUserInfo.setSpecialityLiterature(row.getCell(17).getStringCellValue());
+				baseUserInfo.setSpecialityMajor(row.getCell(17).getStringCellValue());
 			}
 			if (row.getCell(18) != null) {
-				baseUserInfo.setSpecialityMajor(row.getCell(18).getStringCellValue());
+				baseUserInfo.setMarriageStatus(row.getCell(18).getStringCellValue());
 			}
 			if (row.getCell(19) != null) {
-				baseUserInfo.setMarriageStatus(row.getCell(19).getStringCellValue());
-			}
-			if (row.getCell(20) != null) {
-				baseUserInfo.setChildrenStatus(row.getCell(20).getStringCellValue());
-			}
-			
-			//党员类型
-			if (row.getCell(21) != null && StringUtil.isNotEmpty(row.getCell(21).getStringCellValue())) {
-				if ("正式党员".equals(row.getCell(21).getStringCellValue())) {
-					partyUserInfo.setType(1);
-				} else if ("预备党员".equals(row.getCell(21).getStringCellValue())) {
-					partyUserInfo.setType(0);
-				} else {
-					thisValidateSuccess = false;
-					validataErrorMsg.append("第" + (i + 1) + "行党员类型填写错误。\r\n");
-				}
-			} else {
-				thisValidateSuccess = false;
-				validataErrorMsg.append("第" + (i + 1) + "行党员类型不能为空。\r\n");
-			}
-			//党员状态
-			if (row.getCell(22) != null && StringUtil.isNotEmpty(row.getCell(22).getStringCellValue())) {
-				if ("正常".equals(row.getCell(22).getStringCellValue())) {
-					partyUserInfo.setStatus(1);
-				} else if ("停止党籍".equals(row.getCell(22).getStringCellValue())) {
-					partyUserInfo.setStatus(0);
-				} else {
-					thisValidateSuccess = false;
-					validataErrorMsg.append("第" + (i + 1) + "行党员状态填写错误。\r\n");
-				}
-			} else {
-				thisValidateSuccess = false;
-				validataErrorMsg.append("第" + (i + 1) + "行党员状态不能为空。\r\n");
-			}
-			//入党时间
-			if (row.getCell(23) != null) {
-				partyUserInfo.setJoinDateFormal(row.getCell(23).getDateCellValue());
-			} else {
-				//两个时间必有一个
-				if (row.getCell(24) != null) {
-					
-				} else {
-					thisValidateSuccess = false;
-					validataErrorMsg.append("第" + (i + 1) + "行请填写入党时间或预备党员入党时间。\r\n");
-				}
-			}
-			//预备党员入党时间
-			if (row.getCell(24) != null) {
-				partyUserInfo.setJoinDateReserve(row.getCell(24).getDateCellValue());
-			} else {
-				//两个时间必有一个
-				if (row.getCell(23) != null) {
-					
-				} else {
-					thisValidateSuccess = false;
-					validataErrorMsg.append("第" + (i + 1) + "行请填写入党时间或预备党员入党时间。\r\n");
-				}
+				baseUserInfo.setChildrenStatus(row.getCell(19).getStringCellValue());
 			}
 			//工作单位
-			if (row.getCell(25) != null) {				
-				baseUserInfo.setWorkUnit(row.getCell(25).getStringCellValue());
+			if (row.getCell(20) != null) {				
+				baseUserInfo.setWorkUnit(row.getCell(20).getStringCellValue());
 			}
 			//工作性质
-			if (row.getCell(26) != null && StringUtil.isNotEmpty(row.getCell(26).getStringCellValue())) {
+			if (row.getCell(21) != null && StringUtil.isNotEmpty(row.getCell(21).getStringCellValue())) {
 				WorkNatureType wnt = new WorkNatureType();
-				wnt.setName(row.getCell(26).getStringCellValue());
+				wnt.setName(row.getCell(21).getStringCellValue());
 				List<WorkNatureType> wnts = workNatureTypeMapper.queryWorkNatureTypes(wnt);
 				if (wnts != null && wnts .size() == 1) {
 					baseUserInfo.setWorkNature(wnts.get(0).getWorkNatureId());
@@ -535,15 +470,15 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				baseUserInfo.setWorkNature(null);
 			}
 			//参加工作时间
-			if (row.getCell(27) != null) {
-				baseUserInfo.setJoinWorkDate(row.getCell(27).getDateCellValue());
+			if (row.getCell(22) != null) {
+				baseUserInfo.setJoinWorkDate(row.getCell(22).getDateCellValue());
 			} else {
 				baseUserInfo.setJoinWorkDate(null);
 			}
 			//参加工作时长
-			if (row.getCell(28) != null) {
+			if (row.getCell(23) != null) {
 				try {
-					baseUserInfo.setAppointmentTimeLength(Integer.parseInt(row.getCell(28).getStringCellValue()));
+					baseUserInfo.setAppointmentTimeLength(Integer.parseInt(row.getCell(23).getStringCellValue()));
 				} catch (Exception e) {
 					thisValidateSuccess = false;
 					validataErrorMsg.append("第" + (i + 1) + "行请填写正确的工作时长。\r\n");
@@ -552,24 +487,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 			} else {
 				baseUserInfo.setAppointmentTimeLength(null);
 			}
-			//如何加入党支部
-			if (row.getCell(29) != null && StringUtil.isNotEmpty(row.getCell(29).getStringCellValue())) {
-				JoinPartyBranchType jpbt = new JoinPartyBranchType();
-				jpbt.setJoinType(row.getCell(29).getStringCellValue());
-				List<JoinPartyBranchType> jpbts = joinPartyBranchTypeMapper.queryJoinPartyBranchTypes(jpbt);
-				if (jpbts != null && jpbts .size() == 1) {
-					partyUserInfo.setJoinPartyBranchTypeId(jpbts.get(0).getJpbtId());
-				} else {
-					thisValidateSuccess = false;
-					validataErrorMsg.append("第" + (i + 1) + "行加入党支部方式选择有误。\r\n");
-				}
-			} else {
-				partyUserInfo.setJoinPartyBranchTypeId(null);
-			}
 			//一线情况
-			if (row.getCell(30) != null && StringUtil.isNotEmpty(row.getCell(30).getStringCellValue())) {
+			if (row.getCell(24) != null && StringUtil.isNotEmpty(row.getCell(24).getStringCellValue())) {
 				FirstLineType flt = new FirstLineType();
-				flt.setFirstLineTypeName(row.getCell(30).getStringCellValue());
+				flt.setFirstLineTypeName(row.getCell(24).getStringCellValue());
 				List<FirstLineType> flts = firstLineTypeMapper.queryFirstLineTypes(flt);
 				if (flts != null && flts .size() == 1) {
 					baseUserInfo.setFirstLineSituation(flts.get(0).getFltId());
@@ -579,6 +500,86 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				}
 			} else {
 				baseUserInfo.setFirstLineSituation(null);
+			}
+			//是否积极份子
+			if (row.getCell(25) != null && StringUtil.isNotEmpty(row.getCell(25).getStringCellValue())) {
+				if ("是".equals(row.getCell(25).getStringCellValue())) {
+					baseUserInfo.setPositiveUser(1);
+				} else if ("否".equals(row.getCell(25).getStringCellValue())) {
+					baseUserInfo.setPositiveUser(0);
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行是否积极党员选择有误。\r\n");
+				}
+			} else {
+				baseUserInfo.setPositiveUser(null);
+			}
+			
+			//党员类型
+			if (row.getCell(26) != null && StringUtil.isNotEmpty(row.getCell(26).getStringCellValue())) {
+				if ("正式党员".equals(row.getCell(26).getStringCellValue())) {
+					partyUserInfo.setType(1);
+				} else if ("预备党员".equals(row.getCell(26).getStringCellValue())) {
+					partyUserInfo.setType(0);
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行党员类型填写错误。\r\n");
+				}
+			} else {
+				thisValidateSuccess = false;
+				validataErrorMsg.append("第" + (i + 1) + "行党员类型不能为空。\r\n");
+			}
+			//党员状态
+			if (row.getCell(27) != null && StringUtil.isNotEmpty(row.getCell(27).getStringCellValue())) {
+				if ("正常".equals(row.getCell(27).getStringCellValue())) {
+					partyUserInfo.setStatus(1);
+				} else if ("停止党籍".equals(row.getCell(27).getStringCellValue())) {
+					partyUserInfo.setStatus(0);
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行党员状态填写错误。\r\n");
+				}
+			} else {
+				thisValidateSuccess = false;
+				validataErrorMsg.append("第" + (i + 1) + "行党员状态不能为空。\r\n");
+			}
+			//入党时间
+			if (row.getCell(28) != null) {
+				partyUserInfo.setJoinDateFormal(row.getCell(28).getDateCellValue());
+			} else {
+				//两个时间必有一个
+				if (row.getCell(29) != null) {
+					
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行请填写入党时间或预备党员入党时间。\r\n");
+				}
+			}
+			//预备党员入党时间
+			if (row.getCell(29) != null) {
+				partyUserInfo.setJoinDateReserve(row.getCell(29).getDateCellValue());
+			} else {
+				//两个时间必有一个
+				if (row.getCell(28) != null) {
+					
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行请填写入党时间或预备党员入党时间。\r\n");
+				}
+			}
+			//如何加入党支部
+			if (row.getCell(30) != null && StringUtil.isNotEmpty(row.getCell(30).getStringCellValue())) {
+				JoinPartyBranchType jpbt = new JoinPartyBranchType();
+				jpbt.setJoinType(row.getCell(30).getStringCellValue());
+				List<JoinPartyBranchType> jpbts = joinPartyBranchTypeMapper.queryJoinPartyBranchTypes(jpbt);
+				if (jpbts != null && jpbts .size() == 1) {
+					partyUserInfo.setJoinPartyBranchTypeId(jpbts.get(0).getJpbtId());
+				} else {
+					thisValidateSuccess = false;
+					validataErrorMsg.append("第" + (i + 1) + "行加入党支部方式选择有误。\r\n");
+				}
+			} else {
+				partyUserInfo.setJoinPartyBranchTypeId(null);
 			}
 			//是否党务工作者
 			if (row.getCell(31) != null && StringUtil.isNotEmpty(row.getCell(31).getStringCellValue())) {
@@ -762,6 +763,8 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R exportPartyUserInfosExcel(HttpServletResponse response, PartyUserInfo partyUserInfo) throws Exception {
+		if (partyUserInfo == null) 
+			return R.error().setMsg("请选择党员");
 		Map<String, Object> partyUserMap = new HashMap<>();
 		partyUserMap.put("id", partyUserInfo.getPartyUserId());
 		Map<String, Object> partyUserInfoMaps = partyUserInfoMapper.queryPartyUserInfos(partyUserMap).get(0);

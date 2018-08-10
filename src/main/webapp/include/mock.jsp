@@ -5,3 +5,4 @@
 <script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy.js')}"></script>
 <script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy-terminal.js')}"></script>
 <script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy-template.js')}"></script>
+<script src="${urls.getForLookupPath('/assets/debug/mock-url-proxy-history.js')}"></script>

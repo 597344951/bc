@@ -8,11 +8,13 @@
 	String startStep = request.getParameter("startStep");
 	String reAdd = request.getParameter("reAdd");
 	String eventPlanId = request.getParameter("eventPlanId");
+	String url = request.getParameter("url");
 	title = title == null ? "" : title;
 	programId = programId == null ? "-1" : programId;
 	startStep = startStep == null ? "0" : startStep;
 	reAdd = reAdd == null ? "false" : reAdd;
 	eventPlanId = eventPlanId == null ? "-1" : eventPlanId;
+	url = url == null ? "" : url;
 	Subject subject = SecurityUtils.getSubject();
     SysUser user = (SysUser) subject.getPrincipal();
     String userId = user == null ? "" : "" + user.getUserId();
@@ -533,10 +535,14 @@
 		window.onFocus = function() {
 			window.location.reload()
 		}
+		window.onbeforeunload = function() {
+			return "还没有完成,确认退出吗?"
+		}
 
 		window.app = new Vue({
 			el: '#app',
 			data: {
+				url: '<%=url%>',
 				eventPlanId: <%=eventPlanId%>,
 				programId: <%=programId%>,
 				reAdd: <%=reAdd%>,
@@ -689,7 +695,9 @@
 							content.programId = this.programId
 							if(this.eventPlanId >= 0) {
 								content.eventPlanId = this.eventPlanId
+								content.type = 3
 							}
+							content.url = this.url
 							commit(content);
                         })
                         .catch(_ => {});
@@ -813,6 +821,8 @@
 			let url
 			if(app.reAdd) {
 				url = '/publish/reAdd'
+			} else if(app.url) {
+				url = '/publish/urlAdd'
 			} else {
 				url = '/publish/add'
 			}

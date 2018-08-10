@@ -1,113 +1,179 @@
-<!DOCTYPE html PUBLIC-//W3C//DTD XHTML 1.0 Transitional//EN"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html >
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
 <head>
-<meta http-equiv="Content-Language" content="utf-8" />
-<title>党史百科</title>
-<!-- 调用样式表 -->
-<link rel="stylesheet"  href="page.css" type="text/css" media="all"  />
-<style type="text/css">
-    #copyright {
-      width: 980px;
-      margin: 0px auto;
-      font-size: 12px;
-      text-align: center;
-      padding: 20px 0;
-      line-height: 180%;
-      clear: both;
-    }
-    .content-mask{
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      width: 250px;
-      height: 180px;
-      background-color: rgba(0, 0, 0, 0.28);
-      border-radius: 6px;
-      color: #fff;
-      padding: 10px 20px;
-      text-indent: 2em;
-    }
-   
-  </style>
+
+  <meta content="utf-8" />
+  <title>党史百科</title>
+  <!-- 调用样式表 -->
+  <link rel="stylesheet" href="page.css" type="text/css" media="all" />
+  <link rel="stylesheet" href="mask.css" type="text/css" media="all" />
+  <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+  <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+  <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
 </head>
 
 <body>
-  <!--top-->
+  <a href="/view/publish/new.jsp?startStep=2&title=uri&url=/view/faker/dsbk/index-1.html">
+    节目制作
+  </a>
+  <div id="app">
+    <div class="top02 clear w980">
+      <img src="top01.jpg" width="488" height="167" />
+      <img src="top02.jpg" width="492" height="167" />
+    </div>
+    <div class="content-mask" id="mask">
 
-  <div class="top02 clear w980">
-    <img src="top01.jpg" width="488" height="167" />
-    <img src="top02.jpg" width="492" height="167" />
-  </div>
-  <div class="content-mask">
-    1937年7月7日夜，日军在北平西南卢沟桥附近演习时，借口一名士兵“失踪”，要求进入宛平县城搜查，遭到中国守军第29军严辞拒绝。日军遂向中国守军开枪射击，又炮轰宛平城。第29军奋起抗战。这就是震惊中外的七七事变，又称卢沟桥事变。七七事变是日本帝国主义全面侵华战争的开始，也是中华民族进行全面抗战的起点。
-  </div>
-  <div class="clearfix p1_content">
-    <div>
-    <h2>1921-1949</h2>
-    <ul><li><a href="#">七七事变</a></li>
-  <li><a href="#">洛川会议</a></li>
-  <li><a href="#">平型关大捷</a></li>
-  <li><a href="#">陕甘宁边区</a></li>
-  <li><a href="#">大生产运动</a></li>
-  <li><a href="#">“三三制”</a></li>
-  <li><a href="#">百团大战</a></li>
-  <li><a href="#">皖南事变（第二次反共高潮）</a></li>
-  <li><a href="#">延安整风</a></li>
-  <li><a href="#">延安文艺座谈会</a></li>
-  <li><a href="#">中共七大</a></li>
-  <li><a href="#">抗日战争胜利</a></li>
-  <li><a href="#">重庆谈判</a></li>
-  <li><a href="#">土地改革运动</a></li>
-  <li><a href="#">全面内战爆发</a></li>
-  <li><a href="#">延安保卫战</a></li>
-  <li><a href="#">三大战役</a></li>
-  </ul>
-    
+      <h5>{{title}}</h5>
+      <p>{{content}}</p>
+
     </div>
-    <div class="fl">
-    <h2>1921—1949</h2>
-    <ul><li><a href="#">中共七届二中全会</a></li>
-  <li><a href="#">中国人民政治协商会议 </a></li>
-  <li><a href="#">开国大典</a></li>
-  </ul>
-    <h2>1950—1978</h2>
-    <ul><li><a href="#">整风运动</a></li>
-  <li><a href="#">土地改革</a></li>
-  <li><a href="#">抗美援朝</a></li>
-  <li><a href="#">镇压反革命</a></li>
-  <li><a href="#">批判《武训传》</a></li>
-  <li><a href="#">西藏和平解放</a></li>
-  <li><a href="#">“三反”“五反”</a></li>
-  <li><a href="#">公审刘青山、张子善</a></li>
-  <li><a href="#">第一次全国人民代表大会与第一部宪法</a></li>
-  </ul>
+
+    <div class="clearfix p1_content">
+      <div>
+        <h2>1921-1949</h2>
+        <ul>
+          <li>
+            <a href="##" @click="show('七七事变')">七七事变</a>
+          </li>
+          <li>
+            <a href="##">洛川会议</a>
+          </li>
+          <li>
+            <a href="##">平型关大捷</a>
+          </li>
+          <li>
+            <a href="##">陕甘宁边区</a>
+          </li>
+          <li>
+            <a href="##">大生产运动</a>
+          </li>
+          <li>
+            <a href="##">“三三制”</a>
+          </li>
+          <li>
+            <a href="##">百团大战</a>
+          </li>
+          <li>
+            <a href="##">皖南事变（第二次反共高潮）</a>
+          </li>
+          <li>
+            <a href="##">延安整风</a>
+          </li>
+          <li>
+            <a href="##">延安文艺座谈会</a>
+          </li>
+          <li>
+            <a href="##">中共七大</a>
+          </li>
+          <li>
+            <a href="##">抗日战争胜利</a>
+          </li>
+          <li>
+            <a href="##">重庆谈判</a>
+          </li>
+          <li>
+            <a href="##">土地改革运动</a>
+          </li>
+          <li>
+            <a href="##">全面内战爆发</a>
+          </li>
+          <li>
+            <a href="##">延安保卫战</a>
+          </li>
+          <li>
+            <a href="##">三大战役</a>
+          </li>
+        </ul>
+
+      </div>
+      <div class="fl">
+        <h2>1921—1949</h2>
+        <ul>
+          <li>
+            <a href="##">中共七届二中全会</a>
+          </li>
+          <li>
+            <a href="##">中国人民政治协商会议 </a>
+          </li>
+          <li>
+            <a href="##" @click="show('开国大典')">开国大典</a>
+          </li>
+        </ul>
+        <h2>1950—1978</h2>
+        <ul>
+          <li>
+            <a href="##">整风运动</a>
+          </li>
+          <li>
+            <a href="##" @click="show('土地改革')">土地改革</a>
+          </li>
+          <li>
+            <a href="##">抗美援朝</a>
+          </li>
+          <li>
+            <a href="##">镇压反革命</a>
+          </li>
+          <li>
+            <a href="##">批判《武训传》</a>
+          </li>
+          <li>
+            <a href="##">西藏和平解放</a>
+          </li>
+          <li>
+            <a href="##">“三反”“五反”</a>
+          </li>
+          <li>
+            <a href="##">公审刘青山、张子善</a>
+          </li>
+          <li>
+            <a href="##">第一次全国人民代表大会与第一部宪法</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <span>
+          <a href="index.html">1</a>
+          <a href="index-1.html" class="onpage">2</a>
+          <a href="index-2.html">3</a>
+          <a href="index-3.html">4</a>
+        </span>
+      </div>
     </div>
-<div>
-  <span>
-    <a href="index.html">1</a>
-    <a href="index-1.html" class="onpage">2</a>
-    <a href="index-2.html">3</a>
-    <a href="index-3.html">4</a>
-  </span>
-</div>
+    <div class="line w980 clear"></div>
   </div>
-  <div class="line w980 clear"></div>
 </body>
+
 <script>
-  window.onload = function(){
-    var oLi = document.querySelectorAll(".p1_content li>a");
-    for (var i = 0; i < oLi.length; i++) {
-       oLi[i].onclick = function(){
-          
-         
-       };
-
-    };
-   
-  }
+  var appInstince = new Vue({
+    el: '#app',
+    data: {
+      title: '七七事变',
+      content: '1937年7月7日夜，日军在北平西南卢沟桥附近演习时，借口一名士兵“失踪”，要求进入宛平县城搜查，遭到中国守军第29军严辞拒绝。日军遂向中国守军开枪射击，又炮轰宛平城。第29军奋起抗战。这就是震惊中外的七七事变，又称卢沟桥事变。七七事变是日本帝国主义全面侵华战争的开始，也是中华民族进行全面抗战的起点。',
+    },
+    methods: {
+      show(t) {
+        var title = appInstince.title;
+        var content = appInstince.content;
+        var a = t;
+        if (a == '土地改革') {
+          this.title = a;
+          this.content =
+            "一九四七年九月，中国共产党在河北省石家庄市西柏坡村举行全国土地会议，通过了《中国土地法大纲》，于同年十月十日由中共中央公布。1947年全国土地会议后，各解放区为贯彻会议精神，从各级党、政、军机关抽调大批人员组成工作组深入农村开展工作。1947年11月至12月，一个以土地改革为中心的波澜壮阔的群众运动，很快在陕甘宁、晋绥、晋察冀、晋冀鲁豫、华东等老解放区，东北等半老解放区，以及鄂豫皖、豫皖苏、豫陕鄂、江汉、桐柏等新解放区广泛开展起来.";
+        };
+        if (a == '七七事变') {
+          this.title = a;
+          this.content =
+            "1937年7月7日夜，日军在北平西南卢沟桥附近演习时，借口一名士兵“失踪”，要求进入宛平县城搜查，遭到中国守军第29军严辞拒绝。日军遂向中国守军开枪射击，又炮轰宛平城。第29军奋起抗战。这就是震惊中外的七七事变，又称卢沟桥事变。七七事变是日本帝国主义全面侵华战争的开始，也是中华民族进行全面抗战的起点。.";
+        };
+        if (a == '开国大典') {
+          this.title = a;
+          this.content =
+            "开国大典，是指1949年10月1日15：00在北京为中华人民共和国中央人民政府成立而举行的仪式，直到21：00才结束，是中华人民共和国成立的标志。  中华人民共和国的成立开辟了中国历史新纪元。 从此， 中国结束了一百多年来被侵略、 被奴役的屈辱历史， 真正成为独立自主的国家.";
+        };
+      },
+    },
+  });
 </script>
-</html>
 
-  
-   
+</html>

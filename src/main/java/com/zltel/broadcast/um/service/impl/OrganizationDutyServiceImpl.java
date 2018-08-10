@@ -58,6 +58,8 @@ public class OrganizationDutyServiceImpl extends BaseDaoImpl<OrganizationDuty> i
      */
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R queryOrgDutyForOrgInfoClick(OrganizationDuty organizationDuty) throws Exception {
+		if (organizationDuty == null) 
+			organizationDuty = new OrganizationDuty();
 		organizationDuty.setOrgDutyParentId(-1);
 		//这是组织所对应职责的根节点
 		List<OrganizationDuty> srganizationDutys = organizationDutyMapper.queryOrgDutyForOrgInfoClick(organizationDuty);	
@@ -82,6 +84,8 @@ public class OrganizationDutyServiceImpl extends BaseDaoImpl<OrganizationDuty> i
      * @return	查询得到的组织职责
      */
 	public R queryOrgDutyTreeForOrgInfo (OrganizationDuty organizationDuty) throws Exception {
+		if (organizationDuty == null) 
+			organizationDuty = new OrganizationDuty();
 		organizationDuty.setOrgDutyParentId(-1);
 		//这是组织所对应职责的根节点
 		List<OrganizationDuty> srganizationDutys = organizationDutyMapper.queryOrgDutys(organizationDuty);	

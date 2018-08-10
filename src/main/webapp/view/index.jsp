@@ -178,7 +178,7 @@
             </center>
         </el-dialog>
         <!--contextMenu-->
-        <context-menu :visiable.sync="contextMenu.visiable" :mouse-event="contextMenu.event" @click="contextMenuClick" :data="contextMenuData"></context-menu>
+        <context-menu ref="contextMenu" :visiable.sync="contextMenu.visiable" :mouse-event="contextMenu.event" @click="contextMenuClick" :data="contextMenuData"></context-menu>
     </el-container>
 </body>
 </html>

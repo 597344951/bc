@@ -61,15 +61,16 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     public R queryOrgInfoForIc(Map<String, Object> conditions, int pageNum, int pageSize) {
     	Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (conditions == null) conditions = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
-        	conditions.put("orgInfoId", sysUser.getOrgId());
-        } else {	//个人用户，即党员
         	if (sysUser.getOrgId() == null) {
-        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	conditions.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员，没有此功能的权限，前台此模块不显示
+        	return null;
         }
     	
     	PageHelper.startPage(pageNum, pageSize);
@@ -91,15 +92,16 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     public R queryOrgInfoForIcNotPage(Map<String, Object> conditions) {
     	Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (conditions == null) conditions = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
-        	conditions.put("orgInfoId", sysUser.getOrgId());
-        } else {	//个人用户，即党员
         	if (sysUser.getOrgId() == null) {
-        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	conditions.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员，没有此功能的权限，前台此模块不显示
+        	return null;
         }
     	
     	List<Map<String, Object>> orgInfoForIcs = integralConstituteMapper.queryOrgInfoForIc(conditions);
@@ -118,15 +120,16 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     public R queryPartyUserInfoAndIcInfo(Map<String, Object> conditions, int pageNum, int pageSize) {
     	Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (conditions == null) conditions = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
-        	conditions.put("orgId", sysUser.getOrgId());
-        } else {	//个人用户，即党员
         	if (sysUser.getOrgId() == null) {
-        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	conditions.put("orgId", sysUser.getOrgId());
+        } else {	//个人用户，即党员
+        	return null;
         }
     	
     	PageHelper.startPage(pageNum, pageSize);
@@ -146,20 +149,9 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @param conditions
      * @return
      */
-    public R queryOrgIntegralInfo(Map<String, Object> conditions) {
-    	Subject subject = SecurityUtils.getSubject();
-        SysUser sysUser = (SysUser) subject.getPrincipal();
-        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
-        	//不做任何处理
-        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
-        	conditions.put("orgId", sysUser.getOrgId());
-        } else {	//个人用户，即党员
-        	if (sysUser.getOrgId() == null) {
-        		return R.ok().setMsg("用户没有制定所属组织，如果是党员，请加入组织后在查看");
-        	}
-        	conditions.put("orgId", sysUser.getOrgId());
-        }
-    	
+    public R queryOrgIntegralInfo(Map<String, Object> conditions) {    	
+    	if (conditions == null) 
+    		conditions = new HashMap<>();
     	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
     	Double integralCount = new Double(0.0);
     	Map<String, Object> results = new HashMap<>();
@@ -274,7 +266,11 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @return
      */
     public R updateOrgIntegralConstituteInfo(Map<String, Object> conditions) {
+    	if (conditions == null) 
+    		return R.error().setMsg("发生错误");
     	IntegralConstitute ic = new IntegralConstitute();
+    	if (conditions.get("icId") == null) 
+    		return R.error().setMsg("发生错误");
     	ic.setIcId(Integer.parseInt(String.valueOf(conditions.get("icId"))));
     	ic.setType(conditions.get("type") == null ? null : String.valueOf(conditions.get("type")));
     	ic.setIntegral(new BigDecimal(String.valueOf(conditions.get("integral"))));
@@ -319,6 +315,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @return
      */
     public R integralValidator(Map<String, Object> conditions) {
+    	if (conditions == null) 
+    		return R.error().setData("发生错误");
     	Integer score = Integer.parseInt(String.valueOf(conditions.get("score")));
     	Integer icId = Integer.parseInt(String.valueOf(conditions.get("icId")));
     	conditions.clear();

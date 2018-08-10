@@ -1,0 +1,58 @@
+@charset "utf-8";
+#copyright {
+    width: 980px;
+    margin: 0px auto;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px 0;
+    line-height: 180%;
+    clear: both;
+  }
+  .content-mask{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    width: 250px;
+    /*height: 180px;*/
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    color: #fff;
+    padding: 10px 20px;
+    /*display: none;*/
+  }
+ /* .content-mask:after{
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 140px;
+    width: 0;
+    height: 0;
+    border:10px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.5);
+  }*/
+  .p1_content li a{
+    color:#000;
+    display: block;
+  }
+  .p1_content li a:hover{
+    font-weight: bold;
+    font-size: 15px;
+    text-decoration: none;
+  }
+  .content-mask p{
+    text-indent: 2em;
+    font-family: "microsoft yahei";
+  }
+.content-mask h5{
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  color: #fff021;
+ font-family: "microsoft yahei";
+ }
+  .p1_content .content-active{
+  font-weight: bold;
+  color: #a11100;
+  font-size: 15px;
+ }

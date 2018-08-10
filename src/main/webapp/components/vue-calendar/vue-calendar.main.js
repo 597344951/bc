@@ -3,9 +3,7 @@ import timeUtil from './timeUtil.js';
 export default {
     info: {
         name: 'vue-calendar', // 注册组件名
-        template_url: '/components/vue-calendar/vue-calendar.view.html', // 模块
-																			// 页面模板
-																			// url
+        template_url: '/components/vue-calendar/vue-calendar.view.html',  
         author: 'Wangch',
         descript: 'Vue日历'
     },
@@ -137,6 +135,10 @@ export default {
                 }
             }
             this.list = arr;
+        },
+        /**设置日历 当前月份信息**/
+        setDate(dt){
+            this.myDate = dt;
         }
     },
     mounted() {

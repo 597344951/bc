@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.DeedsUserMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.DeedsUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="deeds_type_id" jdbcType="INTEGER" property="deedsTypeId" />
+    <result column="occurrence_time" jdbcType="TIMESTAMP" property="occurrenceTime" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="deeds_title" jdbcType="VARCHAR" property="deedsTitle" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.um.bean.DeedsUser">
+    <result column="deeds_detail" jdbcType="LONGVARCHAR" property="deedsDetail" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, deeds_type_id, occurrence_time, time, deeds_title
+  </sql>
+  <sql id="Blob_Column_List">
+    deeds_detail
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from deeds_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from deeds_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
+    insert into deeds_user (id, user_id, deeds_type_id, 
+      occurrence_time, time, deeds_detail, deeds_title
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{deedsTypeId,jdbcType=INTEGER}, 
+      #{occurrenceTime,jdbcType=TIMESTAMP}, #{time,jdbcType=TIMESTAMP}, #{deedsDetail,jdbcType=LONGVARCHAR},
+      #{deedsTitle,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
+    insert into deeds_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="deedsTypeId != null">
+        deeds_type_id,
+      </if>
+      <if test="occurrenceTime != null">
+        occurrence_time,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="deedsDetail != null">
+        deeds_detail,
+      </if>
+      <if test="deedsTitle != null">
+        deeds_title,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="deedsTypeId != null">
+        #{deedsTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="occurrenceTime != null">
+        #{occurrenceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deedsDetail != null">
+        #{deedsDetail,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="deedsTitle != null">
+        #{deedsTitle,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
+    update deeds_user
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="deedsTypeId != null">
+        deeds_type_id = #{deedsTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="occurrenceTime != null">
+        occurrence_time = #{occurrenceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deedsDetail != null">
+        deeds_detail = #{deedsDetail,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="deedsTitle != null">
+        deeds_title = #{deedsTitle,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
+    update deeds_user
+    set user_id = #{userId,jdbcType=INTEGER},
+      deeds_type_id = #{deedsTypeId,jdbcType=INTEGER},
+      occurrence_time = #{occurrenceTime,jdbcType=TIMESTAMP},
+      time = #{time,jdbcType=TIMESTAMP},
+      deeds_detail = #{deedsDetail,jdbcType=LONGVARCHAR},
+      deeds_title = #{deedsTitle,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
+    update deeds_user
+    set user_id = #{userId,jdbcType=INTEGER},
+      deeds_type_id = #{deedsTypeId,jdbcType=INTEGER},
+      occurrence_time = #{occurrenceTime,jdbcType=TIMESTAMP},
+      time = #{time,jdbcType=TIMESTAMP},
+      deeds_title = #{deedsTitle,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryDeedsUsers" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select 
+	  du.id di,
+	  bui.name userName,
+	  dt.name deedsTypeName,
+	  du.deeds_title deedsTitle,
+	  du.deeds_detail deedsDetail,
+	  du.occurrence_time occurrenceTime,
+	  du.time time
+	from
+	  deeds_user du
+	  inner join deeds_type dt on du.deeds_type_id = dt.id
+	  inner join base_user_info bui on du.user_id = bui.base_user_id
+	where 
+	  1 = 1
+	  <if test="userId != null and userId != ''"> and 
+		  bui.base_user_id = #{userId}
+	  </if>
+	  <if test="deedsTypeId != null and deedsTypeId != ''"> and 
+		  du.deeds_type_id = #{deedsTypeId}
+	  </if>
+  </select>
+</mapper>

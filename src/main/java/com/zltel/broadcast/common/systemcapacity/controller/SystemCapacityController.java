@@ -46,9 +46,9 @@ public class SystemCapacityController extends BaseController {
     @ApiOperation(value = "查询指定组织组织素材使用容量")
     @GetMapping("/resource-store/{orgid}")
     public R orgResStoreCapacity(@PathVariable("orgid") Integer orgid) {
-        long size = this.resourceMaterialService.orgUsedStoreSize(orgid);
+        Long size = this.resourceMaterialService.orgUsedStoreSize(orgid);
         Capability c = new Capability();
-        c.setUsed(size);
+        c.setUsed(size == null ? 0 : size);
         c.setTotal(DEFAULT_STORE_SIZE);
         return R.ok().setData(c);
     }

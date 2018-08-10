@@ -1,0 +1,43 @@
+/* CSS Document */
+@charset "utf-8";
+body {background:url(bak_line.jpg) center top repeat-y;}
+.allframe { margin:0px auto; padding:0px; clear:both; overflow:hidden;}
+.mainbox { margin:0px auto; padding:0px; min-height:888px;*height:100%;_height:888px;  overflow:hidden;clear:both;}
+.box1200 { margin:0px auto; padding:0px; width:1200px; text-align:left; clear:both;}
+.box1000 { margin:0px auto; padding:0px; width:1000px; clear:both;}
+.box950 { margin:0px auto; padding:0px; width:950px; clear:both;}
+.box_l { float:left; display:block; width:400px; overflow:hidden;  }
+.box_r { float:right; display:block; width:800px;  overflow:hidden;  }
+
+.bodybox { margin:0px auto; padding:0px;  background:url(bak_top.jpg) center top no-repeat;background-size: 100%; clear:both; overflow:hidden;}
+.main_item_top  { margin:0px auto; padding:0px; padding-top:100px;  text-align:center; clear:both;}
+.main_item { margin:0px auto;  width:985px; text-align:left; clear:both; overflow:hidden;}
+.main_item_btm  { margin:0px auto; padding:0px; padding-top:0px; padding-bottom:20px;  text-align:center; clear:both;}
+.main_item dl { float:left; display:block; margin:0px 50px -30px 0px; padding:0px; width:155px; height:271px; background:url(photobak.png) center top no-repeat; background-size: 100% 86%; }
+.main_item dl dt { margin:0px auto; padding:0px; padding-top:35px; clear:both; overflow:hidden; text-align:center;}
+.main_item dl dt img {width:100px; height:100px; -webkit-border-radius:300px;-moz-border-radius:300px; -os-border-radius:300px; border-radius:300px; }
+.main_item dl dd { margin:0px auto; padding:0px 10px; padding-top:12px; line-height:30px; clear:both; overflow:hidden; text-align:center;}
+ 
+.topbar {margin:0px auto; padding:0px;  height:45px; background-color:#FFFFFF; clear:both; overflow:hidden;}
+.top_logo { float:left; display:block; width:150px; overflow:hidden;}
+.top_navg { float:left; display:block; width:850px; height:45px; line-height:45px; overflow:hidden;}
+
+.bodyend { margin:0px auto;  padding:0px;  background:url(bak_bottom.jpg) bottom center no-repeat ; clear:both; overflow:hidden;}
+
+.box_local { margin:20px auto; padding:0px; height:40px; line-height:40px;  background-color:#dba9ab;  text-align:left; clear:both; overflow:hidden; } 
+	.box_local span { float:left; display:block; padding-right:20px; font-weight:bold; text-align:center; width:105px; line-height:40px; font-size:18px; }  .box_local ,.box_local a ,.box_local span ,.box_local span a { color:#FFFFFF;}
+	.box1200 p { padding:10px 0px; }
+.box_lmtitle { margin:0px auto; padding:0px; border-bottom:solid 3px #0779c0; margin-bottom:20px; width:450px; height:125px; clear:both; overflow:hidden;}	
+	.box_lmtitle p { text-align:center; font-size:30px; font-weight:bold; color:#ac4a58; padding-top:65px;  }
+.box_lmtulist { margin:0px auto; padding:0px; clear:both; overflow:hidden;}
+	.box_lmtulist dl {margin:0px auto; padding:10px; overflow:hidden; border:dashed 1px #e2f6ff; } .box_lmtulist dl:hover { background-color:#e2f6ff; }
+	.box_lmtulist dl dt {margin:0px auto; display:block; text-align:center; overflow:hidden; clear:both;}
+	.box_lmtulist dl dd { margin:0px auto; display:block; font-size:16px; clear:both; overflow:hidden;}
+.cont_title { margin:0px auto;padding:0px; font-size:26px;font-weight: bold; line-height:30px; color:#233f71; clear:both; overflow:hidden; text-align:center;}
+.cont_disp { margin:0px auto; margin-top:30px; padding:10px; border-top:dashed 1px #e4e4e4; text-align:center; font-size:14px;  border-bottom:dashed 1px #e4e4e4; line-height:35px;}  .cont_disp,.cont_disp a { color:#999999;}
+.cont_txt { margin:0px auto; margin-top:35px; margin-bottom:35px; line-height:40px; padding:0px; font-size:18px; }
+.cont_txt p{
+	text-indent: 2em;
+	font-size: 16px;
+    line-height: 36px;
+}

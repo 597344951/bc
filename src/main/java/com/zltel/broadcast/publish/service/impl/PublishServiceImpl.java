@@ -108,7 +108,7 @@ public class PublishServiceImpl implements PublishService {
 
         for (Map<String, Object> m : materials) {
             boolean isFile = (boolean) m.get("isFile");
-            if(isFile) {
+            if (isFile) {
                 material = new HashMap<String, Object>();
                 material.put("type", m.get("type"));
                 material.put("name", m.get("name"));
@@ -150,7 +150,7 @@ public class PublishServiceImpl implements PublishService {
         processState.put("msg", Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername());
         simpleDao.add("publish_process_state", processState);*/
 
-        addProcessState(((Long)detail.get("id")).intValue(), user.getUserId(), (int)detail.get("process_item_id"), Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername(), null);
+        addProcessState(((Long) detail.get("id")).intValue(), user.getUserId(), (int) detail.get("process_item_id"), Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername(), null);
 
         // 添加节目到编辑器
         int editId = addToEditor(content);
@@ -181,14 +181,57 @@ public class PublishServiceImpl implements PublishService {
         //添加终端
         addTerminals(detail, (List<Map<String, Object>>) content.get("terminals"));
         //更新状态
-        addProcessState(((Long)detail.get("id")).intValue(), user.getUserId(), (int)detail.get("process_item_id"), Constant.MSG_CONTENT_REPUBLISH + user.getUsername(), null);
+        addProcessState(((Long) detail.get("id")).intValue(), user.getUserId(), (int) detail.get("process_item_id"), Constant.MSG_CONTENT_REPUBLISH + user.getUsername(), null);
 
         doNext(((Long) detail.get("id")).intValue());
 
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void urlCreate(SysUser user, Map<String, Object> content) {
+        Date addDate = new Date();
+        int contentTypeId = (int) content.get("type");
+        // 添加内容
+        Map<String, Object> detail = new HashMap<String, Object>();
+        detail.put("title", content.get("title"));
+        detail.put("content", content.get("url"));
+        detail.put("content_type_id", contentTypeId);
+        detail.put("user_id", user.getUserId());
+        detail.put("add_date", addDate);
+        detail.put("update_date", addDate);
+        // 获取发布流程
+        List<Map<String, Object>> process = getProcess((int) detail.get("content_type_id"));
+        detail.put("process_item_id", process.get(0).get("process_item_id"));
+        simpleDao.add("publish_content", detail);
+        addExamineUsers(detail, (List<Map<String, Object>>) content.get("exUsers"));
+        addTerminals(detail, (List<Map<String, Object>>) content.get("terminals"));
+        addProcessState(((Long) detail.get("id")).intValue(), user.getUserId(), (int) detail.get("process_item_id"), Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername(), null);
+
+        Map<String, Object> program = new HashMap<String, Object>();
+
+
+        String modeltype = (String) content.get("screenType");
+        String playtime = (String) content.get("playLength");
+        String resolution = (String) content.get("resolution");
+        int resolutionw = Integer.parseInt(resolution.split("x")[0]);
+        int resolutionh = Integer.parseInt(resolution.split("x")[1]);
+        program.put("title", content.get("title"));
+        program.put("categoryId", 1);
+        program.put("modeltype", Integer.parseInt(modeltype));
+        program.put("resolutionw", resolutionw);
+        program.put("resolutionh", resolutionh);
+        program.put("playtime", Integer.parseInt(playtime));
+        program.put("urlstr", host + content.get("url"));
+
+        publishDao.updateSnapshot(String.valueOf(solaProgramService.addProgram(program, SolaProgramServiceImpl.ADD_PROGRAM_WITH_URL)), ((Long) detail.get("id")).intValue());
+
+        doNext(((Long) detail.get("id")).intValue());
+    }
+
     /**
      * 关联审核人
+     *
      * @param detail
      * @param examineUsers
      */
@@ -208,6 +251,7 @@ public class PublishServiceImpl implements PublishService {
 
     /**
      * 关联终端
+     *
      * @param detail
      * @param terminals
      */
@@ -223,6 +267,7 @@ public class PublishServiceImpl implements PublishService {
             simpleDao.add("publish_terminal", terminal);
         }
     }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public void doNext(int contentId) {
@@ -300,11 +345,11 @@ public class PublishServiceImpl implements PublishService {
             List<Map<String, Object>> examineUser = getExamineUser(contentId);
             queryParam = new HashMap<String, Object>();
             boolean isFirst = true;
-            for(int i=0; i<examineUser.size(); i++) {
+            for (int i = 0; i < examineUser.size(); i++) {
                 Map<String, Object> exu = examineUser.get(i);
                 exu.put("state", processState.get(Constant.VERIFY) == null ? Constant.VERIFY_NOT_START : Constant.VERIFY_ONCE);
                 //一天时间审核
-                exu.put("deadline", new Date(System.currentTimeMillis() + (i+1) * 24 * 60 * 60 * 1000));
+                exu.put("deadline", new Date(System.currentTimeMillis() + (i + 1) * 24 * 60 * 60 * 1000));
                 exu.put("update_date", update_date);
                 queryParam.put("examine_user_id", exu.get("examine_user_id"));
                 simpleDao.update("publish_examine_user", exu, queryParam);
@@ -328,7 +373,7 @@ public class PublishServiceImpl implements PublishService {
 
     /**
      * 像编辑器添加新编辑内容
-     * 
+     *
      * @param content
      * @return
      */
@@ -337,15 +382,15 @@ public class PublishServiceImpl implements PublishService {
         String programTemplateId = (String) content.get("programTemplateId");
         String programTemplateCategoryId = (String) content.get("programTemplateCategoryId");
         int addType;
-        if(StringUtils.isNotEmpty(programTemplateId) && StringUtils.isNotEmpty(programTemplateCategoryId)) {
+        if (StringUtils.isNotEmpty(programTemplateId) && StringUtils.isNotEmpty(programTemplateCategoryId)) {
             //使用模板添加节目
             program.put("title", content.get("title"));
             program.put("templetId", programTemplateId);
             program.put("categoryId", programTemplateCategoryId);
-            program.put("des", content.get("demand")==null ? "" : content.get("demand"));
+            program.put("des", content.get("demand") == null ? "" : content.get("demand"));
             addType = SolaProgramServiceImpl.ADD_PROGRAM_WITH_TEMPLATE;
         } else {
-            //不适用模板添加节目
+            //不使用模板添加节目
             String modeltype = (String) content.get("screenType");
             String playtime = (String) content.get("playLength");
             String resolution = (String) content.get("resolution");
@@ -357,7 +402,7 @@ public class PublishServiceImpl implements PublishService {
             program.put("resolutionw", resolutionw);
             program.put("resolutionh", resolutionh);
             program.put("playtime", Integer.parseInt(playtime));
-            program.put("des", content.get("demand")==null ? "" : content.get("demand"));
+            program.put("des", content.get("demand") == null ? "" : content.get("demand"));
             addType = SolaProgramServiceImpl.ADD_PROGRAM_NO_TEMPLATE;
         }
         // 素材
@@ -369,7 +414,7 @@ public class PublishServiceImpl implements PublishService {
             String type = (String) material.get("type");
             String name = (String) material.get("name");
             String url;
-            if(isFile) {
+            if (isFile) {
                 url = (String) material.get("url");
             } else {
                 url = "";
@@ -383,11 +428,11 @@ public class PublishServiceImpl implements PublishService {
                 res.put("Type", 4);
                 res.put("Url", url);
                 res.put("Content", "");
-            } else if(Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
+            } else if (Constant.MATERIAL_TYPE_VIDEO.equals(type)) {
                 res.put("Type", 3);
                 res.put("Url", url);
                 res.put("Content", "");
-            } else if(Constant.MATERIAL_TYPE_TEXT.equals(type)) {
+            } else if (Constant.MATERIAL_TYPE_TEXT.equals(type)) {
                 res.put("Type", 1);
                 res.put("Content", URLEncoder.encode((String) material.get("content"), "UTF-8"));
                 res.put("Url", "");
@@ -403,7 +448,7 @@ public class PublishServiceImpl implements PublishService {
 
     /**
      * 在编辑状态
-     * 
+     *
      * @param moreEditUser 编辑用户
      * @return 状态
      */
@@ -421,7 +466,7 @@ public class PublishServiceImpl implements PublishService {
 
     /**
      * 下一个流程
-     * 
+     *
      * @param process    全流程
      * @param curProcess 当前流程
      * @return 下一个
@@ -449,10 +494,10 @@ public class PublishServiceImpl implements PublishService {
             addProcessState(contentId, user.getUserId(), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_PASS + user.getUsername(), null);
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_PASS);
-        } else if(Constant.VERIFY_OPERATE_NOT_APPROVED == operate) {
+        } else if (Constant.VERIFY_OPERATE_NOT_APPROVED == operate) {
             // 审核未通过
             // 添加状态
-            addProcessState(contentId, user.getUserId(), Constant.VERIFY,Constant.MSG_CONTENT_VERIFY_NOT_PASS + user.getUsername(), opinion);
+            addProcessState(contentId, user.getUserId(), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_NOT_PASS + user.getUsername(), opinion);
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_NOT_PASS);
             // 返回到上一个状态
@@ -472,9 +517,9 @@ public class PublishServiceImpl implements PublishService {
                     }
                 }*/
 
-                if(Constant.VERIFY == processItemId) {
+                if (Constant.VERIFY == processItemId) {
 
-                    if(i > 0) {
+                    if (i > 0) {
                         processItemId = (int) process.get(i - 1).get("process_item_id");
                         if (Constant.MORE_EDIT == processItemId) {
                             // 回退到在编辑
@@ -499,7 +544,7 @@ public class PublishServiceImpl implements PublishService {
             // 更新审核人状态
             examineUser.put("state", Constant.VERIFY_ABSTAIN);
             List<Map<String, Object>> examineUsers = getExamineUser(contentId);
-            if(examineUsers.get(examineUsers.size()-1).get("user_id").equals(user.getUserId())) {
+            if (examineUsers.get(examineUsers.size() - 1).get("user_id").equals(user.getUserId())) {
                 // 废弃
                 changeProcess(contentId, Constant.DISCARD);
                 hasNext = false;
@@ -515,7 +560,7 @@ public class PublishServiceImpl implements PublishService {
         examineUser.put("update_date", add_date);
         simpleDao.update("publish_examine_user", examineUser, queryParam);
         // 下一步
-        if(hasNext) {
+        if (hasNext) {
             doNext(contentId);
         }
 
@@ -731,7 +776,7 @@ public class PublishServiceImpl implements PublishService {
                     exUser = exUsers.get(i);
                     exUserId = (int) exUser.get("user_id");
                     state = (int) exUser.get("state");
-                    if(Constant.VERIFY_NOT_START == state || Constant.VERIFY_ONCE == state) {
+                    if (Constant.VERIFY_NOT_START == state || Constant.VERIFY_ONCE == state) {
                         if (exUserId == user.getUserId()) {
                             if (i == 0) {
                                 // 第一个审核人
@@ -849,7 +894,7 @@ public class PublishServiceImpl implements PublishService {
         Map<String, Object> queryParam = new HashMap<String, Object>();
         queryParam.put("snapshot", programId);
         List<Map<String, Object>> contents = simpleDao.query("publish_content", queryParam);
-        for(Map<String, Object> content : contents) {
+        for (Map<String, Object> content : contents) {
             int contentId = (int) content.get("content_id");
             queryParam = new HashMap<String, Object>();
             queryParam.put("content_id", contentId);
@@ -901,10 +946,10 @@ public class PublishServiceImpl implements PublishService {
         int contentId;
         List<Map<String, Object>> list;
         //分组
-        for(Map<String, Object> user : users) {
+        for (Map<String, Object> user : users) {
             contentId = (int) user.get("content_id");
             list = (List<Map<String, Object>>) contentVerifyingUsers.get(contentId);
-            if(list == null) {
+            if (list == null) {
                 list = new ArrayList<>();
                 contentVerifyingUsers.put(contentId, list);
             }
@@ -913,15 +958,15 @@ public class PublishServiceImpl implements PublishService {
         //检查超时
         Map<String, Object> user, state, queryParam;
         Date deadline;
-        for(Integer key : contentVerifyingUsers.keySet()) {
+        for (Integer key : contentVerifyingUsers.keySet()) {
             list = (List<Map<String, Object>>) contentVerifyingUsers.get(key);
-            for(int i=0; i<list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 user = list.get(i);
                 deadline = (Date) user.get("deadline");
-                if(deadline == null) {
+                if (deadline == null) {
                     continue;
                 }
-                if(deadline.getTime() < System.currentTimeMillis()) {
+                if (deadline.getTime() < System.currentTimeMillis()) {
                     //超时
                     state = new HashMap<>();
                     state.put("state", Constant.VERIFY_ABSTAIN);
@@ -931,7 +976,7 @@ public class PublishServiceImpl implements PublishService {
                     simpleDao.update("publish_examine_user", state, queryParam);
                     addProcessState(key, (Integer) user.get("user_id"), Constant.VERIFY, Constant.MSG_CONTENT_VERIFY_ABSTAIN + user.get("username"), null);
                     log.info("审核超时, 自动放弃审核.");
-                    if(list.size() <= 1) {
+                    if (list.size() <= 1) {
                         //没有后续审核人, 内容废止
                         Map<String, Object> content = publishDao.get(key);
                         state = new HashMap<>();

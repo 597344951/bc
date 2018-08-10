@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html >
+<head>
+<meta http-equiv="Content-Language" content="utf-8" />
+<title>党史百科</title>
+<!-- 调用样式表 -->
+<link rel="stylesheet"  href="page.css" type="text/css" media="all"  />
+<link rel="stylesheet"  href="mask.css" type="text/css" media="all"  />
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+<style>
+  .make-program{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: cornflowerblue;
+    padding:6px 14px;
+    border-radius: 6px;
+    color:#fff!important;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: "microsoft yahei";
+  }
+  .make-program:hover{
+    color: #fff;
+    background-color: #5582d4;
+    text-decoration: none;
+  }
+  .make-program:active{
+    font-size: 15px;
+  }
+</style>
+</head>
+
+<body>
+  <a class="make-program"  href="/view/publish/new.jsp?startStep=2&title=党史百科&url=/faker/dsbk/index-3.html">
+    节目制作
+  </a>
+<div id="app">
+  <div class="top02 clear w980">
+    <img src="top01.jpg" width="488" height="167" />
+    <img src="top02.jpg" width="492" height="167" />
+  </div>
+  <div class="content-mask" id="mask">
+    <h5 >{{title}}</h5>
+    <p >{{content}}</p>
+  </div>
+  <div class="clearfix p1_content">
+    <div>
+    <h2>1990—1999</h2>
+    <ul><li><a href='##'   @click="show('')" >村民自治</a></li>
+  </ul>
+    <h2>2000--2012</h2>
+    <ul><li><a href='##'   @click="show('“三个代表”重要思想')" >“三个代表”重要思想</a></li>
+  <li><a href='##'   @click="show('')" >中共十六大</a></li>
+  <li><a href='##'   @click="show('')" >科学发展观 </a></li>
+  <li><a href='##'   @click="show('')" >公开选拔党政领导干部</a></li>
+  <li><a href='##'   @click="show('')" >保持共产党员先进性教育活动</a></li>
+  <li><a href='##'   @click="show('')" >保护合法私有财产入宪</a></li>
+  <li><a href='##'   @click="show('')" >国共两党领导人60年来首次会谈</a></li>
+  <li><a href='##'   @click="show('社会主义和谐社会')" >社会主义和谐社会</a></li>
+  <li><a href='##'   @click="show('')" >十二大至十七大党章的五次修正</a></li>
+  <li><a href='##'   @click="show('')" >中共十七大</a></li>
+  <li><a href='##'   @click="show('')" >深入学习实践科学发展观活动</a></li>
+  <li><a href='##'   @click="show('')" >新中国成立60周年庆典</a></li>
+  <li><a href='##'   @click="show('')" >《中国共产党党员领导干部廉洁从政若干准则》</a></li>
+  </ul>
+    </div>
+    <div class="fl">
+    <h2>2000--2012</h2>
+    <ul><li><a href='##'   @click="show('')" >干部选拔任用工作四项监督制度</a></li>
+  <li><a href='##'   @click="show('')" >修改选举法</a></li>
+  <li><a href='##'   @click="show('')" >创先争优活动</a></li>
+  <li><a href='##'   @click="show('中共十七届五中全会')" >中共十七届五中全会</a></li>
+  <li><a href='##'   @click="show('')" >事业单位改革</a></li>
+  <li><a href='##'   @click="show('')" >“三公”经费公开</a></li>
+  <li><a href='##'   @click="show('')" >中国特色社会主义法律体系形成</a></li>
+  <li><a href='##'   @click="show('')" >政务微博</a></li>
+  <li><a href='##'   @click="show('')" >中国共产党成立90周年</a></li>
+  <li><a href='##'   @click="show('')" >辛亥百年</a></li>
+  <li><a href='##'   @click="show('')" >文化体制改革</a></li>
+  <li><a href='##'   @click="show('')" >党的十七届六中全会</a></li>
+  </ul>
+    
+    </div>
+<div>
+  <span>
+    <a href="index.html" >1</a>
+    <a href="index-1.html">2</a>
+    <a href="index-2.html">3</a>
+    <a href="index-3.html" class="onpage">4</a>
+  </span>
+</div>
+  </div>
+  <div class="line w980 clear"></div>
+</div>
+
+</body>
+<script >
+  var appInstince = new Vue({
+    el: '#app',	
+    data:{
+      title:'“三个代表”重要思想',
+      content:'“三个代表”重要思想是江泽民同志2000年2月25日在广东省考察工作时，从全面总结党的历史经验和如何适应新形势新任务的要求出发，首次对“三个代表”重要思想进行了比较全面的阐述。具体内容为中国共产党始终代表中国先进生产力的发展要求、中国先进文化的前进方向、中国最广大人民的根本利益，是我们党的立党之本、执政之基、力量之源。',
+    },
+    methods:{
+      show(t){
+        var title=appInstince.title;
+        var content=appInstince.content;
+        var a=t;
+        if(a=='“三个代表”重要思想'){
+         this.title=a;
+         this.content="“三个代表”重要思想是江泽民同志2000年2月25日在广东省考察工作时，从全面总结党的历史经验和如何适应新形势新任务的要求出发，首次对“三个代表”重要思想进行了比较全面的阐述。具体内容为中国共产党始终代表中国先进生产力的发展要求、中国先进文化的前进方向、中国最广大人民的根本利益，是我们党的立党之本、执政之基、力量之源。.";
+        };
+        if(a=='社会主义和谐社会'){
+         this.title=a;
+         this.content="社会主义和谐社会是人类孜孜以求的一种美好社会，民主主义政党不懈追求的一种社会理想。中外历史上都产生过不少有关社会和谐的思想。进入21世纪后，十六大和十六届三中全会、四中全会，从全面建设小康社会、开创中国特色社会主义事业新局面的全局出发，明确提出构建和谐社会的战略任务，并将其作为加强党的执政能力建设的重要内容。十六大报告第一次将“社会更加和谐”作为重要目标提出。十六届四中全会，进一步提出构建和谐社会的任务。.";
+        };
+        if(a=='中共十七届五中全会'){
+         this.title=a;
+         this.content="党的十七届五中全会将在2010年10月15日—18日在北京召开。大会将集中讨论审议“十二五”规划建议。“十二五”时期是全面建设小康社会的关键时期，是深化改革开放、加快转变经济发展方式的攻坚时期。深刻认识并全面把握国内外形势新变化新特点，研究和提出关于制定国民经济和社会发展“十二五”规划的建议，对科学编制“十二五”规划，对继续抓住和用好我国发展的重要战略机遇期、保持经济平稳较快发展，对夺取全面建设小康社会新胜利、开创中国特色社会主义事业新局面，具有十分重要的意义。.";
+        };
+      },
+    },
+  });
+</script>
+<script>
+  window.onload = function(){
+    var mask = document.getElementById('mask');
+    var oLi = document.querySelectorAll(".p1_content li a");
+    var h = document.body.clientHeight;
+    var w = document.body.clientWidth;
+    mask.style.display="none";
+    for (var i = 0; i < oLi.length; i++) {
+        oLi[i].i = i;
+        oLi[i].onclick = function(){
+          var aL = oLi[this.i];
+          for(var j = 0 ;j<oLi.length;j++){
+            oLi[j].className=" ";
+          };
+          aL.className = "content-active";
+          mask.style.display="block";
+       
+         var t = aL.offsetTop;
+         var l = aL.offsetLeft;
+          console.log(l-mask.offsetWidth)
+         mask.style.top = t-mask.offsetHeight+'px';
+        if(mask.offsetTop<0){
+          mask.style.top = 10+'px';
+        };
+         if(l>=(w/2)){
+          mask.style.left = l+mask.offsetWidth-50+'px';
+
+         }else{
+          mask.style.left = l-mask.offsetWidth-30+'px';
+         };
+         if((l-mask.offsetWidth)<0){
+          mask.style.left=10+'px';
+         }
+       }
+    };
+  }
+</script>
+</html>
+
+

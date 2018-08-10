@@ -1,8 +1,8 @@
 window.appInstince = new Vue({
     el: '#app',
     data: {
-        programLoading:false,
-        disStatus:'',
+        programLoading: false,
+        disStatus: '',
         optLogs: [],
         extLogs: [],
         optPager: {
@@ -22,7 +22,7 @@ window.appInstince = new Vue({
         dis_h_v: false,
         terminals: [], //终端数据
         tprograms: [], //终端节目数据
-        totalPrograms:[],
+        totalPrograms: [],
         logs: [],
         tpager: {
             total: 0,
@@ -173,15 +173,15 @@ window.appInstince = new Vue({
         this.loadSetting();
         this.loadTeminalInfo();
     },
-    computed:{
-        playingCount(){
-            return this.totalPrograms.filter(el=>el.status == 1).length;
+    computed: {
+        playingCount() {
+            return this.totalPrograms ? this.totalPrograms.filter(el => el.status == 1).length : 0;
         },
-        expiredCount(){
-            return this.totalPrograms.filter(el=>el.status == 0).length;
+        expiredCount() {
+            return this.totalPrograms ? this.totalPrograms.filter(el => el.status == 0).length : 0;
         },
-        notPlayCount(){
-            return this.totalPrograms.filter(el=>el.status == 2).length;
+        notPlayCount() {
+            return this.totalPrograms ? this.totalPrograms.filter(el => el.status == 2).length : 0;
         }
     },
     methods: {
@@ -239,7 +239,7 @@ window.appInstince = new Vue({
             let me = this;
             this.$confirm('是否移除该节目', '是否移除?', {
                 type: 'warn'
-            }).then(()=>{
+            }).then(() => {
                 let url = '/terminal/control/' + this.pgw.terminal.id + '/program/' + t.pkId;
                 ajax_promise(url, 'delete').then((result) => {
                     if (result.status) {
@@ -396,17 +396,17 @@ window.appInstince = new Vue({
         getSettingKey() {
             return 'terminal_manage_Setting';
         },
-        getStatusLabel(t){
+        getStatusLabel(t) {
             let status = t.status;
-            if(status == -1) return '屏幕不存在';
-            if(status == 0) return '节目已过期';
-            if(status == 1) return '正在播放';
-            if(status == 2 ) return '当前未播放';
+            if (status == -1) return '屏幕不存在';
+            if (status == 0) return '节目已过期';
+            if (status == 1) return '正在播放';
+            if (status == 2) return '当前未播放';
             return '未知';
         },
-        filterStatus(status){
+        filterStatus(status) {
             this.disStatus = status;
-            this.tprograms = this.totalPrograms.filter(el=>el.status == status);
+            this.tprograms = this.totalPrograms.filter(el => el.status == status);
         }
     },
     watch: {

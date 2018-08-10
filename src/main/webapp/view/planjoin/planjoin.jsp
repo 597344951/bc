@@ -81,7 +81,7 @@
                                     <template v-if="!data.userSign && data.status == 5">
                                         <el-button type="primary" icon="el-icon-edit" size="small" @click="signPlan(data)">签到</el-button>
                                     </template>
-                                    <template v-if="data.userSign">
+                                    <template v-if="data.userSign && data.status == 5">
                                         已签到: {{data.userSign.time|datetime}}
                                     </template>
                                     <template v-if="data.status == 6">

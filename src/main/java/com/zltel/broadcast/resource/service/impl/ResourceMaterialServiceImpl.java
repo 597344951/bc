@@ -104,7 +104,7 @@ public class ResourceMaterialServiceImpl extends BaseDaoImpl<ResourceMaterial> i
     }
 
     @Override
-    public long orgUsedStoreSize(Integer orgid) {
+    public Long orgUsedStoreSize(Integer orgid) {
        return this.mapper.orgUsedStoreSize(orgid);
     }
 

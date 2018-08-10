@@ -152,7 +152,7 @@ let ins = new Vue({
             return this.orgUsers.filter(u => u.userId == item.userId).map(i => i.username).join('');
         },
         loadOrgUsers() {
-            let url = `/sys/user/querySysUsersNotPage`;
+            let url = `/sys/user/querySysUsersProgram`;
             ajax_json_promise(url, 'post', {}).then(result => {
                 this.orgUsers = result.data;
             });

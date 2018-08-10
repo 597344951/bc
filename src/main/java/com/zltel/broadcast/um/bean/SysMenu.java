@@ -1,6 +1,13 @@
 package com.zltel.broadcast.um.bean;
 
-public class SysMenu {
+import java.io.Serializable;
+
+public class SysMenu implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private Long menuId;
 
     private Long parentId;

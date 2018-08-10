@@ -2,7 +2,9 @@ package com.zltel.broadcast.common.util;
 
 import java.io.Serializable;
 import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -14,8 +16,10 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.stereotype.Component;
 
+import com.zltel.broadcast.um.bean.SysUser;
 
-/** 
+
+/**
  * 缓存控制器
  */
 @Component
@@ -66,13 +70,14 @@ public class CacheUtil {
     /** 清除 登陆凭据缓存 **/
     public static void clearAuthenticationCache(String un) {
         getUpAuthenticationCache().remove(un);
-        getTokenAuthenticationCache().remove(un);
     }
 
     /** 清楚 权限数据缓存 **/
     public static void clearAuthorizationCache(String un) {
-        getAuthorizationCache().keys().stream().filter(a -> ((PrincipalCollection) a).getPrimaryPrincipal().equals(un))
-                .forEach(k -> getAuthorizationCache().remove(k));
+        List<Object> datas = getAuthorizationCache().keys().stream().filter(a -> {
+            return getSysUser(a).getUsername().equals(un);
+        }).collect(Collectors.toList());
+        datas.forEach(k -> getAuthorizationCache().remove(k));
     }
 
     /**
@@ -83,11 +88,25 @@ public class CacheUtil {
     }
 
     /**
+     * 清除 登出session 计数
+     */
+    public static void clearLogCountCache(String sid) {
+        getKickOutCache().values().forEach(l -> {
+            l.remove(sid);
+        });
+    }
+
+    /**
      * 清除 账户重试信息
      */
     public static void clearRetryCache(String un) {
         getPasswordRetryCache().remove(un);
     }
 
+    /** 获取用户信息 **/
+    public static SysUser getSysUser(Object princ) {
+
+        return (SysUser) ((PrincipalCollection) princ).getPrimaryPrincipal();
+    }
 
 }

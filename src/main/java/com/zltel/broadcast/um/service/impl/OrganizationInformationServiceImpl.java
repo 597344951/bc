@@ -131,6 +131,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	public R queryOrgInfosForMap(Map<String, Object> organizationInformation, int pageNum, int pageSize) throws Exception {
 		Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (organizationInformation == null) organizationInformation = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
@@ -433,6 +434,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     public R queryOrgInfosToTree(Map<String, Object> orgInfoConditions) {
     	Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (orgInfoConditions == null) orgInfoConditions = new HashMap<>();
         if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
         } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员，只查询自己组织及下属组织关系

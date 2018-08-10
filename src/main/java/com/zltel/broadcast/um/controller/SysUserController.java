@@ -64,6 +64,22 @@ public class SysUserController extends BaseController {
 	}
 	
 	/**
+	 * 查询系统用户信息
+	 * @param sysUser 条件
+	 * @return
+	 */
+	@RequestMapping(value="/querySysUsersProgram", method=RequestMethod.POST)
+	@LogPoint("查询系统用户信息")
+	@ApiOperation(value = "查询系统用户信息")
+	public R querySysUsersProgram(SysUser sysUser) {
+		try {
+			return sysUserService.querySysUsersProgram(sysUser);
+		} catch (Exception e) {
+			return R.error().setMsg("查询系统用户信息失败");
+		}
+	}
+	
+	/**
 	 * 修改系统用户信息
 	 * @param sysUser 要修改的用户
 	 * @return

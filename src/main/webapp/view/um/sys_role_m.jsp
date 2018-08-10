@@ -190,12 +190,29 @@
 		    	remark: [
 		    		{ required: true, message: '请输入角色名!', trigger: 'blur' }
 		    	]
-		    }
+		    },
+		    signInAccountType: null
 		},
 		created:function () {
 			this.role_manager_querySysRoles();	//页面加载完成就开始查询
+			this.getSignInAccountType();
 		},
 		methods: {
+			getSignInAccountType() {	/*得到该登录用户的类型*/
+				var obj = this;
+
+				var url = "/siat/getSignInAccountType";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.signInAccountType = data.data;
+						}
+					}
+
+				})
+			},
 			role_manager_initPager(){	/* 初始化页面 */
 				var obj = this;
 				obj.role_manager_pager.pageNum = 1;

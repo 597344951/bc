@@ -1,148 +1,206 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html >
+<html>
+
 <head>
-<meta http-equiv="Content-Language" content="utf-8" />
-<title>党史百科</title>
-<!-- 调用样式表 -->
-<link rel="stylesheet"  href="page.css" type="text/css" media="all"  />
+  <meta http-equiv="Content-Language" content="utf-8" />
+  <title>党史百科</title>
+  <!-- 调用样式表 -->
+  <link rel="stylesheet" href="page.css" type="text/css" media="all" />
+  <link rel="stylesheet" href="mask.css" type="text/css" media="all" />
+  <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+  <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+  <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+  <style>
+  body{
+    position: relative;
+  }
+  .make-program{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: cornflowerblue;
+    padding:6px 14px;
+    border-radius: 6px;
+    color:#fff;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff!important;
+    font-family: "microsoft yahei";
+  }
+  .make-program:hover{
+    color: #fff;
+    background-color: #5582d4;
+    text-decoration: none;
+  }
+  .make-program:active{
+    font-size: 15px;
+  }
+  </style>
 </head>
 
 <body>
-  <!--top-->
-  
-  <div class="top02 clear w980">
-    <img src="top01.jpg" width="488" height="167" />
-    <img src="top02.jpg" width="492" height="167" />
-  </div>
+  <a class="make-program" href="/view/publish/new.jsp?startStep=2&title=uri&url=/view/faker/dsbk/index.html">
+    节目制作
+  </a>
+  <div id="app">
+    <div class="top02 clear w980">
+      <img src="top01.jpg" width="488" height="167" />
+      <img src="top02.jpg" width="492" height="167" />
+    </div>
+    <div class="content-mask" id="mask">
+      <h5>{{title}}</h5>
+      <p>{{content}}</p>
+    </div>
+    <div class="clearfix p1_content">
+      <div>
+        <h2>1921-1949</h2>
+        <ul>
+          <li>
+            <a href='##' @click="show('中国共产党诞生和中共一大')">中国共产党诞生和中共一大</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中共二大</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">安源路矿工人大罢工</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">京汉铁路工人大罢工</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中共三大</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">国民党一大与第一次国共合作</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">黄埔军校</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中共四大</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">五卅运动</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">三一八惨案</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中共五大</a>
+          </li>
+          <li>
+            <a href='##' @click="show('南昌起义')">南昌起义</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">八七会议</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">秋收起义</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">广州起义</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中共六大</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">土地革命</a>
+          </li>
+        </ul>
+      </div>
+      <div class="fl">
+        <h2>1921-1949</h2>
+        <ul>
+          <li>
+            <a href='##' @click="show('')">中央革命根据地</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">古田会议</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">“围剿”与反“围剿”</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中共六届四中全会</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">肃反扩大化</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">中华苏维埃共和国</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">宁都起义</a>
+          </li>
+          <li>
+            <a href='##' @click="show('长征')">长征</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">遵义会议</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">一二·九运动</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">瓦窑堡会议</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">东北抗日联军</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">西路军</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">西安事变</a>
+          </li>
+          <li>
+            <a href='##' @click="show('')">第二次国共合作</a>
+          </li>
+        </ul>
 
-  <div class="clearfix p1_content">
-    <div>
-      <h2>1921-1949</h2>
-      <ul>
-        <li>
-          <a href='' >中国共产党诞生和中共一大</a>
-        </li>
-        <li>
-          <a href='' >中共二大</a>
-        </li>
-        <li>
-          <a href='' >安源路矿工人大罢工</a>
-        </li>
-        <li>
-          <a href='' >京汉铁路工人大罢工</a>
-        </li>
-        <li>
-          <a href='' >中共三大</a>
-        </li>
-        <li>
-          <a href='' >国民党一大与第一次国共合作</a>
-        </li>
-        <li>
-          <a href='' >黄埔军校</a>
-        </li>
-        <li>
-          <a href='' >中共四大</a>
-        </li>
-        <li>
-          <a href='' >五卅运动</a>
-        </li>
-        <li>
-          <a href='' >三一八惨案</a>
-        </li>
-        <li>
-          <a href='' >中共五大</a>
-        </li>
-        <li>
-          <a href='' >南昌起义</a>
-        </li>
-        <li>
-          <a href='' >八七会议</a>
-        </li>
-        <li>
-          <a href='' >秋收起义</a>
-        </li>
-        <li>
-          <a href='' >广州起义</a>
-        </li>
-        <li>
-          <a href='' >中共六大</a>
-        </li>
-        <li>
-          <a href='' >土地革命</a>
-        </li>
-      </ul>
+      </div>
+      <div>
+        <span>
+          <a href="index.html" class="onpage">1</a>
+          <a href="index-1.html">2</a>
+          <a href="index-2.html">3</a>
+          <a href="index-3.html">4</a>
+        </span>
+      </div>
     </div>
-    <div class="fl">
-      <h2>1921-1949</h2>
-      <ul>
-        <li>
-          <a href='' >中央革命根据地</a>
-        </li>
-        <li>
-          <a href='' >古田会议</a>
-        </li>
-        <li>
-          <a href='' >“围剿”与反“围剿”</a>
-        </li>
-        <li>
-          <a href='' >中共六届四中全会</a>
-        </li>
-        <li>
-          <a href='' >肃反扩大化</a>
-        </li>
-        <li>
-          <a href='' >中华苏维埃共和国</a>
-        </li>
-        <li>
-          <a href='' >宁都起义</a>
-        </li>
-        <li>
-          <a href='' >长征</a>
-        </li>
-        <li>
-          <a href='' >遵义会议</a>
-        </li>
-        <li>
-          <a href='' >一二·九运动</a>
-        </li>
-        <li>
-          <a href='' >瓦窑堡会议</a>
-        </li>
-        <li>
-          <a href='' >东北抗日联军</a>
-        </li>
-        <li>
-          <a href='' >西路军</a>
-        </li>
-        <li>
-          <a href='' >西安事变</a>
-        </li>
-        <li>
-          <a href='' >第二次国共合作</a>
-        </li>
-      </ul>
-
-    </div>
-    <div>
-      <span>
-        <a href="index.html" class="onpage">1</a>
-        <a href="index-1.html">2</a>
-        <a href="index-2.html">3</a>
-        <a href="index-3.html">4</a>
-      </span>
-    </div>
+    <div class="line w980 clear"></div>
   </div>
-  <div class="line w980 clear"></div>
-  <style type="text/css">
-    #copyright {
-      width: 980px;
-      margin: 0px auto;
-      font-size: 12px;
-      text-align: center;
-      padding: 20px 0;
-      line-height: 180%;
-      clear: both;
-    }
-  </style>
 </body>
+<script>
+  var appInstince = new Vue({
+    el: '#app',
+    data: {
+      title: '中国共产党诞生和中共一大',
+      content: '中国共产党第一次全国代表大会于1921年7月23日至31日在上海法租界贝勒路树德里3号（后称望志路106号，现改兴业路76号）和浙江嘉兴南湖召开。出席大会的各地代表共13人。中国共产党第一次全国代表大会鉴于当时党员人数少、地方组织尚不健全，决定暂不成立中央委员会，先建立三人组成的中央局，并选举陈独秀任书记，张国焘为组织主任，李达为宣传主任。党的第一个中央机关由此产生。',
+    },
+    methods: {
+      show(t) {
+        var title = appInstince.title;
+        var content = appInstince.content;
+        var a = t;
+        if (a == '中国共产党诞生和中共一大') {
+          this.title = a;
+          this.content =
+            "中国共产党第一次全国代表大会于1921年7月23日至31日在上海法租界贝勒路树德里3号（后称望志路106号，现改兴业路76号）和浙江嘉兴南湖召开。出席大会的各地代表共13人。中国共产党第一次全国代表大会鉴于当时党员人数少、地方组织尚不健全，决定暂不成立中央委员会，先建立三人组成的中央局，并选举陈独秀任书记，张国焘为组织主任，李达为宣传主任。党的第一个中央机关由此产生。.";
+        };
+        if (a == '南昌起义') {
+          this.title = a;
+          this.content =
+            "八一南昌起义常简称南昌起义或者八一起义，指在1927年8月1日中共联合国民党左派，打响了武装反抗国民党反动派的第一枪，揭开了中国共产党独立领导武装斗争和创建革命军队的序幕。1927年8月1日，中国共产党领导部分国民革命军在江西省南昌市举行的武装起义。起义由周恩来、贺龙、叶挺、朱德、刘伯承、谭平山领导。1933年7月11日，中华苏维埃共和国临时中央政府根据中央革命军事委员会6月30日的建议，决定8月1日为中国工农红军成立纪念日。从此，8月1日成为中国工农红军和后来的中国人民解放军的建军节。.";
+        };
+        if (a == '长征') {
+          this.title = a;
+          this.content =
+            "土地革命战争时期，中国工农红军主力撤离长江南北各苏区，转战两年，到达陕甘苏区的战略转移行动。1934年10月，第五次反围剿失败后，中央主力红军为摆脱国民党军队的包围追击，被迫实行战略性转移，退出中央根据地，进行长征。长征是人类历史上的伟大奇迹，中央红军共进行了380余次战斗，攻占700多座县城，红军牺牲了营以上干部多达430余人，平均年龄不到30岁，共击溃国民党军数百个团，其间共经过14个省，翻越18座大山，跨过24条大河，走过荒草地，翻过雪山，行程约二万五千里，红一方面军于1935年10月到达陕北，与陕北红军胜利会师。1936年10月，红二、四方面军到达甘肃会宁地区，同红一方面军会师。红军三大主力会师，标志着万里长征的胜利结束。";
+        };
+      },
+    },
+  });
+</script>
+
 </html>

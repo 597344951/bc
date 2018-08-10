@@ -229,7 +229,7 @@ window.appInstince = new Vue({
     },
     loadOrgUsers() {
       let orgId = window.sysInfo.orgId;
-      let url = `/sys/user/querySysUsersNotPage`;
+      let url = `/sys/user/querySysUsersProgram`;
       ajax_json_promise(url, 'post', {
         orgId: orgId
       }).then(result => {

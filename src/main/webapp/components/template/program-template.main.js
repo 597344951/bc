@@ -59,7 +59,11 @@ let ProgramTemplate = {
         //打开节目预览
         openProgramView(pt) {
             let url = '/sola/view/' + pt.programId;
-            window.open(url, "_blank", "width=800 height=600");
+            if(openwindow) {
+                openwindow(url,pt.name)
+            } else {
+                window.open(url, "_blank", "width=800 height=600");
+            }
         },
         handleSizeChange(val) {
             this.tpager.size = val;

@@ -65,7 +65,8 @@ window.appInstince = new Vue({
         }
     },
     methods: {
-        contextMenuClick(item) {
+        contextMenuClick(item,datas) {
+            this.contextNode = datas[0];
             let me = this;
             let tabs = this.openTabDatas.filter(item => item.closable);
             if (item.label == '关闭所有') {
@@ -78,8 +79,7 @@ window.appInstince = new Vue({
         },
         showMenu(item) {
             console.log('ContextMenu Show:', arguments);
-            this.contextMenu.visiable = true;
-            this.contextMenu.event = event;
+            this.$refs.contextMenu.showMenu(event,item);
             this.contextNode = item;
         },
         tabRemove() {

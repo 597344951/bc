@@ -259,7 +259,9 @@
 	  pui.develop_user developUser,
 	  pui.missing_user missingUser,
 	  pui.introduce introduce,
-	  bui.is_party isParty
+	  bui.is_party isParty,
+	  od.org_duty_name orgDutyName,
+	  oi.org_info_name orgInfoName
 	from
 	  base_user_info bui 
 	  left join party_user_info pui on bui.base_user_id = pui.party_user_id
@@ -269,7 +271,9 @@
 	  left join work_nature_type wnt on bui.work_nature = wnt.work_nature_id 
 	  left join join_party_branch_type jpbt on pui.join_party_branch_type_id = jpbt.jpbt_id 
 	  left join first_line_type flt on bui.first_line_situation = flt.flt_id 
-	  left join organization_relation _or on bui.base_user_id = _or.org_rlt_user_id
+	  left join organization_relation _or on bui.base_user_id = _or.org_rlt_user_id 
+	  left join organization_duty od on _or.org_rlt_duty_id = od.org_duty_id 
+	  left join organization_information oi on _or.org_rlt_info_id = oi.org_info_id
 	where
 	  1 = 1
 	  <!-- bui.base_user_id = pui.party_user_id and
@@ -288,6 +292,9 @@
 	  </if>
 	  <if test="idCard != null and idCard != ''"> and 
 		  bui.id_card = #{idCard}
+	  </if>
+	  <if test="sex != null and sex != ''"> and 
+		  bui.sex = #{sex}
 	  </if>
   </select>
   

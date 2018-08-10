@@ -21,9 +21,6 @@
 <script src="${urls.getForLookupPath('/components/main.js')}" ></script>
 <!--模块打包前源码引入
 <script src="${urls.getForLookupPath('/components/index.js')}" type="module"></script>-->
-<!-- 不支持模块的兼容方案
-<script nomodule src="${urls.getForLookupPath('/components/main.js')}"></script>
--->
 
 <!--弹窗-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.js"></script>

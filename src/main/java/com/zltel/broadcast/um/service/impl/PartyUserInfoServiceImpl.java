@@ -30,14 +30,18 @@ import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.common.util.CacheUtil;
 import com.zltel.broadcast.common.util.PasswordHelper;
 import com.zltel.broadcast.um.bean.BaseUserInfo;
+import com.zltel.broadcast.um.bean.DeedsType;
 import com.zltel.broadcast.um.bean.OrganizationRelation;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
 import com.zltel.broadcast.um.bean.SysRole;
 import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.bean.SysUserRole;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
+import com.zltel.broadcast.um.dao.DeedsTypeMapper;
+import com.zltel.broadcast.um.dao.DeedsUserMapper;
 import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
 import com.zltel.broadcast.um.dao.SysRoleMapper;
 import com.zltel.broadcast.um.dao.SysUserMapper;
@@ -68,10 +72,12 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	
 	@Resource
 	private SysUserMapper sysUserMapper;
-	
+	@Resource
+    private DeedsUserMapper deedsUserMapper;
 	@Resource
 	private SysRoleMapper sysRoleMapper;
-	
+	@Resource
+    private DeedsTypeMapper deedsTypeMapper;
 	@Resource
 	private SysUserRoleMapper sysUserRoleMapper;
 	
@@ -94,6 +100,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	public R queryPartyUserInfos(Map<String, Object> partyUserMap, int pageNum, int pageSize) throws Exception {
 		Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (partyUserMap == null) partyUserMap = new HashMap<>();
         
     	if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
         	//不做任何处理
@@ -116,6 +123,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 		List<Map<String, Object>> partyUserInfos = partyUserInfoMapper.queryPartyUserInfos(partyUserMap);	//开始查询，没有条件则查询所有组织关系
 		PageInfo<Map<String, Object>> partyUserInfosPageInfo = new PageInfo<>(partyUserInfos);
 		if (partyUserInfosPageInfo != null && partyUserInfosPageInfo.getList() != null && partyUserInfosPageInfo.getList().size() > 0) {	//是否查询到数据
+			List<DeedsType> dts = deedsTypeMapper.queryDeedsTypes(null);
 			for (Map<String, Object> partyUserInfo : partyUserInfos) {
 				partyUserInfo.put("birthDate", 
 						DateUtil.formatDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("birthDate") == null ||
@@ -161,6 +169,24 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 				Date joinDateFormal = DateUtil.toDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("joinDateFormal") == null || partyUserInfo.get("joinDateFormal") == "" ?
 						null : partyUserInfo.get("joinDateFormal").toString());
 				partyUserInfo.put("joinDateFormalAge", getPartyUserAge(joinDateFormal));
+				
+				
+				if (dts != null && dts.size() > 0) {
+					Map<String, Object> conditions = new HashMap<>();
+					for (DeedsType deedsType : dts) {
+						conditions.put("deedsTypeId", deedsType.getId());
+						conditions.put("userId", partyUserInfo.get("id"));
+						List<Map<String, Object>> dusMap = deedsUserMapper.queryDeedsUsers(conditions);
+						if (dusMap != null && dusMap.size() > 0 && "个人荣誉".equals(deedsType.getName())) {
+							for (Map<String, Object> map : dusMap) {
+								map.put("occurrenceTime", 
+										DateUtil.formatDate(DateUtil.YYYY_MM_DD, map.get("occurrenceTime") == null ||
+												map.get("occurrenceTime") == "" ? null : (Date)map.get("occurrenceTime")));
+							}
+						}
+						partyUserInfo.put(deedsType.getName(), dusMap);
+					}
+				}
 			}
 			return R.ok().setData(partyUserInfosPageInfo).setMsg("查询党员信息成功");
 		} else {
@@ -239,6 +265,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
      * @throws Exception
      */
     public R savePartyUserInfoIdPhoto(HttpServletRequest request, MultipartFile file) throws Exception {
+    	if (file == null) return R.error().setMsg("未选择图片");
     	String partyUserIdPhotoTempFileName = UUID.randomUUID().toString() + "." + FileUtil.getFileSuffix(file.getOriginalFilename());	//临时文件文件名
     	FileUtil.writeFile(file.getInputStream(), uploadIdPhotoTempPath, partyUserIdPhotoTempFileName);
     	request.getSession().setAttribute("partyUserIdPhotoFileName", file.getOriginalFilename());
@@ -254,6 +281,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R insertPartyUserInfo(HttpServletRequest request, Map<String, Object> partyUser) throws Exception {
+    	if (partyUser == null) 
+    		return R.error().setMsg("发生错误");
     	BaseUserInfo baseUserInfo = new BaseUserInfo();
     	PartyUserInfo partyUserInfo = new PartyUserInfo();
     	//照片地址
@@ -387,6 +416,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, Map<String, Object> partyUser) throws Exception {
+    	if (file == null) 
+    		return R.error().setMsg("为选择图片");
     	List<Map<String, Object>> puiMaps = partyUserInfoMapper.queryPartyUserInfos(partyUser);
     	if (puiMaps != null && puiMaps.size() == 1) {
     		String idPhotoPath = uploadIdPhotoPath;	//上传照片文件夹路径
@@ -414,6 +445,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R updatePartyUserInfo(HttpServletRequest request, Map<String, Object> partyUser) throws Exception {
+    	if (partyUser == null) 
+    		return R.error().setMsg("未选择人员");
     	BaseUserInfo baseUserInfo = new BaseUserInfo();
     	PartyUserInfo partyUserInfo = new PartyUserInfo();
     	//照片地址
@@ -424,6 +457,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	baseUserInfo.setEmail((String)partyUser.get("email"));
     	baseUserInfo.setQq((String)partyUser.get("qq"));
     	baseUserInfo.setWechat((String)partyUser.get("wechat"));
+    	baseUserInfo.setIdCard((String)partyUser.get("idCard"));
     	baseUserInfo.setEducation(StringUtil.isEmpty((String)partyUser.get("education")) ? 
     			null : Integer.parseInt((String)partyUser.get("education")));
     	baseUserInfo.setAcademicDegree(StringUtil.isEmpty((String)partyUser.get("academicDegree")) ? 
@@ -557,6 +591,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 				SysUser su = new SysUser();
 				su.setUsername(baseUserInfo.getIdCard());
 				sysUserMapper.deleteByUserName(su);
+				CacheUtil.clearAuthenticationCache(su.getUsername());
 			}
 			
 			

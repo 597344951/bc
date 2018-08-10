@@ -335,7 +335,7 @@ const app = new Vue({
             this.loadQuestion(cur, this.questions.pageSize)
         },
         handleUploadSuccess(response, file, fileList) {
-            if(response.status) {
+            if (response.status) {
                 this.questionImport.data.importFile = response.fileName
             }
         },
@@ -348,7 +348,7 @@ const app = new Vue({
                         })
                         return false
                     }
-                    
+
                     this.$confirm('确认提交 ?', '确认提交', {
                         confirmButtonText: '确认',
                         cancelButtonText: '再看看',
@@ -356,7 +356,7 @@ const app = new Vue({
                     }).then(() => {
                         let url = "/question/import"
                         postJson(url, this.questionImport.data, reps => {
-                            if(reps.status) {
+                            if (reps.status) {
                                 app.$message(`成功添加${reps.correct}条记录, 错误记录: [${reps.errorRow.join(',')}]`)
                                 app.loadQuestion(1, app.questions.pageSize)
                             } else {
@@ -364,7 +364,7 @@ const app = new Vue({
                             }
                         })
                         this.questionImport.show = false
-                    }).catch(() => {})
+                    }).catch(() => { })
                 } else {
                     return false;
                 }
@@ -381,14 +381,23 @@ const app = new Vue({
             }).then(() => {
                 let url = "/question/delete"
                 postJson(url, row, reps => {
-                    if(reps.status) {
+                    if (reps.status) {
                         app.$message('删除成功...')
                         app.loadQuestion(1, app.questions.pageSize)
                     } else {
                         app.$message.error(reps.msg)
                     }
                 })
-            }).catch(() => {})
+            }).catch(() => { })
+        },
+        share() {
+            let share = [{weburl: '/html/questionnaire_view.html', playtime: 30*60}]
+            let url = '/view/publish/new.jsp?title=知识问答&startStep=2&url=' + encodeURIComponent(JSON.stringify(share))
+            if (parent.addTab) {
+                parent.addTab({ menuId: -4, name: '知识问道投屏', url: url })
+            } else {
+                window.location.href = url
+            }
         }
     }
 

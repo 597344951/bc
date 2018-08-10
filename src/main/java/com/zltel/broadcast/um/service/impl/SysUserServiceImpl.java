@@ -79,16 +79,21 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 	public R querySysUsers(SysUser sysUser, int pageNum, int pageSize) throws Exception {
 		Subject subject = SecurityUtils.getSubject();
         SysUser su = (SysUser) subject.getPrincipal();
+        if (sysUser == null) sysUser = new SysUser();
         
-    	if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+    	if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员，查询全部
         	//不做任何处理
-        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员，只查询组织内相关的
         	if (su.getOrgId() == null) {
         		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	sysUser.setOrgId(su.getOrgId());
-        } else {	//如果是个人账户
-        	sysUser.setUserId(su.getUserId());
+        } else {	//如果是个人账户，只查询自己
+        	if (su.getUserType() == 0) {
+        		return R.ok().setCode(100).setMsg("非党员账户请先设置管理员类型");
+        	} else if (su.getUserType() == 1) {
+        		sysUser.setUserId(su.getUserId());
+            }
         }
 		
 		PageHelper.startPage(pageNum, pageSize);
@@ -111,16 +116,21 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 	public R querySysUsersNotPage(SysUser sysUser) throws Exception {
 		Subject subject = SecurityUtils.getSubject();
         SysUser su = (SysUser) subject.getPrincipal();
+        if (sysUser == null) sysUser = new SysUser();
         
-    	if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+    	if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员，查询全部
         	//不做任何处理
-        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员，只查询组织内相关的
         	if (su.getOrgId() == null) {
         		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
         	}
         	sysUser.setOrgId(su.getOrgId());
-        } else {	//如果是个人账户
-        	sysUser.setUserId(su.getUserId());
+        } else {	//如果是个人账户，只查询自己
+        	if (su.getUserType() == 0) {
+        		return R.ok().setCode(100).setMsg("非党员账户请先设置管理员类型");
+        	} else if (su.getUserType() == 1) {
+        		sysUser.setUserId(su.getUserId());
+            }
         }
 		
 		List<SysUser> sysUsers = sysUserMapper.querySysUsers(sysUser);	//开始查询，没有条件则查询所有系统用户
@@ -130,6 +140,21 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 			return R.ok().setMsg("没有查询到系统用户");
 		}
 	}
+	
+	/**
+     * 查询系统用户信息
+     * 
+     * @param sysUser 条件
+     * @return 查询得到的系统用户
+     */
+    public R querySysUsersProgram(SysUser sysUser) {
+    	List<SysUser> sysUsers = sysUserMapper.querySysUsers(sysUser);	//开始查询，没有条件则查询所有系统用户
+		if (sysUsers != null && sysUsers.size() > 0) {	//是否查询到数据
+			return R.ok().setData(sysUsers).setMsg("查询系统用户信息成功");
+		} else {
+			return R.ok().setMsg("没有查询到系统用户");
+		}
+    }
 	
 	/**
      * 修改系统用户信息
@@ -159,9 +184,11 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R updateSysUserPwd(SysUser sysUser) throws Exception {
 		if (sysUser != null && StringUtil.isNotEmpty(sysUser.getPassword())) {
+			String username = "";
 			if (sysUser.getUserId() != null || sysUser.getUsername() != null) {	//userId或者userName当唯一
 				SysUser su = new SysUser();
 				su.setUsername(sysUser.getUsername());
+				username = sysUser.getUsername();
 				List<SysUser> sus = sysUserMapper.querySysUsers(su);
 				if (sus != null && sus.size() == 1) {
 					su = sus.get(0);
@@ -177,7 +204,7 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 			sysUser.setSalt(salt);	//保存盐
 			sysUser.setPassword(PasswordHelper.encryptPassword(sysUser.getPassword(), salt));	//加密
 			int count = this.updateByPrimaryKeySelective(sysUser);	//开始修改系统用户信息
-			CacheUtil.clearAuthenticationCache(sysUser.getUsername());
+			CacheUtil.clearAuthenticationCache(username);
 			if (count == 1) {	//受影响的行数，判断是否修改成功
 				return R.ok().setMsg("系统用户信息修改成功。");
 			} else {
@@ -202,7 +229,9 @@ public class SysUserServiceImpl extends BaseDaoImpl<SysUser> implements SysUserS
 			if (sysUser.getUserId() == null) {
 				throw new Exception();	//删除用户一定需要uid，依据uid进行用户的删除
 			}
-			count += this.deleteByPrimaryKey(sysUser.getUserId());	//开始删除系统用户信息
+			sysUser = this.selectByPrimaryKey(sysUser.getUserId());
+			count = this.deleteByPrimaryKey(sysUser.getUserId());	//开始删除系统用户信息
+			CacheUtil.clearAuthenticationCache(sysUser.getUsername());
 			//删除此用户拥有的角色
 			SysUserRole sur = new SysUserRole();
 			sur.setUserId((long)sysUser.getUserId());

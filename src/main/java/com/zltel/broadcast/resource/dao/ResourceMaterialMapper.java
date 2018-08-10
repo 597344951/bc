@@ -22,5 +22,5 @@ public interface ResourceMaterialMapper extends BaseDao<ResourceMaterial> {
 
     void inserts(List<ResourceMaterial> records);
 
-    long orgUsedStoreSize(Integer orgid);
+    Long orgUsedStoreSize(Integer orgid);
 }

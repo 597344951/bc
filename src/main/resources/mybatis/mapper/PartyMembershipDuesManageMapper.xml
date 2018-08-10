@@ -222,6 +222,12 @@
       <if test="userId != null and userId != ''"> and
           pmdm.user_id = #{userId}
       </if>
+      <if test="shouldPayDateStart != null"> and 
+		  pmdm.should_pay_date_start >= #{shouldPayDateStart}
+	  </if>
+	  <if test="shouldPayDateEnd != null"> and 
+		  pmdm.should_pay_date_end &lt;= #{shouldPayDateEnd}
+	  </if>
 	order by
 	  pmdm.should_pay_date_end desc
   </select>
@@ -237,6 +243,9 @@
 	  1 = 1
 	  <if test="orgInfoName != null and orgInfoName != ''"> and
           _oi.org_info_name like CONCAT('%',#{orgInfoName},'%')
+      </if>
+      <if test="orgInfoId != null and orgInfoId != ''"> and
+          _oi.org_info_id = #{orgInfoId}
       </if>
   </select>
 </mapper>
