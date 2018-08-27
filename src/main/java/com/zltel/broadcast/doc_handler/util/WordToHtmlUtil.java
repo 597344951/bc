@@ -5,13 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -21,7 +20,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -119,7 +117,10 @@ public class WordToHtmlUtil {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         DOMSource domSource = new DOMSource(htmlDocument);
         StreamResult streamResult = new StreamResult(outStream);
-        Transformer serializer = TransformerFactory.newInstance().newTransformer();
+        TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        
+        Transformer serializer = factory.newTransformer();
         serializer.setOutputProperty(OutputKeys.ENCODING, "utf-8");// 编码格式
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");// 是否用空白分割
         serializer.setOutputProperty(OutputKeys.METHOD, "html");// 输出类型

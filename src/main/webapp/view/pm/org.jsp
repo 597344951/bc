@@ -1518,7 +1518,7 @@
         		obj.partyOrg_manager_showThisOrgPeoples();
         	},
         	getPath(row) {	/* 得到党员用户id并返回请求路径 */
-				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.baseUserId + "&t=" + Math.random();
+				return "http://192.168.1.119:3000" + row.idPhoto;
 			},
 			thisOrgInfoChildrensPagerInit() {
         		var obj = this;

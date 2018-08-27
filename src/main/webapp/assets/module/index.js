@@ -2,6 +2,15 @@
 window.addTab = function (target) {
     appInstince.addTab(target);
 }
+
+function checkScreenSize(){
+    if(window.screen.width < 1024){
+        return {collapse:true,width:'0px'}
+    }
+
+    return {collapse:false,width:'230px'}
+}
+
 var title_theme = window.sysInfo.title_theme
 window.appInstince = new Vue({
     el: '#app',
@@ -12,8 +21,8 @@ window.appInstince = new Vue({
             userId: window.sysInfo.userId,
             sysUserName: window.sysInfo.sysUserName,
             sysUserAvatar: './assets/avatars/develop.gif',
-            menuWidth: '230px',
-            isCollapse: false, //是否收缩
+            menuWidth: checkScreenSize().width,
+            isCollapse: checkScreenSize().collapse, //是否收缩
             colors: {
                 menu_bg: '#eef1f6',
                 menu_txt: '#48576a',
@@ -134,7 +143,7 @@ window.appInstince = new Vue({
             this.saveSetting();
         },
         _openHideMenu(show) {
-            this.app.isCollapse = show;
+            this.app.isCollapse = checkScreenSize().collapse || show;
             if (!this.app.isCollapse) this.app.menuWidth = '230px';
             else this.app.menuWidth = '65px'
         },

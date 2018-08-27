@@ -8,7 +8,7 @@
 	<link href="lefont.css" rel="stylesheet" type="text/css">
 	<link href="ledivs.css" rel="stylesheet" type="text/css">
 <style>
-   .make-program{
+   .make-program,.make-program2{
     position: absolute;
     top: 10px;
     right: 10px;
@@ -21,20 +21,29 @@
     color: #fff!important;
     font-family: "microsoft yahei";
   }
-  .make-program:hover{
+  .make-program:hover,.make-program2:hover{
     color: #fff;
     background-color: #5582d4;
     text-decoration: none;
   }
-  .make-program:active{
+  .make-program:active,.make-program2:active{
     font-size: 15px;
+  }
+  .make-program2{
+  
+    border:none;
+    cursor: pointer;
+    right: 100px;
+  
   }
 </style>
 </head>
 <body>
-<a class="make-program" href="/view/publish/new.jsp?startStep=2&title=先进典型&url=/faker/xjdx/index.html">
-   					 节目制作
- 					</a>
+<a class="make-program" href="/view/publish/new.jsp?startStep=2&title=先进典型&url=/faker/xjdx/index.html">节目制作</a>
+	<button type="button" 
+		onclick="makeshow()" class="make-program2">
+		演示节目制作
+	</button>
 	<div class="bodybox">
 		<div class="box1000">
 			<div class="main_item_top">
@@ -72,20 +81,20 @@
 				</dl>
 				<dl>
 					<dt>
-						<a href="" >
+						<a href="/vertical/index.html" >
 							<img src="4.jpg" border="0"> </a>
 					</dt>
 					<dd>
-						<a href="" > 富阳协警：新320国道发生连环车祸，协警执行任务中不幸牺牲</a>
+						<a href="/vertical/index.html" > 富阳协警：新320国道发生连环车祸，协警执行任务中不幸牺牲</a>
 					</dd>
 				</dl>
 				<dl>
 					<dt>
-						<a href="" >
+						<a href="/vertical/index.html" >
 							<img src="5.jpg" border="0"> </a>
 					</dt>
 					<dd>
-						<a href="" > 江干公益人物：道德高地书写江干篇章</a>
+						<a href="/vertical/index.html" > 江干公益人物：道德高地书写江干篇章</a>
 					</dd>
 				</dl>
 				<dl>
@@ -135,7 +144,12 @@
 				</dl>
 
 			</div>
-			<script> 
+			<script>
+			function makeshow(){
+				var share = [{weburl: '/faker/xjdx/index.htm', playtime: 5*1000},{weburl: '/faker/xjdx/1.htm', playtime: 5*1000},{weburl: '/faker/xjdx/2.htm', playtime: 5*1000},{weburl: '/faker/xjdx/rwfc.html', playtime: 5*1000},{weburl: '/faker/xjdx/vertical/index.html', playtime: 5*1000},{weburl: '/faker/xjdx/vertical2/index.html', playtime: 5*1000}];
+	            var url = '/view/publish/new.jsp?title=先进典型&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+	            window.location.href=url;
+			}
 				function del4margin(x) {
 					var ObjLi = document.getElementById("list").getElementsByTagName("dl");
 					for (var i = 1; i <= ObjLi.length; i++) {

@@ -10,7 +10,6 @@
     <%@include file="/include/vcharts.jsp" %>
     <style>
         #app {
-            min-width: 1150px;
             padding-right: 30px;
             padding-bottom: 30px;
             /*margin-top: -5px;*/
@@ -194,7 +193,7 @@
 <div id="app">
     <el-row :gutter="10">
         <%--待办待审--%>
-        <el-col :span="8">
+        <el-col :span="8" class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '258px', padding: '15px'}">
                 <el-tabs v-model="pending.active">
                     <el-tab-pane name="handle">
@@ -213,7 +212,7 @@
             </el-card>
         </el-col>
         <%--通告--%>
-        <el-col :span="8">
+        <el-col :span="8" class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span><i class="min-icons el-icon-date"></i>通知告示</span>
@@ -223,7 +222,7 @@
             </el-card>
         </el-col>
 
-        <el-col :span="8">
+        <el-col :span="8" class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span><i class="min-icons fa fa-play-circle"></i>正在播放内容</span>
@@ -234,7 +233,7 @@
         </el-col>
     </el-row>
     <el-row :gutter="10">
-        <el-col :span="16">
+        <el-col :span="16" class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span><i class="min-icons fa fa-user-plus"></i>党员发展</span>
@@ -300,7 +299,7 @@
                 </shiro:hasAnyRoles>
             </el-card>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="8" class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span><i class="min-icons fa fa-arrow-circle-right" aria-hidden="true"></i>便捷入口</span>
@@ -315,7 +314,7 @@
         </el-col>
     </el-row>
     <%-- <el-row :gutter="10">
-        <el-col :span="12">
+        <el-col :span="12"  class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>近期活动</span>
@@ -334,7 +333,7 @@
                 </el-row>
             </el-card>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12"  class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
                     <span>近期文档成果</span>

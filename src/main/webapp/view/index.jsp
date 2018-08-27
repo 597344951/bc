@@ -96,7 +96,7 @@
                     <i v-if="app.isCollapse" :class="app.sysIcon" :title="app.sysName"></i>
                 </el-col>
                 <el-col :span="4">
-                    <div class="tools" @click.prevent="openHideMenu">
+                    <div class="tools hidden-if-mobile" @click.prevent="openHideMenu">
                         <i class="glyphicon glyphicon-align-justify collapseIcon"></i>
                     </div>
                 </el-col>

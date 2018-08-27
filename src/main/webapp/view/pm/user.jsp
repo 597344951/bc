@@ -27,7 +27,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		font-weight:bold;
 		font-size:16px
 	}
-	.partyUserForm .el-input__inner {
+	.partyUserForm .el-input {
 		width: 160px;
 	}
 	.el-date-editor {
@@ -115,6 +115,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	.el-main {
 		padding-left: 0px;
 		padding-right: 0px;
+	}
+	.shijiImgStyle {
+		margin: 10px;
+		box-shadow: 0 8px 15px rgba(0,0,0,0.55);
+		float: left;
+	}
+	.shijiImgStyle:hover{
+	    transform: scale(1.1);
 	}
 </style>
 </head>
@@ -768,43 +776,129 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									<el-row v-if="false" :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="22">{{scope.row.introduce}}</el-col>
 									</el-row>
-									
-									<template v-if="signInAccountType != 'party_role'">
-										<div v-for="item in scope.row.shiji" style="margin-bottom: 50px;">
-											<el-row v-if="item.个人经历 != null && item.个人经历.length != 0">
-												<el-col :span="24"><span class="partyUserTitleFont">个人经历</span></el-col>
-											</el-row>
-											<el-row v-for="it in item.个人经历">
-												<p style="text-indent:2em; font-weight: bold;">{{it.deedsTitle}}</p>
-												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
-											</el-row>
-											
-											<el-row v-if="item.获得荣誉 != null && item.获得荣誉.length != 0">
-												<el-col :span="24"><span class="partyUserTitleFont">获得荣誉</span></el-col>
-											</el-row>
-											<el-row v-for="it in item.获得荣誉">
-												<p style="text-indent:2em;">时间：{{it.occurrenceTime}}</p>
-												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
-											</el-row>
-
-											<el-row v-if="item.个人感言 != null && item.个人感言.length != 0">
-												<el-col :span="24"><span class="partyUserTitleFont">个人感言</span></el-col>
-											</el-row>
-											<el-row v-for="it in item.个人感言">
-												<p style="text-indent:2em; font-weight: bold;">{{it.deedsTitle}}</p>
-												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
-											</el-row>
-
-											<el-row v-if="item.他人评价 != null && item.他人评价.length != 0">
-												<el-col :span="24"><span class="partyUserTitleFont">他人评价</span></el-col>
-											</el-row>
-											<el-row v-for="it in item.他人评价">
-												<p style="text-indent:2em; font-weight: bold;">{{it.deedsTitle}}</p>
-												<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
-											</el-row>
-										</div>
-									</template>
 								</template>
+								<el-row v-if="scope.row.shiji != null && scope.row.shiji.length > 0">
+									<p style="text-align: center; font-size: 24px;">事迹</p>
+								</el-row>
+								<template v-if="signInAccountType != 'party_role'">
+									<div v-for="item in scope.row.shiji" style="margin-bottom: 50px;">
+										<el-button size="small" type="text" @click="openPartyUser_manager_supplyDeedsUserDialog(item)">
+									  		<span 
+									  			style="font-size: 14px; 
+									  			border: 1px solid #ddd;
+									  			border-radius: 6px; 
+									  			padding: 5px;
+									  			background-color: #ddd;
+									  			font-weight: bold;">
+									  			事迹补充
+									  		</span>
+									  	</el-button>
+										<el-row v-if="item.个人经历 != null && item.个人经历.length != 0">
+											<el-col :span="24"><span class="partyUserTitleFont">个人经历</span></el-col>
+										</el-row>
+										<el-row v-for="it in item.个人经历">
+											<p style="text-indent:2em; font-weight: bold;">
+												{{it.deedsTitle}}
+												<el-button size="small" type="text" @click="deleteDeedsUser(it)">
+									  				删除
+									  			</el-button>
+									  			<el-button size="small" type="text" @click="openUpdateDeedsUserDialog(it)">
+									  				修改事迹
+									  			</el-button>
+											</p>
+											<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+
+											<template v-if="it.diMgs != null && it.diMgs.length != 0">
+												<template v-for="diMg in it.diMgs">
+													<div class="shijiImgStyle">
+														<a href="javascript:void(0)" @click="openBigShijiImgDialog(diMg.paths)">
+															<img style="margin: 5px; cursor: zoom-in;" :src="getNewPath(diMg.paths)" height="100px">
+														</a>
+													</div>
+												</template>
+											</template>
+										</el-row>
+										
+										<el-row v-if="item.获得荣誉 != null && item.获得荣誉.length != 0">
+											<el-col :span="24"><span class="partyUserTitleFont">获得荣誉</span></el-col>
+										</el-row>
+										<el-row v-for="it in item.获得荣誉">
+											<p style="text-indent:2em;">
+												时间：{{it.occurrenceTime}}
+												<el-button size="small" type="text" @click="deleteDeedsUser(it)">
+									  				删除
+									  			</el-button>
+									  			<el-button size="small" type="text" @click="openUpdateDeedsUserDialog(it)">
+									  				修改事迹
+									  			</el-button>
+											</p>
+											<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+
+											<template v-if="it.diMgs != null && it.diMgs.length != 0">
+												<template v-for="diMg in it.diMgs">
+													<div class="shijiImgStyle">
+														<a href="javascript:void(0)" @click="openBigShijiImgDialog(diMg.paths)">
+															<img style="margin: 5px; cursor: zoom-in;" :src="getNewPath(diMg.paths)" height="100px">
+														</a>
+													</div>
+												</template>
+											</template>
+										</el-row>
+
+										<el-row v-if="item.个人感言 != null && item.个人感言.length != 0">
+											<el-col :span="24"><span class="partyUserTitleFont">个人感言</span></el-col>
+										</el-row>
+										<el-row v-for="it in item.个人感言">
+											<p style="text-indent:2em; font-weight: bold;">
+												{{it.deedsTitle}}
+												<el-button size="small" type="text" @click="deleteDeedsUser(it)">
+									  				删除
+									  			</el-button>
+									  			<el-button size="small" type="text" @click="openUpdateDeedsUserDialog(it)">
+									  				修改事迹
+									  			</el-button>
+											</p>
+											<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+
+											<template v-if="it.diMgs != null && it.diMgs.length != 0">
+												<template v-for="diMg in it.diMgs">
+													<div class="shijiImgStyle">
+														<a href="javascript:void(0)" @click="openBigShijiImgDialog(diMg.paths)">
+															<img style="margin: 5px; cursor: zoom-in;" :src="getNewPath(diMg.paths)" height="100px">
+														</a>
+													</div>
+												</template>
+											</template>
+										</el-row>
+
+										<el-row v-if="item.他人评价 != null && item.他人评价.length != 0">
+											<el-col :span="24"><span class="partyUserTitleFont">他人评价</span></el-col>
+										</el-row>
+										<el-row v-for="it in item.他人评价">
+											<p style="text-indent:2em; font-weight: bold;">
+												{{it.deedsTitle}}
+												<el-button size="small" type="text" @click="deleteDeedsUser(it)">
+									  				删除
+									  			</el-button>
+									  			<el-button size="small" type="text" @click="openUpdateDeedsUserDialog(it)">
+									  				修改事迹
+									  			</el-button>
+											</p>
+											<p style="text-indent:2em; width: 80%;">{{it.deedsDetail}}</p>
+
+											<template v-if="it.diMgs != null && it.diMgs.length != 0">
+												<template v-for="diMg in it.diMgs">
+													<div class="shijiImgStyle">
+														<a href="javascript:void(0)" @click="openBigShijiImgDialog(diMg.paths)">
+															<img style="margin: 5px; cursor: zoom-in;" :src="getNewPath(diMg.paths)" height="100px">
+														</a>
+													</div>
+												</template>
+											</template>
+										</el-row>
+									</div>
+								</template>
+
 							</template>
 						</el-table-column>
 						<el-table-column label="姓名" prop="name" width=100></el-table-column>
@@ -915,8 +1009,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-form-item label="个人照片" prop="idPhoto">
 							<el-upload 
 								action="" 
-								:http-request="partyUser_manager_savePartyUserIdPhoto"
 								:before-upload="partyUser_manager_validatePartyUserIdPhoto"
+								ref="insertPartyUserIdPhoto"
+								:auto-upload="false"
 								:limit="1"
 								list-type="picture-card" >
 								<div slot="tip" class="el-upload__tip">只能上传小于500kb的图片文件（jpg、jpeg或png格式）</div>
@@ -951,7 +1046,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-col :span="6">
 						<el-form-item label="生日：" prop="birthDate">
 							<el-date-picker class="partyUserDate"
-								clearable
+								clearable 
+								:disabled="true"
 						    	v-model="partyUser_manager_insertPartyUserForm.birthDate"
 						    	type="date" 
 						    	value-format="yyyy-MM-dd" 
@@ -1351,24 +1447,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				:auto-upload="false" >
 				<div slot="tip" class="el-upload__tip">只能上传小于500kb的图片文件（jpg、jpeg或png格式）</div>
 			</el-upload>
-			<el-button size="small" type="primary" @click="partyUser_manager_updatePartyUserIdPhoto">更改照片</el-button>
+			<el-button style="margin-bottom: 10px;" size="small" type="primary" @click="partyUser_manager_updatePartyUserIdPhoto">更改照片</el-button>
 		</el-dialog>
 
 		<el-dialog title="修改党员信息" class="bigClose" :fullscreen="true" :visible.sync="partyUser_manager_updatePartyUserDialog">
 			<el-form class="partyUserForm" size="small" :model="partyUser_manager_updatePartyUserForm" status-icon :rules="partyUser_manager_updatePartyUserRules" 
 				ref="partyUser_manager_updatePartyUserForm" label-width="100px">
 				<el-row>
-					<!-- <el-form-item label="个人照片" prop="idPhoto">
-						<el-upload 
-							:disabled="true"
-							action="" 
-							:http-request="partyUser_manager_savePartyUserIdPhoto"
-							:before-upload="partyUser_manager_validatePartyUserIdPhoto"
-							:limit="1" 
-							:file-list="partyUser_manager_updatePartyUserForm.idPhotoImg"
-							list-type="picture-card" >
-						</el-upload>
-					</el-form-item> -->
 					<el-form-item label="个人照片（点击以修改）">
 						<a href="javascript:void(0)" @click="partyUser_manager_openUpdatePartyUserIdPhoto">
 							<img :src="getPath(partyUser_manager_updatePartyUserForm)" width="100" />
@@ -1789,52 +1874,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		</el-dialog>
 
 
-		<el-dialog @close="partyUser_manager_resetDeedsUserForm" title="人物事迹" :visible.sync="partyUser_manager_updateDeedsUserDialog">
+		<el-dialog @close="partyUser_manager_resetDeedsUserForm" title="人物事迹" :visible.sync="partyUser_manager_insertDeedsUserDialog">
 			<el-form size="small" :model="partyUser_manager_deedsUserForm" status-icon :rules="partyUser_manager_deedsUserRules" 
 				ref="partyUser_manager_deedsUserForm" label-width="100px">
-				<!-- <el-row>
-					<el-form-item label="事迹类型：" prop="deedsType">
-						<el-select style="width: 220px;" clearable v-model="partyUser_manager_deedsUserForm.deedsType" filterable placeholder="请选择，可搜索">
-							<el-option
-								v-for="item in partyUser_manager_deedsUserForm.deedsTypes"
-								:key="item.id"
-								:label="item.name"
-								:value="item.id">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-row>
-				<el-row>
-					<el-form-item label="标题：" prop="deedsTitle">
-						<el-input 
-							style="width: 220px;" clearable 
-							v-model="partyUser_manager_deedsUserForm.deedsTitle"
-							placeholder="事迹的标题"></el-input>
-					</el-form-item>
-				</el-row>
-				<el-row v-if="partyUser_manager_deedsUserForm.deedsType == 2">
-					<el-form-item label="发生时间：" prop="occurrenceTime">
-						<el-date-picker
-							clearable
-					    	v-model="partyUser_manager_deedsUserForm.occurrenceTime"
-					    	type="date" 
-					    	value-format="yyyy-MM-dd" 
-					    	placeholder="请选择时间">
-					    </el-date-picker>
-					</el-form-item>
-				</el-row>
-				<el-row>
-					<el-col :span="24">
-						<el-form-item label="详细描述：" prop="deedsDetail">
-							<el-input
-							  	type="textarea"
-							 	:autosize="{ minRows: 4}"
-							 	placeholder="请输入内容"
-								v-model="partyUser_manager_deedsUserForm.deedsDetail">
-							</el-input>
-						</el-form-item>
-					</el-col>
-				</el-row> -->
 				<el-row>
 					<span style="color: red;">
 						以下步骤至少填写一项
@@ -1864,7 +1906,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-form-item label="经历剪影：" prop="imgs_jl">
 						<el-upload
 							class="shijiUpload"
-						  	ref="upload_jl"
+						  	ref="upload_jl" 
 						  	action=""
 						  	:auto-upload="false"
 						  	:multiple="true"
@@ -1962,6 +2004,141 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					<el-button v-if="stepNum != 1" size="small" @click="deedsUserStepSet('s')">上一步</el-button>
 					<el-button v-if="stepNum != 4" size="small" type="primary" @click="deedsUserStepSet('x')">下一步</el-button>
 					<el-button v-if="stepNum == 4" size="small" type="primary" @click="partyUser_manager_insertDeedsUser">提交</el-button>
+				</el-row>
+			</el-form>
+		</el-dialog>
+
+		<el-dialog title="人物事迹" :visible.sync="bigShijiImgDialog" width="50%">
+			<div style="margin-bottom: 15px; display:inline-block; text-align: center; width: 100%; box-shadow: 0 8px 15px rgba(0,0,0,0.55);">
+				<img style="width: 100%" :src="getNewPath(bigShijiImgPaths)">
+			</div>
+		</el-dialog>
+
+		<el-dialog @close="partyUser_manager_resetSupplyDeedsUserForm" title="补充事迹" :visible.sync="partyUser_manager_supplyDeedsUserDialog">
+			<el-form size="small" :model="partyUser_manager_supplyDeedsUserForm" status-icon :rules="partyUser_manager_supplyDeedsUserRules" 
+				ref="partyUser_manager_supplyDeedsUserForm" label-width="100px">
+				<el-row>
+					<el-form-item label="事迹类型：" prop="deedsType">
+						<el-select style="width: 220px;" clearable v-model="partyUser_manager_supplyDeedsUserForm.deedsType" filterable placeholder="请选择，可搜索">
+							<el-option
+								v-for="item in partyUser_manager_supplyDeedsUserForm.deedsTypes"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-row>
+				<el-row  v-if="partyUser_manager_supplyDeedsUserForm.deedsType != 2">
+					<el-form-item label="标题：" prop="deedsTitle">
+						<el-input 
+							style="width: 220px;" clearable 
+							v-model="partyUser_manager_supplyDeedsUserForm.deedsTitle"
+							placeholder="事迹的标题"></el-input>
+					</el-form-item>
+				</el-row>
+				<el-row v-if="partyUser_manager_supplyDeedsUserForm.deedsType == 2">
+					<el-form-item label="发生时间：" prop="occurrenceTime">
+						<el-date-picker
+							clearable
+					    	v-model="partyUser_manager_supplyDeedsUserForm.occurrenceTime"
+					    	type="date" 
+					    	value-format="yyyy-MM-dd" 
+					    	placeholder="请选择时间">
+					    </el-date-picker>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-col :span="24">
+						<el-form-item label="详细描述：" prop="deedsDetail">
+							<el-input
+							  	type="textarea"
+							 	:autosize="{ minRows: 4}"
+							 	placeholder="请输入内容"
+								v-model="partyUser_manager_supplyDeedsUserForm.deedsDetail">
+							</el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-form-item label="精彩时刻：" prop="imgs">
+						<el-upload
+							class="shijiUpload"
+						  	ref="supplyImgUpload"
+						  	action=""
+						  	:auto-upload="false"
+						  	:multiple="true"
+						  	list-type="picture-card">
+						  	<div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件</div>
+						</el-upload>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-button size="small" type="primary" @click="insertSupplyDeedsUser">补充事迹</el-button>
+				</el-row>
+			</el-form>
+		</el-dialog>
+
+		<el-dialog @close="partyUser_manager_resetUpdateDeedsUserForm" title="修改事迹" :visible.sync="partyUser_manager_updateDeedsUserDialog">
+			<el-form size="small" :model="partyUser_manager_updateDeedsUserForm" status-icon :rules="partyUser_manager_updateDeedsUserRules" 
+				ref="partyUser_manager_updateDeedsUserForm" label-width="100px">
+				<el-row>
+					<el-form-item label="事迹类型：" prop="deedsTypeName">
+						<el-input 
+							:disabled="true"
+							style="width: 220px;" clearable 
+							v-model="partyUser_manager_updateDeedsUserForm.deedsTypeName"
+							placeholder="事迹类型"></el-input>
+					</el-form-item>
+				</el-row>
+				<el-row v-if="partyUser_manager_updateDeedsUserForm.deedsTypeId != 2">
+					<el-form-item label="标题：" prop="deedsTitle">
+						<el-input 
+							style="width: 220px;" clearable 
+							v-model="partyUser_manager_updateDeedsUserForm.deedsTitle"
+							placeholder="事迹的标题"></el-input>
+					</el-form-item>
+				</el-row>
+				<el-row v-if="partyUser_manager_updateDeedsUserForm.deedsTypeId == 2">
+					<el-form-item label="发生时间：" prop="occurrenceTime">
+						<el-date-picker
+							clearable
+					    	v-model="partyUser_manager_updateDeedsUserForm.occurrenceTime"
+					    	type="date" 
+					    	value-format="yyyy-MM-dd" 
+					    	placeholder="请选择时间">
+					    </el-date-picker>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-col :span="24">
+						<el-form-item label="详细描述：" prop="deedsDetail">
+							<el-input
+							  	type="textarea"
+							 	:autosize="{ minRows: 4}"
+							 	placeholder="请输入内容"
+								v-model="partyUser_manager_updateDeedsUserForm.deedsDetail">
+							</el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-form-item label="精彩时刻：" prop="imgs">
+						<el-upload
+							class="shijiUpload"
+						  	ref="updateImgUpload"
+						  	action=""
+						  	:file-list="partyUser_manager_updateDeedsUserForm.diMgs"
+						  	:auto-upload="false"
+						  	:on-remove="updateImgUploadRemoveHaveImg"
+						  	:multiple="true"
+						  	list-type="picture-card">
+						  	<div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件</div>
+						</el-upload>
+					</el-form-item>
+				</el-row>
+				<el-row>
+					<el-button size="small" type="primary" @click="updateSupplyDeedsUser">变更事迹</el-button>
 				</el-row>
 			</el-form>
 		</el-dialog>
@@ -2074,7 +2251,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				missingUser: null,
 				introduce: null,
 				idPhotoImg: [],	/*用户的当前头像*/
-				isParty: 0
+				isParty: 0,
+				idPhoto: null
 			},
 			partyUser_manager_updatePartyUserRules: {	/*修改党员信息验证*/
 				name: [
@@ -2092,7 +2270,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					{ pattern: /^[1-9][0-9]{4,10}/, message: 'QQ号码不正确!'}
 				],
 				wechat: [
-					{ pattern: /^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/, message: '6至20长度，只能包含数字祖母下划线和减号!'}
+					{ pattern: /^[-_a-zA-Z0-9]{6,19}$/, message: '6至20长度，只能包含数字祖母下划线和减号!'}
 				],
 				education: [
 					{ required: true, message: '请选择受教育水平!' }
@@ -2133,73 +2311,25 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				nation: [
 					{ required: true, message: '请选择民族!' }
 				],
-				birthDate: [
-					{ required: true, message: '请选择生日!', trigger: 'blur' },
-					{ 
-		        		validator: function(rule, value, callback){
-		        			if (appInstince.partyUser_manager_insertPartyUserForm.idCard != undefined ||
-		        					appInstince.partyUser_manager_insertPartyUserForm.idCard != null) {
-		        				var dates = value.split("-");
-		        				var birthDayYear = dates[0];
-		        				var birthDayMonth = dates[1];
-		        				var birthDayDay = dates[2];
-		        				var partyUserIdCard = appInstince.partyUser_manager_insertPartyUserForm.idCard;
-		        				var year = null;
-								var month = null;
-								var day = null;
-								if (partyUserIdCard.length == 15) {	/*15为身份证号码*/
-									year = "19" + partyUserIdCard.substring(6,8);
-									month = partyUserIdCard.substring(8,10);
-									day = partyUserIdCard.substring(10,12);
-								} else if (partyUserIdCard.length == 18) {	/*18为身份证号码*/
-									year = partyUserIdCard.substring(6,10);
-									month = partyUserIdCard.substring(10,12);
-									day = partyUserIdCard.substring(12,14);
-								} 
-								if (birthDayYear == year && birthDayMonth == month && birthDayDay == day) {
-									callback();
-								} else {
-									callback(new Error('生日与身份证号码不匹配!'));
-								}
-	        		        } else {
-	        		            callback();
-	        		        }
-		        		},
-		        		trigger: 'blur'
-		        	}
-				],
 				idCard: [
 					{ required: true, message: '请输入15或18位身份证号码!', trigger: 'blur' },
 					{ pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码!'},
 					{ 
 		        		validator: function(rule, value, callback){
-		        			if (appInstince.partyUser_manager_insertPartyUserForm.birthDate != undefined ||
-		        					appInstince.partyUser_manager_insertPartyUserForm.birthDate != null) {
-		        				var birthDay = appInstince.partyUser_manager_insertPartyUserForm.birthDate;
-		        				var dates = appInstince.partyUser_manager_insertPartyUserForm.birthDate.split("-");
-		        				var birthDayYear = dates[0];
-		        				var birthDayMonth = dates[1];
-		        				var birthDayDay = dates[2];
-		        				var year = null;
-								var month = null;
-								var day = null;
-								if (value.length == 15) {	/*15为身份证号码*/
-									year = "19" + value.substring(6,8);
-									month = value.substring(8,10);
-									day = value.substring(10,12);
-								} else if (value.length == 18) {	/*18为身份证号码*/
-									year = value.substring(6,10);
-									month = value.substring(10,12);
-									day = value.substring(12,14);
-								} 
-								if (birthDayYear == year && birthDayMonth == month && birthDayDay == day) {
-									callback();
-								} else {
-									callback(new Error('身份证与生日不匹配!'));
-								}
-	        		        } else {
-	        		            callback();
-	        		        }
+	        				var year = null;
+							var month = null;
+							var day = null;
+							if (value.length == 15) {	/*15为身份证号码*/
+								year = "19" + value.substring(6,8);
+								month = value.substring(8,10);
+								day = value.substring(10,12);
+							} else if (value.length == 18) {	/*18为身份证号码*/
+								year = value.substring(6,10);
+								month = value.substring(10,12);
+								day = value.substring(12,14);
+							} 
+							appInstince.partyUser_manager_insertPartyUserForm.birthDate = year + "-" + month + "-" + day;
+							callback();
 		        		},
 		        		trigger: 'blur'
 		        	},
@@ -2285,8 +2415,55 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_workNatureTypes: [],	/*工作性质*/
 			partyUser_manager_uploadPartyUserIdPhotoTempFileName: "",
 			signInAccountType: null,
+			partyUser_manager_insertDeedsUserDialog: false,
+			partyUser_manager_supplyDeedsUserDialog: false,
 			partyUser_manager_updateDeedsUserDialog: false,
+			bigShijiImgDialog: false,
+			bigShijiImgPaths: "",
 			stepNum: 1,
+			partyUser_manager_supplyDeedsUserForm: {	//补充事迹
+				deedsTypes: [],
+				deedsType: null,
+				deedsTitle: null,
+				occurrenceTime: null,
+				deedsDetail: null,
+				item: null,
+			},
+			partyUser_manager_supplyDeedsUserRules: {
+				deedsType: [
+					{ required: true, message: '请选择补充事迹类型', trigger: 'blur' }
+				],
+				deedsTitle: [
+					{ required: true, message: '请添加补充事迹标题', trigger: 'blur' }
+				],
+				occurrenceTime: [
+					{ required: true, message: '请添加获得荣誉的时间', trigger: 'blur' }
+				],
+				deedsDetail: [
+					{ required: true, message: '请填写补充事迹的内容', trigger: 'blur' }
+				]
+			},
+			partyUser_manager_updateDeedsUserForm: {	//修改事迹
+				deedsTypeName: null,
+				deedsTitle: null,
+				deedsTypeId: null,
+				occurrenceTime: null,
+				id: null,
+				deedsDetail: null,
+				diMgs: [],
+				deleteDiMgs: ""
+			},
+			partyUser_manager_updateDeedsUserRules: {
+				deedsTitle: [
+					{ required: true, message: '请添加补充事迹标题', trigger: 'blur' }
+				],
+				occurrenceTime: [
+					{ required: true, message: '请添加获得荣誉的时间', trigger: 'blur' }
+				],
+				deedsDetail: [
+					{ required: true, message: '请填写补充事迹的内容', trigger: 'blur' }
+				]
+			},
 			partyUser_manager_deedsUserForm: {
 				deedsTypes: [],
 				deedsType: null,
@@ -2300,7 +2477,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				occurrenceTime_ry: null,
 				userId: null,
 
-				imgs_jl: []
+				imgs_jl: "",
+				imgs_ry: "",
+				imgs_gy: "",
+				imgs_pj: "",
+				completeCount: 0
 			},
 			partyUser_manager_deedsUserRules: {
 				deedsTitle_jl: [
@@ -2446,11 +2627,282 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			this.getSignInAccountType();
 		},
 		methods: {
-			validataUploadShijiImg(imgs) {
+			updateSupplyDeedsUser() {
+				var obj = this;
+				this.$refs["partyUser_manager_updateDeedsUserForm"].validate( function(valid) {
+					if (valid) {
+						//处理图片
+						var count = 0;
+						var uploaded = 0;
+						var uploadedUrl = "";
+						var imgs = obj.$refs.updateImgUpload.uploadFiles;
+						if (!obj.validataUploadShijiImg(imgs)) {
+							return;
+						}
+
+						if (imgs.length > 0) {
+							for (var i = 0; i < imgs.length; i++) {
+								if(imgs[i].status == "success") {	//已有图片不用处理，删掉
+									continue;
+								}
+								count++;
+							}
+
+							for (var i = 0; i < imgs.length; i++) {
+								if(imgs[i].status == "success") {	//已有图片不用处理
+									continue;
+								}
+								var formData = new FormData();
+								formData.append("file", imgs[i].raw);
+								$.ajax({
+				                   	url: "http://192.168.1.119:3000/image",
+				                   	data: formData,
+				                   	type: "Post",
+				                   	cache: false,//上传文件无需缓存
+				                   	processData: false,//用于对data参数进行序列化处理 这里必须false
+				                   	contentType: false, //必须
+				                   	success: function (data) {
+				                   		if (data != null && data != undefined) {
+				                   			if (data.state == "SUCCESS") {
+			                   					uploadedUrl += data.url + ",";
+					                	   	} else {
+					                		   	toast('错误','图片上传失败' ,'error');
+				                   				return;
+					                	   	}
+				                   		} else {
+				                   			toast('错误','图片上传失败' ,'error');
+				                   			return;
+				                   		}
+				                   	},
+				                   	error: function() {
+				                   		toast('错误','图片上传失败' ,'error');
+				                   		return;
+				                   	},
+				                   	complete: function(XMLHttpRequest, textStatus) {
+				                   		//上传完成，数量加一，与上传总图片数量比对，如果一致则全部上传完毕，开始事迹内容上传
+		                   				uploaded++;
+				                   	}
+				               })
+							}
+						}
+
+
+						//提交后台
+						var beginInsert = function() {
+							if (count == uploaded) {	//实际上传数量和要上传图片数量一致，图片全部上传完成
+								var url = "/user/duc/updateDeedsUser";
+								var t = {
+									id: obj.partyUser_manager_updateDeedsUserForm.id,
+									deedsTitle: obj.partyUser_manager_updateDeedsUserForm.deedsTitle,
+									occurrenceTime: obj.partyUser_manager_updateDeedsUserForm.occurrenceTime,
+									deedsDetail: obj.partyUser_manager_updateDeedsUserForm.deedsDetail,
+									imgs: uploadedUrl,
+									deleteDiMgs: obj.partyUser_manager_updateDeedsUserForm.deleteDiMgs
+								}
+								$.post(url, t, function(data, status){
+									if (data.code == 200) {
+										toast('修改成功',data.msg,'success');
+										obj.partyUser_manager_updateDeedsUserDialog = false;
+										obj.partyUser_manager_queryPartyUserInfos();
+									} 
+								})
+							} else {
+								setTimeout(beginInsert, 50);
+							}
+						}
+						beginInsert();
+					}
+				});
+			},
+			updateImgUploadRemoveHaveImg(file, fileList) {	//修改事迹变更图片时，记录已有但被删除的图片,这些图片提交后要被删除掉
+				var obj = this;
+				if (file.status == "success") {
+					obj.partyUser_manager_updateDeedsUserForm.deleteDiMgs += file.id + ",";
+				}
+			},
+			openUpdateDeedsUserDialog(it) {
+				var obj = this;
+
+				obj.partyUser_manager_updateDeedsUserForm.id = it.id;
+				obj.partyUser_manager_updateDeedsUserForm.deedsTypeName = it.deedsTypeName;
+				obj.partyUser_manager_updateDeedsUserForm.deedsTypeId = it.deedsTypeId;
+				obj.partyUser_manager_updateDeedsUserForm.deedsTitle = it.deedsTitle;
+				obj.partyUser_manager_updateDeedsUserForm.occurrenceTime = it.occurrenceTime;
+				obj.partyUser_manager_updateDeedsUserForm.deedsDetail = it.deedsDetail;
+
+				if (it.diMgs != null && it.diMgs.length > 0) {
+					for (var i = 0; i < it.diMgs.length; i++) {
+						var diMg = {url: null, id: null};
+						diMg.url = "http://192.168.1.119:3000" + it.diMgs[i].paths;
+						diMg.id = it.diMgs[i].id;
+						obj.partyUser_manager_updateDeedsUserForm.diMgs.push(diMg);
+					}
+				}
+
+				obj.partyUser_manager_updateDeedsUserDialog = true;
+			},
+			partyUser_manager_resetUpdateDeedsUserForm() {
+				var obj = this;
+				obj.$refs["partyUser_manager_updateDeedsUserForm"].resetFields();
+				obj.partyUser_manager_updateDeedsUserForm.diMgs = [];
+				obj.partyUser_manager_updateDeedsUserForm.deleteDiMgs = "";
+			},
+			deleteDeedsUser(du) {
+				var obj = this;
+				obj.$confirm(
+					'删除这条事迹, 是否继续?', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+					var url = "/user/duc/deleteDeedsUser";
+					var t = {
+						id: du.id
+					}
+					$.post(url, t, function(data, status){
+						if (data.code == 200) {
+							toast('删除成功',data.msg,'success');
+							obj.partyUser_manager_queryPartyUserInfos();
+						} 
+					})
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消删除'
+			        });  
+		        });
+			},
+			insertSupplyDeedsUser() {	//补充事迹
+				var obj = this;
+				this.$refs["partyUser_manager_supplyDeedsUserForm"].validate( function(valid) {
+					if (valid) {
+						//处理图片
+						var count = 0;
+						var uploaded = 0;
+						var uploadedUrl = "";
+						var imgs = obj.$refs.supplyImgUpload.uploadFiles;
+						if (!obj.validataUploadShijiImg(imgs)) {
+							return;
+						}
+						count += imgs.length;
+
+						if (imgs.length > 0) {
+							for (var i = 0; i < imgs.length; i++) {
+								var formData = new FormData();
+								formData.append("file", imgs[i].raw);
+								$.ajax({
+				                   	url: "http://192.168.1.119:3000/image",
+				                   	data: formData,
+				                   	type: "Post",
+				                   	cache: false,//上传文件无需缓存
+				                   	processData: false,//用于对data参数进行序列化处理 这里必须false
+				                   	contentType: false, //必须
+				                   	success: function (data) {
+				                   		if (data != null && data != undefined) {
+				                   			if (data.state == "SUCCESS") {
+			                   					uploadedUrl += data.url + ",";
+					                	   	} else {
+					                		   	toast('错误','图片上传失败' ,'error');
+				                   				return;
+					                	   	}
+				                   		} else {
+				                   			toast('错误','图片上传失败' ,'error');
+				                   			return;
+				                   		}
+				                   	},
+				                   	error: function() {
+				                   		toast('错误','图片上传失败' ,'error');
+				                   		return;
+				                   	},
+				                   	complete: function(XMLHttpRequest, textStatus) {
+				                   		//上传完成，数量加一，与上传总图片数量比对，如果一致则全部上传完毕，开始事迹内容上传
+		                   				uploaded++;
+				                   	}
+				               })
+							}
+						}
+
+						var beginInsert = function() {
+							if (count == uploaded) {	//实际上传数量和要上传图片数量一致，图片全部上传完成
+								var url = "/user/duc/insertSupplyDeedsUser";
+								var t = {
+									deedsType: obj.partyUser_manager_supplyDeedsUserForm.deedsType,
+									deedsTitle: obj.partyUser_manager_supplyDeedsUserForm.deedsTitle,
+									occurrenceTime: obj.partyUser_manager_supplyDeedsUserForm.occurrenceTime,
+									deedsDetail: obj.partyUser_manager_supplyDeedsUserForm.deedsDetail,
+									userId: obj.partyUser_manager_supplyDeedsUserForm.item.userId,
+									similarId: obj.partyUser_manager_supplyDeedsUserForm.item.similarId,
+									imgs: uploadedUrl
+								}
+								$.post(url, t, function(data, status){
+									if (data.code == 200) {
+										toast('添加成功',data.msg,'success');
+										obj.partyUser_manager_supplyDeedsUserDialog = false;
+										obj.partyUser_manager_queryPartyUserInfos();
+									} 
+								})
+							} else {
+								setTimeout(beginInsert, 50);
+							}
+						}
+						beginInsert();
+					}
+				});
+			},
+			openPartyUser_manager_supplyDeedsUserDialog(item) {	//补充事迹表单
+				var obj = this;
+
+				var url = "/user/dtc/queryDeedsTypes";
+				var t = {
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data != undefined) {	
+							obj.partyUser_manager_supplyDeedsUserForm.deedsTypes = data.data;
+						}
+					}
+
+				})
+				var _item = null;
+				if (item.个人感言 != null && item.个人感言.length > 0) {
+					_item = item.个人感言[0];
+				} else if (item.个人经历 != null && item.个人经历.length > 0) {
+					_item = item.个人经历[0];
+				} else if (item.他人评价 != null && item.他人评价.length > 0) {
+					_item = item.他人评价[0];
+				} else if (item.获得荣誉 != null && item.获得荣誉.length > 0) {
+					_item = item.获得荣誉[0];
+				} 
+				if (item != null) {
+					obj.partyUser_manager_supplyDeedsUserForm.item = _item;
+				} else {
+					toast('错误',"获取事迹详情失败",'error');
+				}
+				
+				
+				obj.partyUser_manager_supplyDeedsUserDialog = true;
+			},
+			partyUser_manager_resetSupplyDeedsUserForm() {	//事迹补充表单重置
+				var obj = this;
+				obj.$refs["partyUser_manager_supplyDeedsUserForm"].resetFields();
+
+				obj.$refs.supplyImgUpload.uploadFiles = [];
+			},
+			openBigShijiImgDialog(paths) {	//事迹放大图片弹窗
+				var obj = this;
+				obj.bigShijiImgPaths = paths;
+				obj.bigShijiImgDialog = true;
+			},
+			validataUploadShijiImg(imgs) {	//事迹图片验证
 				if (imgs.length != 0) {
 					for (var i = 0; i < imgs.length; i++) {
 						var img = imgs[i];
-
+						if (img.status == "success") {	//现存图片不用验证
+							continue;
+						}
 						var fileFormat = img.name.split(".");
 						var fileSuffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
 						if (fileSuffix == "jpg" || fileSuffix == "jpeg" || fileSuffix == "png") {
@@ -2462,29 +2914,44 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				}
 				return true;
 			},
-			uploadShijiImg(fileList) {
+			uploadShijiImg(fileList, type) {	//上传事迹图片
+				var obj = this;
 				if (fileList.length > 0) {
 					for (var i = 0; i < fileList.length; i++) {
 						var formData = new FormData();
-						formData.append("file", fileList[0]);
+						formData.append("file", fileList[i].raw);
 						$.ajax({
 		                   	url: "http://192.168.1.119:3000/image",
 		                   	data: formData,
 		                   	type: "Post",
-		                   	dataType: "json",
 		                   	cache: false,//上传文件无需缓存
 		                   	processData: false,//用于对data参数进行序列化处理 这里必须false
 		                   	contentType: false, //必须
 		                   	success: function (data) {
 		                   		if (data != null && data != undefined) {
 		                   			if (data.state == "SUCCESS") {
-		                   				obj.partyUser_manager_deedsUserForm.imgs_jl = data;
+		                   				if (type == 'jl') {
+		                   					obj.partyUser_manager_deedsUserForm.imgs_jl += data.url + ",";
+		                   				} else if (type == 'ry') {
+		                   					obj.partyUser_manager_deedsUserForm.imgs_ry += data.url + ",";
+		                   				} else if (type == 'gy') {
+		                   					obj.partyUser_manager_deedsUserForm.imgs_gy += data.url + ",";
+		                   				} else if (type == 'pj') {
+		                   					obj.partyUser_manager_deedsUserForm.imgs_pj += data.url + ",";
+		                   				}
 			                	   	} else {
 			                		   	return false;
 			                	   	}
 		                   		} else {
 		                   			return false;
 		                   		}
+		                   	},
+		                   	error: function() {
+		                   		return false;
+		                   	},
+		                   	complete: function(XMLHttpRequest, textStatus) {
+		                   		//上传完成，数量加一，与上传总图片数量比对，如果一致则全部上传完毕，开始事迹内容上传
+                   				obj.partyUser_manager_deedsUserForm.completeCount++;
 		                   	}
 		               })
 					}
@@ -2531,12 +2998,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				if (!obj.validataUploadShijiImg(imgs)) {
 					return;
 				}
-
-				var fileList = obj.$refs.upload_jl.uploadFiles;	//开始经历图片上传
-				if (!obj.uploadShijiImg(fileList)) {
-					toast('错误','图片上传失败' ,'error');
-					return;
-				}
 				
 
 
@@ -2551,30 +3012,80 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							obj.partyUser_manager_deedsUserForm.deedsTitle_jl != "") ||
 							obj.partyUser_manager_deedsUserForm.occurrenceTime_ry != null) {
 
-							var url = "/user/duc/insertDeedsUser";
-							var t = {
-								userId: obj.partyUser_manager_deedsUserForm.userId,
-								deedsTitle_jl: obj.partyUser_manager_deedsUserForm.deedsTitle_jl,
-								deedsTitle_gy: obj.partyUser_manager_deedsUserForm.deedsTitle_gy,
-								deedsTitle_pj: obj.partyUser_manager_deedsUserForm.deedsTitle_pj,
-								deedsDetail_jl: obj.partyUser_manager_deedsUserForm.deedsDetail_jl,
-								deedsDetail_ry: obj.partyUser_manager_deedsUserForm.deedsDetail_ry,
-								deedsDetail_gy: obj.partyUser_manager_deedsUserForm.deedsDetail_gy,
-								deedsDetail_pj: obj.partyUser_manager_deedsUserForm.deedsDetail_pj,
-								occurrenceTime_ry: obj.partyUser_manager_deedsUserForm.occurrenceTime_ry
-							}
-							if (obj.partyUser_manager_deedsUserForm.occurrenceTime_ry != null) {
-								t.occurrenceTime_ry = new Date(obj.partyUser_manager_deedsUserForm.occurrenceTime_ry).getTime();
-							}
-							$.post(url, t, function(data, status){
-								if (data.code == 200) {
-									toast('添加成功',data.msg,'success');
-									obj.partyUser_manager_resetDeedsUserForm();
-									obj.partyUser_manager_updateDeedsUserDialog = false;
-									obj.partyUser_manager_queryPartyUserInfos();
-								}
+							var count = 0;
+							count += obj.$refs.upload_jl.uploadFiles.length;
+							count += obj.$refs.upload_ry.uploadFiles.length;
+							count += obj.$refs.upload_pj.uploadFiles.length;
+							count += obj.$refs.upload_gy.uploadFiles.length;
 
-							})
+							if(obj.partyUser_manager_deedsUserForm.deedsTitle_jl != null &&
+									obj.partyUser_manager_deedsUserForm.deedsTitle_jl != "") {
+								var fileList = obj.$refs.upload_jl.uploadFiles;	//开始经历图片上传
+								if (!obj.uploadShijiImg(fileList, 'jl')) {
+									toast('错误','图片上传失败' ,'error');
+									return;
+								}
+							}
+							if(obj.partyUser_manager_deedsUserForm.occurrenceTime_ry != null &&
+									obj.partyUser_manager_deedsUserForm.occurrenceTime_ry != "") {
+								var fileList = obj.$refs.upload_ry.uploadFiles;	//开始经历图片上传
+								if (!obj.uploadShijiImg(fileList, 'ry')) {
+									toast('错误','图片上传失败' ,'error');
+									return;
+								}
+							}
+							if(obj.partyUser_manager_deedsUserForm.deedsTitle_gy != null &&
+									obj.partyUser_manager_deedsUserForm.deedsTitle_gy != "") {
+								var fileList = obj.$refs.upload_gy.uploadFiles;	//开始经历图片上传
+								if (!obj.uploadShijiImg(fileList, 'gy')) {
+									toast('错误','图片上传失败' ,'error');
+									return;
+								}
+							}
+							if(obj.partyUser_manager_deedsUserForm.deedsTitle_pj != null &&
+									obj.partyUser_manager_deedsUserForm.deedsTitle_pj != "") {
+								var fileList = obj.$refs.upload_pj.uploadFiles;	//开始经历图片上传
+								if (!obj.uploadShijiImg(fileList, 'pj')) {
+									toast('错误','图片上传失败' ,'error');
+									return;
+								}
+							}
+
+
+							var beginInsert = function() {
+								if (count == obj.partyUser_manager_deedsUserForm.completeCount) {	//实际上传数量和要上传图片数量一致，图片全部上传完成
+									var url = "/user/duc/insertDeedsUser";
+									var t = {
+										userId: obj.partyUser_manager_deedsUserForm.userId,
+										deedsTitle_jl: obj.partyUser_manager_deedsUserForm.deedsTitle_jl,
+										deedsTitle_gy: obj.partyUser_manager_deedsUserForm.deedsTitle_gy,
+										deedsTitle_pj: obj.partyUser_manager_deedsUserForm.deedsTitle_pj,
+										deedsDetail_jl: obj.partyUser_manager_deedsUserForm.deedsDetail_jl,
+										deedsDetail_ry: obj.partyUser_manager_deedsUserForm.deedsDetail_ry,
+										deedsDetail_gy: obj.partyUser_manager_deedsUserForm.deedsDetail_gy,
+										deedsDetail_pj: obj.partyUser_manager_deedsUserForm.deedsDetail_pj,
+										occurrenceTime_ry: obj.partyUser_manager_deedsUserForm.occurrenceTime_ry,
+										imgs_jl: obj.partyUser_manager_deedsUserForm.imgs_jl,
+										imgs_ry: obj.partyUser_manager_deedsUserForm.imgs_ry,
+										imgs_gy: obj.partyUser_manager_deedsUserForm.imgs_gy,
+										imgs_pj: obj.partyUser_manager_deedsUserForm.imgs_pj
+									}
+									$.post(url, t, function(data, status){
+										if (data.code == 200) {
+											toast('添加成功',data.msg,'success');
+											obj.partyUser_manager_resetDeedsUserForm();
+											obj.partyUser_manager_insertDeedsUserDialog = false;
+											obj.partyUser_manager_queryPartyUserInfos();
+										}
+
+									})
+								} else {
+									setTimeout(beginInsert, 50);
+								}
+							}
+							beginInsert();
+
+							
 						} else {
 							toast('提示','至少填写一项' ,'error');
 						}
@@ -2585,20 +3096,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			partyUser_manager_openDeedsUserDialog(row) {	//打开添加事迹弹窗
 				var obj = this;
-
-				var url = "/user/dtc/queryDeedsTypes";
-				var t = {
-				}
-				$.post(url, t, function(data, status){
-					if (data.code == 200) {
-						if (data.data != undefined) {	
-							obj.partyUser_manager_deedsUserForm.deedsTypes = data.data;
-						}
-					}
-
-				})
 				obj.partyUser_manager_deedsUserForm.userId = row.id;
-				obj.partyUser_manager_updateDeedsUserDialog = true;
+				obj.partyUser_manager_insertDeedsUserDialog = true;
 			},
 			getSignInAccountType() {	/*得到该登录用户的类型*/
 				var obj = this;
@@ -2653,7 +3152,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			getPath(row) {	/* 得到党员用户id并返回请求路径 */
 				/*给予一个随机数，保证每次请求的参数都不一样，防止从缓存里取值，用于证件照的更新*/
-				return "/party/user/getPartyUserInfoIdPhoto?partyId="+row.id + "&t=" + Math.random();
+				return "http://192.168.1.119:3000" + row.idPhoto;
+			},
+			getNewPath(path) {
+				return "http://192.168.1.119:3000" + path;
 			},
 			partyUser_manager_queryNationType() {	/* 查询民族信息 */
 				var obj = this;
@@ -2780,27 +3282,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				toast('格式错误',"只能上传图片文件（jpg、jpeg或png格式）",'error');
 				return false;
 			},
-			partyUser_manager_savePartyUserIdPhoto(thisImport) {	/*自定义图片上传*/
-				var obj = this;
-				var formData = new FormData();
-				formData.append("file", thisImport.file);
-				$.ajax({
-                   url: "/party/user/savePartyUserInfoIdPhoto",
-                   data: formData,
-                   type: "Post",
-                   dataType: "json",
-                   cache: false,//上传文件无需缓存
-                   processData: false,//用于对data参数进行序列化处理 这里必须false
-                   contentType: false, //必须
-                   success: function (data) {
-                	   if (data.code == 200) {
-                		   obj.partyUser_manager_uploadPartyUserIdPhotoTempFileName = data.data;	/*获取临时文件名，方便添加党员时读取图片*/
-                	   } else if (data.code == 500) {
-                		   toast('错误',"服务器出错，停止党员注册",'error');
-                	   }
-                   },
-               })
-			},
 			partyUser_manager_updatePartyUserIdPhoto() {	/*修改证件照*/
 				var obj = this;
 				var fileList = obj.$refs.updatePartyUserIdPhoto.uploadFiles;
@@ -2809,31 +3290,51 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				} else if (fileList.length == 1) {
 					var formData = new FormData();
 					formData.append("file", fileList[0].raw);
-					formData.append("id", obj.partyUser_manager_updatePartyUserForm.id);
 					$.ajax({
-	                   	url: "/party/user/updatePartyUserIdPhoto",
-	                   	data: formData,
-	                   	type: "Post",
-	                   	dataType: "json",
-	                   	cache: false,//上传文件无需缓存
-	                   	processData: false,//用于对data参数进行序列化处理 这里必须false
-	                   	contentType: false, //必须
-	                   	success: function (data) {
-	                	   	if (data.code == 200) {
-	                		   	toast('成功',data.msg,'success');	/*获取临时文件名，方便添加党员时读取图片*/
-	                		   	obj.partyUser_manager_updatePartyUserIdPhotoDialog = false;
-	                		   	obj.$refs.updatePartyUserIdPhoto.fileList = [];
-	                		   	obj.getPath(obj.partyUser_manager_updatePartyUserForm);
-	                	   	} else if (data.code == 500) {
-	                		   	toast('错误',"服务器出错，停止证件照修改",'error');
-	                	   	}
-	                   	}
-	               })
+	                   url: "http://192.168.1.119:3000/image",
+	                   data: formData,
+	                   type: "Post",
+	                   cache: false,//上传文件无需缓存
+	                   processData: false,//用于对data参数进行序列化处理 这里必须false
+	                   contentType: false, //必须
+	                   success: function (data) {
+	                   		if (data != null && data != undefined) {
+	                   			if (data.state == "SUCCESS") {
+	                   				var url = "/party/user/updatePartyUserIdPhoto";
+	                   				var t = {
+										id: obj.partyUser_manager_updatePartyUserForm.id,
+										filePath: data.url
+									}
+									$.post(url, t, function(data, status){	//同步到数据库
+										if (data.code == 200) {
+				                		   	toast('成功',data.msg,'success');	/*获取临时文件名，方便添加党员时读取图片*/
+				                		   	obj.partyUser_manager_updatePartyUserIdPhotoDialog = false;
+				                		   	obj.$refs.updatePartyUserIdPhoto.fileList = [];
+				                		   	obj.partyUser_manager_updatePartyUserForm.idPhoto = t.filePath;
+				                		   	obj.getPath(obj.partyUser_manager_updatePartyUserForm);
+				                	   	} else if (data.code == 500) {
+				                		   	toast('错误',"修改失败",'error');
+				                	   	}
+									})
+		                	   	} else {
+		                		   	toast('错误',"修改失败",'error');
+		                	   	}
+	                   		} else {
+	                   			toast('错误',"修改失败",'error');
+	                   		}
+	                   	},
+	                   	error: function() {
+	                   		toast('错误',"修改失败",'error');
+	                   	},
+	                   	complete: function(XMLHttpRequest, textStatus) {}
+	                })
 				}
 			},
 			partyUser_manager_resetInsertPartyUserForm() {	/*重置添加党员信息表单*/
 				var obj = this;
 				obj.$refs["partyUser_manager_insertPartyUserForm"].resetFields();
+
+				obj.$refs.insertPartyUserIdPhoto.uploadFiles = [];
 			},
 			partyUser_manager_openInsertPartyUserDialog() {	/* 打开添加党员信息弹窗 */
 				var obj = this;
@@ -2842,6 +3343,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_openUpdatePartyUserDialog(row) {	/* 打开修改党员信息弹窗 */
 				var obj = this;
 				obj.partyUser_manager_updatePartyUserForm.idPhotoImg = [{url: obj.getPath(row)}];
+				obj.partyUser_manager_updatePartyUserForm.idPhoto = row.idPhoto;
 				obj.partyUser_manager_updatePartyUserForm.id = row.id;
 				obj.partyUser_manager_updatePartyUserForm.name = row.name;
 				obj.partyUser_manager_updatePartyUserForm.sex = row.sex;
@@ -2891,6 +3393,37 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			partyUser_manager_insertPartyUser() {	/* 添加用户 */
 				var obj = this;
+
+				var file = obj.$refs.insertPartyUserIdPhoto.uploadFiles;
+				if (file.length > 0) {
+					var formData = new FormData();
+					formData.append("file", file[0].raw);
+					$.ajax({
+	                   url: "http://192.168.1.119:3000/image",
+	                   data: formData,
+	                   type: "Post",
+	                   cache: false,//上传文件无需缓存
+	                   processData: false,//用于对data参数进行序列化处理 这里必须false
+	                   contentType: false, //必须
+	                   success: function (data) {
+	                   		if (data != null && data != undefined) {
+	                   			if (data.state == "SUCCESS") {
+	                   				obj.partyUser_manager_uploadPartyUserIdPhotoTempFileName = data.url;	/*获取临时文件名，方便添加党员时读取图片*/
+		                	   	} else {
+		                		   	toast('错误',"服务器出错，停止党员注册",'error');
+		                	   	}
+	                   		} else {
+	                   			toast('错误',"服务器出错，停止党员注册",'error');
+	                   		}
+	                   	},
+	                   	error: function() {},
+	                   	complete: function(XMLHttpRequest, textStatus) {}
+	                })
+				}
+				
+
+
+
 				this.$refs["partyUser_manager_insertPartyUserForm"].validate( function(valid) {
 					if (valid) {
 						var url = "/party/user/insertPartyUserInfo";
@@ -2917,6 +3450,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								toast('添加成功',data.msg,'success');
 								obj.partyUser_manager_insertPartyUserDialog = false;
 								obj.partyUser_manager_queryPartyUserInfos();
+								obj.partyUser_manager_resetInsertPartyUserForm();
 							}
 
 						})

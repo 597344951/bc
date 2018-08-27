@@ -5,6 +5,9 @@ import {
 window.appInstince = new Vue({
     el: '#app',
     data: {
+        //主推/辅推
+        mainPlan:[],
+        backupPlan:[],
         //活动生成界面
         planGuide: {
             visiable: false
@@ -102,8 +105,9 @@ window.appInstince = new Vue({
                 let dt = result.data;
                 me.setCalendarMarker(dt);
                 me.groupByAge(dt);
+                me.calcMainAndBackPlan(dt);
             }).catch((xhr) => {
-                ins.$message({
+                me.$message({
                     message: xhr.statusText,
                     type: 'error'
                 });
@@ -112,6 +116,24 @@ window.appInstince = new Vue({
         //设置日历上 选中标识 
         setCalendarMarker(data) {
             this.markDate = data.map(it => it.stime);
+        },
+        calcMainAndBackPlan(datas){
+            //计算 主推和辅助 推荐
+            let ay = [];
+            datas.forEach(el=>{
+                let no = clone(el);
+                no.suggestItems = el.suggestItems.filter(item=>item.type==1);
+                ay.push(no);
+            });
+            this.mainPlan = ay;
+            
+            ay = [];
+            datas.forEach(el=>{
+                let no = clone(el);
+                no.suggestItems = el.suggestItems.filter(item=>item.type==2);
+                ay.push(no);
+            });
+            this.backupPlan = ay;
         },
         groupByAge(data) {
             let map = new Map();

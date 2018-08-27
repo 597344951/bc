@@ -356,7 +356,7 @@
 		var oLi = document.querySelectorAll(".p1_content li a");
 		var h = document.body.clientHeight;
 		var w = document.body.clientWidth;
-		mask.style.display = "none";
+		mask.style.opacity = 0;
 		for (var i = 0; i < oLi.length; i++) {
 			oLi[i].i = i;
 			oLi[i].onclick = function () {
@@ -365,24 +365,33 @@
 					oLi[j].className = " ";
 				};
 				aL.className = "content-active";
-				mask.style.display = "block";
-
 				var t = aL.offsetTop;
 				var l = aL.offsetLeft;
-				console.log(l - mask.offsetWidth)
-				mask.style.top = t - mask.offsetHeight + 'px';
-				if (mask.offsetTop < 0) {
-					mask.style.top = 10 + 'px';
-				};
-				if (l >= (w / 2)) {
-					mask.style.left = l + mask.offsetWidth - 50 + 'px';
+				console.log(mask.offsetTop);
+				
+				setTimeout(function(){
 
-				} else {
-					mask.style.left = l - mask.offsetWidth - 30 + 'px';
-				};
-				if ((l - mask.offsetWidth) < 0) {
-					mask.style.left = 10 + 'px';
-				}
+					mask.style.top = t - mask.offsetHeight + 'px';
+					if (mask.offsetTop < 0) {
+						mask.style.top = 10 + 'px';
+					};
+					if(mask.offsetTop+mask.offsetHeight>h){
+						mask.style.top= 5+'px';
+					};
+					if (l >= (w / 2)) {
+						mask.style.left = l + mask.offsetWidth - 50 + 'px';
+
+					} else {
+						mask.style.left = l - mask.offsetWidth - 30 + 'px';
+					};
+					if ((l - mask.offsetWidth) < 0) {
+						mask.style.left = 10 + 'px';
+					};
+					setTimeout(function(){
+						mask.style.opacity = 100;
+					},100);
+				},10)
+
 			}
 		};
 	}

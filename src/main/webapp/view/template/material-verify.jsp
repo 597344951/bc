@@ -17,7 +17,7 @@
     <%@include file="/include/ueditor.jsp"%>
 </head>
 
-<body style="min-width:1100px;">
+<body >
     <div class="height_full" id="app" v-cloak>
         <el-container>
             <el-header>
@@ -53,7 +53,7 @@
                 </div>
             </el-header>
             <el-container>
-                <el-aside width="200px">
+                <el-aside width="200px" class="hidden-if-mobile">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
                         @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu">
                         <span class="custom-tree-node" slot-scope="{ node, data }">

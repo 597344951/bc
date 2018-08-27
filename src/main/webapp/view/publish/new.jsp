@@ -108,15 +108,15 @@
 			font-size: 13px;
 			font-weight: bold;
         }
-		.el-radio {
+		.image-box .el-radio {
 			position: absolute;
     		right: 10px;
     		top: 10px;
 		}
-		.el-radio__label {
+		.image-box .el-radio .el-radio__label {
 			display: none;
 		}
-		.el-radio__inner {
+		.image-box .el-radio .el-radio__inner {
 			height: 20px;
 			width: 20px;
 		}
@@ -195,31 +195,23 @@
 			<el-header>
 				<el-steps :active="curStep" finish-status="success" simple>
 					<el-step v-for="(s, index) in processSteps" :title="s" v-if="index >= startStep"></el-step>
-					<%-- <el-step title="选择模板"></el-step>
-					<el-step title="编辑内容"></el-step>
-					<el-step title="选择发布终端"></el-step>
-					<el-step title="编辑审核人"></el-step>
-					<el-step title="提交完成"></el-step> --%>
 				</el-steps>
 			</el-header>
 			<el-main v-loading="loading">
 				<div v-show="step==0">
 					<h3>选择模板</h3>
 					<el-row :gutter="20">
-						<%-- <el-col :span="3">
-							<el-select
-									size="medium"
-									v-model="screenDirection"
-									placeholder="节目类型">
-								<el-option label="横屏" value="横屏"></el-option>
-								<el-option label="竖屏" value="竖屏"></el-option>
-							</el-select>
-						</el-col> --%>
 						<el-col :span="4">
 							<el-input size="medium" v-model="keyword" placeholder="输入关键字"></el-input>
 						</el-col>
 						<el-col :span="2">
 							<el-button size="medium" type="primary" icon="el-icon-search" @click="filterTemplate"></el-button>
+						</el-col>
+						<el-col :span="10">
+							<el-radio-group v-model="screenDirection" @change="screenDirectionChange">
+								<el-radio label="横屏" border>横屏模板</el-radio>
+  								<el-radio label="竖屏" border>竖屏模板</el-radio>
+							</el-radio-group>
 						</el-col>
 					</el-row>
 					<el-row :gutter="20">
@@ -318,10 +310,10 @@
 							</el-select>
 							：
 							<el-input style="width: 18%;" v-model="playLength" placeholder="播放时长（秒）"></el-input> --%>
-							<el-checkbox-group v-model="screenDirection" style="display: inline-block;">
+							<%-- <el-checkbox-group v-model="screenDirection" style="display: inline-block;">
 								<el-checkbox v-for="d in screenDirections" :label="d" :key="d">{{d}}</el-checkbox>
-							</el-checkbox-group>
-							（勾选发布节目的显示类型：横屏/竖屏）
+							</el-checkbox-group> --%>
+							
 						</el-col>
 					</el-row>
 					<el-row :gutter="20">
@@ -571,7 +563,8 @@
 				time: '',
 				screenType: '0',
 				screenDirections: ['竖屏', '横屏'],
-				screenDirection: ['竖屏', '横屏'],
+				//screenDirection: ['竖屏', '横屏'],
+				screenDirection: '横屏',
 				playLength: '100',
 				resolution: '1920x1080',
 				week: '',
@@ -615,7 +608,7 @@
 						} else if(this.step == 1) {
 							app.showTerminals = []
 							app.terminals.forEach(item => {
-								if(app.screenDirection.indexOf(item.direction) >= 0 && item.status == '在线') {
+								if(app.screenDirection == item.direction && item.status == '在线') {
 									app.showTerminals.push(item)
 								}
 							})
@@ -793,6 +786,13 @@
 						if(this.material[i].uid == uid) {
 							this.material.splice(i, 1)
 						}
+					}
+				},
+				screenDirectionChange(val) {
+					if(val == '竖屏') {
+						app.resolution = '1080x1920'
+					} else {
+						app.resolution = '1920x1080'
 					}
 				}
 

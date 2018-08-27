@@ -20,10 +20,10 @@
 
 <body>
     <div class="height_full" id="app" v-cloak>
-        <el-container>
-            <el-header>
-                <div class="toolbar" style="display:flex;">
-                    <div style="width: 550px;">
+        <div>
+            <div>
+                <el-row class="toolbar">
+                    <el-col :span="10" class="full-width-if-mobile">
                         <div class="grid-content bg-purple">
                             <shiro:hasPermission name="resource:album:save">
                                 <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
@@ -39,9 +39,9 @@
                                 <el-button type="success" icon="el-icon-upload" @click="importResources" size="small">导入素材</el-button>
                             </shiro:hasPermission>
                         </div>
-                    </div>
-                    <div style="text-align: left;margin-left: 30px;">
-                        <el-form :inline="true" class="demo-form-inline">
+                    </el-col>
+                    <el-col :span="7" class="hidden-if-mobile">
+                        <el-form :inline="true" class="no-margin-form demo-form-inline">
                             <el-form-item label="搜索素材">
                                 <el-input placeholder="搜索素材" v-model="keyword"></el-input>
                             </el-form-item>
@@ -49,19 +49,22 @@
                                 <el-button type="primary" @click="searchTemplate">搜索</el-button>
                             </el-form-item>
                         </el-form>
-                    </div>
-                    <div>
-                        <div class="store-status">
-                            <el-progress :text-inside="true" :stroke-width="18" :percentage="storeUsedPercent" status="success"></el-progress>
-                            <span class="label-txt">{{storeInfo.used | byteToSize}}/{{storeInfo.total | byteToSize}}</span>
+                    </el-col>
+                    <el-col :span="7">
+                        <div class="hidden-if-mobile">
+                            <div class="store-status">
+                                <el-progress :text-inside="true" :stroke-width="18" :percentage="storeUsedPercent" status="success"></el-progress>
+                                <span class="label-txt">{{storeInfo.used | byteToSize}}/{{storeInfo.total | byteToSize}}</span>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </el-header>
+                    </el-col>
+                </el-row>
+            </div>
             <el-container>
-                <el-aside width="250px">
+                <el-aside width="200px">
                     <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" default-expand-all :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable  @node-drop="treeDrapDrop" :allow-drag="allowDrag">
+                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable @node-drop="treeDrapDrop"
+                        :allow-drag="allowDrag">
                         <span class="custom-tree-node" slot-scope="{ node, data }">
                             <span class="left-label-group">
                                 <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
@@ -72,7 +75,7 @@
                 <el-main>
                     <div role="mainDis" v-show="!tp.visible" style="overflow: auto;">
                         <el-row>
-                            <el-col :span="10">
+                            <el-col :span="10" class="full-width-if-mobile">
                                 <!--查询-->
                                 <el-breadcrumb separator="/" style="margin-top: 10px;">
                                     <el-breadcrumb-item>
@@ -85,7 +88,7 @@
                                     </template>
                                 </el-breadcrumb>
                             </el-col>
-                            <el-col :span="14" style="text-align: right;">
+                            <el-col :span="14" style="text-align: right;" class="full-width-if-mobile">
                                 <!--分页-->
                                 <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size"
                                     layout="total, sizes, prev, pager, next, jumper" :total="tpager.total" @size-change="handleSizeChange"
@@ -93,7 +96,7 @@
                                 </el-pagination>
                             </el-col>
                         </el-row>
-                        <div role="nextDirs" class="next-dirs">
+                        <div role="nextDirs" class="next-dirs hidden-if-mobile">
                             <el-button icon="el-icon-back" circle style="float:left;" @click="backToBefore()"></el-button>
                             <template v-for="dir in nextDirs">
                                 <div class="dirs" @click="dir_click(dir.data)">
@@ -184,7 +187,7 @@
                                         </el-form-item>
                                         <el-form-item label="素材截图" v-show="tp.data.type == 'text'">
                                             <el-upload class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
-                                                :before-upload="beforeAvatarUpload"  :on-error="handleError">
+                                                :before-upload="beforeAvatarUpload" :on-error="handleError">
                                                 <div style="display:flex;">
                                                     <img v-show="tp.data.coverUrl" :src="getResUrl(tp.data.coverUrl)" class="avatar">
                                                     <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -192,8 +195,8 @@
                                             </el-upload>
                                         </el-form-item>
                                         <el-form-item label="上传素材" v-show="tp.data.type == 'image' || tp.data.type == 'audio' || tp.data.type == 'video'">
-                                            <el-upload :disabled="tp.data.typeDisable" class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
-                                                :before-upload="beforeResourceUpload" :on-error="handleError">
+                                            <el-upload :disabled="tp.data.typeDisable" class="avatar-uploader" :action="resource_server_url" :show-file-list="false"
+                                                :on-success="handleAvatarSuccess" :before-upload="beforeResourceUpload" :on-error="handleError">
                                                 <div style="display:flex;">
                                                     <img v-show="tp.data.coverUrl" :src="tp.data.type == 'audio' ? tp.data.coverUrl:getResUrl(tp.data.coverUrl)" class="avatar">
                                                     <i v-if="!tp.data.typeDisable" class="el-icon-plus avatar-uploader-icon"></i>
@@ -228,7 +231,7 @@
                     <!-- 模板编辑框 -->
                 </el-main>
             </el-container>
-        </el-container>
+        </div>
         <!--对话框-->
         <!--模板类别 管理对话框-->
         <el-dialog :title="tpt.title" :visible.sync="tpt.visible">
@@ -290,7 +293,8 @@
         <!--导入资源-->
 
         <!--Tree 右键菜单-->
-        <context-menu ref="treeContextMenu" :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event" @click="contextMenuClick"></context-menu>
+        <context-menu ref="treeContextMenu" :visiable.sync="contextMenu.visiable" :data="contextMenuData" :mouse-event="contextMenu.event"
+            @click="contextMenuClick"></context-menu>
         <!--Tree 右键菜单-->
         <el-dialog class="resourceView" :title="resourceView.title" :visible.sync="resourceView.visible" @close="resourceViewClose">
             <template v-if="resourceView.type == 'video'">

@@ -109,3 +109,21 @@ body {
 .margin-left-10 {
 	margin-left: 10px;
 }
+
+.no-margin-form .el-form-item{
+    margin-bottom:0px;
+}
+
+/**媒体查询 适配手机**/
+@media (max-width: 1024px) {
+    /**宽度超过1024**/
+    .full-width-if-mobile {
+        width: 100%;
+    }
+    .hidden-if-mobile{
+        display:none;
+	}
+	.margin-5-if-mobile{
+		margin:5px;
+	}
+}

@@ -17,12 +17,12 @@
 <%@include file="/include/ueditor.jsp"%>
 <link href="${urls.getForLookupPath('/assets/module/template/template.css')}" rel="stylesheet">
 </head>
-<body style="min-width:1100px;">
+<body >
     <div class="height_full" id="app" v-cloak>
         <el-container>
             <el-header>
                 <div class="toolbar" style="display:flex;">
-                    <div style="width: 550px;">
+                    <div  >
                         <div class="grid-content bg-purple">
                             <shiro:hasPermission name="template:type:save">
                                 <el-button type="success" icon="el-icon-plus" @click="addTemplateType" size="small">新增分类</el-button>
@@ -38,8 +38,8 @@
                             </shiro:hasPermission>
                         </div>
                     </div>
-                    <div style="text-align: left;">
-                        <el-form :inline="true" class="demo-form-inline">
+                    <div style="margin-left:50px;" class="hidden-if-mobile">
+                        <el-form :inline="true" class="no-margin-form demo-form-inline">
                             <el-form-item label="搜索模板">
                                 <el-input placeholder="搜索模板" v-model="keyword"></el-input>
                             </el-form-item>
@@ -59,7 +59,7 @@
                 <el-main>
                     <div role="mainDis" v-show="!tp.visible" style="overflow: auto; padding-bottom:20px;">
                         <el-row>
-                            <el-col :span="10">
+                            <el-col :span="10" class="full-width-if-mobile">
                                 <!--查询-->
                                 <el-breadcrumb separator="/" style="margin-top: 10px;">
                                     <el-breadcrumb-item>所有类别</el-breadcrumb-item>
@@ -70,7 +70,7 @@
                                     </template>
                                 </el-breadcrumb>
                             </el-col>
-                            <el-col :span="14" style="text-align: right;">
+                            <el-col :span="14" style="text-align: right;" class="full-width-if-mobile">
                                 <!--分页-->
                                 <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size"
                                     layout="total, sizes, prev, pager, next, jumper" :total="tpager.total" @size-change="handleSizeChange"
