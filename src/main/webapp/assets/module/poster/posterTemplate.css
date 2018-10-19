@@ -1,0 +1,92 @@
+#app{
+    margin:10px;
+}
+.templets-filter-list {
+    margin: 5px 0;
+    display: flex;
+}
+.templets-filter-list > span {
+    margin-right: 1.857em;
+    font-weight: bolder;
+    font-family: PingFang SC,Microsoft YaHei;
+    line-height: 34px;
+    width: 50px;
+}
+.termialDis>div>div>.ratio {
+    background: rgba(0, 0, 0, 0.64);
+}
+.termialDis>div>.deviceInfo{
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    display: block;
+}
+.termialDis>div>.screenshoot-v{
+	width:100%;
+	height:auto;
+}
+.img-box{
+	position:relative;
+	box-shadow:1px 1px 6px 1px #8c8c8c;
+}
+.img-box:hover .img-box-content{
+	display:block;
+}
+.img-box-content{
+	display:none;
+	position:absolute;
+	left:0;
+	bottom:0;
+	right:0;
+	background-color:rgba(255,255,255,0.8);
+	text-align:center;
+	height: 120px;
+    padding-top: 10px;
+}
+.img-box  p{
+	text-align:center;
+	font-size:14;
+	font-weight:bold;
+	margin-top:5px;
+	position:absolute;
+	bottom:-10px;
+	width:100%;
+	padding:5px 0;
+	background-color:rgba(0,0,0,0.6);
+	color:#fff;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	overflow:hidden;
+}
+.img-box-content .btns{
+	width:50px;
+	height:30px;
+	color:#fff;
+	border:none;
+	border-radius:4px;
+	position:absolute;
+	top:10px;
+	outline:none;
+}
+.btn-del{
+	background-color:#de0101;
+	left:9px;
+}
+.btn-edit{
+	background-color:#0857c7;
+	right:10px;
+}
+.btn-pre{
+	background-color:orange;
+	left:62px;
+}
+.btn-del:hover{
+	background-color:red;
+}
+.btn-edit:hover{
+	background-color:#005ee4;
+}
+.btn-pre:hover{
+	background-color:#ffbb3f;
+}

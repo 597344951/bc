@@ -287,7 +287,7 @@
             </el-form>
             <div class="dialog-footer" slot="footer">
                 <el-button @click="importResource.visiable = false">取 消</el-button>
-                <el-button type="primary" @click="saveResources">确 定</el-button>
+                <el-button type="primary" @click="saveResources" :disabled="resource_uploading">确 定</el-button>
             </div>
         </el-dialog>
         <!--导入资源-->

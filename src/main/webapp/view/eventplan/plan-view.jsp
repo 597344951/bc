@@ -208,10 +208,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forTokens items="" delims="," var="name">
-                            <c:out value="${name}" />
-                            <p>
-                        </c:forTokens>
+                        
                         <c:forEach items="${costPlans}" var="plan">
                             <tr>
                                 <td>

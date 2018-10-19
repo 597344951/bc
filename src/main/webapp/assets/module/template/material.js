@@ -18,17 +18,19 @@ window.onFocus = function(){
 let ins = new Vue({
   el: "#app",
   data: {
+	// 资源上传中
+	resource_uploading:false,
     resourceView: {
       title: '',
       visible: false
     },
-    //右键 节点的数据
+    // 右键 节点的数据
     curContextData: null,
     contextMenu: {
       visiable: false,
       event: null
     },
-    //菜单数据
+    // 菜单数据
     contextMenuData: window.menuData,
     resource_server_url: '',
     resource_menu: [{
@@ -42,7 +44,7 @@ let ins = new Vue({
       }]
     }],
     keyword: '',
-    //当前目录
+    // 当前目录
     currentCategory: {
       name: null,
       parent:0
@@ -52,7 +54,7 @@ let ins = new Vue({
       current: 1,
       size: 10
     },
-    //节目模版选择
+    // 节目模版选择
     ptw: {
       visiable: false
     },
@@ -257,7 +259,7 @@ let ins = new Vue({
             url: url,
             contentType: 'application/json;charset=utf-8',
             complete: () => {
-              //nothing...
+              // nothing...
             },
             success: reps => {
               if(reps.state == 'SUCCESS') {
@@ -323,6 +325,7 @@ let ins = new Vue({
     },
     submitUpload() {
       this.$refs.upload.submit();
+      this.resource_uploading = true
     },
     clearChose() {
       console.log('清空选中文件');
@@ -331,11 +334,34 @@ let ins = new Vue({
     },
     handleSuccess(response, file, fileList) {
       console.log('文件上传成功', arguments);
+      if(!response.width || !response.height) this.readImageSize(file.raw,response)
       this.importResource.fileList.push(response);
       if (fileList.length == this.importResource.fileList.length) {
         console.log('所有文件上传完成');
-        if (this.importResource.commitOnUpload) this.saveResources();
+        this.resource_uploading = false
+        if (this.importResource.commitOnUpload){
+        	setTimeout(() => {
+        		this.saveResources();
+			}, 1000);
+        }  
       }
+    },
+    readImageSize(file,info){
+    	var reader = new FileReader();
+        reader.onload = function (e) {
+            var data = e.target.result;
+            // 加载图片获取图片真实宽度和高度
+            var image = new Image();
+            image.onload=function(){
+                var width = image.width;
+                var height = image.height;
+                info.width = width;
+                info.height = height;
+                console.log('read image size: ',info)
+            };
+            image.src= data;
+       };
+       reader.readAsDataURL(file);
     },
     handleError(err, file, fileList){
       let msg = JSON.parse(err.message).msg;
@@ -350,15 +376,18 @@ let ins = new Vue({
     },
     saveResources() {
       let me = this;
+      this.resource_uploading = true
       if (this.importResource.nameType == 'fileName') {
         this.importResource.data.name = "占位符"
       }
       if (this.importResource.fileList.length == 0) {
         $message('请选择上传的文件!', 'warning', this);
+        this.resource_uploading = false
         return;
       }
       this.$refs.importResForm.validate(function (valid) {
         if (!valid) {
+          this.resource_uploading = false
           return false;
         }
 
@@ -370,7 +399,9 @@ let ins = new Vue({
             contentType: item.type,
             type: item.type.split('/')[0],
             size: item.size,
-            timeLength: item.length
+            timeLength: item.length,
+            width: item.width,
+            height: item.height
           };
 
           if (obj.type == 'image') {
@@ -396,6 +427,7 @@ let ins = new Vue({
             me.reloadTpTypeData();
             me.resetImport();
           }
+          me.resource_uploading = false
         });
 
       });
@@ -435,7 +467,7 @@ let ins = new Vue({
       it.showtoolbar = false;
     },
 
-    //查询模板
+    // 查询模板
     searchTemplate() {
       this.currentCategory.name = '所有类别';
       this.loadTpTypeData();
@@ -459,7 +491,7 @@ let ins = new Vue({
       console.log(data);
       return data;
     },
-    //转化为普通数据
+    // 转化为普通数据
     toNormalData(data) {
       function next(obj, chi) {
         if (chi) {
@@ -503,7 +535,7 @@ let ins = new Vue({
       var node = this.$refs.tree.getCurrentNode();
       this.loadTpTypeData(node ? node.data : null, this);
     },
-    //获取选中树节点数据
+    // 获取选中树节点数据
     checkTreeSelectData: function () {
       var node = this.$refs.tree.getCurrentNode();
       if (!node && !this.curContextData) {
@@ -568,7 +600,7 @@ let ins = new Vue({
             if (result.status) {
               tpt.visible = false;
               ins.loadTreeData();
-              //拼接图片恢复显示
+              // 拼接图片恢复显示
               tpt.m3Visible = true;
             }
           });
@@ -578,7 +610,7 @@ let ins = new Vue({
             if (result.status) {
               tpt.visible = false;
               ins.loadTreeData();
-              //拼接图片恢复显示
+              // 拼接图片恢复显示
               tpt.m3Visible = true;
             }
           });
@@ -587,27 +619,37 @@ let ins = new Vue({
     },
     deleteTemplateType: function () {
       var ins = this;
-      var tpt = this.tpt;
       var nodedata = this.checkTreeSelectData();
       if (!nodedata) return;
       if (nodedata.children && nodedata.children.length > 0) {
         $message("本节点包含子节点,如需删除请先删除子节点。", "warning", this);
         return;
       }
-      this.$confirm(`此操作将『${nodedata.name}』, 是否继续?`, "提示", {
+      this.$confirm(`此操作将『${nodedata.name}』!`, "是否继续?", {
         type: "warning"
       }).then(function () {
-        // 删除数据
-        ajax_json("/MaterialAlbum/Album/" + nodedata.albumId, "delete", null, function (
-          result
-        ) {
-          if (result.status) {
-            tpt.visible = false;
-            ins.loadTreeData();
-            ins.beforeDelete = nodedata;
-          }
-        });
+    	if(nodedata.count > 0){
+    		ins.$confirm(`『${nodedata.name}』下包含${nodedata.count}条数据的将会被一起删除! `, "是否继续?", {
+                type: "warning"
+            }).then(()=>{
+            	ins.deleteMaterialAlbum(nodedata)
+            })
+    	}else{
+    		ins.deleteMaterialAlbum(nodedata)
+    	}
       });
+    },
+    deleteMaterialAlbum(nodedata){
+    	var ins = this;
+    	var tpt = this.tpt;
+    	// 删除数据
+        ajax_json("/MaterialAlbum/Album/" + nodedata.albumId, "delete", null, (result)=> {
+           if (result.status) {
+             tpt.visible = false;
+             ins.loadTreeData();
+             ins.beforeDelete = nodedata;
+           }
+        });
     },
     // 类别点击
     tptTreeClick: function (_data, node) {
@@ -616,7 +658,7 @@ let ins = new Vue({
       var data = _data.data; // 类别节点数据
       this.loadTpTypeData(data, ins);
     },
-    //预览模板
+    // 预览模板
     viewTemplate: function (tp) {
       this.resourceView.type = tp.type;
       if (tp.type == 'text') {
@@ -639,7 +681,7 @@ let ins = new Vue({
       this.tp.title = "素材上传";
 
     },
-    //重置模板类别
+    // 重置模板类别
     resetTemplate() {
       this.tp.data = {
         title: "",
@@ -732,7 +774,7 @@ let ins = new Vue({
       }
       this.tp.data.url = res.url;
       this.tp.data.original = res.original;
-      this.tp.data.timeLength = res.length; //时间长度
+      this.tp.data.timeLength = res.length; // 时间长度
       if (res_type == 'text') {
         this.tp.data.contentType = "text/html";
         this.tp.data.coverUrl = res.thumbnail ? res.thumbnail : res.url;
@@ -741,6 +783,8 @@ let ins = new Vue({
       if (res_type == 'audio') {
         if (!this.tp.data.coverUrl) this.tp.data.coverUrl = '/assets/img/timg.png';
       }
+      this.tp.data.width = res.width
+      this.tp.data.height = res.height
     },
     beforeAvatarUpload(file) {
       const isType = file.type.startsWith('image');
@@ -787,12 +831,12 @@ let ins = new Vue({
       return serverConfig.getUrl(url);
     },
     resourceViewClose() {
-      //暂停视频/音频
+      // 暂停视频/音频
       $('.videoView').trigger('pause');
       $('.audioView').trigger('pause');
     },
     allowDrag(draggingNode) {
-      //内置数据不能拖拽
+      // 内置数据不能拖拽
       return !draggingNode.data.data.builtin; 
     },
     treeDrapDrop(from, to, dropType, ev){
@@ -801,7 +845,7 @@ let ins = new Vue({
       let td = to.data.data;
       let ins = this;
       let data = {albumId:fd.albumId};
-      //before、after、inner
+      // before、after、inner
       if(dropType == 'before'){
         data.parent = td.parent;
         data.orderNum = td.orderNum-1;
@@ -833,7 +877,7 @@ function getTpTypeIds(data, tpt_data) {
   let r = ay.reverse().map(function (a) {
     return a.albumId;
   });
-  //增加自身的信息
+  // 增加自身的信息
   r.push(data.albumId);
   return r;
 }
