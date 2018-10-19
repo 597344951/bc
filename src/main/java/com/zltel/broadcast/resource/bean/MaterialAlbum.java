@@ -28,6 +28,8 @@ public class MaterialAlbum {
     private Boolean verify;
     /**未审核**/
     private Boolean noVerify;
+    /**类型**/
+    private String type;
 
     public MaterialAlbum() {}
 
@@ -147,6 +149,14 @@ public class MaterialAlbum {
 
     public void setNoVerify(Boolean noVerify) {
         this.noVerify = noVerify;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

@@ -33,15 +33,16 @@ public class MaterialAlbumServiceImpl extends BaseDaoImpl<MaterialAlbum> impleme
 
     @Override
     public int delete(MaterialAlbum ma) {
-        PageRowBounds prb = new PageRowBounds(0, 0);
         ResourceMaterial r = new ResourceMaterial();
         r.setAlbumId(ma.getAlbumId());
         MaterialAlbum dt = this.mapper.selectByPrimaryKey(ma.getAlbumId());
         if (dt == null) throw new RRException("没有找到要删除数据");
         if (dt.getBuiltin()) throw new RRException("无法删除内置节点");
-        
-        this.resourceMaterialMapper.query(r, prb);
-        if (prb.getTotal() > 0) throw new RRException("此分类下包含数据,无法删除!");
+        ResourceMaterial rm = new ResourceMaterial();
+        rm.setUserId(ma.getUid());
+        rm.setOrgId(ma.getOrgid());
+        rm.setAlbumId(ma.getAlbumId());
+        this.resourceMaterialMapper.delete(rm);
 
         return this.mapper.deleteByPrimaryKey(ma.getAlbumId());
     }

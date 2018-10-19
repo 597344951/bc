@@ -41,7 +41,7 @@ public class MaterialAlbumController extends BaseController {
     @ApiOperation(value = "查询用户专辑树")
     @GetMapping(value = "/Album")
     @RequiresPermissions("resource:album:query")
-    public R listTypeTree(String keyword, Boolean verify) {
+    public R listTypeTree(String keyword,String type, Boolean verify) {
         SysUser user = this.getSysUser();
         MaterialAlbum ma = new MaterialAlbum(user);
         AdminRoleUtil.handleAdminRole(ma, item -> {
@@ -55,6 +55,7 @@ public class MaterialAlbumController extends BaseController {
 
         ma.setKeyword(keyword);
         ma.setVerify(verify);
+        ma.setType(type);
 
         List<MaterialAlbum> mas = this.materialAlbumService.listMaterialAlbum(ma);
         List<TreeNode<MaterialAlbum>> tree =
@@ -112,6 +113,14 @@ public class MaterialAlbumController extends BaseController {
         MaterialAlbum ma = new MaterialAlbum(this.getSysUser());
         ma.setBuiltin(false);
         ma.setAlbumId(albumId);
+        AdminRoleUtil.handleAdminRole(ma, item -> {
+            // 组织管理员
+            ma.setUid(null);
+        }, item -> {
+         // 平台管理员
+            ma.setUid(null);
+            ma.setOrgid(null);
+        });
 
         int rc = this.materialAlbumService.delete(ma);
         if (rc > 0) {

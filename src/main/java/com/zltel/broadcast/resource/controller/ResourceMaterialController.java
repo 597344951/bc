@@ -73,6 +73,8 @@ public class ResourceMaterialController extends BaseController {
             rm.setOrgId(user.getOrgId());
             rm.setUserId(user.getUserId());
             rm.setAddDate(new Date());
+            rm.setWidth(rm.getWidth() == null ? 1 : rm.getWidth());
+            rm.setHeight(rm.getHeight() == null ? 1 : rm.getHeight());
         }
 
         this.materialService.inserts(rms);

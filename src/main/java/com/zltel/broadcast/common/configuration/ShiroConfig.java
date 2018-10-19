@@ -32,6 +32,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.zltel.broadcast.common.shiro.credentials.RetryLimitHashedCredentialsMatcher;
 import com.zltel.broadcast.common.shiro.dao.RedisSessionDao;
+import com.zltel.broadcast.common.shiro.filter.HeaderSettingFilter;
 import com.zltel.broadcast.common.shiro.filter.KickoutSessionControlFilter;
 import com.zltel.broadcast.common.shiro.realm.TokenRealm;
 import com.zltel.broadcast.common.shiro.realm.UserRealm;
@@ -202,12 +203,16 @@ public class ShiroConfig {
         log.debug("KickoutSessionControlFilter bean 已创建");
         return filter;
     }
+    @Bean
+    public HeaderSettingFilter headerSettingFilter() {
+        return new HeaderSettingFilter();
+    }
 
 
     /** 过滤器 **/
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean shiroFilter(SessionsSecurityManager securityManager,
-            KickoutSessionControlFilter kickfilter) {
+            KickoutSessionControlFilter kickfilter,HeaderSettingFilter hsFilter) {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager);
         shiroFilter.setLoginUrl("/login");
@@ -216,6 +221,7 @@ public class ShiroConfig {
         // 配置拦截器信息
         Map<String, Filter> filters = new LinkedHashMap<>();
         filters.put("kickout", kickfilter);
+        filters.put("headFilter", hsFilter);
         shiroFilter.setFilters(filters);
 
         // 配置拦截权限
@@ -232,7 +238,7 @@ public class ShiroConfig {
         filterMap.put("/logout/**", "logout");
         filterMap.put("/view/**", "kickout,user");// view 目录下鉴定权限
 
-        filterMap.put("/**", "kickout,anon");// 其他路径不不做过滤
+        filterMap.put("/**", "headFilter,kickout,anon");// 其他路径不不做过滤
 
         shiroFilter.setFilterChainDefinitionMap(filterMap);
 
@@ -287,6 +293,6 @@ public class ShiroConfig {
         advisor.setSecurityManager(securityManager);
         return advisor;
     }
-
+     
 
 }

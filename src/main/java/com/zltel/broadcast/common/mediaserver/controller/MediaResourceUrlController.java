@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.zltel.broadcast.incision.sola.utils.HttpUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -60,5 +61,26 @@ public class MediaResourceUrlController extends BaseController {
             m.put("msg", e.getMessage());
         }
         return m;
+    }
+    
+    @ApiOperation("海报预览跳转")
+    @GetMapping("/poster/view/{templateId}")
+    public void posterView(@PathVariable("templateId") String templateId,HttpServletResponse response) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(sysInfoConfig.getPosterServe());
+        sb.append("/view/").append(templateId);
+        String tu = sb.toString();
+        logout.debug("重定资源地址:{}", tu);
+        response.sendRedirect(tu);
+    }
+    @ApiOperation("海报编辑跳转")
+    @GetMapping("/poster/edit/{templateId}")
+    public void posterEdit(@PathVariable("templateId") String templateId,HttpServletResponse response) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(sysInfoConfig.getPosterServe());
+        sb.append("/edit/").append(templateId);
+        String tu = sb.toString();
+        logout.debug("重定资源地址:{}", tu);
+        response.sendRedirect(tu);
     }
 }

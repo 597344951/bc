@@ -24,7 +24,7 @@ public class PlanTimer {
     public static final Logger logger = LoggerFactory.getLogger(TestTimer.class);
 
     // 投票开始前延时
-    private static final long VOTING_DELAY = TimeUnit.DAYS.toMillis(1);
+    private static final long VOTING_DELAY = 0;// TimeUnit.DAYS.toMillis(1);
     // 投票时间
     private static final long VOTING_TIME = TimeUnit.DAYS.toMillis(8);
 

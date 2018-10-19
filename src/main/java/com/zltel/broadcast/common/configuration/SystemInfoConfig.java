@@ -21,6 +21,15 @@ public class SystemInfoConfig {
     private String version = "1.0";
     @Value("${zltel.mediaserve}")
     private String mediaserve;
+    @Value("${zltel.posterServe}")
+    private String posterServe;
+    /**信任的跨域域名**/
+    @Value("${zltel.trustCrossDomains}")
+    private String trustCrossDomains;
+    
+    public static final SystemInfoConfig getInstince() {
+        return SpringContextUtils.getBean(SystemInfoConfig.class);
+    }
 
     /** 获取用户自定义上传路径 **/
     public String getCustomizeUploadUrl() {
@@ -55,9 +64,6 @@ public class SystemInfoConfig {
         this.version = version;
     }
 
-    public static final SystemInfoConfig getInstince() {
-        return SpringContextUtils.getBean(SystemInfoConfig.class);
-    }
 
     public String getMediaserve() {
         return mediaserve;
@@ -69,6 +75,22 @@ public class SystemInfoConfig {
 
     public void setAppname(String appname) {
         this.appname = appname;
+    }
+
+    public String getPosterServe() {
+        return posterServe;
+    }
+
+    public void setPosterServe(String posterServe) {
+        this.posterServe = posterServe;
+    }
+
+    public String getTrustCrossDomains() {
+        return trustCrossDomains;
+    }
+
+    public void setTrustCrossDomains(String trustCrossDomains) {
+        this.trustCrossDomains = trustCrossDomains;
     }
 
 

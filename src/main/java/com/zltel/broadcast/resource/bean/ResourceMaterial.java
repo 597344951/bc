@@ -3,7 +3,7 @@ package com.zltel.broadcast.resource.bean;
 import java.util.Date;
 
 import com.zltel.broadcast.um.bean.SysUser;
-
+/**资源素材**/
 public class ResourceMaterial {
     public static final String TYPE_VIDEO = "video";
     public static final String TYPE_PICTURE = "image";
@@ -39,6 +39,10 @@ public class ResourceMaterial {
 
     private Boolean verify;
     private Date verifyDate;
+    /**图片宽度**/
+    private Integer width;
+    /**图片高度**/
+    private Integer height;
 
     /** 关键词 **/
     private String keyword;
@@ -274,6 +278,22 @@ public class ResourceMaterial {
      */
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
     }
 
 }
