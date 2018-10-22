@@ -6,7 +6,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 module.exports = {
   //mode: 'production', //生产模式
   mode: 'development', //开发模式
-  entry: '../index-all.js',
+  entry: './index-all.js',
   devtool: 'eval-source-map',
   output: {
     path: path.resolve(__dirname, '../../components'),
