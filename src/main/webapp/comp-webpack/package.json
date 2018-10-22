@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "webpack-dev-server --config build/webpack.demo.js --hot",
     "build": "webpack --config build/webpack.config.js",
-    "package": "webpack --config build/webpack.config.js"
+    "package": "webpack --config build/webpack.config.js",
+	"debug": "webpack --config build/webpack.config.debug.js --watch"
   },
   "keywords": [
     "vue",
