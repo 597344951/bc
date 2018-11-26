@@ -4,10 +4,9 @@
   "description": "Components with Vue by Touss .",
   "main": "index.js",
   "scripts": {
-    "serve": "webpack-dev-server --config build/webpack.demo.js --hot",
-    "build": "webpack --config build/webpack.config.js",
-    "package": "webpack --config build/webpack.config.js",
-	"debug": "webpack --config build/webpack.config.debug.js --watch"
+    "serve": "webpack-dev-server --config build/webpack.serve.config --hot",
+    "release": "webpack --config build/webpack.prod.config.js",
+    "debug": "webpack --config build/webpack.debug.config.js --watch"
   },
   "keywords": [
     "vue",
@@ -18,8 +17,11 @@
   "license": "MIT",
   "dependencies": {
     "hoek": "^5.0.3",
+    "html2canvas": "^1.0.0-alpha.12",
+    "my_seal": "0.0.7",
     "vue": "^2.5.16",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "webpack-merge": "^4.1.4"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

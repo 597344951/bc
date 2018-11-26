@@ -1,11 +1,13 @@
 /**完整打包容器**/
+'use strict'
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
 module.exports = {
-  mode: 'production', //生产模式
-  //mode: 'development', //开发模式
   entry: './index-all.js',
   //devtool: 'eval-source-map',
   output: {
@@ -13,6 +15,9 @@ module.exports = {
     filename: 'main.js'
   },
   resolve: {
+    //自定义modules位置
+    modules: ['./node_modules/','../node_modules/','../comp-webpack/node_modules/'],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
       vue$: 'vue/dist/vue.esm.js'
     }
