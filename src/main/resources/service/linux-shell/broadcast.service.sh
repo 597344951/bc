@@ -9,6 +9,25 @@ app_log_file=${broadcast_home}logs/logs_`date +%Y-%m-%d`.log
 
 pid_file=${broadcast_home}broadcast.pid
 
+#GC日志文件存储位置
+GC_LOG_FILE=${broadcast_home}logs/gc-log_`date +%Y-%m-%d`.log
+#JAVA运行参数
+JAVA_OPTS=""
+#设定堆内存配置
+JAVA_OPTS="$JAVA_OPTS -Xmx2g -Xms1g -Xmn1g"
+#设定打印GC详情日志
+JAVA_OPTS="$JAVA_OPTS -XX:+UseParallelOldGC -Xloggc:${GC_LOG_FILE} -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution"
+
+#配置远程jconsole连接
+#在jconsole中输入 ${hostname}:${port}即可连接
+JAVA_OPTS="$JAVA_OPTS -Djava.rmi.server.hostname=192.168.1.8 -Dcom.sun.management.jmxremote"
+JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote.port=8888"
+JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote.rmi.port=8889"
+JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
+JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote.ssl=false"
+
+
+
 RUN_USER=zltel
 #当前用户
 user=$(env | grep USER | cut -d "=" -f 2)
@@ -31,10 +50,10 @@ case "$1" in
 		  then
 			#root
 			echo "当前用户是root,切换用户运行"
-			sudo -u $RUN_USER java -jar ${broadcast_home}broadcast*.war >> ${app_log_file} &
+			sudo -u $RUN_USER java -jar ${JAVA_OPTS} ${broadcast_home}broadcast*.war >> ${app_log_file} &
 		  else 
 			#其他用户
-			java -jar ${broadcast_home}broadcast*.war >> ${app_log_file} &
+			java -jar ${JAVA_OPTS} ${broadcast_home}broadcast*.war >> ${app_log_file} &
 		fi
         
 		echo $! > ${pid_file}
