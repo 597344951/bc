@@ -33,7 +33,7 @@
 </head>
 
 <body>
-    <a class="make-program" href="/view/publish/new.jsp?startStep=2&title=先进典型&url=/faker/xjdx/2.htm">
+    <a class="make-program" onclick="makeshow()" >
                      节目制作
                     </a>
     <div class="topbar" style="display:none;">
@@ -127,6 +127,13 @@
         <img src="bak_bottom.jpg" width="1" height="1">
         <img src="photobak.png" width="1" height="1">
     </div>
+    <script>
+        			function makeshow(){
+				var share = [{weburl: '/faker/xjdx/2.htm'}];
+	            var url = '/view/publish/new.jsp?title=先进典型&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+	            window.location.href=url;
+			}
+    </script>
 </body>
 
 </html>

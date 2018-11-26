@@ -25,7 +25,7 @@ public class RegexUtil {
 	
 	private static final String REGEX_QQ = "^[1-9][0-9]{4,10}";
 	
-	private static final String REGEX_WECHAT = "^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$";
+	private static final String REGEX_WECHAT = "[-_a-zA-Z0-9]{5,19}";
 	
 	private static final String REGEX_EMAIL = "^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$";
 	

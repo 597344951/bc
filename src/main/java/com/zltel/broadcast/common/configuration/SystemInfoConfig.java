@@ -23,10 +23,10 @@ public class SystemInfoConfig {
     private String mediaserve;
     @Value("${zltel.posterServe}")
     private String posterServe;
-    /**信任的跨域域名**/
+    /** 信任的跨域域名 **/
     @Value("${zltel.trustCrossDomains}")
     private String trustCrossDomains;
-    
+
     public static final SystemInfoConfig getInstince() {
         return SpringContextUtils.getBean(SystemInfoConfig.class);
     }
@@ -39,14 +39,24 @@ public class SystemInfoConfig {
 
     /** 获取媒体服务器地址 **/
     public StringBuilder getMediaServerUrl() {
+        
+        return getFullUrl(mediaserve);
+    }
+
+    public StringBuilder getPosterServeUrl() {
+
+        return getFullUrl(posterServe);
+    }
+
+    private StringBuilder getFullUrl(String in) {
         StringBuilder sb = new StringBuilder();
-        if (mediaserve.startsWith("//")) {
+        if (in.startsWith("//")) {
             sb.append("http:");
-        } else if (!mediaserve.startsWith("http://") && mediaserve.startsWith("https://")) {
+        } else if (!in.startsWith("http://") && !in.startsWith("https://")) {
             sb.append("http://");
         }
-        sb.append(mediaserve);
-        if (!mediaserve.endsWith("/")) sb.append("/");
+        sb.append(in);
+        if (!in.endsWith("/")) sb.append("/");
         return sb;
     }
 

@@ -93,7 +93,7 @@
 
 	.party-part {
 		text-align: center;
-		font-size: 18px;
+		font-size: 17px;
 		font-weight: bold;
 		margin-bottom: 10px;
 	}
@@ -109,7 +109,7 @@
 	}
 
 	.part-total {
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: bold;
 		text-align: center;
 	}	
@@ -129,13 +129,13 @@
 	}
 
 	.party-part-2 {
-		font-size: 20px;
-		width: 50px;
 		color: #cd8fda;
+		font-size: 14px;
 	}
 
 	.party-part-3 {
 		color: #f47e3d;
+		font-size: 14px;
 	}
 
 	.party-part-4 {
@@ -252,30 +252,30 @@
 								<el-col :span="24" class="party-part">
 									<i class="part-icon part-icon1"></i>
 									<div class="part-icon-box">
-										<span class="party-part-1">党组织</span>
+										<span class="party-part-1">党委数</span>
 										<br>
-										<span class="party-part-2">1688</span>
+										<span class="party-part-2">1</span>
 									</div>
 								</el-col>
 							</el-row>
 							<el-row>
 								<el-col :span="12">
-									<span class="part-title">党委数</span>
-									<span class="part-total">688</span>
+									<span class="part-title">党总支数</span>
+									<span class="part-total">NA</span>
 								</el-col>
 								<el-col :span="12">
-									<span class="part-title">党总支数</span>
-									<span class="part-total">544</span>
+									<span class="part-title">党支部数</span>
+									<span class="part-total">2</span>
 								</el-col>
 							</el-row>
 							<el-row>
 								<el-col :span="12">
-									<span class="part-title">党支部数</span>
-									<span class="part-total">325</span>
+									<span class="part-title">党组数</span>
+									<span class="part-total">NA</span>
 								</el-col>
 								<el-col :span="12">
 									<span class="part-title">联合党支部数</span>
-									<span class="part-total">128</span>
+									<span class="part-total">NA</span>
 								</el-col>
 							</el-row>
 						</el-col>
@@ -286,28 +286,28 @@
 									<div class="part-icon-box">
 										<span class="party-part-1">党员数 </span>
 										<br>
-										<span class="party-part-3">1688</span>
+										<span class="party-part-3">22</span>
 									</div>
 								</el-col>
 							</el-row>
 							<el-row>
 								<el-col :span="12">
 									<span class="part-title">正式党员数</span>
-									<span class="part-total">869</span>
+									<span class="part-total">21</span>
 								</el-col>
 								<el-col :span="12">
 									<span class="part-title">预备党员数</span>
-									<span class="part-total">6555</span>
+									<span class="part-total">1</span>
 								</el-col>
 							</el-row>
 							<el-row>
 								<el-col :span="12">
-									<span class="part-title">党支部数</span>
-									<span class="part-total"> 688</span>
+									<span class="part-title">积极分子</span>
+									<span class="part-total"> 1</span>
 								</el-col>
 								<el-col :span="12">
-									<span class="part-title">联合党支部数</span>
-									<span class="part-total">128</span>
+									<span class="part-title">入党申请人</span>
+									<span class="part-total">2</span>
 								</el-col>
 							</el-row>
 						</el-col>
@@ -324,7 +324,7 @@
 				</el-col>
 				<el-col :span="8" class="up-center-box">
 					<div class="img1">
-						<img src="/assets/icons/a.png">
+						<img src="/assets/icons/b.png">
 					</div>
 				</el-col>
 				<el-col :span="8" class="up-right-box">

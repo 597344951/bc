@@ -65,7 +65,7 @@ function toast(title, content, type, _ins) {
 			offset: 50
 		});
 	} else {
-		alert(content);
+		console.log(content);
 	}
 }
 //
@@ -310,3 +310,31 @@ function UrlSearchParams() {
 	}
 	return map;
 }
+/**
+ * 标准化对象
+ * [{data:{a:1,b:2},children:[...]}] => [{a:1,b:2,children:[...]}]
+ * @param {*} data 
+ */
+function FormatInputData(data) {
+	function next(obj, chi) {
+	  if (chi) {
+		let ay = [];
+		chi.forEach(v => {
+		  let o = v.data;
+		  ay.push(o);
+		  next(o,v.children);
+		});
+		obj.children = ay;
+	  } else {
+		return;
+	  }
+	}
+
+	let ret = [];
+	data.map((v) => {
+	  let obj = v.data;
+	  ret.push(obj);
+	  next(obj, v.children);
+	});
+	return ret;
+  }

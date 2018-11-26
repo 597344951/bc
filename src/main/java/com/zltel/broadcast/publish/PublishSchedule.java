@@ -21,7 +21,7 @@ public class PublishSchedule {
     @Autowired
     private PublishService publishService;
 
-    @Scheduled(cron = "0 0 5 * * ?")
+    @Scheduled(cron = "59 59 23 * * ?")
     public void offline() {
         int count = publishService.offline();
         log.info("节目过期下线处理：" + count);

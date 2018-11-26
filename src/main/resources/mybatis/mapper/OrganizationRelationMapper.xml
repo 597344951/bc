@@ -155,7 +155,8 @@
   		  bui.id_photo idPhoto,
   		  bui.mobile_phone mobilePhone,
   		  _or.org_rlt_join_time orgRltJoinTime,
-  		  bui.id_card idCard
+  		  bui.id_card idCard,
+  		  oi.org_info_name orgInfoName
 		from
 		  organization_relation _or
 		  inner join organization_information oi on _or.org_rlt_info_id = oi.org_info_id 
@@ -232,5 +233,14 @@
 	      <if test="sex != null and sex != ''"> and 
 	        bui.sex = #{sex}
 	      </if>
+	</select>
+	
+	<select id="queryHavePartyUserOrg" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select
+		  distinct oi.org_info_id orgInfoId,
+		  oi.org_info_name orgInfoName
+		from
+		  organization_relation _or 
+		  inner join organization_information oi on _or.org_rlt_info_id = oi.org_info_id
 	</select>
 </mapper>

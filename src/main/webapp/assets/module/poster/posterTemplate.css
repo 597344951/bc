@@ -10,7 +10,7 @@
     font-weight: bolder;
     font-family: PingFang SC,Microsoft YaHei;
     line-height: 34px;
-    width: 50px;
+    width: 70px;
 }
 .termialDis>div>div>.ratio {
     background: rgba(0, 0, 0, 0.64);
@@ -89,4 +89,14 @@
 }
 .btn-pre:hover{
 	background-color:#ffbb3f;
+}
+.el-tree-node__content{
+	height:auto;
+}
+.custom-tree-node{
+	padding:5px;
+	display:flex;
+}
+.custom-tree-node > .node-label {
+	width:200px;
 }

@@ -20,32 +20,42 @@ public interface SysMenuService {
     int updateByPrimaryKeySelective(SysMenu record);
 
     int updateByPrimaryKey(SysMenu record);
-    
+
     List<SysMenu> queryForList(PageRowBounds prb);
-    
+
     List<SysMenu> queryListParentId(Long menuId);
-    
+
     /**
      * 查询菜单
+     * 
      * @param sysMenu 条件
-     * @return	查询得到的菜单
+     * @return 查询得到的菜单
      */
     public R querySysMenus(SysMenu sysMenu, int pageNum, int pageSize) throws Exception;
-    
+
     /**
      * 查询菜单
+     * 
      * @param sysMenu 条件
-     * @return	查询得到的菜单
+     * @return 查询得到的菜单
      */
     public R querySysMenusNotPage(SysMenu sysMenu) throws Exception;
-    /**根据登陆用户权限,查询菜单树信息**/
+
+    /** 根据登陆用户权限,查询菜单树信息 **/
     List<SysMenuTreeNode> queryMenuForTreeByPerms();
-    /**查询整个权限树**/
+
+    /** 查询整个权限树 **/
     List<SysMenuTreeNode> queryAllMenuForTree();
-    
-    /**查询权限树信息**/
+
+    /**
+     * 查询权限树信息
+     * @deprecated 方法有bug 
+     * 使用 {@link #queryAllMenuInfo()}
+     * @return
+     */
+    @Deprecated
     List<TreeNode<SysMenu>> queryTreeMenu();
-    
+
     List<TreeNode<SysMenu>> queryAllMenuInfo();
-    
+
 }

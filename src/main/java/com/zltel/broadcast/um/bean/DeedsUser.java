@@ -16,8 +16,18 @@ public class DeedsUser {
     private String deedsTitle;
     
     private String deedsDetail;
+    
+    private String similarId;
 
-    public String getDeedsTitle() {
+    public String getSimilarId() {
+		return similarId;
+	}
+
+	public void setSimilarId(String similarId) {
+		this.similarId = similarId;
+	}
+
+	public String getDeedsTitle() {
 		return deedsTitle;
 	}
 

@@ -83,4 +83,11 @@ public interface OrganizationRelationService {
      * @throws Exception
      */
     public R insertOrgRelation(OrganizationRelation organizationRelation, List<Integer> orgRltDutys) throws Exception;
+    
+    /**
+     * 查询存在党员的组织
+     * @param conditions 条件
+     * @return
+     */
+    public R queryHavePartyUserOrg(Map<String, Object> conditions);
 }

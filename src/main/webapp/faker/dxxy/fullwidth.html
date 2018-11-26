@@ -59,7 +59,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </head>
 <body>
 	<div id="home" class="header">
-	<a href="/view/publish/new.jsp?startStep=2&title=uri&url=/view/faker/dxxy/fullwidth.html">
+	<a onclick="makeshow()" >
     节目制作
   </a>
 		<div class="header-bottom">
@@ -196,6 +196,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 		 </div>
 	</div>	
-
+	<script>
+			function makeshow() {
+				var share = [{
+					weburl: '/view/faker/dxxy/fullwidth.html',
+					playtime: 5 * 1000
+				}];
+				var url = '/view/publish/new.jsp?title=党性修养&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+				window.location.href = url;
+			}
+		</script>
 </body>
 </html>

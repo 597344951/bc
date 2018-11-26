@@ -1,0 +1,9 @@
+.el-main {
+  padding: 0;
+}
+.header p {
+  display: inline-block;
+}
+.header .el-pagination {
+  float: right;
+}

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.JoinPartyOrgUserMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.JoinPartyOrgUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="join_org_id" jdbcType="INTEGER" property="joinOrgId" />
+    <result column="join_party_type" jdbcType="INTEGER" property="joinPartyType" />
+    <result column="join_status" jdbcType="VARCHAR" property="joinStatus" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="now_step" jdbcType="INTEGER" property="nowStep" />
+    <result column="is_history" jdbcType="INTEGER" property="isHistory" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, join_org_id, join_party_type, join_status, time, now_step, is_history
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from join_party_org_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from join_party_org_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgUser">
+    insert into join_party_org_user (id, user_id, join_org_id, join_party_type, 
+      join_status, time, now_step, 
+      is_history)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{joinOrgId,jdbcType=INTEGER}, #{joinPartyType,jdbcType=INTEGER}, 
+      #{joinStatus,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, #{nowStep,jdbcType=INTEGER}, 
+      #{isHistory,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into join_party_org_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="joinOrgId != null">
+        join_org_id,
+      </if>
+      <if test="joinPartyType != null">
+        join_party_type,
+      </if>
+      <if test="joinStatus != null">
+        join_status,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="nowStep != null">
+        now_step,
+      </if>
+      <if test="isHistory != null">
+        is_history,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="joinOrgId != null">
+        #{joinOrgId,jdbcType=INTEGER},
+      </if>
+      <if test="joinPartyType != null">
+        #{joinPartyType,jdbcType=INTEGER},
+      </if>
+      <if test="joinStatus != null">
+        #{joinStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nowStep != null">
+        #{nowStep,jdbcType=INTEGER},
+      </if>
+      <if test="isHistory != null">
+        #{isHistory,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgUser">
+    update join_party_org_user
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="joinOrgId != null">
+        join_org_id = #{joinOrgId,jdbcType=INTEGER},
+      </if>
+      <if test="joinPartyType != null">
+        join_party_type = #{joinPartyType,jdbcType=INTEGER},
+      </if>
+      <if test="joinStatus != null">
+        join_status = #{joinStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nowStep != null">
+        now_step = #{nowStep,jdbcType=INTEGER},
+      </if>
+      <if test="isHistory != null">
+        is_history = #{isHistory,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgUser">
+    update join_party_org_user
+    set user_id = #{userId,jdbcType=INTEGER},
+      join_org_id = #{joinOrgId,jdbcType=INTEGER},
+      join_party_type = #{joinPartyType,jdbcType=INTEGER},
+      join_status = #{joinStatus,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      now_step = #{nowStep,jdbcType=INTEGER},
+      is_history = #{isHistory,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryJoinPartyOrgUsers" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  jpou.id id,
+	  bui.base_user_id baseUserId,
+	  bui.name name,
+	  bui.sex sex,
+	  bui.id_card idCard,
+	  jpou.join_org_id joinOrgId,
+	  _oi.org_info_name orgInfoName,
+	  jpou.join_party_type joinPartyTypeId,
+	  jpbt.join_type joinPartyType,
+	  jpou.join_status joinStatus,
+	  jpou.time applyTime,
+	  jpou.now_step nowStep,
+	  jpop.name nowStepName
+	from
+	  join_party_org_user jpou 
+	  inner join base_user_info bui on jpou.user_id = bui.base_user_id 
+	  inner join join_party_branch_type jpbt on jpou.join_party_type = jpbt.jpbt_id 
+	  inner join join_party_org_process jpop on jpop.id = jpou.now_step 
+	  inner join organization_information _oi on _oi.org_info_id = jpou.join_org_id
+	where 
+	  1 = 1
+	  <if test="idCard != null and idCard != ''"> and 
+		  bui.id_card = #{idCard}
+	  </if>
+	  <if test="baseUserId != null and baseUserId != ''"> and 
+		  bui.base_user_id = #{baseUserId}
+	  </if>
+	  <if test="isHistory != null and isHistory != ''"> and 
+		  jpou.is_history = #{isHistory}
+	  </if>
+  </select>
+</mapper>

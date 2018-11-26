@@ -219,6 +219,7 @@
 		resultMap="ResultMapWithBLOBs">
 		select * from event_plan_info
 		<include refid="EventPlanInfoWhere" />
+		order by save_time desc
 	</select>
 	<select id="queryForList" resultMap="ResultMapWithBLOBs">
 		select * from event_plan_info

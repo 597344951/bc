@@ -1,0 +1,48 @@
+body {
+  overflow: auto !important;
+}
+h3 {
+  font-size: 16px;
+  margin: 15px 0px;
+  font-weight: 600;
+}
+h4 {
+  margin: 5px 0px;
+  font-weight: 100;
+}
+.banner {
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
+.banner .el-card__body {
+  line-height: 40px;
+}
+.banner .el-card__body p {
+  display: inline-block;
+}
+.banner .el-card__body div {
+  display: inline-block;
+  float: right;
+}
+.line {
+  text-align: center;
+}
+.el-dialog__header {
+  margin-bottom: 20px;
+}
+.el-main {
+  margin-top: 20px;
+}
+.members {
+  border: solid rgb(219, 214, 214) 1px;
+  border-radius: 5px;
+  min-height: 40px;
+}
+.members span {
+  margin: 10px;
+}
+.members button {
+  margin: 10px;
+}
+

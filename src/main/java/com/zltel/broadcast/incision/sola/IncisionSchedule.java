@@ -25,7 +25,7 @@ public class IncisionSchedule {
     @Resource
     private TerminalBasicInfoService terminalService;
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 30 * * * ?")
     public void terminalSync() {
         try {
             terminalService.synchronizTerminalInfo();

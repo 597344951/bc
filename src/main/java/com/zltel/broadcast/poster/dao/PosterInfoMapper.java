@@ -18,5 +18,11 @@ public interface PosterInfoMapper {
     int updateByPrimaryKey(PosterInfo record);
 
     List<PosterInfo> query(PosterInfo posterinfo);
+    /**
+     * 搜索源数据信息
+     * @param regex 搜索字符串
+     * @return 
+     */
+    List<PosterInfo> searchMetaData(String regex);
     
 }

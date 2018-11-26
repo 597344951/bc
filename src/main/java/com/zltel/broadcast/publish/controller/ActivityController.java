@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class ActivityController extends BaseController {
             r.setData(page);
         } catch (Exception e) {
             logout.error(e.getMessage());
-            
+
             r = R.error(e.toString());
         }
         return r;
@@ -75,7 +76,11 @@ public class ActivityController extends BaseController {
             SysUser user = getSysUser();
             //同步文件
             materialService.transferMaterial(user, (List<Map<String, Object>>) addition.get("material"), uploadTempDir, uploadFileDir);
-            activityService.completeActivityAddition(user, addition);
+            activityService.completeActivityAddition(new HashMap<String, Object>() {{
+                put("id", user.getUserId());
+                put("orgId", user.getOrgId());
+                put("name", user.getUsername());
+            }}, addition);
             r = R.ok();
         } catch (Exception e) {
             logout.error(e.getMessage());
@@ -104,7 +109,12 @@ public class ActivityController extends BaseController {
         R r;
         try {
             r = R.ok();
-            activityService.participate(contentId, getSysUser());
+            SysUser user = getSysUser();
+            activityService.participate(contentId, new HashMap<String, Object>() {{
+                put("id", user.getUserId());
+                put("orgId", user.getOrgId());
+                put("name", user.getUsername());
+            }});
         } catch (Exception e) {
             logout.error(e.getMessage());
             r = R.error(e.getMessage());
@@ -132,6 +142,7 @@ public class ActivityController extends BaseController {
         activityService.addSilhouette(silhouette);
         return R.ok();
     }
+
     @GetMapping("/activity/silhouette/{id}")
     @ResponseBody
     public R getSilhouette(@PathVariable("id") int id) {
@@ -139,6 +150,7 @@ public class ActivityController extends BaseController {
         r.setData(activityService.getSilhouette(id));
         return r;
     }
+
     @GetMapping("/activity/silhouette/{pageNum}/{pageSize}")
     @ResponseBody
     public R querySilhouette(@PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize) {

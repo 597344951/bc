@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.poster.dao.PosterInfoMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.poster.bean.PosterInfo">
+		<id column="template_id" jdbcType="INTEGER" property="templateId" />
+		<result column="pid" jdbcType="VARCHAR" property="pid" />
+		<result column="title" jdbcType="VARCHAR" property="title" />
+		<result column="width" jdbcType="INTEGER" property="width" />
+		<result column="height" jdbcType="INTEGER" property="height" />
+		<result column="preview" jdbcType="VARCHAR" property="preview" />
+		<result column="from" jdbcType="VARCHAR" property="from" />
+		<result column="size_type" jdbcType="INTEGER" property="sizeType" />
+		<!-- 关联加载分类 -->
+		<collection property="useCategorys"
+			select="com.zltel.broadcast.poster.dao.PosterCategoryRelationMapper.queryCategorys"
+			column="template_id">
+		</collection>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		template_id, pid, title, width, height, preview, `from`,size_type
+	</sql>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_info
+		where template_id = #{templateId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from poster_info
+		where template_id =
+		#{templateId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.poster.bean.PosterInfo" useGeneratedKeys="true" keyProperty="templateId">
+		insert into poster_info (template_id, pid, 
+		title, width, height,
+		preview, `from`,size_type)
+		values (#{templateId,jdbcType=INTEGER},
+		#{pid,jdbcType=VARCHAR},  
+		#{title,jdbcType=VARCHAR},
+		#{width,jdbcType=INTEGER}, #{height,jdbcType=INTEGER},
+		#{preview,jdbcType=VARCHAR},
+		#{from,jdbcType=VARCHAR},#{sizeType,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.poster.bean.PosterInfo" useGeneratedKeys="true" keyProperty="templateId">
+		insert into poster_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="templateId != null">
+				template_id,
+			</if>
+			<if test="pid != null">
+				pid,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="width != null">
+				width,
+			</if>
+			<if test="height != null">
+				height,
+			</if>
+			<if test="preview != null">
+				preview,
+			</if>
+			<if test="from != null">
+				`from`,
+			</if>
+			<if test="sizeType != null">
+				`size_type`,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="templateId != null">
+				#{templateId,jdbcType=INTEGER},
+			</if>
+			<if test="pid != null">
+				#{pid,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="width != null">
+				#{width,jdbcType=INTEGER},
+			</if>
+			<if test="height != null">
+				#{height,jdbcType=INTEGER},
+			</if>
+			<if test="preview != null">
+				#{preview,jdbcType=VARCHAR},
+			</if>
+			<if test="from != null">
+				#{from,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeType != null">
+				#{sizeType,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.poster.bean.PosterInfo">
+		update poster_info
+		<set>
+			<if test="pid != null">
+				pid = #{pid,jdbcType=VARCHAR},
+			</if>
+			 
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="width != null">
+				width = #{width,jdbcType=INTEGER},
+			</if>
+			<if test="height != null">
+				height = #{height,jdbcType=INTEGER},
+			</if>
+			<if test="preview != null">
+				preview = #{preview,jdbcType=VARCHAR},
+			</if>
+			<if test="from != null">
+				`from` = #{from,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeType != null">
+				size_type = #{sizeType,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where template_id = #{templateId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.poster.bean.PosterInfo">
+		update poster_info
+		set pid =
+		#{pid,jdbcType=VARCHAR},
+		title = #{title,jdbcType=VARCHAR},
+		width = #{width,jdbcType=INTEGER},
+		height = #{height,jdbcType=INTEGER},
+		preview =
+		#{preview,jdbcType=VARCHAR},
+		`from` = #{from,jdbcType=VARCHAR},
+		size_type = #{sizeType,jdbcType=VARCHAR}
+		where template_id =
+		#{templateId,jdbcType=INTEGER}
+	</update>
+	<select id="query" parameterType="com.zltel.broadcast.poster.bean.PosterInfo"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_info
+		<include refid="PosterInfoWhere" />
+	</select>
+	<!-- 查询条件 PosterInfo -->
+	<sql id="PosterInfoWhere">
+		<where>
+			<if test="preview != null">
+				AND preview=#{preview}
+			</if>
+			<if test="width != null">
+				AND width=#{width}
+			</if>
+			<if test="pid != null">
+				AND pid=#{pid}
+			</if>
+			<if test="from != null">
+				AND `from`=#{from}
+			</if>
+			<if test="templateId != null">
+				AND template_id=#{templateId}
+			</if>
+			<if test="title != null">
+				AND title=#{title}
+			</if>
+			<if test="layouts != null">
+				AND layouts=#{layouts}
+			</if>
+			<if test="height != null">
+				AND height=#{height}
+			</if>
+			<if test="sizeType != null">
+				AND size_type=#{sizeType}
+			</if>
+			<if test="keyword != null">
+				AND title like concat(concat('%',#{keyword}),'%')
+			</if>
+			<if test="posterSize != null">
+				AND size_type in (
+					select id from poster_size pi
+					where 1=1
+					<if test="posterSize.horVer != null">
+						AND pi.hor_ver = #{posterSize.horVer}
+					</if>
+					<if test="posterSize.id != null">
+						AND pi.id = #{posterSize.id}
+					</if>
+				)
+			</if>
+			<if test="useCategory != null">
+				<if test="useCategory == -1">
+					AND template_id not in  (
+						select template_id from poster_category_relation
+					)
+				</if>
+				<if test="useCategory != -1">
+					AND template_id in (
+						select template_id from poster_category_relation where category_id = #{useCategory,jdbcType=INTEGER}
+					)
+				</if>
+			</if>
+		</where>
+	</sql>
+	<select id="searchMetaData" parameterType="String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_info pi
+		where pi.template_id in (
+			select template_id   from poster_layouts pl where pl.layouts REGEXP #{regex}
+			union 
+			select template_id from poster_info pi where pi.title REGEXP #{regex}
+		)
+	</select>
+	
+</mapper>

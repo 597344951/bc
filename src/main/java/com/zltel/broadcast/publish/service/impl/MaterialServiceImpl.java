@@ -74,6 +74,9 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public void saveUeditorMaterial(SysUser user, Map<String, Object> content, String srcDir, String descDir) {
 
+        if (StringUtils.isEmpty((String) content.get("templateText"))) {
+            return;
+        }
         List<Map<String, Object>> materials = (List<Map<String, Object>>) content.get("material");
         Document doc = Jsoup.parse((String) content.get("templateText"));
         //图片

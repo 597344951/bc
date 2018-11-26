@@ -140,4 +140,20 @@ public class OrganizationRelationController extends BaseController {
 			return R.error().setMsg("组织关系添加失败");
 		}
 	}
+	
+	/**
+	 * 查询存在党员的组织
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryHavePartyUserOrg", method=RequestMethod.POST)
+	@ApiOperation(value = "查询存在党员的组织")
+	public R queryHavePartyUserOrg(Map<String, Object> conditions) {
+		try {
+			return organizationRelationService.queryHavePartyUserOrg(conditions);	//开始添加组织关系
+		} catch (Exception e) {
+		    logout.error("查询存在党员的组织失败",e);
+			return R.error().setMsg("查询存在党员的组织失败");
+		}
+	}
 }

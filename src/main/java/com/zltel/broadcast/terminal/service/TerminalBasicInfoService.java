@@ -29,7 +29,8 @@ public interface TerminalBasicInfoService {
     /**
      * 同步终端信息
      * 
+     * @return 同步终端数
      * @junit {@link com.zltel.broadcast.terminal.service.TerminalBasicInfoServiceTest#testSynchronizTerminalInfo()}
      */
-    public void synchronizTerminalInfo();
+    public int synchronizTerminalInfo();
 }

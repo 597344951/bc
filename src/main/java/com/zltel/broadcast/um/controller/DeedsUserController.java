@@ -6,6 +6,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.json.R;
@@ -50,11 +51,59 @@ public class DeedsUserController {
 	@RequestMapping(value="/insertDeedsUser", method=RequestMethod.POST)
 	@RequiresPermissions(value = {"base:user:insert"})
 	@ApiOperation(value = "添加事迹")
-	public R insertDeedsUser(DeedsUser deedsUser) {
+	public R insertDeedsUser(@RequestParam Map<String, Object> conditions) {
 		try {
-			return deedsUserService.insertDeedsUser(deedsUser);
+			return deedsUserService.insertDeedsUser(conditions);
 		} catch (Exception e) {
 			return R.error().setMsg("添加失败");
+		}
+	}
+	
+	/**
+	 * 补充事迹
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/insertSupplyDeedsUser", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"base:user:insert"})
+	@ApiOperation(value = "补充事迹")
+	public R insertSupplyDeedsUser(@RequestParam Map<String, Object> conditions) {
+		try {
+			return deedsUserService.insertSupplyDeedsUser(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("添加失败");
+		}
+	}
+	
+	/**
+	 * 删除事迹
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/deleteDeedsUser", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"base:user:delete"})
+	@ApiOperation(value = "删除事迹")
+	public R deleteDeedsUser(DeedsUser du) {
+		try {
+			return deedsUserService.deleteDeedsUser(du);
+		} catch (Exception e) {
+			return R.error().setMsg("删除失败");
+		}
+	}
+	
+	/**
+	 * 修改事迹
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/updateDeedsUser", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"base:user:update"})
+	@ApiOperation(value = "修改事迹")
+	public R updateDeedsUser(@RequestParam Map<String, Object> conditions) {
+		try {
+			return deedsUserService.updateDeedsUser(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("修改失败");
 		}
 	}
 }

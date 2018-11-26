@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+
+.bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.bg img {
+    display: none;
+}
+
+#wrap {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 90%;
+    height: 80%;
+}
+
+#wrap>ul {
+    width: 120%;
+    list-style: none;
+}
+
+#wrap>ul>li {
+    float: left;
+    width: 100px;
+    height: 400px;
+    cursor: pointer;
+}
+
+
+
+#wrap>ul>li>.text {
+    width: 100px;
+    height: 100%;
+    background: #000;
+    opacity: .5;
+}
+
+#wrap>ul>li>.text p {
+    padding: 20px 40px;
+    font-family: 'Microsoft yahei';
+    color: #fff;
+}

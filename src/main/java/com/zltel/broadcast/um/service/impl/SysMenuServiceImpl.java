@@ -80,7 +80,8 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
     @Override
     @Transactional(rollbackFor = java.lang.Exception.class)
     public R querySysMenusNotPage(SysMenu sysMenu) throws Exception {
-        List<TreeNode<SysMenu>> sysMenus = this.queryTreeMenu(); // 开始查询，没有条件则查询所有菜单
+        List<TreeNode<SysMenu>> sysMenus =  this.queryAllMenuInfo();
+        //this.queryTreeMenu(); // 开始查询，没有条件则查询所有菜单
         if (sysMenus != null && sysMenus.size() > 0) { // 是否查询到数据
             return R.ok().setData(sysMenus).setMsg("查询菜单成功");
         } else {

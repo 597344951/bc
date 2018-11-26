@@ -1,0 +1,198 @@
+{
+    "groups": [
+        {
+            "name": "ppt",
+            "title": "动画切换",
+            "list": [
+                {
+                    "title": "碎裂切换",
+                    "url": "view/pw/photo-wrap-1/wrap",
+                    "effect": "",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "按压",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxPressAway",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "侧摆",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxSideSwing",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "轮转",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxFortuneWheel",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "轻扫",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxSwipe",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "推揭",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxPushReveal",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "捕捉",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxSnapIn",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "进入",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxLetMeIn",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "手捧",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxStickIt",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "归档",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxArchiveMe",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "垂直增长",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxVGrowth",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "向后滑动",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxSlideBehind",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "软脉冲",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxSoftPulse",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "地震",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxEarthquake",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "悬崖跳水",
+                    "url": "view/pw/photo-wrap-11/wrap",
+                    "effect": "fxCliffDiving",
+                    "minimum": 6,
+                    "maximum": 20
+                }
+            ]
+        }, {
+            "name": "carousel",
+            "title": "旋转木马|3D旋转",
+            "list": [
+                {
+                    "title": "3D旋转",
+                    "url": "view/pw/photo-wrap-2/wrap",
+                    "effect": "",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "旋转木马一",
+                    "url": "view/pw/photo-wrap-3/wrap",
+                    "effect": "close",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "旋转木马二",
+                    "url": "view/pw/photo-wrap-3/wrap",
+                    "effect": "far",
+                    "minimum": 6,
+                    "maximum": 20
+                }
+            ]
+        }, {
+            "name": "blinds",
+            "title": "百叶窗",
+            "list": [
+                {
+                    "title": "百叶窗一",
+                    "url": "view/pw/photo-wrap-4/wrap",
+                    "effect": "",
+                    "minimum": 4,
+                    "maximum": 8
+                }
+            ]
+        }, {
+            "name": "cube",
+            "title": "旋转立方",
+            "list": [
+                {
+                    "title": "旋转立方一",
+                    "url": "view/pw/photo-wrap-6/wrap",
+                    "effect": "",
+                    "minimum": 6,
+                    "maximum": 6
+                }
+            ]
+        }, {
+            "name": "gallery",
+            "title": "画廊特效",
+            "list": [
+                {
+                    "title": "连续幕布",
+                    "url": "view/pw/photo-wrap-7/wrap",
+                    "effect": "",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "焦点图一",
+                    "url": "view/pw/photo-wrap-9/wrap",
+                    "effect": "",
+                    "minimum": 6,
+                    "maximum": 20
+                }, {
+                    "title": "焦点图二",
+                    "url": "view/pw/photo-wrap-10/wrap",
+                    "effect": "",
+                    "minimum": 6,
+                    "maximum": 20
+                }
+            ]
+        }, {
+            "name": "shape",
+            "title": "形状",
+            "list": [
+                {
+                    "title": "心型",
+                    "url": "view/pw/photo-wrap-12/wrap",
+                    "effect": "",
+                    "minimum": 27,
+                    "maximum": 27
+                }
+            ]
+        }, {
+            "name": "splice",
+            "title": "图片拼接",
+            "list": [
+                {
+                    "title": "美图拼接",
+                    "url": "view/pw/photo-wrap-13/wrap",
+                    "effect": "",
+                    "minimum": 1,
+                    "maximum": 1,
+                    "tool": "M2"
+                }
+            ]
+        }
+    ]
+}

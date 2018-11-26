@@ -396,12 +396,12 @@
 			//同步
 			syn(){
 				var a = this;
-				ajax_json("/terminal/basic/addup", "post","", function ( ) {
-					 a.refresh();
-					 a.$message({
-         					 message: '同步数据成功',
-         					 type: 'success'
-        					});
+				ajax_json("/terminal/basic/addup", "post","", function (result) {
+					a.refresh();
+					a.$message({
+						message: result.msg,
+         				type: result.status ? 'success':'error'
+        			});
 				});
 			},
 			updateTbi(a) {

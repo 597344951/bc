@@ -186,7 +186,9 @@
 			cursor: pointer;
 			color:#fff;
 		}
-
+		.el-footer {
+			margin-top: 20px;
+		}
 	</style>
 </head>
 <body>
@@ -255,7 +257,7 @@
 						<el-col :span="4"><h4>主题 <%-- [<el-button type="text" @click="additionDialogVisible = true">补充</el-button>] --%></h4></el-col>
 						<el-col :span="19"><el-input v-model="title" placeholder="发布内容主题"></el-input></el-col>
 					</el-row>
-					<%-- <el-row :gutter="20">
+					<!-- <el-row :gutter="20">
 						<el-col :span="4"><h4>播放周期</h4></el-col>
 						<el-col :span="19">
 							<el-date-picker style="width: 18%;" v-model="startDate" type="date" placeholder="开始日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
@@ -287,11 +289,11 @@
 									placeholder="选择时间范围">
 							</el-time-picker>
 						</el-col>
-					</el-row> --%>
-					<el-row :gutter="20">
+					</el-row> -->
+					<!-- <el-row :gutter="20">
 						<el-col :span="4"><h4>播放设置</h4></el-col>
 						<el-col :span="19">
-							<%-- <el-select
+							<el-select
 									style="width: 18%;"
 									v-model="resolution"
 									placeholder="屏幕分辨率">
@@ -309,13 +311,13 @@
 								<el-option key="1" label="触屏" value="1"></el-option>
 							</el-select>
 							：
-							<el-input style="width: 18%;" v-model="playLength" placeholder="播放时长（秒）"></el-input> --%>
-							<%-- <el-checkbox-group v-model="screenDirection" style="display: inline-block;">
+							<el-input style="width: 18%;" v-model="playLength" placeholder="播放时长（秒）"></el-input>
+							<el-checkbox-group v-model="screenDirection" style="display: inline-block;">
 								<el-checkbox v-for="d in screenDirections" :label="d" :key="d">{{d}}</el-checkbox>
-							</el-checkbox-group> --%>
+							</el-checkbox-group>
 							
 						</el-col>
-					</el-row>
+					</el-row> -->
 					<el-row :gutter="20">
 						<el-col :span="4">
 							<h4>内容 <%-- [<el-button type="text" @click="showTemplates">选取模板</el-button>] --%></h4>
@@ -397,7 +399,7 @@
 				</div>
 				<%--选择终端--%>
 				<div v-show="step==2">
-					<h3>选择发布终端</h3>
+					<!-- <h3>选择发布终端</h3>
 					<el-table
 							ref="multipleTable"
 							:data="showTerminals"
@@ -417,7 +419,34 @@
 						<el-table-column prop="resolution" label="分辨率" :filters="terminalGroup.resolution" :filter-method="filter" filter="bottom-end"></el-table-column>
 						<el-table-column prop="version" label="版本"></el-table-column>
 						<el-table-column prop="ip" label="IP"></el-table-column>
-					</el-table>
+					</el-table> -->
+					<el-container>
+						<el-header>
+							<h3>选择发布终端</h3>
+						</el-header>
+						<el-container>
+							<el-aside width="300px">
+								<el-tree :data="terminalGroupTree" node-key="id" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick">
+									<span class="tree-node" slot-scope="{ node, data }">
+										<span>{{ node.label }}</span>
+									</span>
+								</el-tree>
+							</el-aside>
+							<el-main>
+								<el-table :data="showTerminals" border @selection-change="handleSelectionChange">
+									<el-table-column type="selection" width="55"></el-table-column>
+									<el-table-column prop="name" label="名称"></el-table-column>
+									<el-table-column prop="status" label="在线状态"></el-table-column>
+									<el-table-column prop="screenType" label="类型"></el-table-column>
+									<el-table-column prop="interaction" label="触摸类型"></el-table-column>
+									<el-table-column prop="direction" label="屏幕比列"></el-table-column>
+									<el-table-column prop="resolution" label="分辨率"></el-table-column>
+									<el-table-column prop="version" label="版本"></el-table-column>
+									<el-table-column prop="ip" label="IP"></el-table-column>
+								</el-table>
+							</el-main>
+						</el-container>
+					</el-container>
 				</div>
 				<%--审核人--%>
 				<div v-show="step==3">
@@ -584,7 +613,8 @@
 					message: [],
 				},
 				demand: '',
-				materialExplorerShow: false
+				materialExplorerShow: false,
+				terminalGroupTree: []
 			},
             methods: {
 			    nextStep() {
@@ -606,12 +636,12 @@
 								}
 							}
 						} else if(this.step == 1) {
-							app.showTerminals = []
+							/* app.showTerminals = []
 							app.terminals.forEach(item => {
 								if(app.screenDirection == item.direction && item.status == '在线') {
 									app.showTerminals.push(item)
 								}
-							})
+							}) */
 						}
 						this.step ++
 						this.curStep ++
@@ -794,8 +824,10 @@
 					} else {
 						app.resolution = '1920x1080'
 					}
-				}
-
+				},
+				onNodeClick(data, node, component) {
+					loadGroupTerminals(data)
+				},
 			}
 		});
 		//编辑器
@@ -810,11 +842,12 @@
 		init()
 
 		function init() {
-			getTerminals()
+			//getTerminals()
 			getExUsers()
 			loadTemplate(()=>{
 				app.loading = false
 			})
+			getTerminalGroupTree()
 		}
 
         function commit(postData) {
@@ -1107,6 +1140,57 @@
 					
 				}
 			}, 1000);
+		}
+	
+		function getTerminalGroupTree() {
+			get('/terminal/m/group/tree', reps => {
+				if(reps.status) {
+					app.terminalGroupTree = reps.data
+					if(app.terminalGroupTree.length > 0) {
+						loadGroupTerminals(app.terminalGroupTree[0])
+					}
+				}
+			})
+		}
+		function getChildIds(group) {
+			let ids = []
+			ids.push(group.id)
+			if(group.children && group.children.length > 0) {
+				for(let i in group.children) {
+				ids = ids.concat(getChildIds(group.children[i]))
+				}
+			}
+			return ids
+		}
+		function loadGroupTerminals(group) {
+			let ids = getChildIds(group)
+			postJson('/terminal/m/group/terminals', ids, data => {
+				let screenType = {
+					'1': '一体机',
+					'2': '播放盒+显示屏',
+					'3': '播放盒+投影仪'
+				}
+				app.showTerminals = []
+				data.forEach(item => {
+					app.showTerminals.push({
+						id: item.id,
+						name: item.name,
+						code: item.code,
+						size: item.size,
+						direction: item.rev,
+						interaction: item.typ,
+						screenType: screenType[item.type_id],
+						position: item.loc,
+						resolution: item.ratio,
+						ip: item.ip,
+						mac: item.mac,
+						regDate: item.resTime,
+						version: item.ver,
+						status: item.online == 1 ? '在线' : '离线',
+						address: item.addr
+					})
+				})
+			})
 		}
 	</script>
 </body>

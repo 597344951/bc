@@ -38,11 +38,14 @@
 		.make-program:active {
 			font-size: 15px;
 		}
+		#app{
+    	padding-top: 10%!important;
+		}
 	</style>
 </head>
 
 <body>
-	<a class="make-program" href="/view/publish/new.jsp?startStep=2&title=党史百科&url=/faker/dsbk/index.html">
+	<a class="make-program" onclick="makeshow()" >
 		节目制作 </a>
 	<div id="app">
 		<div class="top02 clear w980">
@@ -351,6 +354,14 @@
 	});
 </script>
 <script>
+	function makeshow() {
+		var share = [{
+			weburl: '/faker/dsbk/index.html',
+			playtime: 5 * 1000
+		}];
+		var url = '/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+		window.location.href = url;
+	}
 	window.onload = function () {
 		var mask = document.getElementById('mask');
 		var oLi = document.querySelectorAll(".p1_content li a");
@@ -368,15 +379,13 @@
 				var t = aL.offsetTop;
 				var l = aL.offsetLeft;
 				console.log(mask.offsetTop);
-				
-				setTimeout(function(){
-
+				setTimeout(function () {
 					mask.style.top = t - mask.offsetHeight + 'px';
 					if (mask.offsetTop < 0) {
 						mask.style.top = 10 + 'px';
 					};
-					if(mask.offsetTop+mask.offsetHeight>h){
-						mask.style.top= 5+'px';
+					if (mask.offsetTop + mask.offsetHeight > h) {
+						mask.style.top = 5 + 'px';
 					};
 					if (l >= (w / 2)) {
 						mask.style.left = l + mask.offsetWidth - 50 + 'px';
@@ -387,10 +396,10 @@
 					if ((l - mask.offsetWidth) < 0) {
 						mask.style.left = 10 + 'px';
 					};
-					setTimeout(function(){
+					setTimeout(function () {
 						mask.style.opacity = 100;
-					},100);
-				},10)
+					}, 100);
+				}, 10)
 
 			}
 		};

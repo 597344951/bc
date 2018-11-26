@@ -39,7 +39,7 @@ public class HeaderSettingFilter extends AccessControlFilter {
             response.setHeader("Access-Control-Allow-Origin", origin);
             response.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE,PUT");
             response.setHeader("Access-Control-Max-Age", "3600");
-            response.setHeader("Access-Control-Allow-Headers", "X-Requested-With,Authorization,Content-Type,token");
+            response.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,X-XSRF-TOKEN");
             response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setHeader("Content-Type", "text/html;charset=UTF-8");
         }

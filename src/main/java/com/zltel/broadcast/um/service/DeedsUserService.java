@@ -32,5 +32,27 @@ public interface DeedsUserService {
      * @param du
      * @return
      */
-    public R insertDeedsUser(DeedsUser du);
+    public R insertDeedsUser(Map<String, Object> conditions);
+    
+    /**
+     * 补充事迹
+     * @param conditions
+     * @return
+     */
+    public R insertSupplyDeedsUser(Map<String, Object> conditions);
+    
+    /**
+     * 删除用户事迹
+     * @param du
+     * @return
+     */
+    public R deleteDeedsUser(DeedsUser du);
+    
+    /**
+     * 修改用户事迹
+     * @param du
+     * @param paths
+     * @return
+     */
+    public R updateDeedsUser(Map<String, Object> conditions);
 }

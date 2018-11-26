@@ -28,7 +28,7 @@ let ins = new Vue({
             tpager: {
                 total: 0,
                 current: 1,
-                size: 10
+                size: 99
             },
             orgUsers: [], //组织用户
             activities: [],

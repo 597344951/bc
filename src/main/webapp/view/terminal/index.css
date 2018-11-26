@@ -1,0 +1,31 @@
+#app {
+  padding: 10px;
+}
+.el-tree-node__content {
+  margin: 5px 0;
+}
+.operate span {
+  cursor: pointer;
+  border-radius: 2px;
+  margin: 0 1px;
+  padding: 2px;
+  display: none;
+}
+.operate .edit {
+  color: #fff;
+  background-color: #409eff;
+  border-color: #409eff;
+}
+.operate .delete {
+  color: #fff;
+  background-color: #f56c6c;
+  border-color: #f56c6c;
+}
+.operate .plus {
+  color: #fff;
+  background-color: #67c23a;
+  border-color: #67c23a;
+}
+.tree-node:hover .operate > span {
+  display: inline-block;
+}

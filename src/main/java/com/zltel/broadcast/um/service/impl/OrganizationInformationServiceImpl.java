@@ -53,6 +53,20 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     }
 	
 	/**
+     * 组织信息
+     * @param organizationInformation
+     * @return
+     */
+    public R queryOrgInfosSelect(OrganizationInformation organizationInformation) {
+    	List<OrganizationInformation> orgInfoSelects = organizationInformationMapper.queryOrgInfos(organizationInformation);
+		if(orgInfoSelects != null && orgInfoSelects.size() > 0) {
+			return R.ok().setData(orgInfoSelects);
+		} else {
+			return R.ok().setMsg("没有查询到组织信息");
+		}
+    }
+	
+	/**
      * 根据条件查询组织信息树,为了点击树节点显示节点下的所有组织，已废弃现在使用queryOrgInfosForMap方法得到该节点的下一级组织
      * @param organizationInformation 条件
      * @return
@@ -456,7 +470,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     			treeNodes.add(treeNode);
 			}
     		treeNodes.get(0).getData().put("count", 0);
-    		this.toTreeNodes(treeNodes, 0, treeNodes.get(0));
+    		this.toTreeNodes(treeNodes);
     	}
     	return R.ok().setData(treeNodes);
     }
@@ -517,19 +531,10 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	 * 生成树
 	 * @param organizationInfo
 	 */
-    private void toTreeNodes(List<TreeNode<Map<String, Object>>> treeNodes, int count, TreeNode<Map<String, Object>> node) {
+    private void toTreeNodes(List<TreeNode<Map<String, Object>>> treeNodes) {
     	if (treeNodes != null && treeNodes.size() > 0) {
     		for (int i = 0; i < treeNodes.size(); i++) {
     			TreeNode<Map<String, Object>> treeNode = treeNodes.get(i);
-    			if (i == 0) {	//表示新开一层，结果是上级count+1
-    				count = (int)node.getData().get("count");
-    				count++;
-    			} else if ((int)treeNode.getData().get("orgInfoParentId") == -1) {	//最顶层，为第一层
-    				count = 1;
-    			} else {	//本层循环，count不变
-    				count = (int)treeNodes.get(i - 1).getData().get("count");
-    			}
-    			treeNode.getData().put("count", count);
     			Map<String, Object> condition = new HashMap<>();
 				condition.put("orgInfoParentId", treeNode.getData().get("orgInfoId"));
 				List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(condition);
@@ -542,7 +547,7 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 					}
 				}
 				treeNode.setChildren(treeNodes2);
-				toTreeNodes(treeNode.getChildren(), count, treeNode);
+				toTreeNodes(treeNode.getChildren());
 			}
     	}
     }
@@ -633,6 +638,19 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	@Transactional(rollbackFor=java.lang.Exception.class)
 	public R insertOrgInfo(OrganizationInformation organizationInformation) throws Exception {
 		if (organizationInformation != null) {
+			if (-1 == organizationInformation.getOrgInfoParentId()) {	//级别是1
+				organizationInformation.setOrgInfoLevel(1);
+			} else {
+				Map<String, Object> conditions = new HashMap<>();
+				conditions.put("orgInfoId", organizationInformation.getOrgInfoParentId());
+				List<Map<String, Object>> results = organizationInformationMapper.queryOrgInfosForMap(conditions);
+				if (results != null && results.size() > 0) {
+					Integer level = Integer.parseInt(String.valueOf(results.get(0).get("orgInfoLevel")));
+					organizationInformation.setOrgInfoLevel(level + 1);
+				} else {
+					R.error().setMsg("找不到上级信息");
+				}
+			}
 			organizationInformation.setOrgInfoId(null);	//自增，不需要设置值
 			int count = this.insertSelective(organizationInformation);	//开始添加组织信息
 			if (count == 1) {	//受影响的行数，判断是否修改成功
@@ -816,6 +834,79 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 			}
 		}		
 	}
+    
+    /**
+     * 服务于按照时间间隔一次展示组织信息的层级，组织信息组织结构展示
+     * @param conditions
+     * @return
+     */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public R bossSayOneByOneShowOrgInfoLevel(Map<String, Object> orgInfoConditions) {
+    	Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+        if (orgInfoConditions == null) orgInfoConditions = new HashMap<>();
+        if (AdminRoleUtil.isPlantAdmin()) {	//如果是平台管理员
+        	//不做任何处理
+        } else if (AdminRoleUtil.isOrgAdmin()) {	//如果是组织管理员，只查询自己组织及下属组织关系
+        	if (sysUser.getOrgId() == null) {
+        		return R.ok().setCode(100).setMsg("组织管理员请设置所属的组织，如果是党员请加入组织");
+        	}
+        	orgInfoConditions.remove("orgInfoParentId");
+        	orgInfoConditions.put("orgInfoId", sysUser.getOrgId());
+        } else {	//个人用户，即党员，不能查看组织图关系
+        	return null;
+        }
+    	
+    	List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(orgInfoConditions);
+    	List<TreeNode<Map<String, Object>>> treeNodes = new ArrayList<>();
+    	if (orgInfoTrees != null && orgInfoTrees.size() == 1) {
+    		for (Map<String, Object> map : orgInfoTrees) {
+    			TreeNode<Map<String, Object>> treeNode = new TreeNode<Map<String, Object>>();
+    			treeNode.setData(map);
+    			treeNodes.add(treeNode);
+			}
+    		treeNodes.get(0).getData().put("count", 0);
+    		
+    		if (orgInfoConditions.get("nowLevel") == null) {
+    			return R.error().setMsg("查询出错");
+    		}
+    		Integer nowLevel = Integer.parseInt(String.valueOf(orgInfoConditions.get("nowLevel")));
+    		this.bossSayOneByOneShowOrgInfoLevel_toTreeNodes(treeNodes, nowLevel);
+    	}
+    	return R.ok().setData(treeNodes);
+    }
+    
+    /**
+	 * 生成树
+	 * @param organizationInfo
+	 */
+    private void bossSayOneByOneShowOrgInfoLevel_toTreeNodes(List<TreeNode<Map<String, Object>>> treeNodes, Integer nowLevel) {
+    	if (treeNodes != null && treeNodes.size() > 0) {
+    		for (int i = 0; i < treeNodes.size(); i++) {
+    			TreeNode<Map<String, Object>> treeNode = treeNodes.get(i);
+    			
+    			
+    			Map<String, Object> condition = new HashMap<>();
+				condition.put("orgInfoParentId", treeNode.getData().get("orgInfoId"));
+				List<Map<String, Object>> orgInfoTrees = organizationInformationMapper.queryOrgInfosForMap(condition);
+				List<TreeNode<Map<String, Object>>> treeNodes2 = new ArrayList<>();
+				if (orgInfoTrees != null && orgInfoTrees.size() > 0) {
+					for (Map<String, Object> map : orgInfoTrees) {
+						TreeNode<Map<String, Object>> treeNode2 = new TreeNode<Map<String, Object>>();
+		    			treeNode2.setData(map);
+		    			treeNodes2.add(treeNode2);
+		    			if (nowLevel < Integer.parseInt(String.valueOf(map.get("orgInfoLevel")))) {
+		    				return;
+		    			}
+					}
+				}
+				
+				treeNode.setChildren(treeNodes2);
+				bossSayOneByOneShowOrgInfoLevel_toTreeNodes(treeNode.getChildren(), nowLevel);
+			}
+    	}
+    }
 
     
     

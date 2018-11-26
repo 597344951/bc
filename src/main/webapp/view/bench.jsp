@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <%-- <meta http-equiv="refresh" content="30" /> --%>
@@ -12,42 +13,52 @@
         #app {
             padding-right: 30px;
             padding-bottom: 30px;
-            /*margin-top: -5px;*/
         }
-        .min-icons{
+
+        .min-icons {
             font-size: 18px;
             font-weight: bold;
             margin-right: 5px;
         }
-        .el-icon-date{
+
+        .el-icon-date {
             color: #d82a00;
         }
-        .fa-play-circle{
+
+        .fa-play-circle {
             color: cornflowerblue;
         }
-        .fa-user-plus{
+
+        .fa-user-plus {
             color: darkseagreen;
         }
-        .fa-arrow-circle-right{
+
+        .fa-arrow-circle-right {
             color: yellowgreen;
         }
+
         .el-row {
             margin-top: 5px;
         }
+
         .el-tabs__item {
             font-weight: bold;
             font-size: 15px;
         }
+
         .el-badge__content.is-fixed {
             top: 10px;
         }
+
         .el-card {
             box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
         }
+
         .el-card__header {
             font-weight: bold;
             font-size: 15px;
         }
+
         .right {
             float: right;
         }
@@ -62,52 +73,62 @@
             display: block;
             text-decoration: none;
         }
+
         .list-item-title {
             overflow: hidden;
-            text-overflow:ellipsis;
+            text-overflow: ellipsis;
             white-space: nowrap;
             display: inline-block;
             width: 60%;
         }
+
         .pie-chart-3 {
             height: 200px;
             width: 35%;
             float: left;
         }
+
         .pie-chart-5 {
             height: 200px;
             width: 55%;
             float: left;
         }
+
         .line-chart-3 {
             height: 200px;
             width: 35%;
             float: left;
         }
+
         .line-chart-6 {
             height: 200px;
             width: 60%;
             float: left;
         }
+
         .activity-item {
             height: 90%;
             padding: 5px;
             border-right: 1px solid #ebeef5;
         }
+
         .activity-item h5 {
             font-size: 13px;
             margin: 5px 0px;
         }
+
         .activity-item p {
             font-size: 13px;
             line-height: 20px;
         }
+
         .shortcuts {
             width: 100%;
             height: 100%;
             overflow: hidden;
             float: left;
         }
+
         .shortcut {
             color: #51c9d4;
             width: 100px;
@@ -116,204 +137,234 @@
             display: inline-block;
             cursor: pointer;
         }
+
         .shortcut:hover {
             color: #1175ff;
         }
+
         .shortcut-icon {
             font-size: 50px;
             display: block;
         }
+
         .shortcut-label {
             font-size: 12px;
             font-weight: bold;
         }
+
         .party-change-list {
             width: 30%;
             float: right;
         }
+
         .archive-change-list {
             width: 45%;
             float: right;
         }
-        .box-card{
+
+        .box-card {
             width: 100%;
         }
-        .list-left-box{
+
+        .list-left-box {
             line-height: 23px;
             text-align: center;
             float: right;
             width: 72px;
         }
-        .icon-box{
+
+        .icon-box {
             width: 36px;
             height: 36px;
             border-radius: 50%;
             background-color: #eee;
             margin: 0 auto;
         }
+
         .icon-activity {
             background-image: url(../assets/icons/solution_icon4.png);
             background-size: cover;
         }
+
         .icon-learn {
             background-image: url(../assets/icons/culture.png);
             background-size: cover;
         }
+
         .icon-experience {
             background-image: url(../assets/icons/solution_icon7.png);
             background-size: cover;
         }
+
         .icon-standardization {
             background-image: url(../assets/icons/solution_icon3.png);
             background-size: cover;
         }
-        .data-box{
+
+        .data-box {
             display: inline-block;
             font-size: 12px;
             text-align: center;
         }
-        .data-box-total{
+
+        .data-box-total {
             font-size: 18px;
             font-weight: bold;
             margin-right: 5px;
         }
-        .data-box-total1{
-            color:#00af47;
+
+        .data-box-total1 {
+            color: #00af47;
         }
-        .data-box-total2{
-            color:#ff8300;
+
+        .data-box-total2 {
+            color: #ff8300;
         }
-        .el-tabs__content{
+
+        .el-tabs__content {
             overflow: auto;
             height: 80%;
         }
+        
+        .el-card__body {
+            overflow: hidden;
+        }
     </style>
 </head>
-<body>
-<div id="app">
-    <el-row :gutter="10">
-        <%--待办待审--%>
-        <el-col :span="8" class="full-width-if-mobile">
-            <el-card class="box-card" shadow="never" :body-style="{height: '258px', padding: '15px'}">
-                <el-tabs v-model="pending.active">
-                    <el-tab-pane name="handle">
-                        <template slot="label">
-                            <el-badge :value="pending.handling.list.length" class="item"><i class="min-icons el-icon-bell"></i>待办理事项</el-badge>
-                        </template>
-                        <a v-for="l in pending.handling.list" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
-                    </el-tab-pane>
-                    <el-tab-pane name="verify">
-                        <template slot="label">
-                            <el-badge :value="pending.verifying.list.length" class="item"><i class="min-icons el-icon-view"></i>待审核内容</el-badge>
-                        </template>
-                        <a v-for="l in pending.verifying.list" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
-                    </el-tab-pane>
-                </el-tabs>
-            </el-card>
-        </el-col>
-        <%--通告--%>
-        <el-col :span="8" class="full-width-if-mobile">
-            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
-                <div slot="header" class="clearfix">
-                    <span><i class="min-icons el-icon-date"></i>通知告示</span>
-                    <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
-                </div>
-                <a v-for="l in notice" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
-            </el-card>
-        </el-col>
 
-        <el-col :span="8" class="full-width-if-mobile">
-            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
-                <div slot="header" class="clearfix">
-                    <span><i class="min-icons fa fa-play-circle"></i>正在播放内容</span>
-                    <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
-                </div>
-                <a v-for="l in playlist" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
-            </el-card>
-        </el-col>
-    </el-row>
-    <el-row :gutter="10">
-        <el-col :span="16" class="full-width-if-mobile">
-            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
-                <div slot="header" class="clearfix">
-                    <span><i class="min-icons fa fa-user-plus"></i>党员发展</span>
-                    <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
-                </div>
-                <shiro:hasAnyRoles name="plant_admin, org_admin">
-                    <div class="pie-chart-3">
-                        <ve-pie :data="partyMembers.constitute" :settings="pieChartSettings"></ve-pie>
+<body>
+    <div id="app">
+        <el-row :gutter="10">
+            <%--待办待审--%>
+            <el-col :span="8" class="full-width-if-mobile">
+                <el-card class="box-card" shadow="never" :body-style="{height: '258px', padding: '15px'}">
+                    <el-tabs v-model="pending.active">
+                        <el-tab-pane name="handle">
+                            <template slot="label">
+                                <el-badge :value="pending.handling.list.length" class="item"><i class="min-icons el-icon-bell"></i>待办理事项</el-badge>
+                            </template>
+                            <a v-for="l in pending.handling.list" class="list-item" href="#" @click="link(l.target)"
+                                :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span
+                                    class="right">{{new Date(l.date).toLocaleString()}}</span></a>
+                        </el-tab-pane>
+                        <el-tab-pane name="verify">
+                            <template slot="label">
+                                <el-badge :value="pending.verifying.list.length" class="item"><i class="min-icons el-icon-view"></i>待审核内容</el-badge>
+                            </template>
+                            <a v-for="l in pending.verifying.list" class="list-item" href="#" @click="link(l.target)"
+                                :title="l.title"><span class="el-icon-warning list-item-title">&nbsp;&nbsp;{{l.title}}</span><span
+                                    class="right">{{new Date(l.date).toLocaleString()}}</span></a>
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-card>
+            </el-col>
+            <%--通告--%>
+            <el-col :span="8" class="full-width-if-mobile">
+                <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
+                    <div slot="header" class="clearfix">
+                        <span><i class="min-icons el-icon-date"></i>通知告示</span>
+                        <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                     </div>
-                    <div class="line-chart-3">
-                        <ve-pie :data="partyMembers.dues" :settings="pieChartSettings"></ve-pie>
+                    <a v-for="l in notice" class="list-item" href="#" @click="link(l.target)" :title="l.title">
+                        <span class="el-icon-caret-right list-item-title"><span style="font-family: auto;">&nbsp;&nbsp;{{l.title}}</span></span><span class="right">{{new Date(l.date).toLocaleString()}}</span>
+                    </a>
+                </el-card>
+            </el-col>
+
+            <el-col :span="8" class="full-width-if-mobile">
+                <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
+                    <div slot="header" class="clearfix">
+                        <span><i class="min-icons fa fa-play-circle"></i>正在播放内容</span>
+                        <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
                     </div>
-                    <div class="party-change-list">
-                        <el-row :gutter="10">
-                            <el-col :span="12">
-                                <div class="list-left-box">
-                                    <div class="icon-box icon-activity"></div>
-                                    <div class="data-box">
-                                        <label>党建活动</label><br>
-                                        <label for=""><span class="data-box-total data-box-total1">10</span><span>次</span></label>
+                    <a v-for="l in playlist" class="list-item" href="#" @click="link(l.target)" :title="l.title"><span
+                            class="el-icon-caret-right list-item-title">&nbsp;&nbsp;{{l.title}}</span><span class="right">{{l.date}}</span></a>
+                </el-card>
+            </el-col>
+        </el-row>
+        <el-row :gutter="10">
+            <el-col :span="16" class="full-width-if-mobile">
+                <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
+                    <div slot="header" class="clearfix">
+                        <span><i class="min-icons fa fa-user-plus"></i>党员发展</span>
+                        <%-- <el-button style="float: right; padding: 3px 0" type="text">更多</el-button> --%>
+                    </div>
+                    <shiro:hasAnyRoles name="plant_admin, org_admin">
+                        <div class="pie-chart-3">
+                            <ve-pie :data="partyMembers.constitute" :settings="pieChartSettings"></ve-pie>
+                        </div>
+                        <div class="line-chart-3">
+                            <ve-pie :data="partyMembers.dues" :settings="pieChartSettings"></ve-pie>
+                        </div>
+                        <div class="party-change-list">
+                            <el-row :gutter="10">
+                                <el-col :span="12">
+                                    <div class="list-left-box">
+                                        <div class="icon-box icon-activity"></div>
+                                        <div class="data-box">
+                                            <label>党建活动</label><br>
+                                            <label for=""><span class="data-box-total data-box-total1">10</span><span>次</span></label>
+                                        </div>
                                     </div>
-                                </div>
-                            </el-col>
-                            <el-col :span="12">
-                                <div class="list-left-box">
-                                    <div class="icon-box icon-learn"></div>
-                                    <div class="data-box">
-                                        <label>教育学习</label><br>
-                                        <label for=""><span class="data-box-total data-box-total2">50</span><span>次</span></label>
+                                </el-col>
+                                <el-col :span="12">
+                                    <div class="list-left-box">
+                                        <div class="icon-box icon-learn"></div>
+                                        <div class="data-box">
+                                            <label>教育学习</label><br>
+                                            <label for=""><span class="data-box-total data-box-total2">50</span><span>次</span></label>
+                                        </div>
                                     </div>
-                                </div>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="10">
-                            <el-col :span="12">
-                                <div class="list-left-box">
-                                    <div class="icon-box icon-experience"></div>
-                                    <div class="data-box">
-                                        <label>心得体会数</label><br>
-                                        <label for=""><span class="data-box-total data-box-total1">60</span>篇<span></span></span></label>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="12">
+                                    <div class="list-left-box">
+                                        <div class="icon-box icon-experience"></div>
+                                        <div class="data-box">
+                                            <label>心得体会数</label><br>
+                                            <label for=""><span class="data-box-total data-box-total1">60</span>篇<span></span></span></label>
+                                        </div>
                                     </div>
-                                </div>
-                            </el-col>
-                            <el-col :span="12">
-                                <div class="list-left-box">
-                                    <div class="icon-box icon-standardization"></div>
-                                    <div class="data-box">
-                                        <label>思想汇报数</label><br>
-                                        <label for=""><span class="data-box-total data-box-total2">10</span><span>篇</span></label>
+                                </el-col>
+                                <el-col :span="12">
+                                    <div class="list-left-box">
+                                        <div class="icon-box icon-standardization"></div>
+                                        <div class="data-box">
+                                            <label>思想汇报数</label><br>
+                                            <label for=""><span class="data-box-total data-box-total2">10</span><span>篇</span></label>
+                                        </div>
                                     </div>
-                                </div>
-                            </el-col>
-                        </el-row>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </shiro:hasAnyRoles>
+                    <shiro:hasAnyRoles name="org_admin, party_role">
+                        <div class="line-chart-6">
+                            <ve-line :data="partyMember.dues" :grid="grid">
+                                </ve-pie>
+                        </div>
+                        <div class="line-chart-3">
+                            <ve-pie :data="partyMember.integral" :settings="pieChartSettings"></ve-pie>
+                        </div>
+                    </shiro:hasAnyRoles>
+                </el-card>
+            </el-col>
+            <el-col :span="8" class="full-width-if-mobile">
+                <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
+                    <div slot="header" class="clearfix">
+                        <span><i class="min-icons fa fa-arrow-circle-right" aria-hidden="true"></i>便捷入口</span>
                     </div>
-                </shiro:hasAnyRoles>
-                <shiro:hasAnyRoles name="org_admin, party_role">
-                    <div class="line-chart-6">
-                        <ve-line :data="partyMember.dues" :grid="grid"></ve-pie>
+                    <div class="shortcuts">
+                        <div class="shortcut" v-for="shortcut in shortcuts" @click="link(shortcut.target)">
+                            <span class="el-icon-setting shortcut-icon"></span>
+                            <span class="shortcut-label">{{shortcut.title}}</span>
+                        </div>
                     </div>
-                    <div class="line-chart-3">
-                        <ve-pie :data="partyMember.integral" :settings="pieChartSettings"></ve-pie>
-                    </div>
-                </shiro:hasAnyRoles>
-            </el-card>
-        </el-col>
-        <el-col :span="8" class="full-width-if-mobile">
-            <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
-                <div slot="header" class="clearfix">
-                    <span><i class="min-icons fa fa-arrow-circle-right" aria-hidden="true"></i>便捷入口</span>
-                </div>
-                <div class="shortcuts">
-                    <div class="shortcut" v-for="shortcut in shortcuts" @click="link(shortcut.target)">
-                        <span class="el-icon-setting shortcut-icon"></span>
-                        <span class="shortcut-label">{{shortcut.title}}</span>
-                    </div>
-                </div>
-            </el-card>
-        </el-col>
-    </el-row>
-    <%-- <el-row :gutter="10">
+                </el-card>
+            </el-col>
+        </el-row>
+        <%-- <el-row :gutter="10">
         <el-col :span="12"  class="full-width-if-mobile">
             <el-card class="box-card" shadow="never" :body-style="{height: '200px', padding: '15px'}">
                 <div slot="header" class="clearfix">
@@ -348,244 +399,253 @@
             </el-card>
         </el-col>
     </el-row> --%>
-</div>
-<script>
-    const app = new Vue({
-        el: '#app',
-        data: {
-            grid: {
-                height: 135
-            },
-            pieChartSettings: {
-                /* roseType: 'radius', */
-                radius: 70,
-                offsetY: 120
-            },
-            pending: {
-                active: 'handle',
-                handling: {
-                    list: []
+    </div>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                grid: {
+                    height: 135
                 },
-                verifying: {
-                    list: []
-                }
-            },
-            notice: [],
-            playlist: [],
-            partyMembers: {
-                constitute: {
-                    columns: ['类型', '成员数'],
-                    rows: []
+                pieChartSettings: {
+                    /* roseType: 'radius', */
+                    radius: 70,
+                    offsetY: 120
                 },
-                trend: {
-                    columns: ['日期', '党员', '预备党员', '积极份子'],
-                    rows: [
-                        {'日期': '1月', '党员': 40, '预备党员': 10, '积极份子': 20},
-                        {'日期': '2月', '党员': 45, '预备党员': 15, '积极份子': 25},
-                        {'日期': '3月', '党员': 42, '预备党员': 12, '积极份子': 26},
-                        {'日期': '4月', '党员': 47, '预备党员': 13, '积极份子': 28},
-                        {'日期': '5月', '党员': 20, '预备党员': 15, '积极份子': 30},
-                    ]
-                },
-                dues: {
-                    columns: ['类型', '人数'],
-                    rows: []
-                },
-                items: [
-                    { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
-                    { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
-                    { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
-                    { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' }
-                ]
-            },
-            partyMember: {
-                dues: {
-                    columns: ['日期', '党费'],
-                    rows: [
-                        {'日期': '1月', '党费': 100},
-                        {'日期': '2月', '党费': 100},
-                        {'日期': '3月', '党费': 100},
-                        {'日期': '4月', '党费': 100},
-                        {'日期': '6月', '党费': 100},
-                        {'日期': '7月', '党费': 100},
-                    ]
-                },
-                integral: {
-                    columns: ['积分来源', '积分数'],
-                    rows: [
-                        {'积分来源': '其他', '积分数': 10},
-                        {'积分来源': '活动参加', '积分数': 20},
-                        {'积分来源': '心得提交', '积分数': 15},
-                        {'积分来源': '教育学习', '积分数': 16},
-                    ]
-                }
-            },
-            activity: [
-                {title: '欢度五一', date: '2018-05-01', state: '已结束', replied: 100, really: 100, summary: '五一劳动节, 劳动我光荣（放假了，放假了，放假了，放假了，放假了，放假了 。。。）' },
-                {title: '欢度五一', date: '2018-05-01', state: '已结束', replied: 100, really: 100, summary: '' },
-            ],
-            archive: {
-                added: {
-                    columns: ['类型', '新增数'],
-                    rows: [
-                        {'类型': '制度规范', '新增数': 50},
-                        {'类型': '工作计划', '新增数': 15},
-                        {'类型': '工作总结', '新增数': 30},
-                        {'类型': '学习心得', '新增数': 30},
-                        {'类型': '思想汇报', '新增数': 30}
-                    ]
-                },
-                items: [
-                    { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
-                    { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
-                    { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
-                    { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' }
-                ]
-            },
-            shortcuts: [
-                {
-                    title: '困难党员帮扶',
-                    target: {menuId: 96, name: '文档中心', url: '/view/report/index.jsp'}
-                },
-                {
-                    title: '素材提交',
-                    target: {menuId: 125, name: '素材管理', url: '/view/template/material.jsp'}
-                },
-                {
-                    title: '文档提交',
-                    target: {menuId: 96, name: '文档中心', url: '/view/report/index.jsp'}
-                }
-            ]
-
-        },
-        methods: {
-            link(target) {
-                if(parent.addTab) {
-                    parent.addTab(target)
-                } else {
-                    window.location.href = target.url
-                }
-                
-            }
-        }
-    })
-
-    init()
-
-    function init() {
-        loadPending()
-        loadNotice()
-        loadPlayList()
-        loadPartyMemberConstitute()
-        loadPartyMemberDues()
-    }
-
-    function loadPending() {
-        let url = '/message/pending'
-        get(url, reps => {
-            if(reps.status) {
-                app.pending.handling.list = []
-                app.pending.verifying.list = []
-                reps.data.list.forEach(item => {
-                    if(item.type == 1) {
-                        app.pending.verifying.list.push({
-                            date: new Date(item.updateDate).toLocaleString(),
-                            title: item.title,
-                            //target: {menuId: 29, name: '正在审核', url: '/publish/process'}
-                            target: {menuId: -2, name: '待审核内容', url: item.url}
-                        })
-                    } else if(item.type == 2) {
-                        app.pending.handling.list.push({
-                            date: new Date(item.updateDate).toLocaleString(),
-                            title: item.title,
-                            //target: {menuId: 29, name: '正在审核', url: '/publish/process'}
-                            target: {menuId: -3, name: '待办理事项', url: item.url}
-                        })
+                pending: {
+                    active: 'handle',
+                    handling: {
+                        list: []
+                    },
+                    verifying: {
+                        list: []
                     }
-                })
-            }
-        })
-    }
+                },
+                notice: [],
+                playlist: [],
+                partyMembers: {
+                    constitute: {
+                        columns: ['类型', '成员数'],
+                        rows: []
+                    },
+                    trend: {
+                        columns: ['日期', '党员', '预备党员', '积极份子'],
+                        rows: [
+                            { '日期': '1月', '党员': 40, '预备党员': 10, '积极份子': 20 },
+                            { '日期': '2月', '党员': 45, '预备党员': 15, '积极份子': 25 },
+                            { '日期': '3月', '党员': 42, '预备党员': 12, '积极份子': 26 },
+                            { '日期': '4月', '党员': 47, '预备党员': 13, '积极份子': 28 },
+                            { '日期': '5月', '党员': 20, '预备党员': 15, '积极份子': 30 },
+                        ]
+                    },
+                    dues: {
+                        columns: ['类型', '人数'],
+                        rows: []
+                    },
+                    items: [
+                        { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
+                        { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
+                        { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' },
+                        { date: '2018-05-30', title: 'XXXX通过审核转为正式党员。。。', href: '#' }
+                    ]
+                },
+                partyMember: {
+                    dues: {
+                        columns: ['日期', '党费'],
+                        rows: [
+                            { '日期': '1月', '党费': 100 },
+                            { '日期': '2月', '党费': 100 },
+                            { '日期': '3月', '党费': 100 },
+                            { '日期': '4月', '党费': 100 },
+                            { '日期': '6月', '党费': 100 },
+                            { '日期': '7月', '党费': 100 },
+                        ]
+                    },
+                    integral: {
+                        columns: ['积分来源', '积分数'],
+                        rows: [
+                            { '积分来源': '其他', '积分数': 10 },
+                            { '积分来源': '活动参加', '积分数': 20 },
+                            { '积分来源': '心得提交', '积分数': 15 },
+                            { '积分来源': '教育学习', '积分数': 16 },
+                        ]
+                    }
+                },
+                activity: [
+                    { title: '欢度五一', date: '2018-05-01', state: '已结束', replied: 100, really: 100, summary: '五一劳动节, 劳动我光荣（放假了，放假了，放假了，放假了，放假了，放假了 。。。）' },
+                    { title: '欢度五一', date: '2018-05-01', state: '已结束', replied: 100, really: 100, summary: '' },
+                ],
+                archive: {
+                    added: {
+                        columns: ['类型', '新增数'],
+                        rows: [
+                            { '类型': '制度规范', '新增数': 50 },
+                            { '类型': '工作计划', '新增数': 15 },
+                            { '类型': '工作总结', '新增数': 30 },
+                            { '类型': '学习心得', '新增数': 30 },
+                            { '类型': '思想汇报', '新增数': 30 }
+                        ]
+                    },
+                    items: [
+                        { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
+                        { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
+                        { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' },
+                        { date: '2018-05-30', title: 'XXXX提交了学习心得。。。', href: '#' }
+                    ]
+                },
+                shortcuts: [
+                    {
+                        title: '新建节目',
+                        target: { menuId: 28, name: '新建节目', url: '/view/publish/new.jsp' }
+                    },
+                    {
+                        title: '新建海报',
+                        target: { menuId: 202, name: '新建海报', url: '/view/publish/newPoster.jsp' }
+                    },
+                    {
+                        title: '困难党员帮扶',
+                        target: { menuId: 96, name: '文档中心', url: '/view/report/index.jsp' }
+                    },
+                    {
+                        title: '素材提交',
+                        target: { menuId: 125, name: '素材管理', url: '/view/template/material.jsp' }
+                    },
+                    {
+                        title: '文档提交',
+                        target: { menuId: 96, name: '文档中心', url: '/view/report/index.jsp' }
+                    }
+                ]
 
-    function loadNotice() {
-        let url = '/message/notice/1/10'
-        get(url, reps => {
-            if(reps.status) {
-                app.notice = []
-                reps.data.list.forEach(item => {
-                    app.notice.push({
-                        date: item.updateDate,
-                        title: item.title,
-                        target: {menuId: -1, name: '消息通知', url: item.url}
-                    })
-                })
-            }
-        })
-    }
-
-    function loadPlayList() {
-        let url = '/publish/publishing/content/1/10'
-        get(url, reps => {
-            if(reps.status) {
-                app.playlist = []
-                reps.data.list.forEach(item => {
-                    app.playlist.push({
-                        date: item.end_date + ' 止',
-                        title: item.title,
-                        target: {menuId: 30, name: '已发布节目', url: '/publish/publishing'}
-                    })
-                })
-            }
-        })
-    }
-
-    function loadPartyMemberConstitute() {
-        let url = '/statistics/partyMember'
-        get(url, reps => {
-            if(reps.status) {
-                app.partyMembers.constitute.rows = []
-                reps.data.forEach(item => {
-                    app.partyMembers.constitute.rows.push({
-                        '类型': item.type,
-                        '成员数': item.count
-                    })
-                })
-            }
-        })
-    }
-
-    function loadPartyMemberDues() {
-        let url = '/statistics/partyFeePayment'
-        get(url, reps => {
-            if(reps.status) {
-                app.partyMembers.dues.rows = []
-                reps.data.forEach(item => {
-                    app.partyMembers.dues.rows.push({
-                        '类型': item.name,
-                        '人数': item.count
-                    })
-                })
-            }
-        })
-    }
-
-    function get(url, callback) {
-        $.ajax({
-            type:'GET',
-            url:url,
-            dataType:'json',
-            success: function(reps){
-                if(callback) callback(reps)
             },
-            error: function (err) {
-                app.$message.error("系统错误.")
-            }
-        });
-    }
+            methods: {
+                link(target) {
+                    if (parent.addTab) {
+                        parent.addTab(target)
+                    } else {
+                        window.location.href = target.url
+                    }
 
-    setInterval(() => {
+                }
+            }
+        })
+
         init()
-    }, 30*1000)
-</script>
+
+        function init() {
+            loadPending()
+            loadNotice()
+            loadPlayList()
+            loadPartyMemberConstitute()
+            loadPartyMemberDues()
+        }
+
+        function loadPending() {
+            let url = '/message/pending'
+            get(url, reps => {
+                if (reps.status) {
+                    app.pending.handling.list = []
+                    app.pending.verifying.list = []
+                    reps.data.list.forEach(item => {
+                        if (item.type == 1) {
+                            app.pending.verifying.list.push({
+                                date: new Date(item.updateDate).toLocaleString(),
+                                title: item.title,
+                                //target: {menuId: 29, name: '正在审核', url: '/publish/process'}
+                                target: { menuId: -2, name: '待审核内容', url: item.url }
+                            })
+                        } else if (item.type == 2) {
+                            app.pending.handling.list.push({
+                                date: new Date(item.updateDate).toLocaleString(),
+                                title: item.title,
+                                //target: {menuId: 29, name: '正在审核', url: '/publish/process'}
+                                target: { menuId: -3, name: '待办理事项', url: item.url }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        function loadNotice() {
+            let url = '/message/notice/1/10'
+            get(url, reps => {
+                if (reps.status) {
+                    app.notice = []
+                    reps.data.list.forEach(item => {
+                        app.notice.push({
+                            date: item.updateDate,
+                            title: item.title,
+                            target: { menuId: -1, name: '消息通知', url: item.url }
+                        })
+                    })
+                }
+            })
+        }
+
+        function loadPlayList() {
+            let url = '/publish/publishing/content/1/10'
+            get(url, reps => {
+                if (reps.status) {
+                    app.playlist = []
+                    reps.data.list.forEach(item => {
+                        app.playlist.push({
+                            date: item.end_date + ' 止',
+                            title: item.title,
+                            target: { menuId: 30, name: '已发布节目', url: '/publish/publishing' }
+                        })
+                    })
+                }
+            })
+        }
+
+        function loadPartyMemberConstitute() {
+            let url = '/statistics/partyMember'
+            get(url, reps => {
+                if (reps.status) {
+                    app.partyMembers.constitute.rows = []
+                    reps.data.forEach(item => {
+                        app.partyMembers.constitute.rows.push({
+                            '类型': item.type,
+                            '成员数': item.count
+                        })
+                    })
+                }
+            })
+        }
+
+        function loadPartyMemberDues() {
+            let url = '/statistics/partyFeePayment'
+            get(url, reps => {
+                if (reps.status) {
+                    app.partyMembers.dues.rows = []
+                    reps.data.forEach(item => {
+                        app.partyMembers.dues.rows.push({
+                            '类型': item.name,
+                            '人数': item.count
+                        })
+                    })
+                }
+            })
+        }
+
+        function get(url, callback) {
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: 'json',
+                success: function (reps) {
+                    if (callback) callback(reps)
+                },
+                error: function (err) {
+                    app.$message.error("系统错误.")
+                }
+            });
+        }
+
+        setInterval(() => {
+            init()
+        }, 30 * 1000)
+    </script>
 </body>
+
 </html>

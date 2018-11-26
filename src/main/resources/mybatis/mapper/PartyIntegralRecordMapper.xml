@@ -205,5 +205,8 @@
       <if test="idCard != null and idCard != ''"> and
        	bui.id_card = #{idCard}
       </if>
+      <if test="changeIntegralType != null and changeIntegralType != ''"> and
+       	pir.change_integral_type = #{changeIntegralType}
+      </if>
   </select>
 </mapper>

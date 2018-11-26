@@ -247,7 +247,10 @@
 					  				<el-button @click="money_manage_queryPartyMembershipDuesOfConditionForOrgInfoId" size="small" type="primary" @click="">
 										成员缴纳记录
 									</el-button>
-					  			</el-row>
+									<el-button v-if="false" @click="" size="small" type="primary" @click="">
+										成员离线缴纳上报
+									</el-button>
+								</el-row>
 					  			<el-row style="padding: 10px 20px;">
 									<el-date-picker
 								      	v-model="queryConditionForOrgInfoInner.paidDateStart" 
@@ -331,7 +334,7 @@
 				<span style="color: blue"> 导入记录->显示导入错误信息 </span>
 				再次打开
 			</span>
-			<div style="margin: 10px; 15px">
+			<div style="margin: 10px 15px">
 				<el-input 
 				  	type="textarea"
 				 	:autosize="{ minRows: 10, maxRows: 15}"

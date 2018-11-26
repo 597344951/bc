@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.wechat_pay.order.dao.WechatOrderMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.wechat_pay.order.bean.WechatOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+    <result column="mch_id" jdbcType="VARCHAR" property="mchId" />
+    <result column="device_info" jdbcType="VARCHAR" property="deviceInfo" />
+    <result column="nonce_str" jdbcType="VARCHAR" property="nonceStr" />
+    <result column="sign" jdbcType="VARCHAR" property="sign" />
+    <result column="sign_type" jdbcType="VARCHAR" property="signType" />
+    <result column="body" jdbcType="VARCHAR" property="body" />
+    <result column="detail" jdbcType="VARCHAR" property="detail" />
+    <result column="attach" jdbcType="VARCHAR" property="attach" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="fee_type" jdbcType="VARCHAR" property="feeType" />
+    <result column="total_fee" jdbcType="BIGINT" property="totalFee" />
+    <result column="spbill_create_ip" jdbcType="VARCHAR" property="spbillCreateIp" />
+    <result column="time_start" jdbcType="TIMESTAMP" property="timeStart" />
+    <result column="time_expire" jdbcType="TIMESTAMP" property="timeExpire" />
+    <result column="pay_date" jdbcType="TIMESTAMP" property="payDate" />
+    <result column="trade_status" jdbcType="VARCHAR" property="tradeStatus" />
+    <result column="goods_tag" jdbcType="VARCHAR" property="goodsTag" />
+    <result column="notify_url" jdbcType="VARCHAR" property="notifyUrl" />
+    <result column="code_url" jdbcType="VARCHAR" property="codeUrl" />
+    <result column="trade_type" jdbcType="VARCHAR" property="tradeType" />
+    <result column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="limit_pay" jdbcType="VARCHAR" property="limitPay" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="scene_info" jdbcType="VARCHAR" property="sceneInfo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, org_name, mch_id, device_info, nonce_str, sign, sign_type, body, detail, 
+    attach, out_trade_no, fee_type, total_fee, spbill_create_ip, time_start, time_expire, 
+    pay_date, trade_status, goods_tag, notify_url, code_url, trade_type, product_id, limit_pay, 
+    openid, scene_info
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from weixin_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from weixin_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.wechat_pay.order.bean.WechatOrder">
+    insert into weixin_order (id, user_id, org_name, 
+      mch_id, device_info, nonce_str, 
+      sign, sign_type, body, 
+      detail, attach, out_trade_no, 
+      fee_type, total_fee, spbill_create_ip, 
+      time_start, time_expire, pay_date, 
+      trade_status, goods_tag, notify_url, code_url, 
+      trade_type, product_id, limit_pay, 
+      openid, scene_info)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, 
+      #{mchId,jdbcType=VARCHAR}, #{deviceInfo,jdbcType=VARCHAR}, #{nonceStr,jdbcType=VARCHAR}, 
+      #{sign,jdbcType=VARCHAR}, #{signType,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, 
+      #{detail,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{feeType,jdbcType=VARCHAR}, #{totalFee,jdbcType=BIGINT}, #{spbillCreateIp,jdbcType=VARCHAR}, 
+      #{timeStart,jdbcType=TIMESTAMP}, #{timeExpire,jdbcType=TIMESTAMP}, #{payDate,jdbcType=TIMESTAMP}, 
+      #{tradeStatus,jdbcType=VARCHAR}, #{goodsTag,jdbcType=VARCHAR}, #{notifyUrl,jdbcType=VARCHAR}, #{codeUrl,jdbcType=VARCHAR}, 
+      #{tradeType,jdbcType=VARCHAR}, #{productId,jdbcType=VARCHAR}, #{limitPay,jdbcType=VARCHAR}, 
+      #{openid,jdbcType=VARCHAR}, #{sceneInfo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.wechat_pay.order.bean.WechatOrder">
+    insert into weixin_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="orgName != null">
+        org_name,
+      </if>
+      <if test="mchId != null">
+        mch_id,
+      </if>
+      <if test="deviceInfo != null">
+        device_info,
+      </if>
+      <if test="nonceStr != null">
+        nonce_str,
+      </if>
+      <if test="sign != null">
+        sign,
+      </if>
+      <if test="signType != null">
+        sign_type,
+      </if>
+      <if test="body != null">
+        body,
+      </if>
+      <if test="detail != null">
+        detail,
+      </if>
+      <if test="attach != null">
+        attach,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="feeType != null">
+        fee_type,
+      </if>
+      <if test="totalFee != null">
+        total_fee,
+      </if>
+      <if test="spbillCreateIp != null">
+        spbill_create_ip,
+      </if>
+      <if test="timeStart != null">
+        time_start,
+      </if>
+      <if test="timeExpire != null">
+        time_expire,
+      </if>
+      <if test="payDate != null">
+        pay_date,
+      </if>
+      <if test="tradeStatus != null">
+        trade_status,
+      </if>
+      <if test="goodsTag != null">
+        goods_tag,
+      </if>
+      <if test="notifyUrl != null">
+        notify_url,
+      </if>
+      <if test="codeUrl != null">
+        code_url,
+      </if>
+      <if test="tradeType != null">
+        trade_type,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="limitPay != null">
+        limit_pay,
+      </if>
+      <if test="openid != null">
+        openid,
+      </if>
+      <if test="sceneInfo != null">
+        scene_info,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null">
+        #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceInfo != null">
+        #{deviceInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="nonceStr != null">
+        #{nonceStr,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null">
+        #{sign,jdbcType=VARCHAR},
+      </if>
+      <if test="signType != null">
+        #{signType,jdbcType=VARCHAR},
+      </if>
+      <if test="body != null">
+        #{body,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null">
+        #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="attach != null">
+        #{attach,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feeType != null">
+        #{feeType,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null">
+        #{totalFee,jdbcType=BIGINT},
+      </if>
+      <if test="spbillCreateIp != null">
+        #{spbillCreateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="timeStart != null">
+        #{timeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeExpire != null">
+        #{timeExpire,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payDate != null">
+        #{payDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tradeStatus != null">
+        #{tradeStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsTag != null">
+        #{goodsTag,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="codeUrl != null">
+        #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null">
+        #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=VARCHAR},
+      </if>
+      <if test="limitPay != null">
+        #{limitPay,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null">
+        #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="sceneInfo != null">
+        #{sceneInfo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.wechat_pay.order.bean.WechatOrder">
+    update weixin_order
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null">
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null">
+        mch_id = #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceInfo != null">
+        device_info = #{deviceInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="nonceStr != null">
+        nonce_str = #{nonceStr,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null">
+        sign = #{sign,jdbcType=VARCHAR},
+      </if>
+      <if test="signType != null">
+        sign_type = #{signType,jdbcType=VARCHAR},
+      </if>
+      <if test="body != null">
+        body = #{body,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="attach != null">
+        attach = #{attach,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feeType != null">
+        fee_type = #{feeType,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null">
+        total_fee = #{totalFee,jdbcType=BIGINT},
+      </if>
+      <if test="spbillCreateIp != null">
+        spbill_create_ip = #{spbillCreateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="timeStart != null">
+        time_start = #{timeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeExpire != null">
+        time_expire = #{timeExpire,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payDate != null">
+        pay_date = #{payDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tradeStatus != null">
+        trade_status = #{tradeStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsTag != null">
+        goods_tag = #{goodsTag,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="codeUrl != null">
+        code_url = #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null">
+        trade_type = #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=VARCHAR},
+      </if>
+      <if test="limitPay != null">
+        limit_pay = #{limitPay,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null">
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="sceneInfo != null">
+        scene_info = #{sceneInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.wechat_pay.order.bean.WechatOrder">
+    update weixin_order
+    set user_id = #{userId,jdbcType=INTEGER},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      mch_id = #{mchId,jdbcType=VARCHAR},
+      device_info = #{deviceInfo,jdbcType=VARCHAR},
+      nonce_str = #{nonceStr,jdbcType=VARCHAR},
+      sign = #{sign,jdbcType=VARCHAR},
+      sign_type = #{signType,jdbcType=VARCHAR},
+      body = #{body,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR},
+      attach = #{attach,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      fee_type = #{feeType,jdbcType=VARCHAR},
+      total_fee = #{totalFee,jdbcType=BIGINT},
+      spbill_create_ip = #{spbillCreateIp,jdbcType=VARCHAR},
+      time_start = #{timeStart,jdbcType=TIMESTAMP},
+      time_expire = #{timeExpire,jdbcType=TIMESTAMP},
+      pay_date = #{payDate,jdbcType=TIMESTAMP},
+      trade_status = #{tradeStatus,jdbcType=VARCHAR},
+      goods_tag = #{goodsTag,jdbcType=VARCHAR},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      code_url = #{codeUrl,jdbcType=VARCHAR},
+      trade_type = #{tradeType,jdbcType=VARCHAR},
+      product_id = #{productId,jdbcType=VARCHAR},
+      limit_pay = #{limitPay,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR},
+      scene_info = #{sceneInfo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryWechatOrder" parameterType="com.zltel.broadcast.wechat_pay.order.bean.WechatOrder" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" />
+    from 
+    	weixin_order
+    where 
+    	1=1
+    	<if test="userId != null"> and 
+	        user_id = #{userId}
+	    </if>
+	    <if test="timeStart != null"> and 
+	        time_start &lt;= #{timeStart} and time_expire >= #{timeStart}
+	    </if>
+	    <if test="tradeStatus != null"> and 
+	        trade_status = #{tradeStatus} 
+	    </if>
+	    <if test="totalFee >= 0"> and 
+	        total_fee = #{totalFee}
+	    </if>
+	    <if test="productId != null"> and 
+	        product_id = #{productId} 
+	    </if>
+  </select>
+</mapper>

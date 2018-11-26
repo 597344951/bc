@@ -314,7 +314,7 @@
 				AND url=#{url}
 			</if>
 			<if test="orgId != null">
-				AND org_id=#{orgId}
+				AND (org_id=#{orgId} or org_id=0)
 			</if>
 			<if test="relateContentId != null">
 				AND relate_content_id=#{relateContentId}

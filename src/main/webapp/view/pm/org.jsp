@@ -303,17 +303,14 @@
 					<div style="text-align: center;">
 						<p style="margin-bottom: 20px; font-size: 20px; font-weight: bold;">党委结构一览</p>
 					</div>
-				  	<el-carousel :interval="1500" :height="partyOrg_manager_CarouselHeight">
-				    	<el-carousel-item :key="item.data.orgInfoId" v-for="item in partyOrg_manager_orgInfoTreesForZMD">
-				      		<div style="text-align: center;">
-								<p style="margin-top: 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold;">{{item.data.orgInfoName}}</p>
-							</div>
-							<div :load="getItaf(item)" :id="'orgInfoTree'+item.data.orgInfoId" 
-								style="width: 100%; height: 80%; text-align: center; overflow: auto; background-image: url(/view/pm/img/orgInfoChartBg.png); background-size: 100%">
-								
-							</div>
-				    	</el-carousel-item>
-				  	</el-carousel>
+				  	<div v-if="partyOrg_manager_orgInfoTreesForZMD != null">
+						<div style="text-align: center;">
+							<p style="margin-top: 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold;">{{partyOrg_manager_orgInfoTreesForZMD.data.orgInfoName}}</p>
+						</div>
+						<div id="orgInfoTree" 
+							style="width: 100%; height: 80%; text-align: center; overflow: auto; background-image: url(/view/pm/img/orgInfoChartBg.png); background-size: 100%">
+						</div>
+				    </div>
 				</div>
 				<span v-show="dis_h_v">
 					<el-table  
@@ -445,7 +442,7 @@
 						<el-table-column label="组织名" prop="orgInfoName"></el-table-column>
 						<el-table-column label="组织管理所在省" prop="orgInfoCommitteeProvince"></el-table-column>
 						<el-table-column label="组织管理所在市" prop="orgInfoCommitteeCity"></el-table-column>
-						<el-table-column label="操作" width=270>
+						<el-table-column label="操作" width=370>
 							<template slot-scope="scope">
 								<shiro:hasPermission name="party:user:delete">  
 									<el-button @click="partyOrg_manager_deleteOrgInfo(scope.row)" type="text" size="small">删除</el-button>
@@ -465,12 +462,37 @@
 										type="text" size="small">添加积分结构
 									</el-button>
 								</shiro:hasPermission>
+								<el-button 
+									@click="open_update_join_process_dialog(scope.row)" 
+									type="text" size="small">调整入党流程
+								</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
 				</span>
 			</el-main>
 		</el-container>
+
+
+		<el-dialog @close="reset_join_party" title="变更入党流程" :visible.sync="join_process_dialog" width="70%">
+			<div style="float: left; margin-bottom: 20px; margin-right: 20px;">
+				<el-transfer
+					v-model="join_party_org.org_process"
+					:data="join_party_org.process"
+					:props="{key: 'id', label: 'name'}"
+					:titles="['全部步骤', '我的步骤']"
+					:button-texts="['到左边', '到右边']"
+					@right-check-change="org_process_check"
+					target-order="push"
+					filterable>
+				</el-transfer>
+			</div>
+			<div>
+				<el-button @click="change_process_position('s')" size="small">上移</el-button>
+				<el-button @click="change_process_position('x')" size="small">下移</el-button>
+				<el-button type="primary" @click="insert_org_join_process" size="small">变更流程</el-button>
+			</div>
+		</el-dialog>
 
 
 
@@ -510,11 +532,32 @@
 					</div>
 					<div v-if="partyOrg_manager_orgInfoTreeOfIntegralConstitute.length != 0">
 						<el-form-item label="积分类型细分" prop="parentIcId" style="margin-bottom: 0px;">
-						    <el-tree :expand-on-click-node="false" 
+							<el-tree :expand-on-click-node="false" 
+								ref="ref_integral_con"
+								draggable
+								node-key="icId" 
+								@node-drop="change_integral_structure"
 						    	:highlight-current="true" 
 						    	:data="partyOrg_manager_orgInfoTreeOfIntegralConstitute" 
 						    	:props="partyOrg_manager_orgInfoTreeOfIntegralConstituteProps" 
-						    	@node-click="partyOrg_manager_setIntegralparentId">
+								@node-click="partyOrg_manager_setIntegralparentId">
+								<span class="custom-tree-node" slot-scope="{ node, data }">
+									<span>{{ node.label }}</span>
+									<span>
+									  	<el-button
+											type="text"
+											size="mini"
+											@click="() => update_integral_con(node, data)">
+											修改
+									  	</el-button>
+									  	<el-button
+											type="text"
+											size="mini"
+											@click="() => delete_integral_con(node, data)">
+											删除
+									  	</el-button>
+									</span>
+								</span>
 						  	</el-tree>
 						</el-form-item>
 					</div>
@@ -533,7 +576,7 @@
 		</el-dialog>
 
 		<el-dialog @close="partyOrg_manager_resetOrgInfosChildren" title="下属组织关系图" :visible.sync="partyOrg_manager_showOrgInfosChildrenDialog" width="70%">
-			<div style="width: 90%; height: 500px; margin: 0 auto; padding: 20px;" id="childrensOrgChildren"></div>
+			<div style="width: 90%; height: 500px; margin: 0 auto; padding: 20px; text-align: center;" id="childrensOrgChildren"></div>
 		</el-dialog>
 
 		<el-dialog @close="" title="下属组织信息" :visible.sync="partyOrg_manager_showThisOrgChildrensDialog" width="82%">
@@ -654,10 +697,31 @@
 					<el-col :span="24">
 						<el-form-item label="选择上级职责" prop="orgDutyParentId">
 						    <el-tree :expand-on-click-node="false" 
-						    	:highlight-current="true" 
+								:highlight-current="true" 
+								node-key="orgDutyId"
+								ref="ref_duty_orginfo"
+								draggable
+								@node-drop="change_org_duty_structure"
 						    	:data="partyOrg_manager_insertOrgInfoDutyForm.orgDutyTreesForOrgInfo" 
 						    	:props="partyOrg_manager_orgInfoDutyTreesProps" 
-						    	@node-click="partyOrg_manager_setOrgDutyParentId">
+								@node-click="partyOrg_manager_setOrgDutyParentId">
+								<span class="custom-tree-node" slot-scope="{ node, data }">
+									<span>{{ node.label }}</span>
+									<span>
+									  	<el-button
+											type="text"
+											size="mini"
+											@click="() => update_org_duty(node, data)">
+											修改
+									  	</el-button>
+									  	<el-button
+											type="text"
+											size="mini"
+											@click="() => delete_org_duty(node, data)">
+											删除
+									  	</el-button>
+									</span>
+								</span>
 						  	</el-tree>
 						</el-form-item>
 					</el-col>
@@ -858,7 +922,7 @@
 		data: {
 			partyOrg_manager_CarouselHeight: "500px",
 			partyOrg_manager_jumpToOrgDetailInfoArray: [], 	/*点击卡片跳转到详细信息，用于保存值，赋值给rowkey以便展开信息*/
-			dis_h_v: false,
+			dis_h_v: true,
 			partyOrg_manager_address_pca: pca,	/* 省市区三级联动数据 */
 			partyOrg_manager_address_prop: {	/* 地址prop */
 				value: "name",
@@ -909,6 +973,7 @@
 			partyOrg_manager_showOrgInfosChildrenDialog: false, 	/*下属组织关系图弹窗*/
 			partyOrg_manager_showOrgInfosRelationDialog: false, 	/*组织人员分析图弹窗*/
 			partyOrg_manager_addOrgIntegralConstituteDialog: false, /*添加组织积分结构弹窗*/
+			join_process_dialog: false,	//修改入党流程弹窗
 			partyOrg_manager_orgInfoTreeOfInsert: [],	/*添加组织信息时的组织关系树*/
 			partyOrg_manager_orgInfoTreeOfInsertProps: {
 				children: 'children',
@@ -1019,9 +1084,10 @@
 			    	total: 0,
 			    	list: []
 				},
-				partyOrg_manager_orgInfosChildrenTree: []	/*组织关系树图*/
+				partyOrg_manager_orgInfosChildrenTree: [],	/*组织关系树图*/
+				orgInfoChildrenTreeOc: null
 			},
-			partyOrg_manager_orgInfoTreesForZMD: [],	/*组织结构信息-走马灯页面*/
+			partyOrg_manager_orgInfoTreesForZMD: null,	/*组织结构信息-走马灯页面*/
 			partyOrg_manager_addOrgIntegralConstituteForm: {	/*添加组织积分结构弹窗*/
 				type: null,
 				integral: null,
@@ -1033,7 +1099,14 @@
 			count: 0,
 			realCount: 0,
 			signInAccountType: null,
-			loadedOrgInfoId: []
+			loadedOrgInfoId: [],
+			orgInfoTreeOC: null,
+			join_party_org: {
+				org_id: null,
+				process: [],
+				org_process: [],
+				org_process_checked: []
+			}
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -1045,8 +1118,276 @@
 			this.partyOrg_manager_getOrgInfoNatures();
 			this.partyOrg_manager_getOrgInfoTreesForZMD();	/*走马灯*/
 			this.getSignInAccountType();
+			this.getItaf();
 		},
 		methods: {
+			insert_org_join_process() {
+				let obj = this;
+				if (obj.join_party_org.org_process == null || obj.join_party_org.org_process.length < 1) {
+					toast("提示", "请选择流程", "error");
+					return;
+				}
+
+				let url = "/org/process/insertOrganizationJoinProcess";
+		    	var processId = "";
+				for(var i of obj.join_party_org.org_process) {
+					processId += i + ","
+				}
+		    	var t = {
+		    		orgId: obj.join_party_org.org_id,
+		    		processId: processId
+		    	}
+		    	$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						toast('提示', "变更成功",'success');
+						obj.reset_join_party();
+					}
+				})
+			},
+			open_update_join_process_dialog(row) {
+				let obj = this;
+
+				var url = "/join/process/queryJoinPartyOrgProcess";
+				var t = {}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						obj.join_party_org.process = data.data;
+						obj.join_process_dialog = true;
+						obj.join_party_org.org_id = row.orgInfoId;
+
+						url = "/org/process/queryOjp";
+						t = {
+							orgId: row.orgInfoId
+						}
+						$.post(url, t, function(data, status){
+							if (data.code == 200 && data.data != null) {
+								for (let i = 0; i < data.data.length; i++) {
+									obj.join_party_org.org_process.push(data.data[i].processId);
+								}
+							}
+						})
+					} else {
+						toast("提示", "查询步骤失败", "error");
+					}
+				})
+			},
+			change_process_position(position) {
+				let obj = this;
+				if (obj.join_party_org.org_process_checked != null 
+					&& obj.join_party_org.org_process_checked.length != 1) {
+					toast("提示", "请在“我的步骤”栏里勾选一个步骤进行调整顺序", "error");
+					return;
+				}
+				
+				let change_process = obj.join_party_org.org_process_checked[0];	//在组织步骤里勾选的步骤
+				for (let i = 0; i < obj.join_party_org.org_process.length; i++) {	//便利组织步骤
+					if (change_process == obj.join_party_org.org_process[i]) {
+						if (i == 0 && position == 's') {
+							toast("提示", "已经是第一个了", "error");
+							return;
+						}
+						if (i == obj.join_party_org.org_process.length - 1 && position == 'x') {
+							toast("提示", "已经是最后一个了", "error");
+							return;
+						}
+
+						//对应调换位置
+						obj.join_party_org.org_process = obj.swapArray(obj.join_party_org.org_process, 
+							i, position == 's' ? i - 1 : i + 1);
+						return;
+					}
+				}
+			},
+			swapArray(arr, index1, index2) {
+				arr[index1] = arr.splice(index2, 1, arr[index1])[0];
+				return arr;
+			},
+			org_process_check(orgProcess, check_orgProcess) {
+				let obj = this;
+				obj.join_party_org.org_process_checked = orgProcess;
+			},
+			reset_join_party() {
+				let obj = this;
+				obj.join_party_org.process = [];
+				obj.join_party_org.org_process = [];
+				obj.join_party_org.org_id = null;
+				obj.join_party_org.org_process_checked = [];
+				obj.join_process_dialog = false;
+			},
+			delete_org_duty(node, data) {
+				var obj = this;
+				obj.$confirm(
+					'确认要删除吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		if (data.data.orgDutyId == -1) {
+						toast("提示", "此节点不允许删除", "error")
+						return;
+					}
+					var url = "/org/duty/deleteOrgDuty";
+					let t = {
+						orgDutyId: data.data.orgDutyId
+					};
+					$.post(url, t, function(datas, status){
+						if (datas != null && datas.code == 200) {
+							toast("提示", "删除成功", "success");
+							obj.$refs.ref_duty_orginfo.remove(node);
+						}
+					})
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });  
+				});
+			},
+			update_org_duty(node, data) {
+				let obj = this;
+				this.$prompt('请输入新的职责名字', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					inputPattern: /^[\u4e00-\u9fa5.·]+$/,
+					inputErrorMessage: '请输入正确的名字'
+				}).then(({ value }) => {
+					if (data.data.orgDutyId == -1) {
+						toast("提示", "此节点不允许修改", "error")
+						return;
+					}
+					var url = "/org/duty/updateOrgDuty";
+					let t = {
+						orgDutyId: data.data.orgDutyId,
+						orgDutyName: value
+					}
+					$.post(url, t, function(datas, status){
+						if (datas != null && datas.code == 200) {
+							toast("提示", "修改成功", "success");
+							data.data.orgDutyName = value;
+						}
+					})
+				}).catch(() => {
+					obj.$message({
+						type: 'info',
+						message: '取消修改'
+					});       
+				});
+			},
+			change_org_duty_structure(draggingNode, dropNode, dropType, ev) {
+				let obj = this;
+				var url = "/org/duty/updateOrgDuty";
+				let t = null;
+				if (dropType == "inner") {
+					t = {
+						orgDutyId: draggingNode.data.data.orgDutyId,
+						orgDutyParentId: dropNode.data.data.orgDutyId
+					}
+				} else if (dropType == "after" || dropType == "before") {
+					if (dropNode.data.data.orgDutyId == -1) {
+						toast("提示", "不能与顶级节点平行，请重新变更", "error");
+						return;
+					}
+					t = {
+						orgDutyId: draggingNode.data.data.orgDutyId,
+						orgDutyParentId: dropNode.data.data.orgDutyParentId
+					}
+				}
+				$.post(url, t, function(datas, status){
+					if (datas != null && datas.code == 200) {
+						toast("提示", "职责结构变更成功", "success");
+					}
+				})
+			},
+			delete_integral_con(node, data) {
+				var obj = this;
+				obj.$confirm(
+					'确认要删除吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		if (data.data.icId == -1) {
+						toast("提示", "此节点不允许删除", "error")
+						return;
+					}
+					var url = "/org/ic/deleteIntegralConstitute";
+					let t = {
+							icId: data.data.icId
+					};
+					$.post(url, t, function(datas, status){
+						if (datas != null && datas.code == 200) {
+							toast("提示", "删除成功", "success");
+							obj.$refs.ref_integral_con.remove(node);
+						}
+					})
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });  
+				});
+			},
+			update_integral_con(node, data) {
+				let obj = this;
+				this.$prompt('请输入积分类型名字', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					inputPattern: /^[\u4e00-\u9fa5.·]+$/,
+					inputErrorMessage: '请输入正确的名字'
+				}).then(({ value }) => {
+					if (data.data.icId == -1) {
+						toast("提示", "此节点不允许修改", "error")
+						return;
+					}
+					var url = "/org/ic/updateIntegralConstitute";
+					let t = {
+						icId: data.data.icId,
+						type: value
+					}
+					$.post(url, t, function(datas, status){
+						if (datas != null && datas.code == 200) {
+							toast("提示", "修改成功", "success");
+							data.data.type = value;
+						}
+					})
+				}).catch(() => {
+					obj.$message({
+						type: 'info',
+						message: '取消修改'
+					});       
+				});
+			},
+			change_integral_structure(draggingNode, dropNode, dropType, ev) {	//变更积分结构
+				let obj = this;
+				var url = "/org/ic/updateIntegralConstitute";
+				let t = null;
+				if (dropType == "inner") {
+					t = {
+						icId: draggingNode.data.data.icId,
+						parentIcId: dropNode.data.data.icId
+					}
+				} else if (dropType == "after" || dropType == "before") {
+					if (dropNode.data.data.icId == -1) {
+						toast("提示", "不能与顶级节点平行，请重新变更", "error");
+						return;
+					}
+					t = {
+						icId: draggingNode.data.data.icId,
+						parentIcId: dropNode.data.data.parentIcId
+					}
+				}
+				$.post(url, t, function(datas, status){
+					if (datas != null && datas.code == 200) {
+						toast("提示", "积分结构变更成功", "success");
+					}
+				})
+			},
 			getSignInAccountType() {	/*得到该登录用户的类型*/
 				var obj = this;
 
@@ -1066,21 +1407,7 @@
 				})
 			},
 			partyOrg_manager_getOrgInfoTreesForZMD() {
-				var obj = this;
-
-				var url = "/org/ifmt/queryOrgInfosToTrees";
-				var t = {
-					orgInfoParentId: -1,
-					orgInfoName: obj.queryConditionForCharts.orgInfoName
-				}
-				$.post(url, t, function(data, status){
-					if (data.code == 200) {
-						if (data.data != undefined) {	
-							obj.partyOrg_manager_orgInfoTreesForZMD = data.data;
-						}
-					}
-
-				})
+				
 			},
 			setMap(row, expandedRows) {
 				var obj = this;
@@ -1266,6 +1593,7 @@
         	},
         	partyOrg_manager_openInsertOrgInfoDialog() {	/*打开添加组织信息弹窗*/
         		var obj = this;
+
         		obj.partyOrg_manager_insertOrgInfoDialog = true;
 
         		var obj = this;
@@ -1331,29 +1659,49 @@
         		var obj = this;
         		this.$refs.partyOrg_manager_insertOrgInfoForm.validate( function(valid) {
         			if (valid) {
-        				var url = "/org/ifmt/insertOrgInfo";
-        				var t = {
-        					orgInfoTypeId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoTypeId,
-        					orgInfoNatureId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoNatureId,
-        					orgInfoName: obj.partyOrg_manager_insertOrgInfoForm.orgInfoName,
-        					orgInfoCommitteeProvince: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[0],
-        					orgInfoCommitteeCity: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[1],
-        					orgInfoCommitteeArea: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[2],
-        					orgInfoCommitteeDetail: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommitteeDetail,
-        					orgInfoManageDetail: obj.partyOrg_manager_insertOrgInfoForm.orgInfoManageDetail,
-        			    	orgInfoDescribe: obj.partyOrg_manager_insertOrgInfoForm.orgInfoDescribe,
-        			    	orgInfoParentId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoParentId
-        				}
-        				$.post(url, t, function(data, status){
-        					if (data.code == 200) {
-        						toast('添加成功',data.msg,'success');
-        						obj.partyOrg_manager_resetinsertOrgInfoForm();
-        						obj.partyOrg_manager_insertOrgInfoDialog = false;
-        						obj.partyOrg_manager_queryOrgInfosForMap();
-        						obj.partyOrg_manager_queryOrgInfosCommitteeProvince();	/*重新查询地址-省*/
-        					}
-        					
-        				})
+						var url = "/org/ifmt/queryOrgInfosSelect";
+						var t = {
+							orgInfoParentId: -1
+						}
+						$.post(url, t, function(data, status){
+							if (data.code == 200) {
+								if (data.data != null && data.data.length > 0 && obj.partyOrg_manager_insertOrgInfoForm.orgInfoParentId == -1) {
+									obj.$notify({
+										title: '不允许创建更多的组织',
+										message: '只能存在一个最顶级组织',
+										type: 'error'
+									});
+									return;
+								} else {
+									var url = "/org/ifmt/insertOrgInfo";
+									var t = {
+										orgInfoTypeId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoTypeId,
+										orgInfoNatureId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoNatureId,
+										orgInfoName: obj.partyOrg_manager_insertOrgInfoForm.orgInfoName,
+										orgInfoCommitteeProvince: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[0],
+										orgInfoCommitteeCity: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[1],
+										orgInfoCommitteeArea: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca[2],
+										orgInfoCommitteeDetail: obj.partyOrg_manager_insertOrgInfoForm.orgInfoCommitteeDetail,
+										orgInfoManageDetail: obj.partyOrg_manager_insertOrgInfoForm.orgInfoManageDetail,
+										orgInfoDescribe: obj.partyOrg_manager_insertOrgInfoForm.orgInfoDescribe,
+										orgInfoParentId: obj.partyOrg_manager_insertOrgInfoForm.orgInfoParentId
+									}
+									$.post(url, t, function(data, status){
+										if (data.code == 200) {
+											toast('添加成功',data.msg,'success');
+											obj.partyOrg_manager_resetinsertOrgInfoForm();
+											obj.partyOrg_manager_insertOrgInfoDialog = false;
+											obj.partyOrg_manager_queryOrgInfosForMap();
+											obj.partyOrg_manager_queryOrgInfosCommitteeProvince();	/*重新查询地址-省*/
+										}
+										
+									})
+								}
+							}
+							
+						})
+
+        				
         			}
         		})
         	},
@@ -1518,7 +1866,7 @@
         		obj.partyOrg_manager_showThisOrgPeoples();
         	},
         	getPath(row) {	/* 得到党员用户id并返回请求路径 */
-				return "http://192.168.1.119:3000" + row.idPhoto;
+				return "http://192.168.1.8:3000" + row.idPhoto;
 			},
 			thisOrgInfoChildrensPagerInit() {
         		var obj = this;
@@ -1667,14 +2015,32 @@
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
-						if (data.data != undefined) {	
-							obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree = data.data;
-							var trees = new Array;
-							obj.partyOrg_manager_getOrgChildrensTree(obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree, trees);
+						if (data.data != undefined) {
+							if (data.data.length < 1) {
+								return;
+							}
+							obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree = new Array;
+							data.data[0].count = 0;
+							obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(data.data, data.data, obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree);
 
 							setTimeout(()=>{
-								obj.partyOrg_manager_setChartForOrgChildrens(trees, "childrensOrgChildren", false, 99999);
+								//obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true, items[0].count);
+								if (obj.partyOrg_manager_ThisOrgInfos.orgInfoChildrenTreeOc == null) {
+									obj.partyOrg_manager_ThisOrgInfos.orgInfoChildrenTreeOc = $("#childrensOrgChildren").orgchart({
+								      	'data' : obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree[0],
+				      					'nodeContent': 'title',
+				      					'pan': true,
+				      					'zoom': true
+								    });
+								} else {
+									obj.partyOrg_manager_ThisOrgInfos.orgInfoChildrenTreeOc.init({ 'data': obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree[0] });
+								}
+								
 							},200)
+						} else {
+							if (obj.partyOrg_manager_ThisOrgInfos.orgInfoChildrenTreeOc != null) {
+								obj.partyOrg_manager_ThisOrgInfos.orgInfoChildrenTreeOc.init({ 'data': null });
+							}
 						}
 					}
 
@@ -1791,10 +2157,12 @@
 				
 			},
 			partyOrg_manager_resetOrgInfosChildren() {
-				var obj = this;
+				/*var obj = this;
 				obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree = new Array;
 				var Orgchildrens = echarts.init(document.getElementById("childrensOrgChildren"));
-				Orgchildrens.clear();
+				Orgchildrens.clear();*/
+				var obj = this;
+				obj.partyOrg_manager_ThisOrgInfos.partyOrg_manager_orgInfosChildrenTree = null;
 			},
 			partyOrg_manager_resetOrgInfosRelationDialog(){	/*组织人员分析弹窗关闭时重置图表*/
 				var joinorgProportionOfMenAndWomenChart = echarts.init(document.getElementById("joinOrgProportionOfMenAndWomenChart"));
@@ -1942,43 +2310,51 @@
 				obj.partyOrg_manager_jumpToOrgDetailInfoArray = [item.orgInfoId];
 				obj.setMap(item, null);
 			},
-			getItaf(item) {
+			getItaf() {
 				var obj = this;
 
-				var flag = true;
-				if (obj.loadedOrgInfoId.length == 0) {
-					obj.loadedOrgInfoId[0] = item.data.orgInfoId;
-				} else {
-					for (var i = 0; i < obj.loadedOrgInfoId.length; i++) {
-						var loadedId = obj.loadedOrgInfoId[i];
-						if (item.data.orgInfoId == loadedId) {
-							flag = false;
-						}
-					}
+				//为了按照层级关系延时依次展示
+				for (let i = 0; i < 99; i++) {
+					setTimeout(() => {
 
-					if (flag) {
-						obj.loadedOrgInfoId.push(item.data.orgInfoId);
-					} else {
-						return;
-					}
+						var url = "/org/ifmt/bossSayOneByOneShowOrgInfoLevel";
+						var t = {
+							orgInfoParentId: -1,
+							orgInfoName: obj.queryConditionForCharts.orgInfoName,
+							nowLevel: i + 1
+						}
+						$.post(url, t, function(data, status){
+							if (data.data != undefined && data.data != null) {	
+								if (data.code == 200) {
+									obj.partyOrg_manager_orgInfoTreesForZMD = data.data[0];
+
+									var trees = new Array;
+									var items = new Array;
+									obj.partyOrg_manager_orgInfoTreesForZMD.count = 0;
+									items[0] = obj.partyOrg_manager_orgInfoTreesForZMD;
+									obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(items, items, trees);
+
+									setTimeout(()=>{
+										if (obj.orgInfoTreeOC == null) {
+											obj.orgInfoTreeOC = $("#orgInfoTree").orgchart({
+												'data' : trees[0],
+												'nodeContent': 'title',
+												'pan': true,
+												'zoom': true,
+												'toggleSiblingsResp': false,
+												'parentNodeSymbol': false
+											});
+										} else {
+											obj.orgInfoTreeOC.init({ 'data': trees[0] });
+										}
+									},200)
+								}
+							}
+
+						})
+					}, (i + 1) * 1000);
 				}
 				
-
-				var trees = new Array;
-				var items = new Array;
-				item.count = 0;
-				items[0] = item;
-				obj.partyOrg_manager_getOrgChildrensTreeAndAddCount(items, items, trees);
-
-				setTimeout(()=>{
-					//obj.partyOrg_manager_setChartForOrgChildrens(trees, "orgInfoTree"+item.data.orgInfoId, true, items[0].count);
-					var oc = $("#orgInfoTree"+item.data.orgInfoId).orgchart({
-				      	'data' : trees[0],
-      					'nodeContent': 'title',
-      					'pan': true,
-      					'zoom': true
-				    });
-				},200)
 			},
 			partyOrg_manager_getOrgChildrensTreeAndAddCount(addCountOrgInfosRelationTree, orgInfosRelationTree, trees) {
 				var obj = this;

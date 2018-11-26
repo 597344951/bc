@@ -73,7 +73,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<a class="active" href="features.html">计划活动</a>
 						</li>
 						<li class="hvr-underline-from-left button2">
-							<a href="/view/publish/new.jsp?startStep=2&title=活动剪影&url=/faker/hdfc/features.html">
+							<a onclick="makeshow()" >
    					 节目制作
  					 </a>
 						</li>
@@ -147,7 +147,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		</div>
 		<div class="clearfix"></div>
 	</div>
-
+	<script>
+			function makeshow() {
+						var share = [{
+							weburl: '/faker/hdfc/features.html',
+							playtime: 5 * 1000
+						}];
+						var url = '/view/publish/new.jsp?title=活动剪影&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+						window.location.href = url;
+					}
+		</script>
 	<!-- //banner -->
 	<!-- for bootstrap working -->
 	<script src="js/bootstrap.js"></script>

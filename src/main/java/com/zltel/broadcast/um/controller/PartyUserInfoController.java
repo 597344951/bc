@@ -44,7 +44,7 @@ public class PartyUserInfoController extends BaseController  {
 	@ApiOperation(value = "查询党员信息")
 	public R queryPartyUserInfos(@RequestParam Map<String, Object> partyUserMap, int pageNum, int pageSize) {
 		try {
-			return partyUserInfoService.queryPartyUserInfos(partyUserMap, pageNum, pageSize);
+			return partyUserInfoService.queryPartyUserInfos(partyUserMap, pageNum, pageSize, true);
 		} catch (Exception e) {
 			logout.error(e.getMessage());
 			return R.error().setMsg("查询党员信息失败");
@@ -113,9 +113,9 @@ public class PartyUserInfoController extends BaseController  {
 	@LogPoint("修改证件照")
 	@RequiresPermissions(value = {"party:user:update"})
 	@ApiOperation(value = "修改证件照")
-	public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, @RequestParam Map<String, Object> partyUser) {
+	public R updatePartyUserIdPhoto(HttpServletRequest request, @RequestParam Map<String, Object> partyUser) {
 		try {
-			return partyUserInfoService.updatePartyUserIdPhoto(request, file, partyUser);
+			return partyUserInfoService.updatePartyUserIdPhoto(request, partyUser);
 		} catch (Exception e) {
 			logout.error(e.getMessage());
 			return R.error().setMsg("修改证件照出错");

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.FlowPartyRecordMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.FlowPartyRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fp_id" jdbcType="INTEGER" property="fpId" />
+    <result column="contact" jdbcType="INTEGER" property="contact" />
+    <result column="contact_time" jdbcType="TIMESTAMP" property="contactTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fp_id, contact, contact_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from flow_party_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from flow_party_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.FlowPartyRecord">
+    insert into flow_party_record (id, fp_id, contact, 
+      contact_time)
+    values (#{id,jdbcType=INTEGER}, #{fpId,jdbcType=INTEGER}, #{contact,jdbcType=INTEGER}, 
+      #{contactTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.FlowPartyRecord">
+    insert into flow_party_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fpId != null">
+        fp_id,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="contactTime != null">
+        contact_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fpId != null">
+        #{fpId,jdbcType=INTEGER},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=INTEGER},
+      </if>
+      <if test="contactTime != null">
+        #{contactTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.FlowPartyRecord">
+    update flow_party_record
+    <set>
+      <if test="fpId != null">
+        fp_id = #{fpId,jdbcType=INTEGER},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=INTEGER},
+      </if>
+      <if test="contactTime != null">
+        contact_time = #{contactTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.FlowPartyRecord">
+    update flow_party_record
+    set fp_id = #{fpId,jdbcType=INTEGER},
+      contact = #{contact,jdbcType=INTEGER},
+      contact_time = #{contactTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryFlowPartyRecords" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  fpr.contact contact,
+	  fpr.contact_time contactTime
+	from 
+	  flow_party fp 
+	  inner join flow_party_record fpr on fp.id = fpr.fp_id 
+	where
+	  1 = 1
+	  <if test="fpId != null and fpId != ''"> and
+       	fpr.fp_id = #{fpId}
+      </if>
+  </select>
+</mapper>

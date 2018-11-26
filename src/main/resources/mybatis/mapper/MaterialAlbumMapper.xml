@@ -178,6 +178,9 @@
 			<if test="noVerify != null">
 			    AND isNull(m.verify)
 			</if>
+			<if test="type != null">
+			    AND m.type = #{type}
+			</if>
 			group by m.album_id
 		 
 		) t ON ma.album_id = t.album_id

@@ -29,6 +29,23 @@ public class OrganizationInformationController extends BaseController {
 	@Autowired
 	private OrganizationInformationService organizationInformationService;
 	
+	
+	/**
+	 * 查询到组织信息
+	 * @param organizationInformation 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgInfosSelect", method=RequestMethod.POST)
+	@ApiOperation(value = "查询到组织信息")
+	public R queryOrgInfosSelect(OrganizationInformation organizationInformation) {
+		try {
+			return organizationInformationService.queryOrgInfosSelect(organizationInformation);
+		} catch (Exception e) {
+			logout.error(e.getMessage());
+			return R.error().setMsg("查询到组织信息失败");
+		}
+	}
+	
 	/**
 	 * 查询组织信息生成树
 	 * @param organizationInformation 条件
@@ -256,6 +273,24 @@ public class OrganizationInformationController extends BaseController {
 		} catch (Exception e) {
 			logout.error(e.getMessage());
 			return R.error().setMsg("没有查询到用户数量。");
+		}
+	}
+	
+	
+	
+	/**
+	 * 服务于按照时间间隔一次展示组织信息的层级，组织信息组织结构展示
+	 * @param orgInfoConditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/bossSayOneByOneShowOrgInfoLevel", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"org:info:query"})
+	@ApiOperation(value = "查询组织信息生成树")
+	public R bossSayOneByOneShowOrgInfoLevel(@RequestParam Map<String, Object> orgInfoConditions) {
+		try {
+			return organizationInformationService.bossSayOneByOneShowOrgInfoLevel(orgInfoConditions);
+		} catch (Exception e) {
+			return R.error().setMsg("查询组织信息生成树失败");
 		}
 	}
 }

@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jquery特效文字动画--by Bililovy</title>
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/core_plugin.js"></script>
+<style>
+    body{
+        font: 12px/180% Arial, Helvetica, sans-serif, "新宋体";
+        background: #036;
+        text-align: center;
+    }
+    div{
+        position: relative;
+        margin-bottom: 100px;
+    }
+    h1 span{
+        color: #fff;
+        font-size: 30px;
+    }
+</style>
+</head>
+<body>
+<div>
+    <h1 id="font1">左往右飞入左往右飞入左往右飞入左往右飞入左往右飞入左往右飞入左往右飞入</h1>
+</div>
+<div>
+    <h1 id="font2">上往下浮现上往下浮现上往下浮现上往下浮现上往下浮现上往下浮现上往下浮现</h1>
+</div>
+<div>
+    <h1 id="font3">下往上浮现下往上浮现下往上浮现下往上浮现下往上浮现下往上浮现下往上浮现</h1>
+</div>
+<div>
+    <h1 id="font4">右斜上方浮现右斜上方浮现右斜上方浮现右斜上方浮现右斜上方浮现右斜上方浮现</h1>
+</div>
+<div>
+    <h1 id="font5">右斜下方浮现右斜下方浮现右斜下方浮现右斜下方浮现右斜下方浮现右斜下方浮现</h1>
+</div>
+<div>
+    <h1 id="font6">左斜上方浮现左斜上方浮现左斜上方浮现左斜上方浮现左斜上方浮现左斜上方浮现</h1>
+</div>
+<div>
+    <h1 id="font7">左斜下方浮现左斜下方浮现左斜下方浮现左斜下方浮现左斜下方浮现左斜下方浮现</h1>
+</div>
+<div>
+    <h1 id="font8">上下浮现上下浮现上下浮现上下浮现上下浮现上下浮现上下浮现上下浮现上下浮现</h1>
+</div>
+<div>
+    <h1 id="font9">右斜上下浮现右斜上下浮现右斜上下浮现右斜上下浮现右斜上下浮现右斜上下浮现</h1>
+</div>
+<div>
+    <h1 id="font10">左斜上下浮现左斜上下浮现左斜上下浮现左斜上下浮现左斜上下浮现左斜上下浮现</h1>
+</div>
+<div>
+    <h1 id="font11">随机方向浮现随机方向浮现随机方向浮现随机方向浮现随机方向浮现随机方向浮现</h1>
+</div>    
+<div>
+    <h1 id="font13">从左往右淡入从左往右淡入从左往右淡入从左往右淡入从左往右淡入从左往右淡入</h1>
+</div>
+<div>
+    <h1 id="font14">随机淡入随机淡入随机淡入随机淡入随机淡入随机淡入随机淡入随机淡入随机淡入</h1>
+</div>
+<div>
+    <h1 id="font15">从上往下展开从上往下展开从上往下展开从上往下展开从上往下展开从上往下展开</h1>
+</div>
+<div>
+    <h1 id="font12">现有文字打乱在重组，把动画速度调慢，以便观察动画效果，哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+</div>
+</body>
+
+<script>
+    function settings() {}
+
+    function setValue(value) {
+        value.animation;
+        value.animationType = "out";
+        value.backwards = false;
+        value.easing = "easeInExpo";
+        value.speed = 1000;
+        value.sequenceDelay = 50;
+        value.startDelay = 100;
+        value.offsetX = 100;
+        value.offsetY = 50;
+        value.onComplete;
+        value.restoreHTML = true;
+    }
+
+    let setting_font1;
+    let setting_font2;
+    let setting_font3;
+    let setting_font4;
+    let setting_font5;
+    let setting_font6;
+    let setting_font7;
+    let setting_font8;
+    let setting_font9;
+    let setting_font10;
+    let setting_font11;
+    let setting_font12;
+    let setting_font13;
+    let setting_font14;
+    let setting_font15;
+    function doThis_font1() {
+        setting_font1.animationType = setting_font1.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font1);
+        jQuery.cjTextFx.animate("#font1");
+    }
+    function doThis_font2() {
+        setting_font2.animationType = setting_font2.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font2);
+        jQuery.cjTextFx.animate("#font2");
+    }
+    function doThis_font3() {
+        setting_font3.animationType = setting_font3.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font3);
+        jQuery.cjTextFx.animate("#font3");
+    }
+    function doThis_font4() {
+        setting_font4.animationType = setting_font4.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font4);
+        jQuery.cjTextFx.animate("#font4");
+    }
+    function doThis_font5() {
+        setting_font5.animationType = setting_font5.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font5);
+        jQuery.cjTextFx.animate("#font5");
+    }
+    function doThis_font6() {
+        setting_font6.animationType = setting_font6.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font6);
+        jQuery.cjTextFx.animate("#font6");
+    }
+    function doThis_font7() {
+        setting_font7.animationType = setting_font7.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font7);
+        jQuery.cjTextFx.animate("#font7");
+    }
+    function doThis_font8() {
+        setting_font8.animationType = setting_font8.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font8);
+        jQuery.cjTextFx.animate("#font8");
+    }
+    function doThis_font9() {
+        setting_font9.animationType = setting_font9.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font9);
+        jQuery.cjTextFx.animate("#font9");
+    }
+    function doThis_font10() {
+        setting_font10.animationType = setting_font10.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font10);
+        jQuery.cjTextFx.animate("#font10");
+    }
+    function doThis_font11() {
+        setting_font11.animationType = setting_font11.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font11);
+        jQuery.cjTextFx.animate("#font11");
+    }
+    function doThis_font12() {
+        setting_font12.animationType = setting_font12.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font12);
+        jQuery.cjTextFx.animate("#font12");
+    }
+    function doThis_font13() {
+        setting_font13.animationType = setting_font13.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font13);
+        jQuery.cjTextFx.animate("#font13");
+    }
+    function doThis_font14() {
+        setting_font14.animationType = setting_font14.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font14);
+        jQuery.cjTextFx.animate("#font14");
+    }
+    function doThis_font15() {
+        setting_font15.animationType = setting_font15.animationType == "in" ? "out" : "in";
+        jQuery.cjTextFx(setting_font15);
+        jQuery.cjTextFx.animate("#font15");
+    }
+
+
+
+
+    jQuery(document).ready(function () {   
+        setting_font1 = new settings();
+        setValue(setting_font1);
+        setting_font1.onComplete = doThis_font1;
+        setting_font1.animation = 1;
+        setting_font1.speed = 2000;
+        setting_font1.sequenceDelay = 30;
+        setting_font1.startDelay = 30;
+        doThis_font1();
+
+        setting_font2 = new settings();
+        setValue(setting_font2);
+        setting_font2.onComplete = doThis_font2;
+        setting_font2.animation = 2;
+        setting_font2.speed = 1000;
+        setting_font2.sequenceDelay = 50;
+        setting_font2.startDelay = 50;
+        doThis_font2();
+
+        setting_font3 = new settings();
+        setValue(setting_font3);
+        setting_font3.onComplete = doThis_font3;
+        setting_font3.animation = 3;
+        doThis_font3();
+
+        setting_font4 = new settings();
+        setValue(setting_font4);
+        setting_font4.onComplete = doThis_font4;
+        setting_font4.animation = 4;
+        doThis_font4();
+
+        setting_font5 = new settings();
+        setValue(setting_font5);
+        setting_font5.onComplete = doThis_font5;
+        setting_font5.animation = 5;
+        doThis_font5();
+
+        setting_font6 = new settings();
+        setValue(setting_font6);
+        setting_font6.onComplete = doThis_font6;
+        setting_font6.animation = 6;
+        doThis_font6();
+
+        setting_font7 = new settings();
+        setValue(setting_font7);
+        setting_font7.onComplete = doThis_font7;
+        setting_font7.animation = 7;
+        doThis_font7();
+
+        setting_font8 = new settings();
+        setValue(setting_font8);
+        setting_font8.onComplete = doThis_font8;
+        setting_font8.animation = 8;
+        doThis_font8();
+
+        setting_font9 = new settings();
+        setValue(setting_font9);
+        setting_font9.onComplete = doThis_font9;
+        setting_font9.animation = 9;
+        doThis_font9();
+
+        setting_font10 = new settings();
+        setValue(setting_font10);
+        setting_font10.onComplete = doThis_font10;
+        setting_font10.animation = 10;
+        doThis_font10();
+
+        setting_font11 = new settings();
+        setValue(setting_font11);
+        setting_font11.onComplete = doThis_font11;
+        setting_font11.animation = 11;
+        doThis_font11();
+
+        setting_font12 = new settings();
+        setValue(setting_font12);
+        setting_font12.onComplete = doThis_font12;
+        setting_font12.animation = 12;
+        doThis_font12();
+
+        setting_font13 = new settings();
+        setValue(setting_font13);
+        setting_font13.onComplete = doThis_font13;
+        setting_font13.animation = 13;
+        doThis_font13();
+
+        setting_font14 = new settings();
+        setValue(setting_font14);
+        setting_font14.onComplete = doThis_font14;
+        setting_font14.animation = 14;
+        doThis_font14();
+
+        setting_font15 = new settings();
+        setValue(setting_font15);
+        setting_font15.onComplete = doThis_font15;
+        setting_font15.animation = 15;
+        doThis_font15();
+    });
+</script>
+</html>

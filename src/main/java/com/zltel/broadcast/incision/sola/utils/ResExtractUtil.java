@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 资源提取工具类
@@ -12,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class ResExtractUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(ResExtractUtil.class);
+
     private ResExtractUtil() {}
 
     /**
@@ -29,5 +34,29 @@ public class ResExtractUtil {
             return matcher.group(1);
         }
         return "";
+    }
+
+    /**
+     * 替换资源地址的域名
+     * 
+     * @param resUrl 资源地址
+     * @param domain 替换域名
+     * @return 替换后地址
+     */
+    public static final String repResDomain(String resUrl, String domain) {
+        String regexStr = "//([\\w-\\.:]+)/?";
+        String tc = "";
+        Pattern pattern = Pattern.compile(regexStr);
+        Matcher matcher = pattern.matcher(domain);
+        if (matcher.find()) {
+            tc = matcher.group();
+        } else {
+            return resUrl;
+        }
+        String n = pattern.matcher(resUrl).replaceFirst(tc);
+        if (!n.equals(resUrl)) {
+            log.debug("替换资源域名, from : {} -> {}", resUrl, n);
+        }
+        return n;
     }
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.poster.dao.PosterCategoryRelationMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.poster.bean.PosterCategoryRelationKey">
+    <id column="template_id" jdbcType="INTEGER" property="templateId" />
+    <id column="category_id" jdbcType="INTEGER" property="categoryId" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.zltel.broadcast.poster.bean.PosterCategoryRelationKey">
+    delete from poster_category_relation
+    where template_id = #{templateId,jdbcType=INTEGER}
+      and category_id = #{categoryId,jdbcType=INTEGER}
+  </delete>
+  <delete id="delete" parameterType="com.zltel.broadcast.poster.bean.PosterCategoryRelationKey">
+    delete from poster_category_relation
+    where 1=1
+    <if test="templateId != null">
+    	AND template_id = #{templateId,jdbcType=INTEGER}
+    </if>
+    <if test="categoryId != null">
+    	AND category_id = #{categoryId,jdbcType=INTEGER}
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.poster.bean.PosterCategoryRelationKey">
+    insert into poster_category_relation (template_id, category_id)
+    values (#{templateId,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.poster.bean.PosterCategoryRelationKey">
+    insert into poster_category_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="templateId != null">
+        template_id,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="templateId != null">
+        #{templateId,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="queryCategorys" parameterType="Integer" resultType="Integer">
+  	select category_id from poster_category_relation where template_id = #{templateId}
+  </select>
+</mapper>

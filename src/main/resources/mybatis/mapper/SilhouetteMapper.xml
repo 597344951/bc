@@ -10,21 +10,21 @@
         <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
     </resultMap>
     <resultMap id="ResourceMaterial" type="com.zltel.broadcast.resource.bean.ResourceMaterial">
-        <id column="material_id" jdbcType="INTEGER" property="materialId" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="type" jdbcType="VARCHAR" property="type" />
-        <result column="description" jdbcType="VARCHAR" property="description" />
-        <result column="url" jdbcType="VARCHAR" property="url" />
-        <result column="cover_url" jdbcType="VARCHAR" property="coverUrl" />
-        <result column="size" jdbcType="VARCHAR" property="size" />
-        <result column="content_type" jdbcType="VARCHAR" property="contentType" />
-        <result column="time_length" jdbcType="VARCHAR" property="timeLength" />
-        <result column="user_id" jdbcType="INTEGER" property="userId" />
-        <result column="org_id" jdbcType="INTEGER" property="orgId" />
-        <result column="album_id" jdbcType="INTEGER" property="albumId" />
-        <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
-        <result column="verify" jdbcType="TINYINT" property="verify" />
-        <result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
+        <id column="material_id" jdbcType="INTEGER" property="materialId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="cover_url" jdbcType="VARCHAR" property="coverUrl"/>
+        <result column="size" jdbcType="VARCHAR" property="size"/>
+        <result column="content_type" jdbcType="VARCHAR" property="contentType"/>
+        <result column="time_length" jdbcType="VARCHAR" property="timeLength"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="album_id" jdbcType="INTEGER" property="albumId"/>
+        <result column="add_date" jdbcType="TIMESTAMP" property="addDate"/>
+        <result column="verify" jdbcType="TINYINT" property="verify"/>
+        <result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate"/>
     </resultMap>
     <sql id="Base_Column_List">
         silhouette_id, activity_id, material, title, add_date, update_date
@@ -133,5 +133,45 @@
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+    </select>
+
+    <insert id="mapInsert" parameterType="java.util.Map">
+        insert into activity_silhouette (activity_id, material,
+        title, add_date, update_date
+        )
+        values (#{activity_id,jdbcType=INTEGER}, #{material,jdbcType=VARCHAR},
+        #{title,jdbcType=VARCHAR}, #{add_date,jdbcType=TIMESTAMP}, #{update_date,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <select id="mapGet" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from activity_silhouette
+        where silhouette_id = #{id}
+        order by update_date desc
+    </select>
+
+    <select id="queryGallery" resultType="java.util.Map">
+        select
+        silhouette_id, activity_id, title, add_date, update_date
+        from activity_silhouette
+        where activity_id = -1
+        order by update_date desc
+    </select>
+    <select id="queryXjdx" resultType="java.util.Map">
+        select
+        silhouette_id, activity_id, title, add_date, update_date
+        from activity_silhouette
+        where activity_id = 666
+        order by update_date desc
+    </select>
+
+    <select id="queryFlashing" resultType="java.util.Map">
+        select
+        silhouette_id, activity_id, title, add_date, update_date
+        from activity_silhouette
+        where activity_id = -2
+        order by update_date desc
     </select>
 </mapper>

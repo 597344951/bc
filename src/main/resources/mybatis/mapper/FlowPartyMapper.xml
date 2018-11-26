@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.FlowPartyMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.FlowParty">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="flow_time" jdbcType="INTEGER" property="flowTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.um.bean.FlowParty">
+    <result column="reason" jdbcType="LONGVARCHAR" property="reason" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, org_id, flow_time
+  </sql>
+  <sql id="Blob_Column_List">
+    reason
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from flow_party
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from flow_party
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.FlowParty">
+    insert into flow_party (id, user_id, org_id, 
+      flow_time, reason)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
+      #{flowTime,jdbcType=INTEGER}, #{reason,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.FlowParty">
+    insert into flow_party
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="flowTime != null">
+        flow_time,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="flowTime != null">
+        #{flowTime,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.FlowParty">
+    update flow_party
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="flowTime != null">
+        flow_time = #{flowTime,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.um.bean.FlowParty">
+    update flow_party
+    set user_id = #{userId,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      flow_time = #{flowTime,jdbcType=INTEGER},
+      reason = #{reason,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.FlowParty">
+    update flow_party
+    set user_id = #{userId,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      flow_time = #{flowTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryFlowPartys" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  bui.base_user_id userId,
+	  bui.name name,
+	  bui.sex sex,
+	  nt.name nation,
+	  bui.mobile_phone mobilePhone,
+	  pui.type partyType,
+	  pui.status partyStatus,
+	  _oi.org_info_name flowOrgInfoName,
+	  fp.reason reason,
+	  fp.flow_time flowTime,
+	  fp.id id
+	from 
+	  flow_party fp 
+	  inner join base_user_info bui on fp.user_id = bui.base_user_id 
+	  inner join party_user_info pui on fp.user_id = pui.party_user_id 
+	  left join nation_type nt on bui.nation = nt.nt_id 
+	  left join organization_information _oi on fp.org_id = _oi.org_info_id
+	where
+	  1 = 1
+	  <if test="userId != null and userId != ''"> and
+       	fp.user_id = #{userId}
+      </if>
+      <if test="name != null and name != ''"> and
+       	bui.name = #{name}
+      </if>
+  </select>
+</mapper>

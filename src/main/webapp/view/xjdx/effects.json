@@ -1,0 +1,19 @@
+{
+    "groups": [
+        {
+            "name": "muban",
+            "title": "先进典型",
+            "list": [
+                {
+                    "title": "样式一",
+                    "url": "/view/xjdx/xjdx/rwfc",
+                    "demoUrl":"/faker/xjdx/rwfc.html",
+                    "effect": "",
+                    "minimum": 2,
+                    "maximum": 2,
+                    "tips": "第一张图  建议 宽度 1600 高度 440 以内;第二张图 建议 宽度 400 高度 260 以内;"
+                }
+            ]
+        }
+    ]
+}

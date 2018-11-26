@@ -28,6 +28,36 @@ public class IntegralConstituteController {
 	private IntegralConstituteService integralConstituteService;
 	
 	/**
+	 * 修改
+	 * @param organizationInformation 条件
+	 * @return
+	 */
+	@RequestMapping(value="/updateIntegralConstitute", method=RequestMethod.POST)
+	@ApiOperation(value = "修改积分结构")
+	public R updateIntegralConstitute(IntegralConstitute ic) {
+		try {
+			return integralConstituteService.updateIntegralConstitute(ic);
+		} catch (Exception e) {
+			return R.error().setMsg("变更失败");
+		}
+	}
+	
+	/**
+	 * 删除
+	 * @param organizationInformation 条件
+	 * @return
+	 */
+	@RequestMapping(value="/deleteIntegralConstitute", method=RequestMethod.POST)
+	@ApiOperation(value = "删除积分结构")
+	public R deleteIntegralConstitute(IntegralConstitute ic) {
+		try {
+			return integralConstituteService.deleteIntegralConstitute(ic);
+		} catch (Exception e) {
+			return R.error().setMsg("删除失败");
+		}
+	}
+	
+	/**
 	 * 查询组织信息生成树
 	 * @param organizationInformation 条件
 	 * @return

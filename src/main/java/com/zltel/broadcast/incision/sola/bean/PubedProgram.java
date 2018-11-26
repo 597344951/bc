@@ -4,6 +4,7 @@ import com.zltel.broadcast.incision.sola.utils.ResExtractUtil;
 
 /**
  * 已发布节目
+ * 
  * @author wangch
  *
  */
@@ -24,12 +25,15 @@ public class PubedProgram {
     private String userName;
     /** 发布时间 **/
     private String createTime;
-    
+
     /** 节目截图地址 **/
     private String coverImageUrl;
-    /** -1屏幕不存在，0节目过期，1节目正在播放,2当前未在播放**/
+    /** -1屏幕不存在，0节目过期，1节目正在播放,2当前未在播放 **/
     private String status;
-    
+
+    /** 同步来源域名地址 **/
+    private String solaUrl;
+
     public void setCoverImage(String coverImage) {
         this.coverImage = coverImage;
         this.coverImageUrl = ResExtractUtil.getImageUrl(coverImage);
@@ -47,7 +51,7 @@ public class PubedProgram {
         return coverImage;
     }
 
-    
+
 
     public String getName() {
         return name;
@@ -118,5 +122,15 @@ public class PubedProgram {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
+    public String getSolaUrl() {
+        return solaUrl;
+    }
+
+    public void setSolaUrl(String solaUrl) {
+        this.solaUrl = solaUrl;
+        this.coverImage = ResExtractUtil.repResDomain(this.coverImage, this.solaUrl);
+        this.coverImageUrl = ResExtractUtil.repResDomain(this.coverImageUrl, this.solaUrl);
+    }
+
 }

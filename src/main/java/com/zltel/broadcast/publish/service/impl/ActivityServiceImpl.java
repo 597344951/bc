@@ -42,7 +42,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void completeActivityAddition(SysUser user, Map<String, Object> addition) {
+    public void completeActivityAddition(Map<String, Object> user, Map<String, Object> addition) {
         Date updateDate = new Date();
         Map<String, Object> data = activityDao.getActivityAdditionById((Integer) addition.get("id"));
         data.put("actual_participant_number", addition.get("actualParticipantNumber"));
@@ -59,8 +59,8 @@ public class ActivityServiceImpl implements ActivityService {
             material.put("content", m.get("content"));
             material.put("url", m.get("url"));
             material.put("description", m.get("name"));
-            material.put("user_id", user.getUserId());
-            material.put("org_id", user.getOrgId());
+            material.put("user_id", user.get("id"));
+            material.put("org_id", user.get("orgId"));
             material.put("upload_reason", Constant.MATERIAL_UPLOAD_REASON_FEEDBACK);
             material.put("relate_content_id", addition.get("contentId"));
             material.put("add_date", updateDate);
@@ -71,7 +71,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void participate(int contentId, SysUser user) {
+    public void participate(int contentId, Map<String, Object> user) {
         Map<String, Object> addition = activityDao.getActivityAdditionByContentId(contentId);
         if (addition == null) {
             throw new RuntimeException("活动不存在...");
@@ -87,13 +87,13 @@ public class ActivityServiceImpl implements ActivityService {
             throw new RuntimeException("报名人数已满...");
         }
         // 是否已报名
-        Map<String, Object> participant = activityDao.getParticipantByContentId(contentId, user.getUserId());
+        Map<String, Object> participant = activityDao.getParticipantByContentId(contentId, (Integer) user.get("id"));
         if (participant != null) {
             // 已报名
             throw new RuntimeException("已报名参加...");
         }
         participant = new HashMap<String, Object>();
-        participant.put("user_id", user.getUserId());
+        participant.put("user_id", user.get("id"));
         participant.put("content_id", contentId);
         Date addDate = new Date();
         participant.put("add_date", addDate);
@@ -130,9 +130,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void addIntegral(SysUser user, int moving, String sourceType, String reason) {
+    public void addIntegral(Map<String, Object> user, int moving, String sourceType, String reason) {
         Map<String, Object> integralMoving = new HashMap<String, Object>();
-        integralMoving.put("user_id", user.getUserId());
+        integralMoving.put("user_id", user.get("id"));
         integralMoving.put("source_type", sourceType);
         integralMoving.put("moving", moving);
         integralMoving.put("reason", reason);
@@ -186,5 +186,38 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public PageInfo<Silhouette> querySilhouette(int pageNum, int pageSize) {
         return new PageInfo<Silhouette>(silhouetteMapper.query(pageNum, pageSize));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public int addSilhouette(Map<String, Object> silhouette) {
+        Date addDate = new Date();
+        silhouette.put("add_date", addDate);
+        silhouette.put("update_date", addDate);
+        return silhouetteMapper.mapInsert(silhouette);
+    }
+
+    @Override
+    public Map<String, Object> mapGetSilhouette(int id) {
+        return silhouetteMapper.mapGet(id);
+    }
+
+    @Override
+    public PageInfo<Map<String, Object>> queryGallery(int pageNum, int pageSize) {
+        return new PageInfo<Map<String, Object>>(silhouetteMapper.queryGallery(pageNum, pageSize));
+    }
+    @Override
+    public PageInfo<Map<String, Object>> queryXjdx(int pageNum, int pageSize) {
+        return new PageInfo<Map<String, Object>>(silhouetteMapper.queryXjdx(pageNum, pageSize));
+    }
+    @Override
+    public PageInfo<Map<String, Object>> queryFlashing(int pageNum, int pageSize) {
+        return new PageInfo<Map<String, Object>>(silhouetteMapper.queryFlashing(pageNum, pageSize));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public int delete(int id) {
+        return silhouetteMapper.deleteByPrimaryKey(id);
     }
 }

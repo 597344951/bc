@@ -17,6 +17,9 @@
 		<result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
 		<result column="verify" jdbcType="TINYINT" property="verify" />
 		<result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
+		
+		<result column="width" jdbcType="INTEGER" property="width" />
+		<result column="height" jdbcType="INTEGER" property="height" />
 	</resultMap>
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
 
@@ -27,7 +30,7 @@
 		material_id, name, type, description, url, cover_url, size,
 		content_type,
 		time_length,
-		user_id, org_id, album_id, add_date,verify,verify_date
+		user_id, org_id, album_id, add_date,verify,verify_date,width,height
 	</sql>
 	<sql id="Blob_Column_List">
 		content
@@ -51,7 +54,14 @@
 	<insert id="insert" parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
 		insert into resource_material (material_id, name, type,
 		description, url, cover_url, size, content_type, time_length, user_id, org_id, album_id, add_date,
-		content,verify,verify_date)
+		content,verify,verify_date
+		<if test="width != null">
+			,width
+		</if>
+		<if test="height != null">
+			,height
+		</if>
+		)
 		values
 		(#{materialId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
 		#{type,jdbcType=VARCHAR},
@@ -66,6 +76,14 @@
 		#{addDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR},
 		#{verify,jdbcType=TINYINT},
 		#{verifyDate,jdbcType=TIMESTAMP}
+		
+		
+		<if test="width != null">
+			,#{width,jdbcType=INTEGER}
+		</if>
+		<if test="height != null">
+			,#{height,jdbcType=INTEGER}
+		</if>
 		)
 	</insert>
 	<insert id="inserts" parameterType="ArrayList">
@@ -77,7 +95,8 @@
 		user_id,
 		org_id,
 		album_id,
-		add_date, content,verify,verify_date)
+		add_date, content,verify,verify_date,width,height
+		)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.materialId,jdbcType=INTEGER},
@@ -94,7 +113,9 @@
 			#{item.addDate,jdbcType=TIMESTAMP},
 			#{item.content,jdbcType=LONGVARCHAR},
 			#{item.content.verify,jdbcType=TINYINT},
-			#{item.content.verifyDate,jdbcType=TIMESTAMP}
+			#{item.content.verifyDate,jdbcType=TIMESTAMP},
+			#{item.width,jdbcType=INTEGER},
+			#{item.height,jdbcType=INTEGER}
 			)
 		</foreach>
 	</insert>
@@ -151,6 +172,12 @@
 			<if test="verifyDate != null">
 				verify_date,
 			</if>
+			<if test="width != null">
+				width,
+			</if>
+			<if test="height != null">
+				height,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="materialId != null">
@@ -200,6 +227,12 @@
 			</if>
 			<if test="verifyDate != null">
 				#{verifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="width != null">
+				#{width},
+			</if>
+			<if test="height != null">
+				#{height},
 			</if>
 		</trim>
 	</insert>
@@ -252,6 +285,12 @@
 			<if test="verifyDate != null">
 				verify_date = #{verifyDate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="width != null">
+				width = #{width},
+			</if>
+			<if test="height != null">
+				height = #{height},
+			</if>
 		</set>
 		where material_id = #{materialId,jdbcType=INTEGER}
 	</update>
@@ -283,7 +322,9 @@
 		#{content,jdbcType=LONGVARCHAR},
 		verify = #{verify,jdbcType=TINYINT},
 		verify_date =
-		#{verifyDate,jdbcType=TIMESTAMP}
+		#{verifyDate,jdbcType=TIMESTAMP},
+		width = #{width},
+		height = #{height}
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</update>
@@ -313,7 +354,9 @@
 		add_date = #{addDate,jdbcType=TIMESTAMP},
 		verify =
 		#{verify,jdbcType=TINYINT},
-		verify_date = #{verifyDate,jdbcType=TIMESTAMP}
+		verify_date = #{verifyDate,jdbcType=TIMESTAMP},
+		width = #{width},
+		height = #{height}
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</update>
@@ -342,7 +385,7 @@
 				AND url=#{url}
 			</if>
 			<if test="orgId != null">
-				AND org_id=#{orgId}
+				AND (org_id=#{orgId} or org_id=0)
 			</if>
 			<if test="content != null">
 				AND content=#{content}
@@ -370,6 +413,12 @@
 			</if>
 			<if test="noVerify != null">
 				AND isNull(verify)
+			</if>
+			<if test="width != null">
+				AND width = #{width} 
+			</if>
+			<if test="height != null">
+				AND height = #{height}
 			</if>
 		</where>
 	</sql>

@@ -236,7 +236,7 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 			}
 			count = organizationRelationMapper.deleteOrgRelationByUserId(organizationRelation.getOrgRltUserId());	//开始删除组织关系
 			
-			if (count == 1) {	//受影响的行数，判断是否全部删除
+			if (count > 0) {	//受影响的行数，判断是否全部删除
 				return R.ok().setMsg("共计删除组织关系 " + count + "条。").setData(count);
 			} else {	
 				return R.ok().setMsg("没有需要删除的组织关系").setData(0);
@@ -290,6 +290,20 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 			
 		} else {	//添加一定需要一个组织关系
 			throw new Exception();
+		}
+    }
+    
+    /**
+     * 查询存在党员的组织
+     * @param conditions 条件
+     * @return
+     */
+    public R queryHavePartyUserOrg(Map<String, Object> conditions) {
+    	List<Map<String, Object>> orgs = organizationRelationMapper.queryHavePartyUserOrg(conditions);
+    	if (orgs != null && orgs.size() > 0) {
+    		return R.ok().setData(orgs).setMsg("查询组织成功");
+		} else {
+			return R.ok().setMsg("没有查询到组织");
 		}
     }
 

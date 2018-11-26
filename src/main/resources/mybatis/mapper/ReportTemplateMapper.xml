@@ -216,7 +216,7 @@
 				AND title like concat('%',#{keyword},'%')
 			</if>
 			<if test="orgid != null">
-				AND orgid=#{orgid}
+				AND (orgid=#{orgid} or orgid=0)
 			</if>
 			<if test="content != null">
 				AND content=#{content}

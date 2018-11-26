@@ -1,5 +1,7 @@
 package com.zltel.broadcast.incision.sola.bean;
 
+import com.zltel.broadcast.incision.sola.utils.ResExtractUtil;
+
 /**
  * 终端信息
  * 
@@ -41,6 +43,9 @@ public class Screen {
     private String lastOnlineTime;
     /** 封面截图 **/
     private String coverImage;
+    
+    /**同步来源域名地址**/
+    private String solaUrl;
     
     public String getPkId() {
         return pkId;
@@ -144,6 +149,12 @@ public class Screen {
     public void setCoverImage(String coverImage) {
         this.coverImage = coverImage;
     }
-    
+    public String getSolaUrl() {
+        return solaUrl;
+    }
+    public void setSolaUrl(String solaUrl) {
+        this.solaUrl = solaUrl;
+        this.coverImage = ResExtractUtil.repResDomain(this.coverImage, this.solaUrl);
+    }
     
 }

@@ -61,4 +61,11 @@ public interface OrganizationRelationMapper extends BaseDao<OrganizationRelation
      * @return
      */
     public List<Map<String, Object>> queryOrgRelationsNewForUserId(Map<String, Object> orgRelationConditiona);
+    
+    /**
+     * 查询存在党员的组织
+     * @param conditions 条件
+     * @return
+     */
+    public List<Map<String, Object>> queryHavePartyUserOrg(Map<String, Object> conditions);
 }

@@ -77,7 +77,37 @@ public class BaseUserInfo {
     
     private Integer firstLineSituation;
     
-    public String getWorkUnit() {
+    private Integer income;
+    
+    private Integer partyProportion;
+    
+    private Integer devPeople;
+    
+    public Integer getDevPeople() {
+		return devPeople;
+	}
+
+	public void setDevPeople(Integer devPeople) {
+		this.devPeople = devPeople;
+	}
+
+	public Integer getIncome() {
+		return income;
+	}
+
+	public void setIncome(Integer income) {
+		this.income = income;
+	}
+
+	public Integer getPartyProportion() {
+		return partyProportion;
+	}
+
+	public void setPartyProportion(Integer partyProportion) {
+		this.partyProportion = partyProportion;
+	}
+
+	public String getWorkUnit() {
 		return workUnit;
 	}
 

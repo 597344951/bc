@@ -788,26 +788,26 @@ let ins = new Vue({
     },
     beforeAvatarUpload(file) {
       const isType = file.type.startsWith('image');
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt20M = file.size / 1024 / 1024 < 20;
 
       if (!isType) {
         this.$message.error('上传封面不许为图片!');
       }
-      if (!isLt2M) {
-        this.$message.error('上传资源大小不能超过 2MB!');
+      if (!isLt20M) {
+        this.$message.error('上传资源大小不能超过 20MB!');
       }
       return isType && isLt2M;
     },
     beforeResourceUpload(file) {
       let type = this.tp.data.type;
       const isType = file.type.startsWith(type);
-      const isLt2M = file.size / 1024 / 1024 < 200;
+      const isLt1G = file.size / 1024 / 1024 < 1024;
 
       if (!isType) {
         this.$message.error('上传文件资源和选择资源类型不符!');
       }
-      if (!isLt2M) {
-        this.$message.error('上传资源大小不能超过 200MB!');
+      if (!isLt1G) {
+        this.$message.error('上传资源大小不能超过1GB!');
       }
       return isType && isLt2M;
     },

@@ -8,12 +8,13 @@
     <result column="occurrence_time" jdbcType="TIMESTAMP" property="occurrenceTime" />
     <result column="time" jdbcType="TIMESTAMP" property="time" />
     <result column="deeds_title" jdbcType="VARCHAR" property="deedsTitle" />
+    <result column="similar_id" jdbcType="VARCHAR" property="similarId" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.um.bean.DeedsUser">
     <result column="deeds_detail" jdbcType="LONGVARCHAR" property="deedsDetail" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, deeds_type_id, occurrence_time, time, deeds_title
+    id, user_id, deeds_type_id, occurrence_time, time, deeds_title, similar_id
   </sql>
   <sql id="Blob_Column_List">
     deeds_detail
@@ -32,14 +33,14 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
     insert into deeds_user (id, user_id, deeds_type_id, 
-      occurrence_time, time, deeds_detail, deeds_title
+      occurrence_time, time, deeds_detail, deeds_title, similar_id
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{deedsTypeId,jdbcType=INTEGER}, 
       #{occurrenceTime,jdbcType=TIMESTAMP}, #{time,jdbcType=TIMESTAMP}, #{deedsDetail,jdbcType=LONGVARCHAR},
-      #{deedsTitle,jdbcType=VARCHAR}
+      #{deedsTitle,jdbcType=VARCHAR},#{similarId,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.DeedsUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into deeds_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -62,6 +63,9 @@
       </if>
       <if test="deedsTitle != null">
         deeds_title,
+      </if>
+      <if test="similarId != null">
+        similar_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -86,6 +90,9 @@
       <if test="deedsTitle != null">
         #{deedsTitle,jdbcType=VARCHAR},
       </if>
+      <if test="similarId != null">
+        #{similarId,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
@@ -109,6 +116,9 @@
       <if test="deedsTitle != null">
         deeds_title = #{deedsTitle,jdbcType=VARCHAR},
       </if>
+      <if test="similarId != null">
+        similar_id = #{similarId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -119,7 +129,8 @@
       occurrence_time = #{occurrenceTime,jdbcType=TIMESTAMP},
       time = #{time,jdbcType=TIMESTAMP},
       deeds_detail = #{deedsDetail,jdbcType=LONGVARCHAR},
-      deeds_title = #{deedsTitle,jdbcType=VARCHAR}
+      deeds_title = #{deedsTitle,jdbcType=VARCHAR},
+      similar_id = #{similarId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.DeedsUser">
@@ -128,19 +139,23 @@
       deeds_type_id = #{deedsTypeId,jdbcType=INTEGER},
       occurrence_time = #{occurrenceTime,jdbcType=TIMESTAMP},
       time = #{time,jdbcType=TIMESTAMP},
-      deeds_title = #{deedsTitle,jdbcType=VARCHAR}
+      deeds_title = #{deedsTitle,jdbcType=VARCHAR},
+      similar_id = #{similarId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
   <select id="queryDeedsUsers" parameterType="java.util.HashMap" resultType="java.util.HashMap">
   	select 
-	  du.id di,
+	  du.id id,
+	  du.user_id userId,
 	  bui.name userName,
+	  du.deeds_type_id deedsTypeId,
 	  dt.name deedsTypeName,
 	  du.deeds_title deedsTitle,
 	  du.deeds_detail deedsDetail,
 	  du.occurrence_time occurrenceTime,
-	  du.time time
+	  du.time time,
+	  du.similar_id similarId
 	from
 	  deeds_user du
 	  inner join deeds_type dt on du.deeds_type_id = dt.id

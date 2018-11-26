@@ -35,7 +35,7 @@
                     <div class="item">
                         <el-checkbox v-model="event_filter_form.froms[0]" true-label="system" @change="event_filter_change">系统内置计划</el-checkbox>
                     </div>
-    
+
                     <div class="item">
                         <el-checkbox v-model="event_filter_form.froms[1]" true-label="user" @change="event_filter_change">用户计划</el-checkbox>
                     </div>
@@ -94,33 +94,6 @@
                 <el-tabs v-model="activeMonth">
                     <el-tab-pane v-for="mp in monthPlans" :label="mp.title" :name="mp.title">
                         <div>
-                            <h3>{{mp.title}}</h3>
-                            <div class="theme-festival">
-                                <div class="shadow">
-                                    <div class="main">
-                                        <div class="suggest-type">
-                                            <span>主推活动</span>
-                                        </div>
-                                        <div class="main-content">
-                                            <table class="table">
-                                                <tr>
-                                                    <td>组织活动</td>
-                                                    <td>三会一课</td>
-                                                </tr>
-                                                <tr>
-                                                        <td>组织活动</td>
-                                                        <td>两学一做</td>
-                                                    </tr>
-                                                    <tr>
-                                                            <td>重大节日</td>
-                                                            <td>两学一做</td>
-                                                        </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                             <div class="festival-container">
                                 <h3>{{mp.title}}</h3>
                                 <template v-for=" eventdata in mp.datas">
@@ -164,7 +137,7 @@
                                                                     <span class="title">策划人员: </span>
                                                                     <span class="text">develop</span>
                                                                 </p>
-    
+
                                                             </div>
                                                             <div class="box-down">
                                                                 <p>浙江省杭州市党委</p>
@@ -208,7 +181,7 @@
                                                                     <span class="title">策划人员: </span>
                                                                     <span class="text">develop</span>
                                                                 </p>
-    
+
                                                             </div>
                                                             <div class="box-down">
                                                                 <p>浙江省杭州市党委</p>
@@ -223,11 +196,12 @@
                                     </div>
                                 </template>
                             </div>
+                        </div>
                     </el-tab-pane>
                 </el-tabs>
             </el-col>
         </el-row>
-    
+
         <!--dialog-->
         <el-dialog title="新增计划" :visible.sync="addEventDialog.visiable">
             <add-event :add-event-dialog="addEventDialog" @added-data="addEventCallback"></add-event>

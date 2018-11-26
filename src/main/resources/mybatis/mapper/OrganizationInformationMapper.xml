@@ -15,6 +15,7 @@
     <result column="org_info_parent_id" jdbcType="INTEGER" property="orgInfoParentId" />
     <result column="org_info_type_id" jdbcType="INTEGER" property="orgInfoTypeId" />
     <result column="org_info_nature_id" jdbcType="INTEGER" property="orgInfoNatureId" />
+    <result column="org_info_level" jdbcType="INTEGER" property="orgInfoLevel" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.um.bean.OrganizationInformation">
     <result column="org_info_describe" jdbcType="LONGVARCHAR" property="orgInfoDescribe" />
@@ -22,7 +23,8 @@
   <sql id="Base_Column_List">
     org_info_id, org_info_name, org_info_committee_province, org_info_committee_city, 
     org_info_committee_area, org_info_committee_detail, org_info_manage_province, org_info_manage_city, 
-    org_info_manage_area, org_info_manage_detail, org_info_parent_id, org_info_type_id, org_info_nature_id
+    org_info_manage_area, org_info_manage_detail, org_info_parent_id, org_info_type_id, org_info_nature_id,
+    org_info_level
   </sql>
   <sql id="Blob_Column_List">
     org_info_describe
@@ -44,14 +46,14 @@
       org_info_committee_city, org_info_committee_area, 
       org_info_committee_detail, org_info_manage_province, 
       org_info_manage_city, org_info_manage_area, org_info_manage_detail, 
-      org_info_parent_id, org_info_type_id, org_info_describe, org_info_nature_id
+      org_info_parent_id, org_info_type_id, org_info_describe, org_info_nature_id, org_info_level
       )
     values (#{orgInfoId,jdbcType=INTEGER}, #{orgInfoName,jdbcType=VARCHAR}, #{orgInfoCommitteeProvince,jdbcType=VARCHAR}, 
       #{orgInfoCommitteeCity,jdbcType=VARCHAR}, #{orgInfoCommitteeArea,jdbcType=VARCHAR}, 
       #{orgInfoCommitteeDetail,jdbcType=VARCHAR}, #{orgInfoManageProvince,jdbcType=VARCHAR}, 
       #{orgInfoManageCity,jdbcType=VARCHAR}, #{orgInfoManageArea,jdbcType=VARCHAR}, #{orgInfoManageDetail,jdbcType=VARCHAR}, 
       #{orgInfoParentId,jdbcType=INTEGER}, #{orgInfoTypeId,jdbcType=INTEGER}, #{orgInfoDescribe,jdbcType=LONGVARCHAR},
-      #{orgInfoNatureId,jdbcType=INTEGER}
+      #{orgInfoNatureId,jdbcType=INTEGER}, #{orgInfoLevel,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
@@ -99,6 +101,9 @@
       <if test="orgInfoNatureId != null">
         org_info_nature_id,
       </if>
+      <if test="orgInfoLevel != null">
+        org_info_level,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="orgInfoId != null">
@@ -142,6 +147,9 @@
       </if>
       <if test="orgInfoNatureId != null">
         #{orgInfoNatureId,jdbcType=INTEGER},
+      </if>
+      <if test="orgInfoLevel != null">
+        #{orgInfoLevel,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -187,6 +195,9 @@
       <if test="orgInfoNatureId != null">
         org_info_nature_id = #{orgInfoNatureId,jdbcType=INTEGER},
       </if>
+      <if test="orgInfoLevel != null">
+        org_info_level = #{orgInfoLevel,jdbcType=INTEGER},
+      </if>
     </set>
     where org_info_id = #{orgInfoId,jdbcType=INTEGER}
   </update>
@@ -204,7 +215,8 @@
       org_info_parent_id = #{orgInfoParentId,jdbcType=INTEGER},
       org_info_type_id = #{orgInfoTypeId,jdbcType=INTEGER},
       org_info_describe = #{orgInfoDescribe,jdbcType=LONGVARCHAR},
-      org_info_nature_id = #{orgInfoNatureId,jdbcType=INTEGER}
+      org_info_nature_id = #{orgInfoNatureId,jdbcType=INTEGER},
+      org_info_level = #{orgInfoLevel,jdbcType=INTEGER}
     where org_info_id = #{orgInfoId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
@@ -220,7 +232,8 @@
       org_info_manage_detail = #{orgInfoManageDetail,jdbcType=VARCHAR},
       org_info_parent_id = #{orgInfoParentId,jdbcType=INTEGER},
       org_info_type_id = #{orgInfoTypeId,jdbcType=INTEGER},
-      org_info_nature_id = #{orgInfoNatureId,jdbcType=INTEGER}
+      org_info_nature_id = #{orgInfoNatureId,jdbcType=INTEGER},
+      org_info_level = #{orgInfoLevel,jdbcType=INTEGER}
     where org_info_id = #{orgInfoId,jdbcType=INTEGER}
   </update>
   
@@ -260,7 +273,8 @@
 	  oi.org_info_describe orgInfoDescribe,
 	  oi.org_info_parent_id orgInfoParentId,
 	  oi.org_info_type_id orgInfoTypeId,
-	  oi.org_info_nature_id orgInfoNatureId
+	  oi.org_info_nature_id orgInfoNatureId,
+	  oi.org_info_level orgInfoLevel
 	from
 	  organization_information oi 
 	  inner join organization_type ot on oi.org_info_type_id = ot.org_type_id 

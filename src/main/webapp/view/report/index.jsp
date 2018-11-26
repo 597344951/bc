@@ -68,8 +68,8 @@
         </div>
         <el-container>
             <el-aside width="200px">
-                <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" :default-expand-all="false" :expand-on-click-node="true"
-                    @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable default-expand-all
+                <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id"  :expand-on-click-node="true"
+                    @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable
                     @node-drop="treeDrapDrop" :allow-drag="allowDrag">
                     <span class="custom-tree-node" slot-scope="{ node, data }">
                         <span class="left-label-group">

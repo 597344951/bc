@@ -5,15 +5,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.terminal.bean.MapInfo;
+import com.zltel.broadcast.incision.sola.bean.Screen;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.terminal.bean.OnlineCountBean;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
@@ -153,26 +159,25 @@ public class TerminalBasicInfoServiceImpl implements TerminalBasicInfoService {
 
     @Override
     public R queryMapInfo() {
-        List<TerminalBasicInfo> tbi = tbm.queryAll(); 
-        List<MapInfo> m=new ArrayList<>();
-       
-        if (tbi != null && tbi.size() > 0) { // 是否查询到数据
+        List<TerminalBasicInfo> tbi = tbm.queryAll();
+        List<MapInfo> m = new ArrayList<>();
+
+        if (tbi != null && !tbi.isEmpty()) { // 是否查询到数据
             for (TerminalBasicInfo t : tbi) {
-                if(null==t.getGis()||"".equals(t.getGis())) 
-                    continue;
-                List<String> c=new ArrayList<>();
-                MapInfo mi=new MapInfo();
-                String online=t.getOnline().equals("1")?"在线":"离线";
-                String icon=t.getOnline().equals("1")?"/assets/icons/1.png":"/assets/icons/2.png";
-                mi.setTitle(t.getName()+"<span style=\"font-size:11px;color:#F00;\">"+online+"</span>");
+                if (null == t.getGis() || "".equals(t.getGis())) continue;
+                List<String> c = new ArrayList<>();
+                MapInfo mi = new MapInfo();
+                String online = t.getOnline().equals("1") ? "在线" : "离线";
+                String icon = t.getOnline().equals("1") ? "/assets/icons/1.png" : "/assets/icons/2.png";
+                mi.setTitle(t.getName() + "<span style=\"font-size:11px;color:#F00;\">" + online + "</span>");
                 mi.setIcon(icon);
                 mi.setPosition(t.getGis().split(","));
-                c.add("终端地址:"+t.getAddr());
-                c.add("屏幕尺寸:"+t.getSize());
-                c.add("屏幕分辨率:"+t.getRatio());
-                c.add("屏幕方向:"+t.getRev());
-                c.add("屏幕类型:"+t.getTyp());
-                c.add("联系电话"+t.getTel());
+                c.add("终端地址:" + t.getAddr());
+                c.add("屏幕尺寸:" + t.getSize());
+                c.add("屏幕分辨率:" + t.getRatio());
+                c.add("屏幕方向:" + t.getRev());
+                c.add("屏幕类型:" + t.getTyp());
+                c.add("联系电话" + t.getTel());
                 mi.setContent(c);
                 m.add(mi);
             }
@@ -183,37 +188,44 @@ public class TerminalBasicInfoServiceImpl implements TerminalBasicInfoService {
     }
 
 
-    public void synchronizTerminalInfo() {
-        List<Map<String, Object>> terminals = solaProgramService.queryTerminal();
+    public int synchronizTerminalInfo() {
+        List<Screen> terminals = solaProgramService.getScreenList(0, Pager.DEFAULT_PAGER);
         if (terminals == null || terminals.isEmpty()) {
             log.warn("没有终端信息需要同步.");
-            return;
+            return 0;
         }
         Map<String, Object> terminal = null;
         Map<String, Object> queryParam = new HashMap<>();
-        for (Map<String, Object> t : terminals) {
-            queryParam.put("id", t.get("PkId"));
-            boolean isAdd = isAdd(queryParam);
+        List<String> codes = this.getTerminalCodes();
+        for (Screen t : terminals) {
+            queryParam.put("code", t.getCode());
+            boolean isAdd = false;
+            if (!codes.contains(t.getCode())) {
+                isAdd = true;
+            } else {
+                // 不是新增 ,移除
+                codes.remove(t.getCode());
+            }
             terminal = new HashMap<>();
-            terminal.put("name", t.get("Name"));
-            terminal.put("id", t.get("PkId"));
-            terminal.put("code", t.get("Code"));
-            terminal.put("type_id", t.get("ScreenType"));
-            terminal.put("res_time", t.get("RegDateTime"));
-            terminal.put("online", t.get("OnlineStatus"));
-            terminal.put("last_time", t.get("LastOnlineTime"));
-            terminal.put("ip", t.get("IP"));
-            terminal.put("mac", t.get("Mac"));
-            terminal.put("size", t.get("ScreenSize"));
-            terminal.put("ratio", t.get("Resolution"));
-            terminal.put("rev", t.get("ScreenDirection"));
-            terminal.put("ver", t.get("Version"));
-            terminal.put("typ", t.get("ScreenInteraction"));
-            terminal.put("cover_image", t.get("CoverImage"));
+            terminal.put("name", t.getName());
+            terminal.put("id", t.getPkId());
+            terminal.put("code", t.getCode());
+            terminal.put("type_id", t.getScreenType());
+            terminal.put("res_time", t.getRegDateTime());
+            terminal.put("online", t.getOnlineStatus());
+            terminal.put("last_time", t.getLastOnlineTime());
+            terminal.put("ip", t.getIp());
+            terminal.put("mac", t.getMac());
+            terminal.put("size", t.getScreenSize());
+            terminal.put("ratio", t.getResolution());
+            terminal.put("rev", t.getScreenDirection());
+            terminal.put("ver", t.getVersion());
+            terminal.put("typ", t.getScreenInteraction());
+            terminal.put("cover_image", t.getCoverImage());
 
             if (isAdd) {
                 // 更新时不需要更改的数据
-                terminal.put("addr", t.get("Position"));
+                terminal.put("addr", t.getPosition());
             }
             terminal.put("last_syn_time", new Date());
             if (isAdd) {
@@ -222,13 +234,32 @@ public class TerminalBasicInfoServiceImpl implements TerminalBasicInfoService {
                 simpleDao.update(TERMINAL_BASIC_INFO, terminal, queryParam);
             }
         }
-
+        this.setTerminalOffline(codes);
+        return terminals.size();
     }
 
+    /** 设置不存在的终端 离线 **/
+    private void setTerminalOffline(List<String> codes) {
+        if (codes == null || codes.isEmpty()) return;
+        log.warn("终端code为:{} 没有同步成功,标记为离线状态", JSON.toJSONString(codes));
+        Map<String, Object> queryParam = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("online", 0);
+        codes.forEach(code -> {
+            queryParam.put("code", code);
+            simpleDao.update(TERMINAL_BASIC_INFO, data, queryParam);
+        });
+    }
 
     /** 是否新增数据 **/
     private boolean isAdd(Map<String, Object> queryParam) {
         return simpleDao.get(TERMINAL_BASIC_INFO, queryParam) == null;
+    }
+
+    /** 获取终端id **/
+    private List<String> getTerminalCodes() {
+        List<Map<String, Object>> list = simpleDao.query(TERMINAL_BASIC_INFO, null);
+        return list.stream().map(map -> (String) map.get("code")).collect(Collectors.toList());
     }
 
 

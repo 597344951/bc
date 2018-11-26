@@ -23,9 +23,11 @@ import com.zltel.broadcast.um.bean.IntegralConstitute;
 import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.dao.IntegralChangeTypeMapper;
 import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
+import com.zltel.broadcast.um.dao.PartyIntegralRecordMapper;
 import com.zltel.broadcast.um.service.IntegralConstituteService;
 import com.zltel.broadcast.um.util.IntegralErrorException;
 import com.zltel.broadcast.um.util.IntegralNullException;
+import com.zltel.broadcast.um.util.JumpOutRecursionException;
 
 @Service
 public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitute>
@@ -35,10 +37,94 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     private IntegralConstituteMapper integralConstituteMapper;
     @Resource
     private IntegralChangeTypeMapper integralChangeTypeMapper;
+    @Resource
+    private PartyIntegralRecordMapper partyIntegralRecordMapper;
 
     @Override
     public BaseDao<IntegralConstitute> getInstince() {
         return this.integralConstituteMapper;
+    }
+    
+    /**
+     * 修改
+     * @param ic
+     * @return
+     */
+    public R updateIntegralConstitute(IntegralConstitute ic) {
+    	if (ic != null) {
+    		int count = integralConstituteMapper.updateByPrimaryKeySelective(ic);
+            if (count == 1) {
+                return R.ok();
+            } else {
+                return R.error().setMsg("修改失败");
+            }
+    	}
+    	return R.error().setMsg("修改错误");
+    }
+    
+    /**
+     * 删除
+     * @param ic
+     * @return
+     */
+    public R deleteIntegralConstitute(IntegralConstitute ic) {
+    	Map<String, Object> condition = new HashMap<>();
+    	condition.put("parentIcId", ic.getIcId());
+    	List<Map<String, Object>> result = integralConstituteMapper.queryOrgIntegralConstitute(condition);
+    	
+    	if (result != null && result.size() > 0) {
+    		return R.error().setMsg("请先删除此节点下的子节点");
+    	}
+    	
+    	List<Integer> icIds = new ArrayList<>();
+    	icIds.add(ic.getIcId());
+    	try {
+			this.checkNodeHaveIntegral(icIds);
+		} catch (JumpOutRecursionException e) {
+			return R.error().setMsg(e.getMsg());
+		}
+    	int count = integralConstituteMapper.deleteByPrimaryKey(ic.getIcId());
+    	if (count == 1) {
+    		return R.ok().setMsg("删除成功");
+    	}
+    	return R.ok().setMsg("删除失败");
+    }
+    
+    /**
+     * 检查此节点下是否有积分
+     * @return
+     */
+    private void checkNodeHaveIntegral(List<Integer> icIds) throws JumpOutRecursionException {
+    	if (icIds != null && icIds.size() > 0) {
+    		for (Integer icId : icIds) {
+    			IntegralChangeType ict = new IntegralChangeType();
+    	    	ict.setIcId(icId);
+    	    	List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+    	    	if (icts != null && icts.size() > 0) {
+    	    		for (IntegralChangeType resultIct : icts) {
+    	    			Map<String, Object> condition = new HashMap<>();
+        	    		condition.put("changeIntegralType", resultIct.getIctId());
+        	    		List<Map<String, Object>> pirs = partyIntegralRecordMapper.queryPartyIntegralRecords(condition);
+        	    		if (pirs != null && pirs.size() > 0) {
+        	    			throw new JumpOutRecursionException("该节点或子节点有积分信息，不能删除");
+        	    		}
+					}
+    	    		
+    	    	}
+    	    	
+    	    	//查询此节点下的子节点
+    	    	Map<String, Object> condition = new HashMap<>();
+    	    	condition.put("parentIcId", icId);
+    	    	List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(condition);
+    	    	if (ics != null && ics.size() > 0) {
+    	    		List<Integer> _icIds = new ArrayList<>();
+    	    		for (Map<String, Object> map : ics) {
+						_icIds.add(Integer.parseInt(String.valueOf(map.get("icId"))));
+					}
+    	    		this.checkNodeHaveIntegral(_icIds);
+    	    	}
+			}
+    	}
     }
 
     /**

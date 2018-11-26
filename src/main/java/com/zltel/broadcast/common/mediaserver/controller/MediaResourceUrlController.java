@@ -83,4 +83,23 @@ public class MediaResourceUrlController extends BaseController {
         logout.debug("重定资源地址:{}", tu);
         response.sendRedirect(tu);
     }
+    @ApiOperation("从模板创建新海报跳转")
+    @GetMapping("/poster/from/{templateId}")
+    public void newPosterFromTemplate(@PathVariable("templateId") String templateId,HttpServletResponse response) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(sysInfoConfig.getPosterServe());
+        sb.append("/from/").append(templateId);
+        String tu = sb.toString();
+        logout.debug("重定资源地址:{}", tu);
+        response.sendRedirect(tu);
+    }
+    @ApiOperation("跳转新创建海报")
+    @GetMapping("/poster/new")
+    public void newPoster(HttpServletResponse response) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(sysInfoConfig.getPosterServe());
+        String tu = sb.toString();
+        logout.debug("重定资源地址:{}", tu);
+        response.sendRedirect(tu);
+    }
 }

@@ -1,6 +1,7 @@
 package com.zltel.broadcast.publish.service.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -15,6 +16,7 @@ import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.incision.sola.service.impl.SolaProgramServiceImpl;
 import com.zltel.broadcast.message.bean.Message;
 import com.zltel.broadcast.message.service.MessageService;
+import com.zltel.broadcast.poster.service.PosterInfoService;
 import com.zltel.broadcast.publish.Constant;
 import com.zltel.broadcast.publish.dao.PublishDao;
 import com.zltel.broadcast.publish.service.PublishService;
@@ -51,6 +53,8 @@ public class PublishServiceImpl implements PublishService {
     private SolaProgramService solaProgramService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private PosterInfoService posterInfoService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
@@ -152,12 +156,17 @@ public class PublishServiceImpl implements PublishService {
 
         addProcessState(((Long) detail.get("id")).intValue(), user.getUserId(), (int) detail.get("process_item_id"), Constant.MSG_CONTENT_FIRST_EDIT + user.getUsername(), null);
 
-        // 添加节目到编辑器
-        int editId = addToEditor(content);
+        int editId;
+        if (contentTypeId == Constant.CONTENT_TYPE_POSTER) {
+            // 添加海报编辑
+            editId = posterInfoService.newPosterFromTemplateId(-1).getTemplateId();
+        } else {
+            // 添加节目到编辑器
+            editId = addToEditor(content);
+        }
         // 更新预览
         publishDao.updateSnapshot(String.valueOf(editId), ((Long) detail.get("id")).intValue());
         doNext(((Long) detail.get("id")).intValue());
-
         return detail;
     }
 
@@ -189,13 +198,13 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
-    public void urlCreate(SysUser user, Map<String, Object> content) {
+    public void urlCreate(SysUser user, Map<String, Object> content) throws UnsupportedEncodingException {
         Date addDate = new Date();
         int contentTypeId = (int) content.get("type");
         // 添加内容
         Map<String, Object> detail = new HashMap<String, Object>();
         detail.put("title", content.get("title"));
-        detail.put("content", content.get("url"));
+        detail.put("content", URLDecoder.decode((String) content.get("url"), "UTF-8"));
         detail.put("content_type_id", contentTypeId);
         detail.put("user_id", user.getUserId());
         detail.put("add_date", addDate);
@@ -222,7 +231,13 @@ public class PublishServiceImpl implements PublishService {
         program.put("resolutionw", resolutionw);
         program.put("resolutionh", resolutionh);
         program.put("playtime", Integer.parseInt(playtime));
-        program.put("urlstr", host + content.get("url"));
+
+        List<Map> share = JSON.parseArray((String) content.get("url"), Map.class);
+        share.stream().forEach(map -> {
+            map.put("weburl", host + map.get("weburl"));
+        });
+
+        program.put("urlstr", JSON.toJSONString(share));
 
         publishDao.updateSnapshot(String.valueOf(solaProgramService.addProgram(program, SolaProgramServiceImpl.ADD_PROGRAM_WITH_URL)), ((Long) detail.get("id")).intValue());
 
@@ -845,6 +860,24 @@ public class PublishServiceImpl implements PublishService {
     public void publish(SysUser user, int contentId, Map<String, Object> period) {
         // 调用发布接口
         Map<String, Object> content = publishDao.get(contentId);
+        int contentType = (int) content.get("content_type_id");
+        if (Constant.CONTENT_TYPE_POSTER == contentType) {
+            //海报节目-直接添加在发布
+            //添加
+            Map<String, Object> program = new HashMap<String, Object>();
+            program.put("title", content.get("title"));
+            program.put("categoryId", 1);
+            program.put("modeltype", 0);
+            program.put("resolutionw", 1920);
+            program.put("resolutionh", 1080);
+            program.put("playtime", 3 * 60 * 1000);
+            program.put("urlstr", "[{'weburl':'" + host + "/media-server/poster/view/" + content.get("snapshot") + "', playtime: 60}]");
+            int programId = solaProgramService.addProgram(program, SolaProgramServiceImpl.ADD_PROGRAM_WITH_URL);
+            content.put("snapshot", programId);
+
+            publishDao.updateSnapshot(String.valueOf(programId), contentId);
+        }
+
         Map<String, Object> queryParam = new HashMap<String, Object>();
         queryParam.put("content_id", contentId);
         List<Map<String, Object>> terminals = simpleDao.query("publish_terminal", queryParam);
@@ -867,6 +900,30 @@ public class PublishServiceImpl implements PublishService {
 
         //消息处理
         messageService.handleMessage(user, contentId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void directPublishUrl(String title, String url, long playtime, int width, int height, List<Map<String, Object>> terminals, String dateStart, String dateEnd, String period, String weeks) {
+        //添加
+        Map<String, Object> program = new HashMap<String, Object>();
+        program.put("title", title);
+        program.put("categoryId", 1);
+        program.put("modeltype", 0);
+        program.put("resolutionw", width);
+        program.put("resolutionh", height);
+        program.put("playtime", playtime);
+        program.put("urlstr", "[{'weburl':'" + host + url + "', playtime: " + playtime + "}]");
+        int programId = solaProgramService.addProgram(program, SolaProgramServiceImpl.ADD_PROGRAM_WITH_URL);
+        //发布
+        Map<String, Object> s = new HashMap<>();
+        s.put("terminals", terminals);
+        s.put("start_date", dateStart);
+        s.put("end_date", dateEnd);
+        s.put("period", period);
+        s.put("weeks", weeks);
+        s.put("snapshot", programId);
+        solaProgramService.publish(s);
     }
 
     @Override

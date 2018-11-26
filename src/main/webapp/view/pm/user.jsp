@@ -194,13 +194,54 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										<el-option label="女" value="女"></el-option>
 									</el-select>
 								</el-row>
+								<el-row>
+									<el-select size="small" clearable 
+											@change="partyUser_manager_queryPartyUserInfos()"
+											v-model="partyUser_manager_queryPartyUserInfosCondition.orgInfoId" placeholder="党组织">
+										<el-option
+											v-for="item in selectOptions.havePartyUserOrgs"
+											:key="item.orgInfoId"
+											:label="item.orgInfoName"
+											:value="item.orgInfoId">
+											<span style="float: left; margin-right: 15px;">{{item.orgInfoName}}</span>
+											<span style="float: right;">{{item.orgInfoId}}</span>
+										</el-option>
+									</el-select>
+								</el-row>
 						  	</div>
 						</el-popover>
 					</shiro:hasPermission>
 					<el-button-group class="margin-left-10">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
-                    </el-button-group>
+					</el-button-group>
+					<span class="margin-left-10" v-if="false">
+						<el-button size="small" type="primary" @click="zidonghuachengxu_video()">开始</el-button>
+					</span>
+					<span class="margin-left-10" v-if="false">
+						<el-popover
+							placement="bottom" 
+						  	width="400" 
+						  	trigger="click" >
+						  	<el-button size="small" type="primary" slot="reference">
+						  		<i class="el-icon-upload"></i>
+						  		演示文件
+						  	</el-button>
+						  	<div>
+								<el-upload
+									style="width: 360px" 
+									drag
+									action=""
+									ref="variableJoinOrgFile" 
+									:auto-upload="false" 
+									:multiple="true">
+									<i class="el-icon-upload"></i>
+									<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+									<div class="el-upload__tip" slot="tip">只能上传doc或docx文件</div>
+								</el-upload>
+						  	</div>
+						</el-popover>
+					</span>
                     <span style="float: right;">
 	                    <el-pagination id="partyUser_manager_pagesdididi" 
 						  	layout="total, prev, pager, next, jumper" 
@@ -315,7 +356,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									</shiro:hasPermission>
 								</el-row>
 								<el-row :gutter="20">
-									<el-col :span="24">用户ID：{{scope.row.id}}</el-col>
+									<span style="margin: 10px">用户ID：{{scope.row.id}}</span>
+									<span v-if="scope.row.orgInfoId != null && scope.row.orgInfoId != ''" style="margin: 10px">
+										已加入组织：
+										<span style="color: red; font-weight: bold;">
+											{{scope.row.orgInfoName}}
+										</span>
+									</span>
+									<span style="margin: 10px;">
+										加入组织时间：
+										{{scope.row.orgJoinTime}}
+									</span>
 								</el-row>
 								<el-row :gutter="20">
 									<el-col :span="24"><span class="partyUserTitleFont">基本信息</span></el-col>
@@ -636,6 +687,18 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										</el-row>
 									</el-col>
 								</el-row>
+								<el-row>
+									<el-col v-if="scope.row.devPeople != null && scope.row.devPeople != ''" :span="6">
+										<el-row :gutter="20">
+											<el-col :span="9" style="text-align: right;">
+												是否发展对象：
+											</el-col>
+											<el-col :span="15">
+												{{scope.row.devPeople == 1 ? '是' : '否'}}
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
 								<template v-if="scope.row.isParty == 1">
 									<el-row :gutter="20">
 										<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
@@ -916,8 +979,23 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									<el-button @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="org:relation:insert">  
-									<el-button @click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" type="text" size="small">加入组织</el-button>
+									<el-button v-if="scope.row.isParty == 1" @click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" type="text" size="small">
+										{{scope.row.orgInfoId == null || scope.row.orgInfoId == '' ? '加入组织' : '变更组织'}}
+									</el-button>
 								</shiro:hasPermission>
+								<template>
+									<el-button 
+										v-if="scope.row.joinPartyUserInfo == null && scope.row.isParty != 1"
+										@click="openApplyJoinPartyOrgDialog(scope.row)" 
+										type="text" size="small">申请入党
+									</el-button>
+									<el-button 
+										style="color: red;"
+										v-if="scope.row.joinPartyUserInfo != null && scope.row.type != 1"
+										@click="openApplyJoinPartyOrgDialog(scope.row)" 
+										type="text" size="small">申请状态
+									</el-button>
+								</template>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -943,6 +1021,120 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				 	placeholder="导入党员信息失败时，对表格校验的错误信息将显示在这里"
 					v-model="partyUser_manager_importPartyUserExcelErrorMsg">
 				</el-input>
+			</div>
+		</el-dialog>
+
+		<el-dialog @close="resetApplyJoinPartyOrgDialog" title="申请入党" :visible.sync="joinPartyOrg.applyJoinPartyOrgDialog" width="80%">
+			<div v-loading="joinPartyOrg.joinPartyOrgLoading" element-loading-text="资料提交中，请稍后..." style="width: 100%">
+				<el-row>
+					<el-steps :active="joinPartyOrg.joinPartyOrgStepNum" finish-status="success">
+						<template v-for="item in joinPartyOrg.joinPartyOrgProcess">
+							<el-step :title="item.name" :status="item.status"></el-step>
+						</template>
+					</el-steps>
+				</el-row>
+
+				<!-- 公共提示信息 -->
+				<span style="font-size: 12px;">
+					<!-- thisStepInfoNull代表没有查询到这个步骤信息 -->
+					<el-row v-if="joinPartyOrg.joinPartyOrgStepInfo.stepStatus != null">	
+						<p>
+							提交时间：{{joinPartyOrg.joinPartyOrgStepInfo.stepTime}}
+						</p>
+						<p>
+							希望加入的组织：{{joinPartyOrg.userInfo.joinPartyUserInfo.orgInfoName}}
+						</p>
+						<p>
+							加入方式：{{joinPartyOrg.userInfo.joinPartyUserInfo.joinPartyType}}
+						</p>
+						<p>审核状态：
+							<span :style="joinPartyOrg.joinPartyOrgStepInfo.stepStatus == 'success' ? 
+								'color: green; font-weight: bold;' : joinPartyOrg.joinPartyOrgStepInfo.stepStatus == 'wait' ? 
+								'color: #808080; font-weight: bold;' : joinPartyOrg.joinPartyOrgStepInfo.stepStatus == 'error' ? 
+								'color: red; font-weight: bold;' : 'color: black; font-weight: bold;'">
+								{{joinPartyOrg.joinPartyOrgStepInfo.stepStatus}}
+							</span>
+						</p>
+						<p>
+							附加消息：{{joinPartyOrg.joinPartyOrgStepInfo.stepStatusReason}}
+						</p>
+					</el-row>
+				</span>
+				<!-- 公共材料提交 -->
+				<el-row v-if="joinPartyOrg.joinPartyOrgStepInfo.stepStatus == null">
+					<el-form size="small" :model="joinPartyOrg.applyJoinPartyOrgForm" status-icon 
+						:rules="joinPartyOrg.applyJoinPartyOrgRules" 
+						label-position="top"
+						ref="applyJoinPartyOrgForm" label-width="100px">
+						<!-- 没有申请入党记录，第一次申请入党，填写希望加入的组织，后续有记录就不显示加入组织了 -->
+						<span v-if="joinPartyOrg.userInfo.joinPartyUserInfo == null">	
+							<el-form-item label="选择组织" prop="orgInfoId">
+								<el-select size="small" clearable 
+										v-model="joinPartyOrg.applyJoinPartyOrgForm.orgInfoId" placeholder="党组织">
+									<el-option
+										v-for="item in joinPartyOrg.orgInfosSelect"
+										:key="item.orgInfoId"
+										:label="item.orgInfoName"
+										:value="item.orgInfoId">
+										<span style="float: left; margin-right: 15px;">{{item.orgInfoName}}</span>
+										<span style="float: right;">{{item.orgInfoId}}</span>
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="加入方式" prop="joinOrgType">
+								<el-select size="small" clearable 
+										v-model="joinPartyOrg.applyJoinPartyOrgForm.joinOrgType" placeholder="加入党组织方式">
+									<el-option
+										v-for="item in joinPartyOrg.joinOrgTypeSelects"
+										:key="item.jpbtId"
+										:label="item.joinType"
+										:value="item.jpbtId">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</span>
+						<span v-if="(joinPartyOrg.flag.flagContent || joinPartyOrg.flag.flagFile) && joinPartyOrg.commonTips != null">
+							<p>{{joinPartyOrg.commonTips}}</p>
+						</span>
+						<span v-if="joinPartyOrg.flag.flagContent">
+							
+						</span>
+						<!-- 需要申请人操作时提供材料提交 -->
+						<span v-if="joinPartyOrg.flag.flagFile">
+							<el-upload
+								style="width: 360px" 
+								drag
+								action=""
+								ref="upload_joinPartyOrg" 
+								:auto-upload="false" 
+								:multiple="true">
+								<i class="el-icon-upload"></i>
+								<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+								<div class="el-upload__tip" slot="tip">只能上传doc或docx文件</div>
+							</el-upload>
+						</span>
+					</el-form>
+				</el-row>
+
+				<el-row>
+					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum > 1" size="small" @click="joinPartyOrgStepSet('s')">
+						查看上一步结果
+					</el-button>
+					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum < joinPartyOrg.joinPartyOrgStepNumNow" 
+						size="small" @click="joinPartyOrgStepSet('x')">查看下一步结果
+					</el-button>
+					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow && 
+						joinPartyOrg.joinPartyOrgStepInfo.stepStatus == 'success'" 
+						size="small" type="primary" @click="joinPartyOrgStepSet('x')">审核通过，下一步
+					</el-button>
+					<!-- 该步骤有提交材料并且步骤对应 -->
+					<el-button 
+						v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow + 1 && 
+						joinPartyOrg.flag.flagFile" 
+						size="small" type="primary" @click="submitJoinPartyOrg">提交
+					</el-button>
+				</el-row>
 			</div>
 		</el-dialog>
 
@@ -998,8 +1190,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 			</el-form>
 		</el-dialog>
-
-
 
 		<el-dialog title="添加党员" class="bigClose" :fullscreen="true" :visible.sync="partyUser_manager_insertPartyUserDialog">
 			<el-form class="partyUserForm" size="small" :model="partyUser_manager_insertPartyUserForm" status-icon :rules="partyUser_manager_insertPartyUserRules" 
@@ -1431,11 +1621,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-form-item>
 			</el-form>
 		</el-dialog>
-
-
-
-
-
 
 		<el-dialog title="修改证件照" :visible.sync="partyUser_manager_updatePartyUserIdPhotoDialog" width="30%">
 			<el-upload 
@@ -1873,7 +2058,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			</el-form>
 		</el-dialog>
 
-
 		<el-dialog @close="partyUser_manager_resetDeedsUserForm" title="人物事迹" :visible.sync="partyUser_manager_insertDeedsUserDialog">
 			<el-form size="small" :model="partyUser_manager_deedsUserForm" status-icon :rules="partyUser_manager_deedsUserRules" 
 				ref="partyUser_manager_deedsUserForm" label-width="100px">
@@ -2151,7 +2335,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		el: '#app',
 		data: {
 			partyUser_manager_jumpToUserDetailInfoArray: [],	/*点击卡片跳转到详细信息，用于保存值，赋值给rowkey以便展开信息*/
-			dis_h_v: false,
+			dis_h_v: true,
 			partyUser_manager_importPartyUserExcelErrorMsg: null,	/*导入党员校验错误信息*/
 			partyUser_manager_joinOrgInfoForm: {
 				orgInfoTreeOfJoinOrg: [],
@@ -2190,7 +2374,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_queryPartyUserInfosCondition: {
 				name: null,
 				isParty: null,
-				sex: null
+				sex: null,
+				orgInfoId: null
 			},
 			partyUser_manager_address_pca: pca,	/* 省市区三级联动数据 */
 			partyUser_manager_address_prop: {	/* 地址prop */
@@ -2413,6 +2598,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_firstLineTypes: [],	/*一线情况*/
 			partyUser_manager_joinPartyBranchTypes: [],	/*加入党支部方式*/
 			partyUser_manager_workNatureTypes: [],	/*工作性质*/
+			selectOptions: {
+				havePartyUserOrgs: []
+			},
 			partyUser_manager_uploadPartyUserIdPhotoTempFileName: "",
 			signInAccountType: null,
 			partyUser_manager_insertDeedsUserDialog: false,
@@ -2610,12 +2798,53 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 		        		trigger: 'blur'
 		        	}
 				]
+			},
+			joinPartyOrg: {
+				applyJoinPartyOrgDialog: false,	/*申请入党弹窗*/
+				joinPartyOrgStepNum: 1,	//当前步骤条步骤，控制步骤条
+				joinPartyOrgStepNumNow: 0,	//申请进度到第几步，来自数据库
+				joinPartyOrgProcess: [],
+				userInfo: {
+					joinPartyUserInfo: null
+				},	//当前用户信息
+				joinPartyOrgLoading: false,
+
+				getJoinPartyOrgStepInfoOver: false,	//该请求是否完成
+				getJoinPartyOrgProcessOver: false,	//请求是否完成
+				joinPartyOrgStepInfo: {
+					stepStatus: null	//步骤需要这个变量，现初始化
+				},	//当前步骤信息
+				flag: {	//控制显示提交控件来控制提交哪些材料
+					flagContent: false,
+					flagFile: false
+				},
+				commonTips: null,	//公共提示信息
+				applyJoinPartyOrgForm: {
+					userId: null,
+					orgInfoId: null,
+					joinOrgType: null
+				},
+				applyJoinPartyOrgRules: {
+					orgInfoId: [
+						{ required: true, message: '请选择想要加入的组织', trigger: 'blur' }
+					],
+					joinOrgType: [
+						{ required: true, message: '请选择加入党的方式', trigger: 'blur' }
+					]
+				},
+				orgInfosSelect: [],
+				joinOrgTypeSelects: []
+			},
+			zidonghuachengxu_videoVariable: {
+				userInfo: null,
+				joinOrgFile: []
 			}
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
 		},
 		mounted: function () {
+			this.initHavePartyUserOrgSelect();	//已存在党员的组织
 			this.partyUser_manager_queryPartyUserInfos();	/*查找党员信息*/
 			this.partyUser_manager_queryNationType();	/*初始化民族下拉框*/
 			this.partyUser_manager_queryEducationLevels(); /* 初始化学历水平下拉框 */
@@ -2627,6 +2856,336 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			this.getSignInAccountType();
 		},
 		methods: {
+			zidonghuachengxu_video() {	//为了录像
+				var obj = this;
+				setTimeout(() => {
+					obj.$message({
+						message:'开始入党申请',
+						duration: 1000
+					});
+					obj.zidonghuachengxu_videoVariable.userInfo = obj.partyUser_manager_pager.list[0];
+					setTimeout(() => {
+						obj.openApplyJoinPartyOrgDialog(obj.zidonghuachengxu_videoVariable.userInfo);
+						setTimeout(() => {
+							obj.$message({
+								message:'设置加入党组织',
+								duration: 1000
+							});
+							obj.joinPartyOrg.applyJoinPartyOrgForm.orgInfoId = obj.joinPartyOrg.orgInfosSelect[2].orgInfoId;
+							setTimeout(() => {
+								obj.$message({
+									message:'设置加入方式',
+									duration: 1000
+								});
+								obj.joinPartyOrg.applyJoinPartyOrgForm.joinOrgType = obj.joinPartyOrg.joinOrgTypeSelects[3].jpbtId;
+								setTimeout(() => {
+									obj.$message({
+										message:'设置入党申请书',
+										duration: 1000
+									});
+									obj.zidonghuachengxu_videoVariable.joinOrgFile = obj.$refs.variableJoinOrgFile.uploadFiles;
+									obj.$refs.upload_joinPartyOrg.uploadFiles = obj.zidonghuachengxu_videoVariable.joinOrgFile;
+									setTimeout(() => {
+										obj.$message({
+											message:'提交入党申请',
+											duration: 1000
+										});
+										obj.submitJoinPartyOrg();
+									}, 1300);
+								}, 1300);
+							}, 1300);
+						}, 1300);
+					}, 1300);
+				}, 1300);
+			},
+			validataUploadJoinPartyOrgFiles(joinFiles) {
+				if (joinFiles.length != 0) {
+					for (var i = 0; i < joinFiles.length; i++) {
+						var joinFile = joinFiles[i];
+						var fileFormat = joinFile.name.split(".");
+						var fileSuffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+						if (fileSuffix == "doc" || fileSuffix == "docx") {
+							continue; 
+						}
+						toast('格式错误',"只能上传doc或docx格式的文件，请检查选中的文件",'error');
+						return false;
+					}
+				}
+				return true;
+			},
+			submitJoinPartyOrg() {
+				var obj = this;
+				this.$refs["applyJoinPartyOrgForm"].validate( function(valid) {
+					if (valid) {
+						obj.joinPartyOrg.joinPartyOrgLoading = true;
+
+						var joinFiles = obj.$refs.upload_joinPartyOrg.uploadFiles;
+						// if (!obj.validataUploadJoinPartyOrgFiles(joinFiles)) {	//验证文件格式
+						// 	obj.joinPartyOrg.joinPartyOrgLoading = false;
+						// 	return;
+						// }
+
+						if (obj.joinPartyOrg.joinPartyOrgStepNum == 1 || obj.joinPartyOrg.joinPartyOrgStepNum == 5) {	//入党第一步必须提交入党申请书
+							if (joinFiles == null || joinFiles.length == 0) {
+								var msggggg = "";
+								if (obj.joinPartyOrg.joinPartyOrgStepNum == 1) {
+									msggggg = "请上传入党申请书";
+								} else if (obj.joinPartyOrg.joinPartyOrgStepNum == 8) {
+									msggggg = "请上传申请预备党员申请书";
+								}
+								toast('错误',msggggg ,'error');
+								obj.joinPartyOrg.joinPartyOrgLoading = false;
+								return;
+							}
+						}
+						
+						var joinFileUploadCount = 0;
+						var joinFileCount = joinFiles == null ? 0 : joinFiles.length;
+						var joinFileUploadUrl = "";
+						if (joinFiles != null && joinFiles.length > 0) {	//上传材料
+							for (var i = 0; i < joinFiles.length; i++) {
+								var formData = new FormData();
+								formData.append("file", joinFiles[i].raw);
+								$.ajax({
+				                   	url: "http://192.168.1.8:3000/upload",
+				                   	data: formData,
+				                   	type: "Post",
+				                   	cache: false,//上传文件无需缓存
+				                   	processData: false,//用于对data参数进行序列化处理 这里必须false
+				                   	contentType: false, //必须
+				                   	success: function (data) {
+				                   		if (data != null && data != undefined) {
+				                   			if (data.state == "SUCCESS") {
+												var fileFormat = data.original.split(".");
+												var fileSuffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+												joinFileUploadUrl += data.url + ",入党申请书-" + obj.joinPartyOrg.userInfo.name + "-" + obj.joinPartyOrg.userInfo.id + "."
+													+ fileSuffix + ",";
+												//上传完成，数量加一，与上传总图片数量比对，如果一致则全部上传完毕，开始事迹内容上传
+												joinFileUploadCount++;
+					                	   	} 
+				                   		} 
+				                   	},
+				                   	error: function() {
+										toast('错误','材料上传失败' ,'error');
+										obj.joinPartyOrg.joinPartyOrgLoading = false;
+				                   		return;
+				                   	},
+				                   	complete: function(XMLHttpRequest, textStatus) {
+				                   		//覆盖默认函数，避免报错
+				                   	}
+				               })
+							}
+						}
+						
+						var timeCount = 0;
+						var beginInsert = function() {
+							if (timeCount > 10 * 1000) {
+								toast('错误','上传材料超时' ,'error');
+								obj.joinPartyOrg.joinPartyOrgLoading = false;
+								return;
+							}
+							if (joinFileCount == joinFileUploadCount) {	//实际上传数量和要上传成功数量一致
+								var url = "/join/user/insertJoinPartyOrgUsers";
+								var t = {
+									userId: obj.joinPartyOrg.applyJoinPartyOrgForm.userId,
+									stepNum: obj.joinPartyOrg.joinPartyOrgStepNum,
+									orgInfoId: obj.joinPartyOrg.applyJoinPartyOrgForm.orgInfoId,
+									joinFileUploadUrl: joinFileUploadUrl,
+									joinOrgType: obj.joinPartyOrg.applyJoinPartyOrgForm.joinOrgType
+								}
+								if (obj.joinPartyOrg.userInfo.joinPartyUserInfo != null) {
+									t.joinId = obj.joinPartyOrg.userInfo.joinPartyUserInfo.id;
+								}
+								$.post(url, t, function(data, status){
+									if (data.code == 200) {
+										toast('提示',"操作成功",'success');
+										obj.joinPartyOrg.joinPartyOrgLoading = false;
+										obj.joinPartyOrg.applyJoinPartyOrgDialog = false;
+										obj.partyUser_manager_queryPartyUserInfos();
+									} else {
+										toast('提示',"操作失败",'error');
+										obj.joinPartyOrg.joinPartyOrgLoading = false;
+									}
+								})
+							} else {
+								timeCount += 50;
+								setTimeout(beginInsert, 50);
+							}
+						}
+						beginInsert();
+					}
+				});
+			},
+			resetApplyJoinPartyOrgDialog() {	//关闭入党弹窗重置数据
+				var obj = this;
+				if (obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus == null) {	//当没有步骤时，则添加当前步骤信息，此时在充值表单，防止表单未初始化而重置失败
+					obj.$refs["applyJoinPartyOrgForm"].resetFields();
+				}
+				obj.joinPartyOrg.joinPartyOrgStepNum = 1;
+				obj.joinPartyOrg.joinPartyOrgStepNumNow = 0;
+				obj.joinPartyOrg.joinPartyOrgStepInfo = {
+					stepStatus: null
+				};
+				obj.joinPartyOrg.userInfo = {
+					joinPartyUserInfo: null
+				};
+				obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = false;
+				obj.joinPartyOrg.getJoinPartyOrgProcessOver = false;
+				obj.joinPartyOrg.joinPartyOrgProcess = [];
+				obj.joinPartyOrg.commonTips = null;
+				obj.joinPartyOrg.joinPartyOrgLoading = false;
+			},
+			joinPartyOrgStepSet(step) {	//入党步骤条设置
+				var obj = this;
+
+				//重置公共提示信息
+				obj.joinPartyOrg.commonTips = null;
+				obj.joinPartyOrg.flag.flagFile = false;
+				obj.joinPartyOrg.flag.flagContent = false;
+
+				if (step == 's') {
+					obj.joinPartyOrg.joinPartyOrgStepNum--;
+				} else {					
+					obj.joinPartyOrg.joinPartyOrgStepNum++;
+				}
+
+				obj.queryJoinPartyOrgSteps(obj.joinPartyOrg.joinPartyOrgStepNum);	//查询当前进行的步骤信息
+				var timeCount = 0;
+				var initSomeThings = function() {
+					if (timeCount > 2000) {
+						toast('错误','请求数据超时' ,'error');
+						return;
+					}
+					//等待步骤条信息和当前步骤信息请求完成，设置步骤条显示状态
+					if (obj.joinPartyOrg.getJoinPartyOrgProcessOver && obj.joinPartyOrg.getJoinPartyOrgStepInfoOver) {
+						obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = false;
+
+						if (obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus != null) {
+							if (obj.joinPartyOrg.joinPartyOrgProcess.length >= obj.joinPartyOrg.joinPartyOrgStepNumNow) {
+								obj.joinPartyOrg.joinPartyOrgProcess[obj.joinPartyOrg.joinPartyOrgStepNum - 1].status = 
+									obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus == "wait" ? "process" : obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus;
+								obj.joinPartyOrg.applyJoinPartyOrgDialog = true;
+							}
+						} else {	//没有申请入党记录，开始申请入党
+							obj.joinPartyOrg.joinPartyOrgProcess[obj.joinPartyOrg.joinPartyOrgStepNum - 1].status = "process";
+							if (obj.joinPartyOrg.joinPartyOrgStepNum == 1) {
+								url = "/org/ifmt/queryOrgInfosSelect";
+								t = {
+									
+								}
+								$.post(url, t, function(data, status){	//选择加入的党组织
+									if (data.code == 200) {
+										obj.joinPartyOrg.orgInfosSelect = data.data;
+									} 
+								})
+
+								var url = "/jpbt/queryJoinPartyBranchTypes";
+								var t = {
+								}
+								$.post(url, t, function(data, status){	//如何加入
+									if (data.code == 200) {
+										obj.joinPartyOrg.joinOrgTypeSelects = data.data;
+									}
+
+								})
+
+								obj.joinPartyOrg.commonTips = "请上传入党申请书，组织要求上交纸质申请此处拍照上传";
+								obj.joinPartyOrg.flag.flagFile = true;
+							} else if (obj.joinPartyOrg.joinPartyOrgStepNum == 8) {
+								obj.joinPartyOrg.commonTips = "请上传转正申请书，组织要求上交纸质申请此处拍照上传";
+								obj.joinPartyOrg.flag.flagFile = true;
+							}
+							
+							obj.joinPartyOrg.applyJoinPartyOrgDialog = true;
+						}
+					} else {
+						timeCount += 50;
+						setTimeout(initSomeThings, 50)
+					}
+				}
+				initSomeThings();
+			},
+			openApplyJoinPartyOrgDialog(userInfo) {	//打开入党弹窗
+				var obj = this;
+
+				var url = "/join/process/queryJoinPartyOrgProcess";
+				var t = {
+					
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						obj.joinPartyOrg.joinPartyOrgProcess = data.data;
+
+						if (obj.joinPartyOrg.joinPartyOrgProcess != null && obj.joinPartyOrg.joinPartyOrgProcess.length > 0) {
+							for (var i = 0; i < obj.joinPartyOrg.joinPartyOrgProcess.length; i++) {	//增加status属性，以便给步骤条设置状态
+								var _process = {id: null, name: null, nameEn: null, describes: null, status: 'wait'};
+								if (userInfo.joinPartyUserInfo != null && i <= userInfo.joinPartyUserInfo.nowStep - 2) {
+									_process.status = "success";
+								}
+								_process.id = obj.joinPartyOrg.joinPartyOrgProcess[i].id;
+								_process.name = obj.joinPartyOrg.joinPartyOrgProcess[i].name;
+								_process.nameEn = obj.joinPartyOrg.joinPartyOrgProcess[i].nameEn;
+								_process.describes = obj.joinPartyOrg.joinPartyOrgProcess[i].describes;
+								obj.joinPartyOrg.joinPartyOrgProcess[i] = _process;
+							}
+							obj.joinPartyOrg.getJoinPartyOrgProcessOver = true;
+						} 
+					} 
+				})
+
+
+				obj.joinPartyOrg.userInfo = userInfo;	//一定存在
+				obj.joinPartyOrg.applyJoinPartyOrgForm.userId = obj.joinPartyOrg.userInfo.id;
+				if (obj.joinPartyOrg.userInfo.joinPartyUserInfo != null) {
+					obj.joinPartyOrg.joinPartyOrgStepNum = obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep;	//设置当前步骤，默认1
+					obj.joinPartyOrg.joinPartyOrgStepNumNow = obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep;
+				}
+
+				//在joinPartyOrgStepSet方法中步骤会+1，为了查询当前步骤，步骤先-1
+				obj.joinPartyOrg.joinPartyOrgStepNum--;
+				obj.joinPartyOrgStepSet('x');
+			},
+			queryJoinPartyOrgSteps(stepNum) {	//查询步骤信息
+				var obj = this;
+				if (obj.joinPartyOrg.userInfo.joinPartyUserInfo == null) {
+					obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = true;
+					obj.joinPartyOrg.joinPartyOrgStepInfo = {
+						stepStatus: null	//步骤需要这个变量，现初始化
+					}
+					return;
+				}
+				url = "/join/step/queryJoinPartyOrgSteps";
+				var t = {
+					joinId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.id,
+					processId: stepNum
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200 && data.data != undefined && data.data != null) {
+						obj.joinPartyOrg.joinPartyOrgStepInfo = data.data;
+					} else {
+						obj.joinPartyOrg.joinPartyOrgStepInfo = {
+							stepStatus: null	//步骤需要这个变量，现初始化
+						}
+					}
+					obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = true;
+				})
+			},
+
+
+
+
+			initHavePartyUserOrgSelect() {	//搜索条件框-有党员的组织
+				var obj = this;
+				var url = "/org/relation/queryHavePartyUserOrg";
+				var t = {
+					
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						obj.selectOptions.havePartyUserOrgs = data.data;
+					} 
+				})
+			},
 			updateSupplyDeedsUser() {
 				var obj = this;
 				this.$refs["partyUser_manager_updateDeedsUserForm"].validate( function(valid) {
@@ -2655,7 +3214,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								var formData = new FormData();
 								formData.append("file", imgs[i].raw);
 								$.ajax({
-				                   	url: "http://192.168.1.119:3000/image",
+				                   	url: "http://192.168.1.8:3000/image",
 				                   	data: formData,
 				                   	type: "Post",
 				                   	cache: false,//上传文件无需缓存
@@ -2733,7 +3292,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				if (it.diMgs != null && it.diMgs.length > 0) {
 					for (var i = 0; i < it.diMgs.length; i++) {
 						var diMg = {url: null, id: null};
-						diMg.url = "http://192.168.1.119:3000" + it.diMgs[i].paths;
+						diMg.url = "http://192.168.1.8:3000" + it.diMgs[i].paths;
 						diMg.id = it.diMgs[i].id;
 						obj.partyUser_manager_updateDeedsUserForm.diMgs.push(diMg);
 					}
@@ -2794,7 +3353,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								var formData = new FormData();
 								formData.append("file", imgs[i].raw);
 								$.ajax({
-				                   	url: "http://192.168.1.119:3000/image",
+				                   	url: "http://192.168.1.8:3000/image",
 				                   	data: formData,
 				                   	type: "Post",
 				                   	cache: false,//上传文件无需缓存
@@ -2921,7 +3480,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						var formData = new FormData();
 						formData.append("file", fileList[i].raw);
 						$.ajax({
-		                   	url: "http://192.168.1.119:3000/image",
+		                   	url: "http://192.168.1.8:3000/image",
 		                   	data: formData,
 		                   	type: "Post",
 		                   	cache: false,//上传文件无需缓存
@@ -3133,7 +3692,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					pageSize: obj.partyUser_manager_pager.pageSize,
 					name: obj.partyUser_manager_queryPartyUserInfosCondition.name,
 					isParty: obj.partyUser_manager_queryPartyUserInfosCondition.isParty,
-					sex: obj.partyUser_manager_queryPartyUserInfosCondition.sex
+					sex: obj.partyUser_manager_queryPartyUserInfosCondition.sex,
+					orgInfoId: obj.partyUser_manager_queryPartyUserInfosCondition.orgInfoId
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
@@ -3152,10 +3712,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			getPath(row) {	/* 得到党员用户id并返回请求路径 */
 				/*给予一个随机数，保证每次请求的参数都不一样，防止从缓存里取值，用于证件照的更新*/
-				return "http://192.168.1.119:3000" + row.idPhoto;
+				return "http://192.168.1.8:3000" + row.idPhoto;
 			},
 			getNewPath(path) {
-				return "http://192.168.1.119:3000" + path;
+				return "http://192.168.1.8:3000" + path;
 			},
 			partyUser_manager_queryNationType() {	/* 查询民族信息 */
 				var obj = this;
@@ -3194,18 +3754,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 
 				})
 			},
-			//partyUser_manager_queryOrgInfosNotPage() {	/* 查询公司 */
-				/*var obj = this;
-				var url = "/org/info/queryOrgInfosNotPage";
-				var t = {
-				}
-				$.post(url, t, function(data, status){
-					if (data.code == 200) {
-						obj.partyUser_manager_orgInfos = data.data;
-					}
-
-				})
-			},*/
 			partyUser_manager_queryWorkNatureTypes() {	/* 查询工作性质 */
 				var obj = this;
 				var url = "/wnt/queryWorkNatureTypes";
@@ -3291,7 +3839,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					var formData = new FormData();
 					formData.append("file", fileList[0].raw);
 					$.ajax({
-	                   url: "http://192.168.1.119:3000/image",
+	                   url: "http://192.168.1.8:3000/image",
 	                   data: formData,
 	                   type: "Post",
 	                   cache: false,//上传文件无需缓存
@@ -3399,7 +3947,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					var formData = new FormData();
 					formData.append("file", file[0].raw);
 					$.ajax({
-	                   url: "http://192.168.1.119:3000/image",
+	                   url: "http://192.168.1.8:3000/image",
 	                   data: formData,
 	                   type: "Post",
 	                   cache: false,//上传文件无需缓存
@@ -3710,5 +4258,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			}
 		}
 	});
+
+
+	window.onFocus = function () {
+		window.location.reload();
+	}
 </script>
 </html>

@@ -81,6 +81,7 @@ public class Constant {
     public static final int CONTENT_TYPE_SHOW = 4;
     public static final int CONTENT_TYPE_EMEGENCY = 5;
     public static final int CONTENT_TYPE_EXIST = 6;
+    public static final int CONTENT_TYPE_POSTER = 7;
 
 
 }

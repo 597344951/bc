@@ -42,7 +42,7 @@
 			  		<el-table size="mini" stripe :data="role_manager_pager.list" style="width: 100%" max-height="550">
 					    <el-table-column fixed prop="roleId" label="角色ID" width="100">
 					    </el-table-column>
-					    <el-table-column prop="roleName" label="角色名（英）" width="120">
+					    <el-table-column prop="roleName" label="角色名（英）" width="200">
 					    </el-table-column>
 					    <el-table-column prop="remark" label="角色名（中）" width="200">
 					    </el-table-column>

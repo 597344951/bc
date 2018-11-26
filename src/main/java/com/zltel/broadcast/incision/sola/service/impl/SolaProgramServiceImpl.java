@@ -108,12 +108,12 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         program.put("activeStartTime", content.get("start_date"));// 开始日期
         program.put("activeEndTime", content.get("end_date"));// 结束日期
         program.put("times", content.get("period"));// 时间段
-        program.put("weeks", "0,1,2,3,4,5,6");// 星期几
+        program.put("weeks", content.get("weeks"));// 星期几
         program.put("programPlayType", 1);// 节目播放类型：0为计划节目播放；1为轮播节目播放
         program.put("publishTimeType", 1);// 发布时间类型：0为作息时间发布；1为计划时间发布
         program.put("delayTime", 0);// 作息时间发布时，延后播放时间：单位分钟
         program.put("playTime", 0);// 作息时间发布时，播放时间长度：单位分钟
-        program.put("isDelete", 0);// 是否删除过期节目
+        program.put("isDelete", 1);// 是否删除过期节目
         String msg = execute(program, "PublishProgram");
         log.debug("发布节目<PublishProgram>:{}", msg);
         ResultStatus rs = this.handleResultStatus(msg);
@@ -186,6 +186,7 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         param.put(PAGE_INDEX, pager.getPageIndex());
         param.put(PAGE_COUNT, pager.getLimit());
         String msg = execute(param, "GetScreenList");
+        log.debug("查询终端<getScreenList>:{}", msg);
         ResultStatus rs = this.handleResultStatus(msg);
         if (!rs.isSuccess()) {
             String em = "拉取终端信息失败: " + rs.getMsg();
@@ -197,7 +198,11 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         pager.setTotal(Long.valueOf(rcs));
 
         JSONArray ja = jsonObject.getJSONArray("DISSchoolClassScreenModelList");
-        rets = ja.stream().map(jo -> JSON.toJavaObject((JSONObject) jo, Screen.class)).collect(Collectors.toList());
+        rets = ja.stream().map(jo -> {
+            Screen sc = JSON.toJavaObject((JSONObject) jo, Screen.class);
+            sc.setSolaUrl(this.url);
+            return sc;
+        }).collect(Collectors.toList());
         return rets;
     }
 
@@ -256,7 +261,9 @@ public class SolaProgramServiceImpl implements SolaProgramService {
 
         program.put("ServiceName", serviceName);
         program.put("Sign", sign);
+        log.debug("query url: {},orgid: {}", this.url, this.org);
         log.debug("query data: {}", program);
+        log.debug("Sign data: {}", JSON.toJSONString(access));
         return HttpUtil.post(url, "data=" + JsonUtils.serialization(program));
     }
 
@@ -275,8 +282,11 @@ public class SolaProgramServiceImpl implements SolaProgramService {
             RRException.makeThrow(em);
         }
         JSONArray ja = JSON.parseArray(msg);
-        rets = ja.stream().map(jo -> JSON.toJavaObject((JSONObject) jo, PubedProgram.class))
-                .collect(Collectors.toList());
+        rets = ja.stream().map(jo -> {
+            PubedProgram pr = JSON.toJavaObject((JSONObject) jo, PubedProgram.class);
+            pr.setSolaUrl(this.url);
+            return pr;
+        }).collect(Collectors.toList());
         return rets;
     }
 
@@ -385,8 +395,11 @@ public class SolaProgramServiceImpl implements SolaProgramService {
         Integer rcs = (Integer) jsonObject.get(RECORD_COUNT);
         prb.setTotal(Long.valueOf(rcs));
         JSONArray ja = jsonObject.getJSONArray("OperateProgramModelList");
-        rets = ja.stream().map(jo -> JSON.toJavaObject((JSONObject) jo, ProgramTemp.class))
-                .collect(Collectors.toList());
+        rets = ja.stream().map(jo -> {
+            ProgramTemp pt = JSON.toJavaObject((JSONObject) jo, ProgramTemp.class);
+            pt.setSolaUrl(this.url);
+            return pt;
+        }).collect(Collectors.toList());
         return rets;
     }
 

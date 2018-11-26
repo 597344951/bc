@@ -4,26 +4,29 @@
 	<integralConstitute>
 		<level>1</level>
 		<insertedIcId>-1</insertedIcId>	<!-- 必须 -->
-		<type>基础积分</type>
-		<describes>这是党组织的基本积分</describes>
+		<type>基本义务</type>
+		<describes>这是党组织的最基本基础积分构成</describes>
 		<childrens>
-			<integralConstitute>
-				<level>2</level>
-				<type>组织生活方面</type>
-				<describes>组织生活方面</describes>
-				<childrens>
-					<integralConstitute>
-						<level>3</level>
-						<type>按时足额缴纳党费</type>
-						<describes>党费必须按时缴纳，迟缴、未缴清、补缴、未缴都会被扣分并通知</describes>
-					</integralConstitute>
-					<integralConstitute>
-						<level>3</level>
-						<type>按时参加党内活动</type>
-						<describes>必须按时参加组织举办的活动、生活会、三会一课</describes>
-					</integralConstitute>
-				</childrens>
-			</integralConstitute>
+				<integralConstitute>
+					<level>2</level>
+					<type>学习教育</type>
+					<describes>积极参加党组织的各类学习、培训，认真完成党支部规定的学习任务。</describes>
+				</integralConstitute>
+				<integralConstitute>
+					<level>2</level>
+					<type>缴纳党费</type>
+					<describes>按时、足额缴纳党费。</describes>
+				</integralConstitute>
+				<integralConstitute>
+					<level>2</level>
+					<type>参加组织生活</type>
+					<describes>积极参加“三会一课”及党支部的组织生活会等组织生活。</describes>
+				</integralConstitute>
+				<integralConstitute>
+					<level>2</level>
+					<type>遵纪守法</type>
+					<describes>严格遵守各项法律法规及党纪党规。遵守各项规章制度和工作纪律。</describes>
+				</integralConstitute>
 		</childrens>
 	</integralConstitute>
 </orgIntegralConstitutes>

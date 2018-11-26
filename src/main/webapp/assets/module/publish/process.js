@@ -20,7 +20,7 @@ let app = new Vue({
         url: '',
         processState: {
             visible: false,
-            contentId: 9,
+            contentId: 0,
             active: 0,
             steps: [],
             detail: []
@@ -63,11 +63,9 @@ let app = new Vue({
     },
     methods: {
         handleSizeChange(val) {
-            //console.log(`每页 ${val} 条`);
             this.tpager.size = val;
         },
         handleCurrentChange(val) {
-            //console.log(`当前页: ${val}`);
             this.tpager.current = val;
         },
         startMoreEdit(row) {
@@ -75,14 +73,28 @@ let app = new Vue({
             get(url, reps => {
                 init();
                 if (reps.status) {
-                    window.open("/sola/edit/" + reps.editId, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+                    let editUrl;
+                    if (row.type == 7) {
+                        editUrl = "/media-server/poster/edit/" + reps.editId;
+                    } else {
+                        editUrl = "/sola/edit/" + reps.editId;
+                    }
+                    //window.open(editUrl, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+                    window.open(editUrl, '_blank');
                 } else {
                     app.$message('编辑失败, 该内容已被其他人编辑 !');
                 }
             })
         },
         moreEdit(row) {
-            window.open("/sola/edit/" + row.snapshot, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+            let editUrl;
+            if (row.type == 7) {
+                editUrl = "/media-server/poster/edit/" + row.snapshot;
+            } else {
+                editUrl = "/sola/edit/" + row.snapshot;
+            }
+            //window.open(editUrl, 'edit', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+            window.open(editUrl, '_blank');
         },
         preCommitMoreEdit(row) {
             this.isMoreEditCommit = true;
@@ -197,6 +209,7 @@ let app = new Vue({
                     }
                 })
             } else {
+                this.processState.contentId = row.id;
                 this.processState.visible = true;
             }
         },
@@ -212,14 +225,22 @@ let app = new Vue({
             })
         },
         viewTemplate(row) {
-            window.open('/publish/template/' + row.id, 'template', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+            //window.open('/publish/template/' + row.id, 'template', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+            window.open('/publish/template/' + row.id, '_blank');
         },
         view(row) {
             if (!row.snapshot) {
                 this.$message("预览还未提交, 无法预览.");
                 return;
             }
-            window.open('/sola/view/' + row.snapshot, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+            let viewUrl;
+            if(row.type == 7) {
+                viewUrl = '/media-server/poster/view/' + row.snapshot;
+            } else {
+                viewUrl = '/sola/view/' + row.snapshot;
+            }
+            //window.open(viewUrl, 'view', 'top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,width=1920,height=1080');
+            window.open(viewUrl, '_blank');
         },
         viewTerminal(row) {
             let url = '/publish/publishTerminal/' + row.id

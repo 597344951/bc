@@ -21,6 +21,13 @@ public interface OrganizationInformationService {
     int updateByPrimaryKey(OrganizationInformation record);
     
     /**
+     * 组织信息
+     * @param organizationInformation
+     * @return
+     */
+    public R queryOrgInfosSelect(OrganizationInformation organizationInformation);
+    
+    /**
 	 * 得到用户数量
 	 * @param organizationInformation
 	 * @return
@@ -117,4 +124,11 @@ public interface OrganizationInformationService {
      * @return
      */
     public R queryOrgIntegralConstituteToTree(Map<String, Object> conditions);
+    
+    /**
+     * 服务于按照时间间隔一次展示组织信息的层级，组织信息组织结构展示
+     * @param conditions
+     * @return
+     */
+    public R bossSayOneByOneShowOrgInfoLevel(Map<String, Object> conditions);
 }

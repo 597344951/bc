@@ -25,7 +25,9 @@ public interface PartyIntegralRecordService {
 	
 	public enum IcType {
 		ACTIVE("按时参加党内活动"),
-		MONEY("按时足额缴纳党费");
+		MONEY("按时足额缴纳党费"),
+		QUESTION_AND_ANSWER("知识问答"),
+		WATCH_VIDEO("观看视频");
 	    
 	    private final String name;
 	    

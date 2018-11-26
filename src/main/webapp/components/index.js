@@ -23,13 +23,14 @@ import CreateActivityPlan from './calendar/create-activity-plan.main.js';
 import ContextMenu from './common/context-menu.main.js';
 import ReportTemplateExplorer from './template/report-template-explorer.main.js';
 import TextViewEdit from './common/text-view-edit.main.js';
-
+import PaymentList from './cost-list/PaymentList.vue';
 
 let compMap = new Map();
 //2. 将要自动注册的组件放在此数组中
 export const comps = [MessageNotice, VueCalendar, AddEvent, EventToolTip, CostPlan, PlanSuggest,
     EventCalendar, PubedPlanInfo, PubplanGuide, CommunityInfo, PmInfo, FestivalInfo, HotNews, LoadReport,
-    ProgramManage, ProgramTemplate, CreateActivityPlan, ResourceMaterialExplorer, ContextMenu, ReportTemplateExplorer, TextViewEdit
+    ProgramManage, ProgramTemplate, CreateActivityPlan, ResourceMaterialExplorer, ContextMenu, ReportTemplateExplorer, 
+    TextViewEdit,PaymentList
 ];
 
 

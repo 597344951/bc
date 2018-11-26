@@ -46,7 +46,7 @@
 </head>
 
 <body>
-  <a  class="make-program"  href="/view/publish/new.jsp?startStep=2&title=廉政教育&url=/faker/lzjy/index-1.html">
+  <a  class="make-program" onclick="makeshow()" >
              节目制作
           </a>
   <div class="bg_top clearfix">
@@ -534,5 +534,14 @@
     </div>
   </div>
 </body>
-
+<script>
+    function makeshow() {
+					var share = [{
+						weburl: '/faker/lzjy/index-2.html',
+						playtime: 5 * 1000
+					}];
+					var url = '/view/publish/new.jsp?title=廉政教育&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+					window.location.href = url;
+				}
+  </script>
 </html>

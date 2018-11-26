@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @date 2018/5/2
  */
 @SpringBootApplication
-@MapperScan("com.zltel.broadcast.*.dao")
+@MapperScan("com.zltel.broadcast.**.dao")
 @ServletComponentScan
 @EnableScheduling // 启用定时器
 @EnableSwagger2 // API文档

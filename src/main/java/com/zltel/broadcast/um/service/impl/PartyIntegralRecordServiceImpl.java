@@ -124,7 +124,7 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     	Map<String, Object> conditions = new HashMap<>();
     	conditions.put("orgInfoId", pir.getOrgId());
     	conditions.put("idCard", su.getUsername());
-    	List<Map<String, Object>> partyUsers = partyUserInfoMapper.queryPartyUserInfos(conditions);
+    	List<Map<String, Object>> partyUsers = partyUserInfoMapper.queryPartyUserInfos(conditions);	//查询出该用户的信息
     	if (partyUsers == null || partyUsers.size() != 1) 
     		return false;
     	

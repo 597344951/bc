@@ -4,7 +4,7 @@
   "description": "Components with Vue by Touss .",
   "main": "index.js",
   "scripts": {
-    "serve": "webpack-dev-server --config build/webpack.serve.config --hot",
+    "server": "webpack-dev-server --devtool eval-source-map --progress --colors --hot --inline --config build/webpack.serve.config.js",
     "release": "webpack --config build/webpack.prod.config.js",
     "debug": "webpack --config build/webpack.debug.config.js --watch"
   },

@@ -18,6 +18,7 @@ public interface PublishService {
 
     /**
      * 创建内容
+     *
      * @param user
      * @param content
      * @return
@@ -26,15 +27,18 @@ public interface PublishService {
 
     public void reCreate(SysUser user, Map<String, Object> content);
 
-    public void urlCreate(SysUser user, Map<String, Object> content);
+    public void urlCreate(SysUser user, Map<String, Object> content) throws UnsupportedEncodingException;
+
     /**
      * 流程进行
+     *
      * @param contentId
      */
     public void doNext(int contentId);
 
     /**
      * 获取发布流程
+     *
      * @param contentTypeId 内容类型
      * @return 发布流程
      */
@@ -42,22 +46,25 @@ public interface PublishService {
 
     /**
      * 获取内容类型
+     *
      * @return 内容类型
      */
     public List<Map<String, Object>> getContentType();
 
     /**
      * 审核
-     * @param user 审核人
-     * @param operate 审核操作
-     * @param contentId 待审核内容
+     *
+     * @param user          审核人
+     * @param operate       审核操作
+     * @param contentId     待审核内容
      * @param contentTypeId 内容类型
-     * @param opinion 意见
+     * @param opinion       意见
      */
     public void verify(SysUser user, int operate, String opinion, int contentId, int contentTypeId);
 
     /**
      * 在编辑提交
+     *
      * @param user
      * @param contentId
      * @param snapshot
@@ -66,6 +73,7 @@ public interface PublishService {
 
     /**
      * 在编辑开始
+     *
      * @param user
      * @param contentId
      * @return
@@ -74,6 +82,7 @@ public interface PublishService {
 
     /**
      * 获取在编辑人员
+     *
      * @param contentId
      * @return
      */
@@ -81,6 +90,7 @@ public interface PublishService {
 
     /**
      * 获取内容
+     *
      * @param contentId
      * @return
      */
@@ -88,6 +98,7 @@ public interface PublishService {
 
     /**
      * 正在进行的内容
+     *
      * @param user
      * @return
      */
@@ -95,6 +106,7 @@ public interface PublishService {
 
     /**
      * 正在显示的内容
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -103,6 +115,7 @@ public interface PublishService {
 
     /**
      * 下架内容
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -111,6 +124,7 @@ public interface PublishService {
 
     /**
      * 废弃内容
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -119,6 +133,7 @@ public interface PublishService {
 
     /**
      * 获取流程状态
+     *
      * @param contentId
      * @return
      */
@@ -126,6 +141,7 @@ public interface PublishService {
 
     /**
      * 获取审核人员
+     *
      * @param contentId
      * @return
      */
@@ -133,6 +149,7 @@ public interface PublishService {
 
     /**
      * 流程切换
+     *
      * @param contentId
      * @param processItemId
      */
@@ -140,6 +157,7 @@ public interface PublishService {
 
     /**
      * 添加进度状态
+     *
      * @param contentId
      * @param userId
      * @param processItemId
@@ -150,6 +168,7 @@ public interface PublishService {
 
     /**
      * 废弃内容
+     *
      * @param user
      * @param contentId
      */
@@ -157,6 +176,7 @@ public interface PublishService {
 
     /**
      * 发布
+     *
      * @param user
      * @param contentId
      * @param period
@@ -165,20 +185,24 @@ public interface PublishService {
 
     /**
      * 下架
+     *
      * @param user
      * @param contentId
      */
     public void offline(SysUser user, int contentId);
+
     public void offline(SysUser user, String programId);
 
     /**
      * 下架
+     *
      * @return
      */
     public int offline();
 
     /**
      * 显示状态进度
+     *
      * @param contentTypeId
      * @param contentId
      * @return
@@ -187,6 +211,7 @@ public interface PublishService {
 
     /**
      * 预发布到终端
+     *
      * @param contentId
      * @return
      */
@@ -194,6 +219,7 @@ public interface PublishService {
 
     /**
      * 审核状态
+     *
      * @param contentId
      * @return
      */
@@ -203,4 +229,28 @@ public interface PublishService {
      * 审核超时处理
      */
     public void verifyTimeout();
+
+    /**
+     * 直接发布url节目
+     * @param title
+     * @param url
+     * @param playtime
+     * @param width
+     * @param height
+     * @param terminals
+     * @param dateStart
+     * @param dateEnd
+     * @param period
+     * @param weeks
+     */
+    public void directPublishUrl(String title,
+                                 String url,
+                                 long playtime,
+                                 int width,
+                                 int height,
+                                 List<Map<String, Object>> terminals,
+                                 String dateStart,
+                                 String dateEnd,
+                                 String period,
+                                 String weeks);
 }

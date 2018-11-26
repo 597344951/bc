@@ -23,6 +23,44 @@ public class HttpUtil {
 
     private HttpUtil() {}
 
+    public static String get(String url, String data) {
+        BufferedReader bufferedReader = null;
+        try {
+            URL uri = new URL(url);
+            HttpURLConnection urlConnection = (HttpURLConnection) uri.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.setDoInput(true);
+            urlConnection.setUseCaches(false);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Accept", "*/*");
+            urlConnection.setRequestProperty("Keep-Alive", String.valueOf(false));
+            urlConnection.setRequestProperty("Charsert", "UTF-8");
+
+            int code = urlConnection.getResponseCode();
+            StringBuilder stringBuffer = null;
+            String line = null;
+            if (code == HttpURLConnection.HTTP_OK) {
+                bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+                stringBuffer = new StringBuilder();
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+                return stringBuffer.toString();
+            } else {
+                String em = "请求失败：" + code;
+                RRException.makeThrow(em);
+            }
+        } catch (IOException e) {
+            String em = "请求失败:" + e.getMessage();
+            RRException.makeThrow(em);
+        } finally {
+            IOUtils.closeQuietly(bufferedReader);
+        }
+
+        RRException.makeThrow("没有返回数据");
+        return null;
+    }
+
     public static String post(String url, String postData) {
         DataOutputStream dataOutputStream = null;
         BufferedReader bufferedReader = null;

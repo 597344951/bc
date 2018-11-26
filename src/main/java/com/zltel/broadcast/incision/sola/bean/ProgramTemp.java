@@ -25,6 +25,8 @@ public class ProgramTemp {
     /** 节目截图地址 **/
     private String coverImageUrl;
 
+    /** 同步来源域名地址 **/
+    private String solaUrl;
      
     public String getModelTypeName() {
         return "1".equals(this.getModelType()) ? "触摸类节目" : "非触摸类节目";
@@ -119,6 +121,16 @@ public class ProgramTemp {
 
     public void setCoverImageUrl(String coverImageUrl) {
         this.coverImageUrl = coverImageUrl;
+    }
+
+    public String getSolaUrl() {
+        return solaUrl;
+    }
+
+    public void setSolaUrl(String solaUrl) {
+        this.solaUrl = solaUrl;
+        this.coverImage = ResExtractUtil.repResDomain(this.coverImage, this.solaUrl);
+        this.coverImageUrl = ResExtractUtil.repResDomain(this.coverImageUrl, this.solaUrl);
     }
 
 }

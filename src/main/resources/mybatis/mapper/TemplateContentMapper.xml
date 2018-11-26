@@ -213,7 +213,7 @@
 				AND tp_type_id = #{tpTypeId,jdbcType=INTEGER}
 			</if>
 			<if test="orgid != null">
-				AND orgid = #{orgid,jdbcType=INTEGER}
+				AND (orgid = #{orgid,jdbcType=INTEGER} or orgid=0)
 			</if>
 			<if test="uid != null">
 				AND uid = #{uid,jdbcType=INTEGER}

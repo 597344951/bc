@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.poster.dao.PosterCategoryMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.poster.bean.PosterCategory">
+		<id column="category_id" jdbcType="INTEGER" property="categoryId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="type" jdbcType="INTEGER" property="type" />
+		<result column="parent" jdbcType="INTEGER" property="parent" />
+		<result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+		<result column="display" jdbcType="BIT" property="display" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		category_id, name, type, parent,sort_num,display
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_category
+		where category_id = #{categoryId,jdbcType=INTEGER}
+	</select>
+
+	<select id="query" parameterType="com.zltel.broadcast.poster.bean.PosterCategory"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_category
+		where 1=1
+		<if test="categoryId != null">
+			AND category_id = #{categoryId}
+		</if>
+		<if test="name != null">
+			AND name = #{name}
+		</if>
+		<if test="type != null">
+			AND type = #{type}
+		</if>
+		<if test="parent != null">
+			AND parent = #{parent}
+		</if>
+		<if test="sortNum != null">
+			AND sort_num = #{sortNum}
+		</if>
+		<if test="display != null">
+			AND display = #{display}
+		</if>
+		order by parent,sort_num asc
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from poster_category
+		where category_id = #{categoryId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.poster.bean.PosterCategory">
+		insert into poster_category (category_id, name, type,parent,sort_num,display)
+		values
+		(#{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},#{parent}
+		#{sortNum,jdbcType=BIT},#{display,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.poster.bean.PosterCategory">
+		insert into poster_category
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="categoryId != null">
+				category_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="parent != null">
+				parent,
+			</if>
+			<if test="sortNum != null">
+				sort_num,
+			</if>
+			<if test="display != null">
+				display,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="categoryId != null">
+				#{categoryId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="parent != null">
+				#{parent},
+			</if>
+			<if test="sortNum != null">
+				#{sortNum},
+			</if>
+			<if test="display != null">
+				#{display},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.poster.bean.PosterCategory">
+		update poster_category
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="parent != null">
+				parent = #{parent},
+			</if>
+			<if test="sortNum != null">
+				sort_num = #{sortNum},
+			</if>
+			<if test="display != null">
+				display = #{display},
+			</if>
+		</set>
+		where category_id = #{categoryId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.poster.bean.PosterCategory">
+		update poster_category
+		set name = #{name,jdbcType=VARCHAR},
+		type = #{type,jdbcType=INTEGER},
+		parent=#{parent}
+		sort_num = #{sortNum},
+		display = #{display}
+		where category_id = #{categoryId,jdbcType=INTEGER}
+	</update>
+</mapper>

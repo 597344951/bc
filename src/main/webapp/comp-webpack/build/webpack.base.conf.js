@@ -9,7 +9,6 @@ function resolve (dir) {
 }
 module.exports = {
   entry: './index-all.js',
-  //devtool: 'eval-source-map',
   output: {
     path: path.resolve(__dirname, '../../components'),
     filename: 'main.js'

@@ -8,6 +8,7 @@ import javax.annotation.Generated;
 import javax.annotation.Resource;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
@@ -21,6 +22,7 @@ import com.zltel.broadcast.incision.sola.bean.PubedProgram;
 import com.zltel.broadcast.incision.sola.bean.ResultStatus;
 import com.zltel.broadcast.incision.sola.bean.Screen;
 
+@Ignore
 @Generated(value = "org.junit-tools-1.0.6")
 public class SolaProgramServiceTest extends BroadcastApplicationTests {
 

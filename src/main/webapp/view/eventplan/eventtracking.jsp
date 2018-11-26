@@ -36,7 +36,7 @@
                             </el-button-group>
                         </el-menu-item>
                         <el-menu-item index="-2" :style="{'float':'right'}" class="normal-menu-item" disabled>
-                            <el-pagination class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
+                            <el-pagination class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 99]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
                                 :total="tpager.total" @size-change="handleSizeChange" @current-change="handleCurrentChange">
                             </el-pagination>
                         </el-menu-item>

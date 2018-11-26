@@ -316,7 +316,7 @@
 		        ],
 		        mobile: [
 		        	{ required: true, message: '请输入联系号码!', trigger: 'blur' },
-		        	{ pattern: "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}$", message: '号码输入不正确!'}
+		        	{ pattern: "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0-9]))\\d{8}$", message: '号码输入不正确!'}
 		        ],
 		        email: [
 		        	{ required: true, message: '请输入邮箱!', trigger: 'blur' },
@@ -347,7 +347,7 @@
 		    updateSysUserRules: {
 		    	mobile: [
 		        	{ required: true, message: '请输入联系号码!', trigger: 'blur' },
-		        	{ pattern: "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}$", message: '号码输入不正确!'}
+		        	{ pattern: "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0-9]))\\d{8}$", message: '号码输入不正确!'}
 		        ],
 		        email: [
 		        	{ required: true, message: '请输入邮箱!', trigger: 'blur' },

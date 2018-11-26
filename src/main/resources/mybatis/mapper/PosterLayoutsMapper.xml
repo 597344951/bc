@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.poster.dao.PosterLayoutsMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.poster.bean.PosterLayouts">
+		<id column="template_id" jdbcType="INTEGER" property="templateId" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.poster.bean.PosterLayouts">
+		<result column="layouts" jdbcType="LONGVARCHAR" property="layouts" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		template_id
+	</sql>
+	<sql id="Blob_Column_List">
+		layouts
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from poster_layouts
+		where template_id = #{templateId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from poster_layouts
+		where template_id =
+		#{templateId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.poster.bean.PosterLayouts">
+		insert
+		into poster_layouts (template_id, layouts)
+		values (#{templateId,jdbcType=INTEGER},
+		#{layouts,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.poster.bean.PosterLayouts">
+		insert into poster_layouts
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="templateId != null">
+				template_id,
+			</if>
+			<if test="layouts != null">
+				layouts,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="templateId != null">
+				#{templateId,jdbcType=INTEGER},
+			</if>
+			<if test="layouts != null">
+				#{layouts,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.poster.bean.PosterLayouts">
+		update poster_layouts
+		<set>
+			<if test="layouts != null">
+				layouts = #{layouts,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where template_id = #{templateId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.poster.bean.PosterLayouts">
+		update poster_layouts
+		set layouts = #{layouts,jdbcType=LONGVARCHAR}
+		where template_id
+		= #{templateId,jdbcType=INTEGER}
+	</update>
+</mapper>

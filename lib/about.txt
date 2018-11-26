@@ -1,0 +1,6 @@
+
+# 以下为破解后的jxbrowser包 ， 需要自行发布到私服上或本地源才能正常使用
+jxbrowser-6.14.2.jar
+jxbrowser-license-0.0.1.jar
+jxbrowser-linux64-6.14.2.jar
+jxbrowser-win32-6.14.2.jar

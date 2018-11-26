@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,18 +15,14 @@ import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.tree.TreeNode;
 import com.zltel.broadcast.um.bean.OrganizationDuty;
-import com.zltel.broadcast.um.bean.OrganizationRelation;
 import com.zltel.broadcast.um.dao.OrganizationDutyMapper;
 import com.zltel.broadcast.um.service.OrganizationDutyService;
-import com.zltel.broadcast.um.service.OrganizationRelationService;
+import com.zltel.broadcast.um.util.JumpOutRecursionException;
 
 @Service
 public class OrganizationDutyServiceImpl extends BaseDaoImpl<OrganizationDuty> implements OrganizationDutyService {
 	@Resource
     private OrganizationDutyMapper organizationDutyMapper;
-	
-	@Autowired
-	private OrganizationRelationService organizationRelationService;
 	
 	@Override
     public BaseDao<OrganizationDuty> getInstince() {
@@ -224,27 +219,51 @@ public class OrganizationDutyServiceImpl extends BaseDaoImpl<OrganizationDuty> i
      */
 	@Transactional(rollbackFor=java.lang.Exception.class)
     public R deleteOrgDuty(OrganizationDuty organizationDuty) throws Exception {
-		if(organizationDuty != null) {
-			int count = 0;
-			int countOrgRelation = 0;
-			if (organizationDuty.getOrgDutyId() == null) {
-				throw new Exception();	//删除组织职责一定需要id，依据id进行组织职责删除
-			}
-			count = this.deleteByPrimaryKey(organizationDuty.getOrgDutyId());	//开始删除组织职责
-			//删除职责信息同步删除此组织关联的用户
-			OrganizationRelation or = new OrganizationRelation();
-			or.setOrgRltDutyId(organizationDuty.getOrgDutyId());
-			countOrgRelation = (int)organizationRelationService.deleteOrgRelationByOrgDutyId(or).get("data");
-			
-			if (count == 1) {	//受影响的行数，判断是否全部删除
-				return R.ok().setMsg("共计删除组织职责 " + count + "条，组织关系" + countOrgRelation + "条。");
-			} else {	//没有受影响行数或者受影响行数与要删除的组织职责数量不匹配表示删除失败
-				throw new Exception();
-			}
-		} else {	//删除一定需要组织职责
-			throw new Exception();
+		OrganizationDuty od = new OrganizationDuty();
+		od.setOrgDutyParentId(organizationDuty.getOrgDutyId());
+		List<OrganizationDuty> orgDutys = organizationDutyMapper.queryOrgDutys(od);
+		if (orgDutys != null && orgDutys.size() > 0) {
+    		return R.error().setMsg("请先删除此节点下的子节点");
+    	}
+		
+		List<Integer> orgDutyIds = new ArrayList<>();
+		orgDutyIds.add(organizationDuty.getOrgDutyId());
+    	try {
+			this.checkNodeHaveUser(orgDutyIds);
+		} catch (JumpOutRecursionException e) {
+			return R.error().setMsg(e.getMsg());
 		}
+    	int count = organizationDutyMapper.deleteByPrimaryKey(organizationDuty.getOrgDutyId());
+    	if (count == 1) {
+    		return R.ok().setMsg("删除成功");
+    	}
+    	return R.ok().setMsg("删除失败");
     }
+	
+	private void checkNodeHaveUser(List<Integer> orgDutyIds) throws JumpOutRecursionException {
+		if (orgDutyIds != null && orgDutyIds.size() > 0) {
+    		for (Integer orgDutyId : orgDutyIds) {
+    			OrganizationDuty od = new OrganizationDuty();
+    			od.setOrgDutyId(orgDutyId);
+    	    	List<OrganizationDuty> ods = organizationDutyMapper.queryOrgDutysOfQueryRelations(od);
+    	    	if (ods != null && ods.size() > 0) {
+    	    		throw new JumpOutRecursionException("该节点或子节点有对应用户，不能删除");
+    	    	}
+    	    	
+    	    	//查询此节点下的子节点
+    	    	od = new OrganizationDuty();
+    	    	od.setOrgDutyParentId(orgDutyId);
+    	    	List<OrganizationDuty> orgDutys = organizationDutyMapper.queryOrgDutys(od);
+    	    	if (orgDutys != null && orgDutys.size() > 0) {
+    	    		List<Integer> _orgDutyIds = new ArrayList<>();
+    	    		for (OrganizationDuty resultOd : orgDutys) {
+    	    			_orgDutyIds.add(resultOd.getOrgDutyId());
+					}
+    	    		this.checkNodeHaveUser(_orgDutyIds);
+    	    	}
+			}
+    	}
+	}
     
     /**
      * 新增组织职责

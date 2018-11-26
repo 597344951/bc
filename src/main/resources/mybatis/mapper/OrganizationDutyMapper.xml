@@ -134,9 +134,10 @@
 			distinct od.org_duty_id,
 			od.org_duty_name
 		from
-		  organization_relation _or inner join organization_duty od
+		  organization_relation _or 
+		  inner join organization_duty od on _or.org_rlt_duty_id = od.org_duty_id
 		where
-		  _or.org_rlt_duty_id = od.org_duty_id
+		  _or.org_rlt_duty_id = #{orgDutyId}
 	</select>
 	
 	<select id="queryOrgDutyForOrgInfoClick" parameterType="com.zltel.broadcast.um.bean.OrganizationDuty" resultMap="BaseResultMap">

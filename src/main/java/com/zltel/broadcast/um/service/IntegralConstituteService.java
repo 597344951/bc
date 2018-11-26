@@ -80,5 +80,19 @@ public interface IntegralConstituteService {
      * @return
      */
     public R integralValidator(Map<String, Object> conditions);
+    
+    /**
+     * 修改
+     * @param ic
+     * @return
+     */
+    public R updateIntegralConstitute(IntegralConstitute ic);
+    
+    /**
+     * 删除
+     * @param ic
+     * @return
+     */
+    public R deleteIntegralConstitute(IntegralConstitute ic);
 
 }

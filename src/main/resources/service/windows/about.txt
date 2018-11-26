@@ -1,0 +1,50 @@
+winsw
+winsw是一款可将可执行程序安装成Windows Service的开源小工具，官网地址：https://github.com/kohsuke/winsw
+
+注意： 要使用winsw，电脑上必须已经安装`.NET framework`
+
+下载
+下载winsw:http://repo.jenkins-ci.org/releases/com/sun/winsw/winsw/，当前最新版本是1.19，下载后得到：winsw-1.19-bin.exe
+
+使用
+1.为了方便，将打包的项目jar和winsw放在同一目录，我这里放在D盘
+
+2.将winsw-1.19-bin.exe重命名为和myapp.jar同名：myapp.exe
+
+3.在当前目录下新建一个xml文件：myapp.xml,内容如下：
+
+<service>
+  <id>myapp</id>
+  <name>myapp</name>
+  <description>This service runs myapp project.</description>
+  <executable>java</executable>
+  <arguments>-jar "myapp.jar"</arguments>
+  <logmode>rotate</logmode>
+</service>
+
+相关参数说明如下：
+
+id:id是安装成windows服务后的服务名，id必须是唯一的。
+name：name是服务的简写名字，name也必须是唯一的，这里我设为和id相同。
+description:服务的文字说明。
+executable:执行的命令，因为启动springboot应用的命令是java -jar myapp.jar,所以这里写java，如果java没有安装到系统path里，则这里必须全路径。
+arguments：命令执行参数， 如果端口号要在这里设置，可以在后面添上：--server.port=8080
+当然还有其它属性，请参考官网上的说明。
+4.运行以下命令，将应用注册为服务：
+
+myapp.exe install
+
+5.运行上面的命令后，在windows的服务里面能看到名为myapp的服务，到此安装成功。
+
+6.除了install命令外，还有其它命令：
+
+uninstall：删除服务
+start：启动服务
+stop：停止服务
+restart：重启服务
+status：输出当前服务的状态
+
+作者：lunabird
+链接：https://www.jianshu.com/p/b61d3c913d15
+來源：简书
+简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。

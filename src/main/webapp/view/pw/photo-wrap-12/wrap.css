@@ -1,0 +1,37 @@
+ul,
+li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.heartPic {
+	width: 750px;
+	height: 630px;
+	margin: 50px auto;
+}
+
+.heartPic ul {
+	float: left;
+	width: 750px;
+}
+
+.heartPic ul li {
+	float: left;
+	width: 100px;
+	height: 100px;
+	padding: 2px;
+	cursor: pointer;
+}
+
+.heartPic ul li.on {
+	z-index: 99;
+}
+
+.heartPic ul li.on .in {
+	position: absolute;
+	left: 20%;
+	top: 10%;
+	padding: 5px 5px 5px 5px;
+	background: #fff;
+}

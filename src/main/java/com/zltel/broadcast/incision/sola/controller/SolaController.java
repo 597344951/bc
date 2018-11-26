@@ -1,6 +1,8 @@
 package com.zltel.broadcast.incision.sola.controller;
 
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.pager.Pager;
+import com.zltel.broadcast.incision.sola.bean.Screen;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
 import com.zltel.broadcast.incision.sola.utils.DESUtil;
 import com.zltel.broadcast.incision.sola.utils.JsonUtils;
@@ -65,15 +67,8 @@ public class SolaController {
     @GetMapping(value = "/terminals")
     @ResponseBody
     public Object terminals() {
-        R r = new R();
-        List<Map<String, Object>> terminals = solaProgramService.queryTerminal();
-        if(terminals != null) {
-            r.setStatus(true);
-            r.setData(terminals);
-        } else {
-            r.setStatus(false);
-        }
-        return r;
+        List<Screen> screens = solaProgramService.getScreenList(0, Pager.DEFAULT_PAGER);
+        return R.ok().setData(screens);
     }
 
     private String next(int id, String url) throws UnsupportedEncodingException {

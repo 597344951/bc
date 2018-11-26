@@ -30,11 +30,14 @@
   .make-program:active{
     font-size: 15px;
   }
+  #app{
+      padding-top: 10%!important;
+    }
 </style>
 </head>
 
 <body>
-  <a class="make-program"  href="/view/publish/new.jsp?startStep=2&title=党史百科&url=/faker/dsbk/index-3.html">
+  <a class="make-program"  onclick="makeshow()" >
     节目制作
   </a>
 <div id="app">
@@ -126,6 +129,14 @@
   });
 </script>
 <script>
+    function makeshow() {
+    var share = [{
+      weburl: '/faker/dsbk/index-3.html',
+      playtime: 5 * 1000
+    }];
+    var url = '/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+    window.location.href = url;
+  }
   window.onload = function(){
     var mask = document.getElementById('mask');
     var oLi = document.querySelectorAll(".p1_content li a");

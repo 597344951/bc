@@ -1,5 +1,6 @@
 package com.zltel.broadcast.publish.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +54,8 @@ public class PublishController extends BaseController{
     private String uploadTempDir;
     @Value("${ueditor.savepath}")
     private String ueditorDir;
+    @Value("${zltel.mediaserve}")
+    private String mediaServe;
 
     @RequestMapping(value = "/new")
     public String create(Model model) {
@@ -63,6 +66,7 @@ public class PublishController extends BaseController{
     @GetMapping(value = "/template/{id}")
     public String template(Model model, @PathVariable("id") int id) {
         model.addAttribute("contentId", id);
+        model.addAttribute("mediaServe", mediaServe);
         return "view/publish/template";
     }
 
@@ -88,7 +92,7 @@ public class PublishController extends BaseController{
         try {
             SysUser user = getSysUser();
             //同步文件
-            materialService.transferMaterial(user, (List<Map<String, Object>>) content.get("material"), uploadTempDir, uploadFileDir);
+            //materialService.transferMaterial(user, (List<Map<String, Object>>) content.get("material"), uploadTempDir, uploadFileDir);
             materialService.saveUeditorMaterial(user, content, ueditorDir, uploadFileDir);
             Map<String, Object> detail = publishService.create(user, content);
             //判断活动
@@ -108,8 +112,15 @@ public class PublishController extends BaseController{
     @RequestMapping(value = "/urlAdd")
     @ResponseBody
     public R contentUrlAdd(@RequestBody Map<String, Object> content) {
-        publishService.urlCreate(getSysUser(), content);
-        return R.ok();
+        R r;
+        try {
+            publishService.urlCreate(getSysUser(), content);
+            r = R.ok();
+        } catch (UnsupportedEncodingException e) {
+            logout.error(e.getMessage(),e);
+            r = R.error(e.toString());
+        }
+        return r;
     }
 
     @PostMapping(value = "/reAdd")

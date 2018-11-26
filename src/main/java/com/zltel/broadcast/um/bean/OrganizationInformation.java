@@ -41,8 +41,18 @@ public class OrganizationInformation {
     private String orgInfoDescribe;
     
     private Integer orgInfoNatureId;
+    
+    private Integer orgInfoLevel;
 
-    public Integer getOrgInfoNatureId() {
+    public Integer getOrgInfoLevel() {
+		return orgInfoLevel;
+	}
+
+	public void setOrgInfoLevel(Integer orgInfoLevel) {
+		this.orgInfoLevel = orgInfoLevel;
+	}
+
+	public Integer getOrgInfoNatureId() {
 		return orgInfoNatureId;
 	}
 

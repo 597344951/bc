@@ -42,7 +42,7 @@
     </div>
    
   <div class="p1_con">
-  	     <a class="make-program" href="/view/publish/new.jsp?startStep=2&title=高层声音&url=/faker/gcsy/index.html">
+  	     <a class="make-program" onclick="makeshow()">
     节目制作
   </a>
     <ul>
@@ -123,6 +123,16 @@
 
     </ul>
   </div>
+  <script>
+    function makeshow() {
+					var share = [{
+						weburl: '/faker/gcsy/index.html',
+						playtime: 5 * 1000
+					}];
+					var url = '/view/publish/new.jsp?title=高层声音&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+					window.location.href = url;
+				}
+  </script>
   <style>
     #copyright {
       width: 100%;

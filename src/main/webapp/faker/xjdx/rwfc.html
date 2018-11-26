@@ -19,7 +19,7 @@
 <body>
 	<!-- container -->
 	<!-- header -->
-	 <a class="make-program" href="/view/publish/new.jsp?startStep=2&title=人物简介&url=/faker/xjdx/rwfc.html">节目制作</a>
+	<a class="make-program" onclick="makeshow()" >节目制作</a>
 	<div id="home" class="header">
 		<div class="container">
 			<!-- top-hedader -->
@@ -43,9 +43,7 @@
 									<li>
 										<a class="scroll" data-hover="先进典型" href="index.htm">先进典型</a>
 									</li>
-									<li>
-										<a class="scroll" data-hover="人物风采" href="1.htm">人物风采</a>
-									</li>
+
 								</ul>
 							</nav>
 
@@ -214,7 +212,16 @@
 	<!--end-smooth-scrolling-->
 	<!-- //for bootstrap working -->
 	<script src="js/bootstrap.js"></script>
-
+	<script>
+		function makeshow() {
+			var share = [{
+				weburl: '/faker/xjdx/rwfc.html',
+				playtime: 5 * 1000
+			}];
+			var url = '/view/publish/new.jsp?title=先进典型&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+			window.location.href = url;
+		}
+	</script>
 
 </body>
 

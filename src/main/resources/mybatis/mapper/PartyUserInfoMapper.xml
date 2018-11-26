@@ -261,7 +261,12 @@
 	  pui.introduce introduce,
 	  bui.is_party isParty,
 	  od.org_duty_name orgDutyName,
-	  oi.org_info_name orgInfoName
+	  oi.org_info_id orgInfoId,
+	  oi.org_info_name orgInfoName,
+	  bui.income income,
+	  bui.party_proportion partyProportion,
+	  bui.dev_people devPeople,
+	  _or.org_rlt_join_time orgJoinTime
 	from
 	  base_user_info bui 
 	  left join party_user_info pui on bui.base_user_id = pui.party_user_id

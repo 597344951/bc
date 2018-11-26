@@ -30,7 +30,7 @@ public interface PartyUserInfoService {
      * @return
      * @throws Exception
      */
-    public R queryPartyUserInfos(Map<String, Object> partyUserMap, int pageNum, int pageSize) throws Exception;
+    public R queryPartyUserInfos(Map<String, Object> partyUserMap, int pageNum, int pageSize, boolean queryThis) throws Exception;
     
     
     /**
@@ -64,7 +64,7 @@ public interface PartyUserInfoService {
      * @return
      * @throws Exception
      */
-    public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, Map<String, Object> partyUser) throws Exception;
+    public R updatePartyUserIdPhoto(HttpServletRequest request, Map<String, Object> partyUser) throws Exception;
     
     /**
      * 修改党员信息
@@ -80,5 +80,5 @@ public interface PartyUserInfoService {
      * @return
      * @throws Exception
      */
-    public R deletePartyUserInfo(BaseUserInfo baseUserInfo) throws Exception;
+    public R deletePartyUserInfo(BaseUserInfo baseUserInfo);
 }

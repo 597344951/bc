@@ -7,6 +7,12 @@ public class PosterCategory {
 
     private Integer type;
 
+    private Integer parent;
+    
+    private Integer sortNum;
+    
+    private Boolean display;
+
     public Integer getCategoryId() {
         return categoryId;
     }
@@ -29,6 +35,30 @@ public class PosterCategory {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getParent() {
+        return parent;
+    }
+
+    public void setParent(Integer parent) {
+        this.parent = parent;
+    }
+
+    public Integer getSortNum() {
+        return sortNum;
+    }
+
+    public void setSortNum(Integer sortNum) {
+        this.sortNum = sortNum;
+    }
+
+    public Boolean getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(Boolean display) {
+        this.display = display;
     }
 
 }

@@ -40,7 +40,9 @@ div.edui-box {
 .edui-default .edui-clearfix {
     zoom: 1
 }
-
+.edui-editor-bottombar {
+    display: none!important;
+}
 .edui-default .edui-clearfix:after {
     content: '\20';
     display: block;

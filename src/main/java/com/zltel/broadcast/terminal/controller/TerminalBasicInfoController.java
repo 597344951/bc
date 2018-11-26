@@ -39,18 +39,19 @@ public class TerminalBasicInfoController extends BaseController {
         r.put("online", count);
         return r;
     }
-    
-    @ApiOperation(value="查询地图信息")
+
+    @ApiOperation(value = "查询地图信息")
     @GetMapping("/addup")
     public R queryMapInfo() {
         try {
             return tbs.queryMapInfo();
         } catch (Exception e) {
-            logout.error(e.getMessage(),e);
+            logout.error(e.getMessage(), e);
             return R.error().setMsg("查询地图信息失败");
         }
-      
+
     }
+
     @ApiOperation(value = "删除终端基础信息")
     @DeleteMapping("/addup/{oid}")
     public R delete(@PathVariable("oid") Integer oid) {
@@ -65,9 +66,9 @@ public class TerminalBasicInfoController extends BaseController {
 
     @ApiOperation(value = "同步终端基础信息")
     @PostMapping(value = "/addup")
-    public R syn( ) {
-        this.tbs.synchronizTerminalInfo();
-        return R.ok();
+    public R syn() {
+        int c = this.tbs.synchronizTerminalInfo();
+        return R.ok().setMsg("同步终端数:" + c);
     }
 
     @ApiOperation(value = "更新终端基础信息")
@@ -88,6 +89,6 @@ public class TerminalBasicInfoController extends BaseController {
             return R.error().setMsg("统计终端基础信息失败");
         }
     }
-    
+
 }
 

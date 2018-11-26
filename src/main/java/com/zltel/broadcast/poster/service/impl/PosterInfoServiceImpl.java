@@ -1,8 +1,6 @@
 package com.zltel.broadcast.poster.service.impl;
 
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -22,6 +20,7 @@ import com.zltel.broadcast.poster.dao.PosterCategoryRelationMapper;
 import com.zltel.broadcast.poster.dao.PosterInfoMapper;
 import com.zltel.broadcast.poster.dao.PosterLayoutsMapper;
 import com.zltel.broadcast.poster.dao.PosterSizeMapper;
+import com.zltel.broadcast.poster.service.PosterCoverService;
 import com.zltel.broadcast.poster.service.PosterInfoService;
 
 @Service
@@ -39,6 +38,9 @@ public class PosterInfoServiceImpl implements PosterInfoService {
     @Resource
     private PosterCategoryRelationMapper posterCategoryRelationMapper;
 
+    @Resource
+    private PosterCoverService posterCoverService;
+
     @Override
     public List<PosterInfo> query(PosterInfo posterinfo) {
         return this.posterInfoMapper.query(posterinfo);
@@ -47,15 +49,16 @@ public class PosterInfoServiceImpl implements PosterInfoService {
     @Override
     public PosterInfo selectAllByPrimaryKey(Integer templateId) {
         PosterInfo pi = this.posterInfoMapper.selectByPrimaryKey(templateId);
-        pi.setLayouts(this.posterLayoutsMapper.selectByPrimaryKey(templateId).getLayouts());
+        PosterLayouts pl = this.posterLayoutsMapper.selectByPrimaryKey(templateId);
+        if (pl != null) pi.setLayouts(pl.getLayouts());
         return pi;
     }
 
     @Override
     @Transactional
-    public int deleteByPrimaryKey(Integer templateId) {
+    public void deleteByPrimaryKey(Integer templateId) {
         this.posterLayoutsMapper.deleteByPrimaryKey(templateId);
-        return this.posterInfoMapper.deleteByPrimaryKey(templateId);
+        this.posterInfoMapper.deleteByPrimaryKey(templateId);
     }
 
     @Override
@@ -63,8 +66,12 @@ public class PosterInfoServiceImpl implements PosterInfoService {
     public int insert(PosterInfo record) {
         record.setTemplateId(null);
         this.posterInfoMapper.insert(record);
-        PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), record.getLayouts());
-        return this.posterLayoutsMapper.insert(layouts);
+        String ls = record.getLayouts();
+        ls = StringUtils.isNotBlank(ls) ? ls : "[]";
+        PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), ls);
+        this.posterLayoutsMapper.insert(layouts);
+        this.posterCoverService.updateCover(record);
+        return record.getTemplateId();
     }
 
     @Override
@@ -72,28 +79,43 @@ public class PosterInfoServiceImpl implements PosterInfoService {
     public int insertSelective(PosterInfo record) {
         record.setTemplateId(null);
         this.posterInfoMapper.insertSelective(record);
-        PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), record.getLayouts());
-        return this.posterLayoutsMapper.insertSelective(layouts);
+        String ls = record.getLayouts();
+        ls = StringUtils.isNotBlank(ls) ? ls : "[]";
+        PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), ls);
+        this.posterLayoutsMapper.insertSelective(layouts);
+
+        this.updateUseCategory(record);
+        this.posterCoverService.updateCover(record);
+        return record.getTemplateId();
     }
 
     @Override
     @Transactional
-    public int updateByPrimaryKey(PosterInfo record) {
-        PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), record.getLayouts());
-        this.posterLayoutsMapper.updateByPrimaryKeyWithBLOBs(layouts);
-        return this.posterInfoMapper.updateByPrimaryKey(record);
-    }
-
-    @Override
-    @Transactional
-    public int updateByPrimaryKeySelective(PosterInfo record) {
+    public void updateByPrimaryKey(PosterInfo record) {
         if (StringUtils.isNotBlank(record.getLayouts())) {
             PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), record.getLayouts());
-            this.posterLayoutsMapper.updateByPrimaryKeySelective(layouts);
+            int r = this.posterLayoutsMapper.updateByPrimaryKeySelective(layouts);
+            if (r == 0) this.posterLayoutsMapper.insert(layouts);
+            this.posterCoverService.updateCover(record);
         }
         this.updateUseCategory(record);
-        return this.posterInfoMapper.updateByPrimaryKeySelective(record);
+        this.posterInfoMapper.updateByPrimaryKey(record);
     }
+
+    @Override
+    @Transactional
+    public void updateByPrimaryKeySelective(PosterInfo record) {
+        if (StringUtils.isNotBlank(record.getLayouts())) {
+            PosterLayouts layouts = new PosterLayouts(record.getTemplateId(), record.getLayouts());
+            int r = this.posterLayoutsMapper.updateByPrimaryKeySelective(layouts);
+            if (r == 0) this.posterLayoutsMapper.insert(layouts);
+            this.posterCoverService.updateCover(record);
+        }
+        this.updateUseCategory(record);
+        this.posterInfoMapper.updateByPrimaryKeySelective(record);
+    }
+
+
 
     private void updateUseCategory(PosterInfo record) {
         if (record.getUseCategorys() == null) return;
@@ -101,10 +123,11 @@ public class PosterInfoServiceImpl implements PosterInfoService {
         key.setTemplateId(record.getTemplateId());
         this.posterCategoryRelationMapper.delete(key);
         for (Integer uc : record.getUseCategorys()) {
-            key = new PosterCategoryRelationKey(record.getTemplateId(),uc);
+            key = new PosterCategoryRelationKey(record.getTemplateId(), uc);
             this.posterCategoryRelationMapper.insert(key);
         }
     }
+
 
     @Override
     public List<PosterSize> queryPosterSize(PosterSize record) {
@@ -118,5 +141,34 @@ public class PosterInfoServiceImpl implements PosterInfoService {
         return this.posterCategoryMapper.query(record);
     }
 
+    @Override
+    public PosterInfo newPosterFromTemplateId(Integer templateId) {
+        PosterInfo pi = this.posterInfoMapper.selectByPrimaryKey(templateId);
+        if (pi != null) {
+            pi.setPid(pi.getTemplateId().toString());
+            pi.setFrom("newFromTemplate");
+            pi.setLayouts(this.posterLayoutsMapper.selectByPrimaryKey(templateId).getLayouts());
+        } else {
+            pi = new PosterInfo();
+            pi.setTitle("新创建海报");
+            pi.setFrom("new");
+            pi.setHeight(1080);
+            pi.setWidth(1920);
+        }
+        this.insertSelective(pi);
+        return pi;
+    }
+
+    @Override
+    @Transactional
+    public void updateLayoutsByPrimaryKey(PosterLayouts layouts) {
+        int r = this.posterLayoutsMapper.updateByPrimaryKeySelective(layouts);
+        if (r == 0) this.posterLayoutsMapper.insert(layouts);
+    }
+
+    @Override
+    public List<PosterInfo> searchMetaData(String regex) {
+        return this.posterInfoMapper.searchMetaData(regex);
+    }
 
 }

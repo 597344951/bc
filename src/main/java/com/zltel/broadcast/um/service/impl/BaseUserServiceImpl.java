@@ -104,6 +104,7 @@ public class BaseUserServiceImpl extends BaseDaoImpl<BaseUser> implements BaseUs
      */
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
+    @Deprecated
     public R deleteBaseUser(BaseUser baseUser) throws Exception {
 		if(baseUser != null) {
 			int count = 0;

@@ -12,31 +12,36 @@
   <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
   <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
   <style>
-  .make-program{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: cornflowerblue;
-    padding:6px 14px;
-    border-radius: 6px;
-    color:#fff!important;
-    font-weight: bold;
-    font-size: 14px;
-    font-family: "microsoft yahei";
-  }
-  .make-program:hover{
-    color: #fff;
-    background-color: #5582d4;
-    text-decoration: none;
-  }
-  .make-program:active{
-    font-size: 15px;
-  }
+    .make-program {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: cornflowerblue;
+      padding: 6px 14px;
+      border-radius: 6px;
+      color: #fff !important;
+      font-weight: bold;
+      font-size: 14px;
+      font-family: "microsoft yahei";
+    }
+
+    .make-program:hover {
+      color: #fff;
+      background-color: #5582d4;
+      text-decoration: none;
+    }
+
+    .make-program:active {
+      font-size: 15px;
+    }
+    #app{
+      padding-top: 10%!important;
+    }
   </style>
 </head>
 
 <body>
-  <a class="make-program" href="/view/publish/new.jsp?startStep=2&title=党史百科&url=/faker/dsbk/index-1.html">
+  <a class="make-program" onclick="makeshow()" >
     节目制作
   </a>
   <div id="app">
@@ -198,38 +203,46 @@
   });
 </script>
 <script>
-  window.onload = function(){
+  function makeshow() {
+    var share = [{
+      weburl: '/faker/dsbk/index-1.html',
+      playtime: 5 * 1000
+    }];
+    var url = '/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+    window.location.href = url;
+  }
+  window.onload = function () {
     var mask = document.getElementById('mask');
     var oLi = document.querySelectorAll(".p1_content li a");
     var h = document.body.clientHeight;
     var w = document.body.clientWidth;
-    mask.style.display="none";
+    mask.style.display = "none";
     for (var i = 0; i < oLi.length; i++) {
-        oLi[i].i = i;
-        oLi[i].onclick = function(){
-          var aL = oLi[this.i];
-          for(var j = 0 ;j<oLi.length;j++){
-            oLi[j].className=" ";
-          };
-          aL.className = "content-active";
-          mask.style.display="block";
-         var t = aL.offsetTop;
-         var l = aL.offsetLeft;
-          console.log(l-mask.offsetWidth)
-         mask.style.top = t-mask.offsetHeight+'px';
-        if(mask.offsetTop<0){
-          mask.style.top = 10+'px';
+      oLi[i].i = i;
+      oLi[i].onclick = function () {
+        var aL = oLi[this.i];
+        for (var j = 0; j < oLi.length; j++) {
+          oLi[j].className = " ";
         };
-         if(l>=(w/2)){
-          mask.style.left = l+mask.offsetWidth-50+'px';
+        aL.className = "content-active";
+        mask.style.display = "block";
+        var t = aL.offsetTop;
+        var l = aL.offsetLeft;
+        console.log(l - mask.offsetWidth)
+        mask.style.top = t - mask.offsetHeight + 'px';
+        if (mask.offsetTop < 0) {
+          mask.style.top = 10 + 'px';
+        };
+        if (l >= (w / 2)) {
+          mask.style.left = l + mask.offsetWidth - 50 + 'px';
 
-         }else{
-          mask.style.left = l-mask.offsetWidth-30+'px';
-         };
-         if((l-mask.offsetWidth)<0){
-          mask.style.left=10+'px';
-         }
-       }
+        } else {
+          mask.style.left = l - mask.offsetWidth - 30 + 'px';
+        };
+        if ((l - mask.offsetWidth) < 0) {
+          mask.style.left = 10 + 'px';
+        }
+      }
     };
   }
 </script>

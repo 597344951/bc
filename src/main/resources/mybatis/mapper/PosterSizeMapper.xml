@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.poster.dao.PosterSizeMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.poster.bean.PosterSize">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="width" jdbcType="INTEGER" property="width" />
+		<result column="height" jdbcType="INTEGER" property="height" />
+		<result column="hor_ver" jdbcType="VARCHAR" property="horVer" />
+		<result column="tag" jdbcType="VARCHAR" property="tag" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, width, height, hor_ver, tag
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_size
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from poster_size
+		where id =
+		#{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.poster.bean.PosterSize">
+		insert into poster_size (id, width, height,
+		hor_ver, tag)
+		values (#{id,jdbcType=INTEGER}, #{width,jdbcType=INTEGER}, #{height,jdbcType=INTEGER},
+		#{horVer,jdbcType=VARCHAR}, #{tag,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.poster.bean.PosterSize">
+		insert into poster_size
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="width != null">
+				width,
+			</if>
+			<if test="height != null">
+				height,
+			</if>
+			<if test="horVer != null">
+				hor_ver,
+			</if>
+			<if test="tag != null">
+				tag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="width != null">
+				#{width,jdbcType=INTEGER},
+			</if>
+			<if test="height != null">
+				#{height,jdbcType=INTEGER},
+			</if>
+			<if test="horVer != null">
+				#{horVer,jdbcType=VARCHAR},
+			</if>
+			<if test="tag != null">
+				#{tag,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.poster.bean.PosterSize">
+		update poster_size
+		<set>
+			<if test="width != null">
+				width = #{width,jdbcType=INTEGER},
+			</if>
+			<if test="height != null">
+				height = #{height,jdbcType=INTEGER},
+			</if>
+			<if test="horVer != null">
+				hor_ver = #{horVer,jdbcType=VARCHAR},
+			</if>
+			<if test="tag != null">
+				tag = #{tag,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.poster.bean.PosterSize">
+		update poster_size
+		set width =
+		#{width,jdbcType=INTEGER},
+		height = #{height,jdbcType=INTEGER},
+		hor_ver =
+		#{horVer,jdbcType=VARCHAR},
+		tag = #{tag,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="query" parameterType="com.zltel.broadcast.poster.bean.PosterSize"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from poster_size
+		<where>
+			<include refid="PosterSizeWhere" />
+		</where>
+	</select>
+
+	<sql id="PosterSizeWhere">
+		<if test="horVer != null">
+			AND hor_ver=#{horVer}
+		</if>
+		<if test="width != null">
+			AND width=#{width}
+		</if>
+		<if test="id != null">
+			AND id=#{id}
+		</if>
+		<if test="tag != null">
+			AND tag=#{tag}
+		</if>
+		<if test="height != null">
+			AND height=#{height}
+		</if>
+	</sql>
+</mapper>

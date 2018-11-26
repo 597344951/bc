@@ -39,6 +39,9 @@
     <result column="join_work_date" jdbcType="TIMESTAMP" property="joinWorkDate" />
     <result column="appointment_time_length" jdbcType="INTEGER" property="appointmentTimeLength" />
     <result column="first_line_situation" jdbcType="INTEGER" property="firstLineSituation" />
+    <result column="income" jdbcType="INTEGER" property="income" />
+    <result column="party_proportion" jdbcType="INTEGER" property="partyProportion" />
+    <result column="dev_people" jdbcType="INTEGER" property="devPeople" />
   </resultMap>
   <sql id="Base_Column_List">
     base_user_id, name, sex, nation, native_place, home_address_province, home_address_city, 
@@ -47,7 +50,7 @@
     email, qq, wechat, id_photo, education, academic_degree, major, enrolment_time, graduation_time, 
     graduation_school, speciality_literature, speciality_major, marriage_status, children_status, is_party,
     positive_user, work_unit, work_nature, 
-    join_work_date, appointment_time_length, first_line_situation
+    join_work_date, appointment_time_length, first_line_situation, income, party_proportion, dev_people
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -72,7 +75,8 @@
       graduation_time, graduation_school, speciality_literature, 
       speciality_major, marriage_status, children_status, is_party, positive_user, 
       work_unit, 
-      work_nature, join_work_date, appointment_time_length, first_line_situation
+      work_nature, join_work_date, appointment_time_length, first_line_situation,
+      income, party_proportion, dev_people
       )
     values (#{baseUserId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{nation,jdbcType=INTEGER}, #{nativePlace,jdbcType=VARCHAR}, #{homeAddressProvince,jdbcType=VARCHAR}, 
@@ -88,7 +92,8 @@
       #{isParty,jdbcType=INTEGER}, #{positiveUser,jdbcType=INTEGER},
       #{workUnit,jdbcType=VARCHAR}, 
       #{workNature,jdbcType=INTEGER}, #{joinWorkDate,jdbcType=TIMESTAMP}, #{appointmentTimeLength,jdbcType=INTEGER}, 
-      #{firstLineSituation,jdbcType=INTEGER}
+      #{firstLineSituation,jdbcType=INTEGER}, #{income,jdbcType=INTEGER}, #{partyProportion,jdbcType=INTEGER},
+      #{devPeople,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.BaseUserInfo">
@@ -205,6 +210,15 @@
       <if test="firstLineSituation != null">
         first_line_situation,
       </if>
+      <if test="income != null">
+        income,
+      </if>
+      <if test="partyProportion != null">
+        party_proportion,
+      </if>
+      <if test="devPeople != null">
+        dev_people,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="baseUserId != null">
@@ -317,6 +331,15 @@
       </if>
       <if test="firstLineSituation != null">
         #{firstLineSituation,jdbcType=INTEGER},
+      </if>
+      <if test="income != null">
+        #{income,jdbcType=INTEGER},
+      </if>
+      <if test="partyProportion != null">
+        #{partyProportion,jdbcType=INTEGER},
+      </if>
+      <if test="devPeople != null">
+        #{devPeople,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -431,6 +454,15 @@
        <if test="firstLineSituation != null">
         first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
       </if>
+      <if test="income != null">
+        income = #{income,jdbcType=INTEGER},
+      </if>
+      <if test="partyProportion != null">
+        party_proportion = #{partyProportion,jdbcType=INTEGER},
+      </if>
+      <if test="devPeople != null">
+        dev_people = #{devPeople,jdbcType=INTEGER},
+      </if>
     </set>
     where base_user_id = #{baseUserId,jdbcType=INTEGER}
   </update>
@@ -471,7 +503,10 @@
       work_nature = #{workNature,jdbcType=INTEGER},
       join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
       appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
-      first_line_situation = #{firstLineSituation,jdbcType=INTEGER}
+      first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
+      income = #{income,jdbcType=INTEGER},
+      party_proportion = #{partyProportion,jdbcType=INTEGER},
+      dev_people = #{devPeople,jdbcType=INTEGER}
     where base_user_id = #{baseUserId,jdbcType=INTEGER}
   </update>
   

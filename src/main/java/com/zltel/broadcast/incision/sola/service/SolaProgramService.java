@@ -48,6 +48,7 @@ public interface SolaProgramService {
 
     /**
      * 删除节目
+     * 
      * @param programId
      */
     public void deleteProgram(int programId);
@@ -57,7 +58,9 @@ public interface SolaProgramService {
      * 
      * @return
      * @junit {@link com.zltel.broadcast.incision.sola.service.SolaProgramServiceTest#testQueryTerminal()}
+     * 使用: {@link SolaProgramService#getScreenList(int, Pager)}
      */
+    @Deprecated
     public List<Map<String, Object>> queryTerminal();
 
     /**
@@ -87,8 +90,10 @@ public interface SolaProgramService {
      * @return
      */
     public boolean terminalCommand(int tid, String label, String name, String code);
+
     /**
      * 执行终端操作
+     * 
      * @param cmd
      * @return
      */

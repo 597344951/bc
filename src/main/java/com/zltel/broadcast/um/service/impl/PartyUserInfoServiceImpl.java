@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,15 +34,17 @@ import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.util.CacheUtil;
 import com.zltel.broadcast.common.util.PasswordHelper;
 import com.zltel.broadcast.um.bean.BaseUserInfo;
-import com.zltel.broadcast.um.bean.DeedsType;
-import com.zltel.broadcast.um.bean.OrganizationRelation;
+import com.zltel.broadcast.um.bean.DeedsImg;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
 import com.zltel.broadcast.um.bean.SysRole;
 import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.bean.SysUserRole;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
+import com.zltel.broadcast.um.dao.DeedsImgMapper;
 import com.zltel.broadcast.um.dao.DeedsTypeMapper;
 import com.zltel.broadcast.um.dao.DeedsUserMapper;
+import com.zltel.broadcast.um.dao.JoinPartyOrgUserMapper;
+import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
 import com.zltel.broadcast.um.dao.SysRoleMapper;
 import com.zltel.broadcast.um.dao.SysUserMapper;
@@ -66,10 +69,12 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	
 	@Resource
 	private BaseUserInfoMapper baseUserInfoMapper;
-	
+	@Resource
+	private DeedsImgMapper deedsImgMapper;
 	@Resource
 	private OrganizationRelationService organizationRelationService;
-	
+	@Resource
+    private OrganizationRelationMapper organizationRelationMapper;
 	@Resource
 	private SysUserMapper sysUserMapper;
 	@Resource
@@ -80,7 +85,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     private DeedsTypeMapper deedsTypeMapper;
 	@Resource
 	private SysUserRoleMapper sysUserRoleMapper;
-	
+	@Resource
+    private JoinPartyOrgUserMapper joinPartyOrgUserMapper;
 	@Override
     public BaseDao<PartyUserInfo> getInstince() {
         return this.partyUserInfoMapper;
@@ -97,7 +103,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	 */
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
-	public R queryPartyUserInfos(Map<String, Object> partyUserMap, int pageNum, int pageSize) throws Exception {
+	public R queryPartyUserInfos(Map<String, Object> partyUserMap, int pageNum, int pageSize, boolean queryThis) throws Exception {
 		Subject subject = SecurityUtils.getSubject();
         SysUser sysUser = (SysUser) subject.getPrincipal();
         if (partyUserMap == null) partyUserMap = new HashMap<>();
@@ -113,7 +119,9 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
         	if (sysUser.getUserType() == 0) {
         		return R.ok().setCode(100).setMsg("非党员账户请先设置管理员类型");
         	} else if (sysUser.getUserType() == 1) {
-            	partyUserMap.put("idCard", sysUser.getUsername());
+        		if (queryThis) {     //党费代缴时用身份证查询他人信息时不设置登录用户自身的身份证   			
+        			partyUserMap.put("idCard", sysUser.getUsername());
+        		}
             }
         }
         
@@ -123,7 +131,6 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 		List<Map<String, Object>> partyUserInfos = partyUserInfoMapper.queryPartyUserInfos(partyUserMap);	//开始查询，没有条件则查询所有组织关系
 		PageInfo<Map<String, Object>> partyUserInfosPageInfo = new PageInfo<>(partyUserInfos);
 		if (partyUserInfosPageInfo != null && partyUserInfosPageInfo.getList() != null && partyUserInfosPageInfo.getList().size() > 0) {	//是否查询到数据
-			List<DeedsType> dts = deedsTypeMapper.queryDeedsTypes(null);
 			for (Map<String, Object> partyUserInfo : partyUserInfos) {
 				partyUserInfo.put("birthDate", 
 						DateUtil.formatDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("birthDate") == null ||
@@ -143,6 +150,9 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 				partyUserInfo.put("joinWorkDate", 
 						DateUtil.formatDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("joinWorkDate") == null ||
 						partyUserInfo.get("joinWorkDate") == "" ? null : (Date)partyUserInfo.get("joinWorkDate")));
+				partyUserInfo.put("orgJoinTime", 
+						DateUtil.formatDate(DateUtil.YYYY_MM_DD, StringUtil.isEmpty(String.valueOf(partyUserInfo.get("orgJoinTime"))) 
+						? null : (Date)partyUserInfo.get("orgJoinTime")));
 				partyUserInfo.put("typeName", partyUserInfo.get("type") == null || partyUserInfo.get("type") == "" ? 
 						null : (int)partyUserInfo.get("type") == 1 ? "正式党员" : "预备党员");
 				partyUserInfo.put("statusName", partyUserInfo.get("type") == null || partyUserInfo.get("type") == "" ? 
@@ -171,20 +181,60 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 				partyUserInfo.put("joinDateFormalAge", getPartyUserAge(joinDateFormal));
 				
 				
-				if (dts != null && dts.size() > 0) {
-					Map<String, Object> conditions = new HashMap<>();
-					for (DeedsType deedsType : dts) {
-						conditions.put("deedsTypeId", deedsType.getId());
-						conditions.put("userId", partyUserInfo.get("id"));
-						List<Map<String, Object>> dusMap = deedsUserMapper.queryDeedsUsers(conditions);
-						if (dusMap != null && dusMap.size() > 0 && "个人荣誉".equals(deedsType.getName())) {
-							for (Map<String, Object> map : dusMap) {
+				Map<String, Object> conditions = new HashMap<>();
+				conditions.put("userId", partyUserInfo.get("id"));
+				List<Map<String, Object>> dusMap = deedsUserMapper.queryDeedsUsers(conditions);
+				if (dusMap != null && dusMap.size() > 0) {
+					Map<String, List<Map<String, Object>>> duss = new HashMap<>();
+					
+					//按照id分类
+					for (Map<String, Object> dus : dusMap) {
+						if (duss.get(dus.get("similarId")) != null) {
+							duss.get(dus.get("similarId")).add(dus);
+						} else {
+							List<Map<String, Object>> list = new ArrayList<>();
+							list.add(dus);
+							duss.put(String.valueOf(dus.get("similarId")), list);
+						}
+					}
+					
+					List<Map<String, List<Map<String, Object>>>> dusList = new ArrayList<>();
+					if (duss.keySet().size() > 0) {
+						for (String key : duss.keySet()) {
+							List<Map<String, Object>> duss2 = duss.get(key);	//拿到一类
+							
+							Map<String, List<Map<String, Object>>> dtDus = new HashMap<>();
+							for (Map<String, Object> map : duss2) {
 								map.put("occurrenceTime", 
 										DateUtil.formatDate(DateUtil.YYYY_MM_DD, map.get("occurrenceTime") == null ||
-												map.get("occurrenceTime") == "" ? null : (Date)map.get("occurrenceTime")));
+										map.get("occurrenceTime") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD, String.valueOf(map.get("occurrenceTime")))));
+								DeedsImg queryDi = new DeedsImg();
+								queryDi.setDeedsUserId(Integer.parseInt(String.valueOf(map.get("id"))));
+								List<DeedsImg> diMgs = deedsImgMapper.queryDeedsImgs(queryDi);
+								map.put("diMgs", diMgs);
+								if (dtDus.get(map.get("deedsTypeName")) != null) {
+									dtDus.get(map.get("deedsTypeName")).add(map);
+								} else {
+									List<Map<String, Object>> list = new ArrayList<>();
+									list.add(map);
+									dtDus.put(String.valueOf(map.get("deedsTypeName")), list);
+								}
 							}
+							dusList.add(dtDus);
 						}
-						partyUserInfo.put(deedsType.getName(), dusMap);
+					}
+					
+					partyUserInfo.put("shiji", dusList);
+				}
+				
+				//非党员申请入党记录
+				if ("0".equals(String.valueOf(partyUserInfo.get("type"))) || "0".equals(String.valueOf(partyUserInfo.get("isParty")))) {
+					Map<String, Object> joinCondition = new HashMap<>();
+					joinCondition.put("baseUserId", partyUserInfo.get("id"));
+					joinCondition.put("isHistory", partyUserInfo.get("0"));
+					List<Map<String, Object>> joinPartyUsers = joinPartyOrgUserMapper.queryJoinPartyOrgUsers(joinCondition);
+					if (joinPartyUsers != null && joinPartyUsers.size() > 0) {
+						partyUserInfo.put("joinPartyUserInfo", joinPartyUsers.get(0));
 					}
 				}
 			}
@@ -212,7 +262,7 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
             if (StringUtil.isEmpty((String)partyUserInfos.get(0).get("idPhoto"))) {
             	bis = this.getClass().getResourceAsStream("/noFoundIdPhoto.jpg");
             } else {            	
-            	bis = new FileInputStream(new File(uploadIdPhotoPath + File.separator + (String)partyUserInfos.get(0).get("idPhoto")));
+            	bis = new FileInputStream(new File((String)partyUserInfos.get(0).get("idPhoto")));
             }
             try {
     		int i = bis.read(buff);
@@ -355,58 +405,52 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	partyUserInfo.setIntroduce((String)partyUser.get("introduce"));
     	
     	String partyUserIdPhotoTempFileName = partyUser.get("partyUserIdPhotoTempFileName") == null ? null : partyUser.get("partyUserIdPhotoTempFileName").toString();	//临时照片文件名
-    	if (StringUtil.isEmpty(partyUserIdPhotoTempFileName)) {	//没有用户证件照
-    		throw new Exception();
-    	}
-    	
-    	String idPhotoPathTemp = uploadIdPhotoTempPath + File.separator + partyUserIdPhotoTempFileName;	//临时照片全路径
-    	String idPhotoPath = uploadIdPhotoPath;	//上传照片文件夹路径
-    	String idPhotoName = baseUserInfo.getIdCard() + File.separator + request.getSession().getAttribute("partyUserIdPhotoFileName").toString();	//上传照片文件名
-    	baseUserInfo.setIdPhoto(idPhotoName);	//上传照片全路径
+    	baseUserInfo.setIdPhoto(partyUserIdPhotoTempFileName);	//上传照片全路径
     	int insertBaseUserInfoCount = baseUserInfoMapper.insertSelective(baseUserInfo);	//保存基础信息
     	List<BaseUserInfo> baseUserInfos = baseUserInfoMapper.queryBaseUserInfos(baseUserInfo);	//查询基础信息id
     	if (insertBaseUserInfoCount != 1 || baseUserInfos == null ? true : baseUserInfos.size() != 1 ? true : false) {	//插入失败，抛异常回滚
     		throw new Exception();
     	}
+    	
+    	//添加登录用户
+    	SysUser su = new SysUser();
+    	su.setUsername(baseUserInfo.getIdCard());
+    	su.setPassword(baseUserInfo.getIdCard().substring(baseUserInfo.getIdCard().length() - 6));
+    	String salt = UUID.randomUUID().toString();
+    	su.setSalt(salt);	//保存盐
+    	su.setPassword(PasswordHelper.encryptPassword(su.getPassword(), salt));	//加密
+    	su.setEmail(baseUserInfo.getEmail());
+    	su.setMobile(baseUserInfo.getMobilePhone());
+    	su.setStatus(true);
+    	su.setUserType(1);
+    	su.setCreateTime(new Date());
+		int count = sysUserMapper.insertSelective(su);
+		if (count != 1) {
+			throw new Exception();
+		}
+		//赋予默认角色
+		SysRole sysRole = new SysRole();
+		sysRole.setRoleName("party_role");
+		List<SysRole> srs = sysRoleMapper.querySysRoles(sysRole);
+		if (srs != null && srs.size() == 1) {
+			SysUserRole sur = new SysUserRole();
+			sur.setUserId((long)su.getUserId());
+			sur.setRoleId(srs.get(0).getRoleId());
+			count = sysUserRoleMapper.insertSelective(sur);
+			if (count != 1) {
+				throw new Exception();
+			}
+		} else {
+			throw new Exception();
+		}
+    	
     	if (baseUserInfo.getIsParty() == 1) {
     		partyUserInfo.setPartyUserId(baseUserInfos.get(0).getBaseUserId());	//设置id
         	int insertPartyUserInfoCount = partyUserInfoMapper.insertSelective(partyUserInfo);	//保存党员信息
         	if (insertPartyUserInfoCount != 1) {	//插入失败，抛异常回滚
         		throw new Exception();
         	}
-        	
-        	SysUser su = new SysUser();
-        	su.setUsername(baseUserInfo.getIdCard());
-        	su.setPassword(baseUserInfo.getIdCard().substring(baseUserInfo.getIdCard().length() - 6));
-        	String salt = UUID.randomUUID().toString();
-        	su.setSalt(salt);	//保存盐
-        	su.setPassword(PasswordHelper.encryptPassword(su.getPassword(), salt));	//加密
-        	su.setEmail(baseUserInfo.getEmail());
-        	su.setMobile(baseUserInfo.getMobilePhone());
-        	su.setStatus(true);
-        	su.setUserType(1);
-        	su.setCreateTime(new Date());
-			int count = sysUserMapper.insertSelective(su);
-			if (count != 1) {
-				throw new Exception();
-			}
-			//赋予默认角色
-			SysRole sysRole = new SysRole();
-			sysRole.setRoleName("party_role");
-			List<SysRole> srs = sysRoleMapper.querySysRoles(sysRole);
-			if (srs != null && srs.size() == 1) {
-				SysUserRole sur = new SysUserRole();
-				sur.setUserId((long)su.getUserId());
-				sur.setRoleId(srs.get(0).getRoleId());
-				count = sysUserRoleMapper.insertSelective(sur);
-				if (count != 1) {
-					throw new Exception();
-				}
-			} else {
-				throw new Exception();
-			}
     	}
-    	FileUtil.writeFile(new FileInputStream(new File(idPhotoPathTemp)), idPhotoPath, idPhotoName);	//保存证件照
     	return R.ok().setMsg("党员信息注册成功");
     }
     
@@ -415,17 +459,12 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
      */
     @Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
-    public R updatePartyUserIdPhoto(HttpServletRequest request, MultipartFile file, Map<String, Object> partyUser) throws Exception {
-    	if (file == null) 
-    		return R.error().setMsg("为选择图片");
+    public R updatePartyUserIdPhoto(HttpServletRequest request, Map<String, Object> partyUser) throws Exception {
     	List<Map<String, Object>> puiMaps = partyUserInfoMapper.queryPartyUserInfos(partyUser);
     	if (puiMaps != null && puiMaps.size() == 1) {
-    		String idPhotoPath = uploadIdPhotoPath;	//上传照片文件夹路径
-    		String idPhotoName = puiMaps.get(0).get("idCard") + File.separator + file.getOriginalFilename();	//上传照片文件名
-    		FileUtil.writeFile(file.getInputStream(), idPhotoPath, idPhotoName);	//保存证件照
     		BaseUserInfo bui = new BaseUserInfo();
     		bui.setBaseUserId(Integer.parseInt(puiMaps.get(0).get("id").toString()));
-    		bui.setIdPhoto(idPhotoName);
+    		bui.setIdPhoto(String.valueOf(partyUser.get("filePath")));
     		int updateBaseUserInfoCount = baseUserInfoMapper.updateByPrimaryKeySelective(bui);
     		if (updateBaseUserInfoCount != 1) {	//更新失败，抛异常回滚
         		throw new Exception();
@@ -579,29 +618,22 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
      */
     @Override
     @Transactional(rollbackFor=java.lang.Exception.class)
-    public R deletePartyUserInfo(BaseUserInfo baseUserInfo) throws Exception {
+    public R deletePartyUserInfo(BaseUserInfo baseUserInfo) {
     	if(baseUserInfo != null) {
     		baseUserInfo = baseUserInfoMapper.selectByPrimaryKey(baseUserInfo.getBaseUserId());
-			int countpui = this.deleteByPrimaryKey(baseUserInfo.getBaseUserId());	//开始删除党员用户信息
-			int countBui = baseUserInfoMapper.deleteByPrimaryKey(baseUserInfo.getBaseUserId()); //删除基础用户信息
-			OrganizationRelation or = new OrganizationRelation();
-			or.setOrgRltUserId(baseUserInfo.getBaseUserId());
-			organizationRelationService.deleteOrgRelationByUserId(or).get("data");
-			if (StringUtil.isNotEmpty(baseUserInfo.getIdCard())) {
+			this.deleteByPrimaryKey(baseUserInfo.getBaseUserId());	//开始删除党员用户信息
+			baseUserInfoMapper.deleteByPrimaryKey(baseUserInfo.getBaseUserId()); //删除基础用户信息
+			organizationRelationMapper.deleteOrgRelationByUserId(baseUserInfo.getBaseUserId());	//删除组织关系
+			if (StringUtil.isNotEmpty(baseUserInfo.getIdCard())) {	//删除登录账户
 				SysUser su = new SysUser();
 				su.setUsername(baseUserInfo.getIdCard());
 				sysUserMapper.deleteByUserName(su);
 				CacheUtil.clearAuthenticationCache(su.getUsername());
 			}
 			
-			
-			if (countpui == 1 && countBui == 1) {	//受影响的行数，判断是否全部删除
-				return R.ok().setMsg("党员删除成功！");
-			} else {	//没有受影响行数或者受影响行数与要删除的用户数量不匹配表示删除失败
-				throw new Exception();
-			}
+			return R.ok().setMsg("党员删除成功！");
 		} else {	//删除用户一定需要一个用户信息
-			throw new Exception();
+			return R.error().setMsg("请选择要删除的用户");
 		}
     }
     
