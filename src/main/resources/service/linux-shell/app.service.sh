@@ -44,7 +44,7 @@ case "$1" in
 		if [ $? -eq 0 ]
 		then
 			echo "程序已启动, 请停止后再启动"
-			exit -1
+			exit 1
 		fi
 		java -jar ${JAVA_OPTS} ${app_home}${app_file_name} >> ${app_log_file} &
 		pidnum=$!
