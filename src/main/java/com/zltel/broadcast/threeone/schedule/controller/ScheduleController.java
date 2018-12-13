@@ -50,9 +50,14 @@ public class ScheduleController extends BaseController {
 
     @GetMapping("/")
     @ResponseBody
-    public R query() {
+    public R query(String meetingType) {
         R r = R.ok();
-        r.setData(scheduleService.queryEnableSchedule(getSysUser()));
+        if("life".equals(meetingType)) {
+            r.setData(scheduleService.queryLifeEnableSchedule(getSysUser()));
+        } else {
+            r.setData(scheduleService.queryThreeoneEnableSchedule(getSysUser()));
+        }
+
         return r;
     }
 
@@ -97,6 +102,6 @@ public class ScheduleController extends BaseController {
     public String notice(Model model, @PathVariable("id") int id) {
         model.addAttribute("schedule", scheduleService.getSchedule(id));
         messageService.handleMessage(getSysUser(), id);
-        return "/view/threeone/notice/notice01";
+        return "/html/threeone/notice/notice01";
     }
 }

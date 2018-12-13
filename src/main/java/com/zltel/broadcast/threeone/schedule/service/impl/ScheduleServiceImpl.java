@@ -58,19 +58,38 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<Schedule> queryEnableSchedule(SysUser user) {
         Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
         Integer orgId = user == null ? null : user.getOrgId();
-        return scheduleMapper.selectByTime(orgId, timeStartFrom, null, null, null, null, 1, Integer.MAX_VALUE);
+        return scheduleMapper.selectByTime(orgId, timeStartFrom, null, null, null, null, null, 1, Integer.MAX_VALUE);
     }
 
     @Override
-    public List<Schedule> queryCompletedSchedule(SysUser user, int pageNum, int pageSize) {
+    public List<Schedule> queryThreeoneEnableSchedule(SysUser user) {
+        Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
+        Integer orgId = user == null ? null : user.getOrgId();
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+            add(3);
+            add(4);
+        }};
+        return scheduleMapper.selectByTime(orgId, timeStartFrom, null, null, null, types, null, 1, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public List<Schedule> queryThreeoneCompletedSchedule(SysUser user, int pageNum, int pageSize) {
         Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
         Integer orgId = user == null ? null : user.getOrgId();
-        return scheduleMapper.selectByTime(orgId, null, null, null, timeEndTo, "desc", pageNum, pageSize);
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+            add(3);
+            add(4);
+        }};
+        return scheduleMapper.selectByTime(orgId, null, null, null, timeEndTo, types, "desc", pageNum, pageSize);
     }
 
     @Override
     public Map<Integer, Object> countCompletedSchedule(SysUser user) {
-        List<Schedule> schedules = queryCompletedSchedule(user, 1, Integer.MAX_VALUE);
+        List<Schedule> schedules = queryThreeoneCompletedSchedule(user, 1, Integer.MAX_VALUE);
         Map<Integer, Object> count = new HashMap<>();
         schedules.stream().forEach(schedule -> {
             LocalDate ld = schedule.getStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -181,5 +200,44 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<Map<String, Object>> queryOrgMembers(Integer orgId) {
         return scheduleMapper.selectMembers(orgId, null);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryThreeoneParticipantSchedule(String username, int pageNum, int pageSize) {
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+            add(3);
+            add(4);
+        }};
+        return scheduleMapper.selectByUsername(username, types, pageNum, pageSize);
+    }
+
+    @Override
+    public List<Schedule> queryLifeEnableSchedule(SysUser user) {
+        Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
+        Integer orgId = user == null ? null : user.getOrgId();
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(5);
+        }};
+        return scheduleMapper.selectByTime(orgId, timeStartFrom, null, null, null, types, null, 1, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public List<Schedule> queryLifeCompletedSchedule(SysUser user, int pageNum, int pageSize) {
+        Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
+        Integer orgId = user == null ? null : user.getOrgId();
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(5);
+        }};
+        return scheduleMapper.selectByTime(orgId, null, null, null, timeEndTo, types, "desc", pageNum, pageSize);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryLifeParticipantSchedule(String username, int pageNum, int pageSize) {
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(5);
+        }};
+        return scheduleMapper.selectByUsername(username, types, pageNum, pageSize);
     }
 }

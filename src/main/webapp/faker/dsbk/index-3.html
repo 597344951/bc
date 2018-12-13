@@ -1,178 +1,326 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html >
+<html>
+
 <head>
-<meta http-equiv="Content-Language" content="utf-8" />
-<title>党史百科</title>
-<!-- 调用样式表 -->
-<link rel="stylesheet"  href="page.css" type="text/css" media="all"  />
-<link rel="stylesheet"  href="mask.css" type="text/css" media="all"  />
-<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
-<script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
-<script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
-<style>
-  .make-program{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: cornflowerblue;
-    padding:6px 14px;
-    border-radius: 6px;
-    color:#fff!important;
-    font-weight: bold;
-    font-size: 14px;
-    font-family: "microsoft yahei";
-  }
-  .make-program:hover{
-    color: #fff;
-    background-color: #5582d4;
-    text-decoration: none;
-  }
-  .make-program:active{
-    font-size: 15px;
-  }
-  #app{
-      padding-top: 10%!important;
+  <meta http-equiv="Content-Language" content="utf-8" />
+  <title>党史百科</title>
+  <!-- 调用样式表 -->
+  <link rel="stylesheet" href="page.css" type="text/css" media="all" />
+  <link rel="stylesheet" href="mask.css" type="text/css" media="all" />
+  <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+  <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+  <script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+  <style>
+    .make-program {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: cornflowerblue;
+      padding: 6px 14px;
+      border-radius: 6px;
+      color: #fff !important;
+      font-weight: bold;
+      font-size: 14px;
+      font-family: "microsoft yahei";
     }
-</style>
+
+    .make-program:hover {
+      color: #fff;
+      background-color: #5582d4;
+      text-decoration: none;
+    }
+
+    .make-program:active {
+      font-size: 15px;
+    }
+
+    #app {
+      padding-top: 10% !important;
+    }
+  </style>
 </head>
 
 <body>
-  <a class="make-program"  onclick="makeshow()" >
+  <a class="make-program" onclick="makeshow()">
     节目制作
   </a>
-<div id="app">
-  <div class="top02 clear w980">
-    <img src="top01.jpg" width="488" height="167" />
-    <img src="top02.jpg" width="492" height="167" />
-  </div>
-  <div class="content-mask" id="mask">
-    <h5 >{{title}}</h5>
-    <p >{{content}}</p>
-  </div>
-  <div class="clearfix p1_content">
-    <div>
-    <h2>1990—1999</h2>
-    <ul><li><a href='##'   @click="show('')" >村民自治</a></li>
-  </ul>
-    <h2>2000--2012</h2>
-    <ul><li><a href='##'   @click="show('“三个代表”重要思想')" >“三个代表”重要思想</a></li>
-  <li><a href='##'   @click="show('')" >中共十六大</a></li>
-  <li><a href='##'   @click="show('')" >科学发展观 </a></li>
-  <li><a href='##'   @click="show('')" >公开选拔党政领导干部</a></li>
-  <li><a href='##'   @click="show('')" >保持共产党员先进性教育活动</a></li>
-  <li><a href='##'   @click="show('')" >保护合法私有财产入宪</a></li>
-  <li><a href='##'   @click="show('')" >国共两党领导人60年来首次会谈</a></li>
-  <li><a href='##'   @click="show('社会主义和谐社会')" >社会主义和谐社会</a></li>
-  <li><a href='##'   @click="show('')" >十二大至十七大党章的五次修正</a></li>
-  <li><a href='##'   @click="show('')" >中共十七大</a></li>
-  <li><a href='##'   @click="show('')" >深入学习实践科学发展观活动</a></li>
-  <li><a href='##'   @click="show('')" >新中国成立60周年庆典</a></li>
-  <li><a href='##'   @click="show('')" >《中国共产党党员领导干部廉洁从政若干准则》</a></li>
-  </ul>
+  <div id="app">
+    <div class="top02 clear w980">
+      <img src="top01.jpg" width="488" height="167" />
+      <img src="top02.jpg" width="492" height="167" />
     </div>
-    <div class="fl">
-    <h2>2000--2012</h2>
-    <ul><li><a href='##'   @click="show('')" >干部选拔任用工作四项监督制度</a></li>
-  <li><a href='##'   @click="show('')" >修改选举法</a></li>
-  <li><a href='##'   @click="show('')" >创先争优活动</a></li>
-  <li><a href='##'   @click="show('中共十七届五中全会')" >中共十七届五中全会</a></li>
-  <li><a href='##'   @click="show('')" >事业单位改革</a></li>
-  <li><a href='##'   @click="show('')" >“三公”经费公开</a></li>
-  <li><a href='##'   @click="show('')" >中国特色社会主义法律体系形成</a></li>
-  <li><a href='##'   @click="show('')" >政务微博</a></li>
-  <li><a href='##'   @click="show('')" >中国共产党成立90周年</a></li>
-  <li><a href='##'   @click="show('')" >辛亥百年</a></li>
-  <li><a href='##'   @click="show('')" >文化体制改革</a></li>
-  <li><a href='##'   @click="show('')" >党的十七届六中全会</a></li>
-  </ul>
-    
+    <div class="content-mask" id="mask">
+      <h5>{{title}}</h5>
+      <p>{{content}}</p>
     </div>
-<div>
-  <span>
-    <a href="index.html" >1</a>
-    <a href="index-1.html">2</a>
-    <a href="index-2.html">3</a>
-    <a href="index-3.html" class="onpage">4</a>
-  </span>
-</div>
+    <div class="clearfix p1_content">
+      <div>
+        <h2>1990—1999</h2>
+        <ul>
+          <li><a href="##" @click="show('村民自治')">村民自治</a></li>
+        </ul>
+        <h2>2000--2012</h2>
+        <ul>
+          <li><a href="##" @click="show('“三个代表”重要思想')">“三个代表”重要思想</a></li>
+          <li><a href="##" @click="show('中共十六大')">中共十六大</a></li>
+          <li><a href="##" @click="show('科学发展观')">科学发展观 </a></li>
+          <li><a href="##" @click="show('公开选拔党政领导干部')">公开选拔党政领导干部</a></li>
+          <li><a href="##" @click="show('保持共产党员先进性教育活动')">保持共产党员先进性教育活动</a></li>
+          <li><a href="##" @click="show('保护合法私有财产入宪')">保护合法私有财产入宪</a></li>
+          <li><a href="##" @click="show('国共两党领导人60年来首次会谈')">国共两党领导人60年来首次会谈</a></li>
+          <li><a href="##" @click="show('社会主义和谐社会')">社会主义和谐社会</a></li>
+          <li><a href="##" @click="show('十二大至十七大党章的五次修正')">十二大至十七大党章的五次修正</a></li>
+          <li><a href="##" @click="show('中共十七大')">中共十七大</a></li>
+          <li><a href="##" @click="show('深入学习实践科学发展观活动')">深入学习实践科学发展观活动</a></li>
+          <li><a href="##" @click="show('新中国成立60周年庆典')">新中国成立60周年庆典</a></li>
+          <li><a href="##" @click="show('《中国共产党党员领导干部廉洁从政若干准则》')">《中国共产党党员领导干部廉洁从政若干准则》</a></li>
+        </ul>
+      </div>
+      <div class="fl">
+        <h2>2000--2012</h2>
+        <ul>
+          <li><a href="##" @click="show('干部选拔任用工作四项监督制度')">干部选拔任用工作四项监督制度</a></li>
+          <li><a href="##" @click="show('修改选举法')">修改选举法</a></li>
+          <li><a href="##" @click="show('创先争优活动')">创先争优活动</a></li>
+          <li><a href="##" @click="show('中共十七届五中全会')">中共十七届五中全会</a></li>
+          <li><a href="##" @click="show('事业单位改革')">事业单位改革</a></li>
+          <li><a href="##" @click="show('“三公”经费公开')">“三公”经费公开</a></li>
+          <li><a href="##" @click="show('中国特色社会主义法律体系形成')">中国特色社会主义法律体系形成</a></li>
+          <li><a href="##" @click="show('政务微博')">政务微博</a></li>
+          <li><a href="##" @click="show('中国共产党成立90周年')">中国共产党成立90周年</a></li>
+          <li><a href="##" @click="show('辛亥百年')">辛亥百年</a></li>
+          <li><a href="##" @click="show('文化体制改革')">文化体制改革</a></li>
+          <li><a href="##" @click="show('党的十七届六中全会')">党的十七届六中全会</a></li>
+        </ul>
+
+      </div>
+      <div>
+        <span>
+          <a href="index.html">1</a>
+          <a href="index-1.html">2</a>
+          <a href="index-2.html">3</a>
+          <a href="index-3.html" class="onpage">4</a>
+        </span>
+      </div>
+    </div>
+    <div class="line w980 clear"></div>
   </div>
-  <div class="line w980 clear"></div>
-</div>
 
 </body>
-<script >
+<script>
   var appInstince = new Vue({
-    el: '#app',	
-    data:{
-      title:'“三个代表”重要思想',
-      content:'“三个代表”重要思想是江泽民同志2000年2月25日在广东省考察工作时，从全面总结党的历史经验和如何适应新形势新任务的要求出发，首次对“三个代表”重要思想进行了比较全面的阐述。具体内容为中国共产党始终代表中国先进生产力的发展要求、中国先进文化的前进方向、中国最广大人民的根本利益，是我们党的立党之本、执政之基、力量之源。',
+    el: '#app',
+    data: {
+      title: '“三个代表”重要思想',
+      content: '“三个代表”重要思想是江泽民同志2000年2月25日在广东省考察工作时，从全面总结党的历史经验和如何适应新形势新任务的要求出发，首次对“三个代表”重要思想进行了比较全面的阐述。具体内容为中国共产党始终代表中国先进生产力的发展要求、中国先进文化的前进方向、中国最广大人民的根本利益，是我们党的立党之本、执政之基、力量之源。',
     },
-    methods:{
-      show(t){
-        var title=appInstince.title;
-        var content=appInstince.content;
-        var a=t;
-        if(a=='“三个代表”重要思想'){
-         this.title=a;
-         this.content="“三个代表”重要思想是江泽民同志2000年2月25日在广东省考察工作时，从全面总结党的历史经验和如何适应新形势新任务的要求出发，首次对“三个代表”重要思想进行了比较全面的阐述。具体内容为中国共产党始终代表中国先进生产力的发展要求、中国先进文化的前进方向、中国最广大人民的根本利益，是我们党的立党之本、执政之基、力量之源。.";
+    methods: {
+      show(t) {
+        var title = appInstince.title;
+        var content = appInstince.content;
+        var a = t;
+
+        if (a == '村民自治') {
+          this.title = a;
+          this.content = "“村民自治”的提法始见于1982年我国修订颁布的《宪法》第111条，规定村民委员会是基层群众自治性组织 。四个民主 的提法始见于1994年民政部下发的关于开展村民自治示范活动的通知之中。从村民自治 到四个民主，我们对基层民主的认识是逐步完善、逐步提高的。";
         };
-        if(a=='社会主义和谐社会'){
-         this.title=a;
-         this.content="社会主义和谐社会是人类孜孜以求的一种美好社会，民主主义政党不懈追求的一种社会理想。中外历史上都产生过不少有关社会和谐的思想。进入21世纪后，十六大和十六届三中全会、四中全会，从全面建设小康社会、开创中国特色社会主义事业新局面的全局出发，明确提出构建和谐社会的战略任务，并将其作为加强党的执政能力建设的重要内容。十六大报告第一次将“社会更加和谐”作为重要目标提出。十六届四中全会，进一步提出构建和谐社会的任务。.";
+        if (a == '“三个代表”重要思想') {
+          this.title = a;
+          this.content =
+            "“三个代表”重要思想是江泽民同志2000年2月25日在广东省考察工作时，从全面总结党的历史经验和如何适应新形势新任务的要求出发，首次对“三个代表”重要思想进行了比较全面的阐述。具体内容为中国共产党始终代表中国先进生产力的发展要求、中国先进文化的前进方向、中国最广大人民的根本利益，是我们党的立党之本、执政之基、力量之源。";
         };
-        if(a=='中共十七届五中全会'){
-         this.title=a;
-         this.content="党的十七届五中全会将在2010年10月15日—18日在北京召开。大会将集中讨论审议“十二五”规划建议。“十二五”时期是全面建设小康社会的关键时期，是深化改革开放、加快转变经济发展方式的攻坚时期。深刻认识并全面把握国内外形势新变化新特点，研究和提出关于制定国民经济和社会发展“十二五”规划的建议，对科学编制“十二五”规划，对继续抓住和用好我国发展的重要战略机遇期、保持经济平稳较快发展，对夺取全面建设小康社会新胜利、开创中国特色社会主义事业新局面，具有十分重要的意义。.";
+        if (a == '中共十六大') {
+          this.title = a;
+          this.content =
+            "中国共产党第十六次全国代表大会于２００２年１１月８日至１４日在北京召开。这次大会应到正式代表２１１４名、特邀代表４０名（共２１５４名）（出席开幕式的代表和特邀代表共２１３４人），代表了全党６６００多万党员。大会通过了《关于十五届中央委员会报告的决议》、《关于〈中国共产党章程（修正案）〉的决议》（这一修正案自通过之日起生效）、《关于中央纪律检查委员会工作报告的决议》。大会以无记名投票方式，选举出由１９８名委员、１５８名候补委员组成的十六届中央委员会，选举出由１２１名委员组成的中央纪律检查委员会。";
         };
+        if (a == '科学发展观') {
+          this.title = a;
+          this.content =
+            "党的十六大以来，以胡锦涛同志为总书记的党中央，高举中国特色社会主义伟大旗帜，以邓小平理论和“三个代表”重要思想为指导，立足社会主义初级阶段基本国情，总结中国发展实践，借鉴国外发展经验，适应中国发展要求，提出了科学发展观这一重大战略思想。中共中央总书记胡锦涛在2003年7月28日的讲话中提出“坚持以人为本，树立全面、协调、可持续的发展观，促进经济社会和人的全面发展”，按照“统筹城乡发展、统筹区域发展、统筹经济社会发展、统筹人与自然和谐发展、统筹国内发展和对外开放”的要求推进各项事业的改革和发展的方法论--科学发展观，也是中国共产党的重大战略思想。中国共产党第十七次全国代表大会把科学发展观写入党章，中国共产党第十八次全国代表大会把科学发展观列入党的指导思想  。";
+        };
+        if (a == '公开选拔党政领导干部') {
+          this.title = a;
+          this.content =
+            "公选，即公开选拔，全称是党政领导干部公开选拔和竞争上岗。2002年，中央颁布《党政领导干部选拔任用工作条例》发布，规定公开选拔、竞争上岗主要适用于选拔任用地方党委、政府工作部门的领导成员或者其人选，党政机关内设机构的领导成员或者其人选，以及其他适于公开选拔、竞争上岗的领导职务。公开选拔面向社会进行，而竞争上岗在本单位或者本系统内部进行。";
+        };
+        if (a == '保持共产党员先进性教育活动') {
+          this.title = a;
+          this.content =
+            "根据党的十六大和十六届四中全会精神，为进一步加强党的执政能力建设，全面推进党的建设新的伟大工程，确保党始终走在时代前列，更好地肩负起历史使命，2004年11月7日，中共中央发布《关于在全党开展以实践“三个代表”重要思想为主要内容的保持共产党员先进性教育活动的意见》，决定从2005年1月开始，用一年半左右的时间，在全党开展以实践“三个代表”重要思想为主要内容的保持共产党员先进性教育活动，历时一年半，到2006年6月基本结束。";
+        };
+        if (a == '保护合法私有财产入宪') {
+          this.title = a;
+          this.content =
+            "2004年3月14日，十届全国人大二次会议审议通过了第四次宪法修正案，“公民的合法的私有财产不受侵犯”、“国家尊重和保护人权”等内容写入宪法。它适应了保护私有财产的客观需要，扩大了私有财产的保护范围，进一步完善了私有财产保护制度。加强对公民的合法的私有财产的保护，有利于坚持和完善基本经济制度，促进非公有制经济发展；有利于保障公民权利的实现，推进依法治国；有利于调动广大人民群众的积极性和创造性，全面建设小康社会。";
+        };
+        if (a == '国共两党领导人60年来首次会谈') {
+          this.title = a;
+          this.content =
+            "应中国共产党中央委员会总书记胡锦涛邀请，中国国民党主席连战率国民党大陆访问团，于二00五年四月二十六日至五月三日访问大陆。这是国共两党一次重要的交流与对话。在两党“正视现实，开创未来”的共同体认下，四月二十九日，胡总书记与连主席在北京举行会谈。双方就促进两岸关系改善和发展的重大问题及两党交往事宜，广泛而深入地交换了意见。这是六十年来国共两党主要领导人首次会谈，具有重大的历史和现实意义。四月二十八日，中共中央政治局常委贾庆林会见了国民党访问团全体成员。两党工作机构负责人进行了工作会谈。基于两党对促进两岸关系和平稳定发展的承诺和对人民利益的关切，胡总书记与连主席决定共同发布“两岸和平发展共同愿景”。";
+        };
+        if (a == '社会主义和谐社会') {
+          this.title = a;
+          this.content =
+            "社会主义和谐社会是人类孜孜以求的一种美好社会，民主主义政党不懈追求的一种社会理想。中外历史上都产生过不少有关社会和谐的思想。进入21世纪后，十六大和十六届三中全会、四中全会，从全面建设小康社会、开创中国特色社会主义事业新局面的全局出发，明确提出构建和谐社会的战略任务，并将其作为加强党的执政能力建设的重要内容。十六大报告第一次将“社会更加和谐”作为重要目标提出。十六届四中全会，进一步提出构建和谐社会的任务。";
+        };
+        if (a == '十二大至十七大党章的五次修正') {
+          this.title = a;
+          this.content =
+            "在总结中国社会主义现代化建设经验基础上，党的十四大、十五大、十六大通过党章修正案，使党的指导思想不断丰富，中国特色社会主义理论不断发展——十四大党章修改中，对建设有中国特色社会主义的理论作了新的概括；十五大党章修改中，把邓小平理论确立为党的指导思想；十六大党章修改中，把“三个代表”重要思想写入党章。党的十七大对十二大制定的《中国共产党章程》做出了第5次修改,于2007年10月21日通过。";
+        };
+        if (a == '中共十七大') {
+          this.title = a;
+          this.content =
+            "中国共产党第十七次全国代表大会于2007年10月15日至21日在北京召开。大会主题是：高举中国特色社会主义伟大旗帜，以邓小平理论和“三个代表”重要思想为指导，深入贯彻落实科学发展观，继续解放思想，坚持改革开放，推动科学发展，促进社会和谐，为夺取全面建设小康社会新胜利而奋斗。胡锦涛代表第十六届中央委员会向大会作了题为《高举中国特色社会主义伟大旗帜，为夺取全面建设小康社会新胜利而奋斗》的报告。大会的突出贡献，是对科学发展观的时代背景、科学内涵和精神实质进行了深刻阐述，对深入贯彻落实科学发展观提出了明确要求。";
+        };
+        if (a == '深入学习实践科学发展观活动') {
+          this.title = a;
+          this.content = "根据中国共产党的十七大部署，中共中央决定，从2008年9月开始，用一年半左右时间，在全党分批开展深入学习实践科学发展观活动。";
+        };
+        if (a == '新中国成立60周年庆典') {
+          this.title = a;
+          this.content = "首都各界庆祝中华人民共和国成立60周年大会是2009年10月1日上午在北京天安门广场20万军民以盛大的阅兵仪式和群众游行欢庆新中国60华诞的庆祝活动。";
+        };
+        if (a == '《中国共产党党员领导干部廉洁从政若干准则》') {
+          this.title = a;
+          this.content =
+            "《中国共产党党员领导干部廉洁从政若干准则》是党中央为加强党员领导干部廉洁自律工作采取的重要举措。廉政准则》在禁止“利用职权和职务上的影响谋取不正当利益”等8个方面对党员领导干部提出了52个“不准”，规范了党员领导干部的廉洁从政行为，并充实完善了相应的实施与监督制度，是一部规范党员领导干部廉洁从政行为的基础性法规。2015年10月，中共中央印发《中国共产党廉洁自律准则》（以下简称“准则”），《准则》自2016年1月1日起实施，《中国共产党党员领导干部廉洁从政若干准则》同时废止。";
+        };
+        if (a == '干部选拔任用工作四项监督制度') {
+          this.title = a;
+          this.content =
+            "四项干部监督制度（Four item of cadre control system ；4 cadre supervision system）。四项干部监督制度是指中央办公厅在2010年4月份颁布实施的《党政领导干部选拔任用工作责任追究办法（试行）》（以下简称《责任追究办法》）以及中央组织部同步印发了《党政领导干部选拔任用工作有关事项报告办法（试行）》、《地方党委常委会向全委会报告干部选拔任用工作并接受民主评议办法（试行）》、《市县党委书记履行干部选拔任用工作职责离任检查办法（试行）》（以下分别简称《有关事项报告办法》、《“一报告两评议”办法》、《离任检查办法》）等四项干部选拔任用工作方面的监督制度。";
+        };
+        if (a == '修改选举法') {
+          this.title = a;
+          this.content =
+            "改革开放以来，适应社会主义市场经济发展和社会主义民主政治发展的需要，我国人大代表选举制度进行了一系列重大改革和完善，改革和完善的主要方向是不断扩大社会主义民主。1982年12月五届全国人大五次会议、1986年12月六届全国人大常委会十八次会议、1995年2月八届全国人大常委会十二次会议、2004年10月十届全国人大常委会十二次会议和2010年3月十一届全国人大三次会议，又五次对选举法进行了重要修改。这是我国亿万人民在党的领导下参加的多次换届选举的伟大民主实践经验的总结和升华，标志着我国人大代表选举制度向民主化方向不断迈出新的、重要的步伐。";
+        };
+        if (a == '创先争优活动') {
+          this.title = a;
+          this.content =
+            "继深入学习实践科学发展观活动之后，中央进一步做出了创建先进基层党组织、争当优秀共产党员为主要内容的创先争优活动部署。在党的基层组织和党员中深入开展创先争优活动，是党的十七大作出的重要部署，是深入开展学习实践科学发展观活动的拓展和延伸。中央于2010年4月作出决定，在全国党的基层组织和党员中深入开展创先争优活动历时两年半，至2012年11月十八大召开前。";
+        };
+        if (a == '中共十七届五中全会') {
+          this.title = a;
+          this.content =
+            "中共中央政治局召开第十七届中央委员会第五次全体会议，讨论十七届四中全会以来中央政治局的工作，研究制定国民经济和社会发展第十二个五年规划的建议等问题。中共中央总书记胡锦涛主持会议。";
+        };
+        if (a == '事业单位改革') {
+          this.title = a;
+          this.content =
+            "事业单位改革是行政管理体制改革的重要组成部分。推进事业单位改革关键要从体制机制入手，转变政府职能和管理方式，调整和规范政事关系。2011年4月初，中央已经确定了一张事业单位分类改革的时间表，共涉及到超过126万个机构，4000余万人。该表预计到2015年，中国将在清理规范基础上完成事业单位分类；到2020年，中国将形成新的事业单位管理体制和运行机制。2012年4月16日，《中共中央 国务院关于分类推进事业单位改革的指导意见》发布。";
+        };
+        if (a == '“三公”经费公开') {
+          this.title = a;
+          this.content =
+            "2012年4月，国务院再下“三公经费”公开令箭，这一次剑指省级政府。2012年4月18日，国务院总理温家宝主持国务院常务会议，要求省级政府两年内全面公开“三公经费”。国务院对2012年中央部委“三公经费”的公开做了更为严格的要求，要求部委公开财政部批复的全部预算表格，并细化到款级科目，有关教育、医疗卫生、社会保障和就业、农林水事务、住房保障支出等要细化到项级科目。国务院常务会议还要求，中央部门要细化“三公经费”的解释说明，公开车辆购置及保有量、因公出国(境)团组数及人数、公务接待有关情况，公开行政经费支出情况。2012年10月1日起，县级以上政府需将“三公经费”纳入预算管理，并定期公布。超预算开支“三公”、购建豪华办公用房、安排与业务工作无关的出国考察等情形，情节严重的将面临撤职处分。这也是我国首部专门规范机关事务管理活动的行政法规。";
+        };
+        if (a == '中国特色社会主义法律体系形成') {
+          this.title = a;
+          this.content =
+            "2011年3月10日，全国人民代表大会常务委员会委员长吴邦国同志向十一届全国人民代表大会四次会议作全国人大常委会工作报告时庄严宣布，一个立足中国国情和实际、适应改革开放和社会主义现代化建设需要、集中体现党和人民意志的，以宪法为统帅，以宪法相关法、民法商法等多个法律部门的法律为主干，由法律、行政法规、地方性法规与自治条例、单行条例等三个层次的法律规范构成的中国特色社会主义法律体系已经形成。";
+        };
+        if (a == '政务微博') {
+          this.title = a;
+          this.content =
+            "政务微博2009年下半年，湖南桃源县官方微博“桃源网”出炉，成为中国最早开通微博的政府部门。紧接着云南省委宣传部的官方微博“微博云南”面世。随后，以“平安肇庆”、“平安北京”为代表的全国各地的公安微博，以及各级党政机关领导的微博如雨后春笋般开通。截至2011年12月10日，在新浪网、腾讯网、人民网、新华网四家微博客网站上认证的政务微博客总数为50561个，其中党政机构微博客32358个，党政干部微博客18203个。在新浪网认证的党政机构微博客12103个，党政干部微博客10652个；在腾讯网认证的党政机构微博客13911个，党政干部微博客6748个；在人民网认证的党政机构微博客2401个，党政干部微博客71个；在新华网认证的党政机构微博客3943个，党政干部微博客732个。";
+        };
+        if (a == '中国共产党成立90周年') {
+          this.title = a;
+          this.content =
+            "90年来，中国共产党由小到大，由弱变强，领导中国人民冲破重重难关，夺取了革命斗争和经济建设的一个又一个胜利。中国共产党坚持以马克思列宁主义、毛泽东思想、中国特色社会主义理论体系为指导，领导全国人民改革开放，奋斗进取，全面推进中国特色社会主义现代化建设，综合国力显著增强，取得了举世瞩目的成就。可以说，中国共产党的历史，就是不断从胜利走向胜利的历史。";
+        };
+
+        if (a == '文化体制改革') {
+          this.title = a;
+          this.content =
+            "文化是一种生产力，是综合国力的重要组成部分。当今世界，文化与经济、政治相互交融，在综合国力竞争中的地位和作用越来越突出，越来越重要。因此，大力发展社会主义文化，建设社会主义精神文明，是我们全面建设小康社会必须完成的重任。要完成这一重任，改革文化体制是题中应有之义。深入推进文化体制改革，促进文化事业全面繁荣和文化产业快速发展，关系全面建设小康社会奋斗目标的实现，关系中国特色社会主义事业总体布局，关系中华民族伟大复兴。";
+        };
+        if (a == '党的十七届六中全会') {
+          this.title = a;
+          this.content =
+            "中国共产党第十七届中央委员会第六次全体会议，于2011年10月15日至18日在北京举行。出席全会的有，中央委员202人，候补中央委员163人。中央纪律检查委员会常务委员会委员和有关方面负责同志列席了会议。党的十七大代表中部分基层文化工作者和从事文化研究的专家学者也列席了会议。全会由中央政治局主持。全会听取和讨论了胡锦涛受中央政治局委托作的工作报告，审议通过了《中共中央关于深化文化体制改革、推动社会主义文化大发展大繁荣若干重大问题的决定》。李长春就《决定（讨论稿）》向全会作了说明。";
+        };
+
       },
     },
   });
 </script>
 <script>
-    function makeshow() {
+  function makeshow() {
     var share = [{
       weburl: '/faker/dsbk/index-3.html',
-      playtime: 5 * 1000
+     
     }];
     var url = '/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
     window.location.href = url;
   }
-  window.onload = function(){
+  window.onload = function () {
     var mask = document.getElementById('mask');
     var oLi = document.querySelectorAll(".p1_content li a");
+    var ap = document.querySelectorAll(".make-program");
     var h = document.body.clientHeight;
     var w = document.body.clientWidth;
-    mask.style.display="none";
-    for (var i = 0; i < oLi.length; i++) {
-        oLi[i].i = i;
-        oLi[i].onclick = function(){
-          var aL = oLi[this.i];
-          for(var j = 0 ;j<oLi.length;j++){
-            oLi[j].className=" ";
-          };
-          aL.className = "content-active";
-          mask.style.display="block";
-       
-         var t = aL.offsetTop;
-         var l = aL.offsetLeft;
-          console.log(l-mask.offsetWidth)
-         mask.style.top = t-mask.offsetHeight+'px';
-        if(mask.offsetTop<0){
-          mask.style.top = 10+'px';
-        };
-         if(l>=(w/2)){
-          mask.style.left = l+mask.offsetWidth-50+'px';
-
-         }else{
-          mask.style.left = l-mask.offsetWidth-30+'px';
-         };
-         if((l-mask.offsetWidth)<0){
-          mask.style.left=10+'px';
-         }
-       }
+    mask.style.display = "none";
+    ap[0].onclick= function(){
+      var This = this;
+     setTimeout(function(){
+       This.style.opacity = '0';
+     },500)
     };
+    for (var i = 0; i < oLi.length; i++) {
+      oLi[i].i = i;
+      oLi[i].onclick = function () {
+        var aL = oLi[this.i];
+        for (var j = 0; j < oLi.length; j++) {
+          oLi[j].className = " ";
+        };
+        aL.className = "content-active";
+        mask.style.display = "block";
+
+        var t = aL.offsetTop;
+        var l = aL.offsetLeft;
+        console.log(l - mask.offsetWidth)
+        mask.style.top = t - mask.offsetHeight + 'px';
+        if (mask.offsetTop < 0) {
+          mask.style.top = 10 + 'px';
+        };
+        if (l >= (w / 2)) {
+          mask.style.left = l + mask.offsetWidth - 50 + 'px';
+
+        } else {
+          mask.style.left = l - mask.offsetWidth - 30 + 'px';
+        };
+        if ((l - mask.offsetWidth) < 0) {
+          mask.style.left = 10 + 'px';
+        }
+      }
+    };
+    var oMenu1 = document.getElementById("menu1");
+    var aList1= document.querySelectorAll(".p1_content li a");
+    // var aList2= document.querySelectorAll("#menu2 li a");
+
+    function selfrun(x){
+      function run(){
+        function doScaledTimeout(i) {
+          setTimeout(function() {
+             x[i].click();
+          }, i * 5000);
+        };
+        for (var i = 0; i < x.length; ++i){
+          doScaledTimeout(i);
+        }
+      }
+      run();
+      setInterval(function(i){
+        run()
+      }, x.length*5000)
+    };
+
+    selfrun(aList1);
   }
 </script>
+
 </html>
-
-

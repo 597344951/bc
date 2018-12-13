@@ -25,4 +25,11 @@ public interface JoinPartyOrgUserMapper extends BaseDao<JoinPartyOrgUser> {
      * @return
      */
     public List<Map<String, Object>> queryJoinPartyOrgUsers(Map<String, Object> conditions);
+    
+    /**
+     * 查询申请入党人员的信息
+     * @param conditions
+     * @return
+     */
+    public List<Map<String, Object>> queryJpouIsJoin(JoinPartyOrgUser jpou);
 }

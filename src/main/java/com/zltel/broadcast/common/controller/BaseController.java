@@ -1,8 +1,13 @@
 package com.zltel.broadcast.common.controller;
 
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.util.Date;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +35,12 @@ import com.zltel.broadcast.um.bean.SysUser;
 public class BaseController {
     public static final org.slf4j.Logger logout = LoggerFactory.getLogger(BaseController.class);
     private Logger operateLog;
+    
+    @Resource
+    protected HttpServletRequest request;
+
+    @Resource
+    protected HttpServletResponse response;
 
     public BaseController() {}
 
@@ -105,5 +116,17 @@ public class BaseController {
             }
 
         });
+    }
+    
+    /**
+     * 重定向到页面
+     * @param request
+     * @param response
+     * @param url 页面相对地址
+     * @throws IOException 
+     * @throws ServletException 
+     */
+    public void forward(HttpServletRequest request, HttpServletResponse response,String url) throws ServletException, IOException {
+        request.getRequestDispatcher(url).forward(request,response);
     }
 }

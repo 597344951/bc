@@ -27,9 +27,15 @@ public interface ScheduleMapper {
                                 @Param("timeStartTo") Date timeStartTo,
                                 @Param("timeEndFrom") Date timeEndFrom,
                                 @Param("timeEndTo") Date timeEndTo,
+                                @Param("types") List<Integer> types,
                                 @Param("turn") String turn,
                                 @Param("pageNum") int pageNum,
                                 @Param("pageSize") int pageSize);
+
+    List<Map<String, Object>> selectByUsername(@Param("username") String username,
+                                               @Param("types") List<Integer> types,
+                                               @Param("pageNum") int pageNum,
+                                               @Param("pageSize") int pageSize);
 
     List<Map<String, Object>> selectMembers(@Param("orgId") Integer orgId, @Param("scheduleId") Integer scheduleId);
 

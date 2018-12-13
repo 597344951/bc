@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>党史单页版</title>
+	<link rel="stylesheet" href="page.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="mask.css" type="text/css" media="all" />
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+	<script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.js"></script>
+	<script src="https://cdn.bootcss.com/element-ui/2.3.4/index.js"></script>
+	<style>
+	body{
+		background: url(bg01.gif) top repeat-x #990000;
+	}
+	.header{
+
+	}
+	.box{
+		width:1080px;
+		height: 1740px;
+		margin:0 auto;
+		background-image: url(shufeng.png);
+	    box-shadow: 2px 6px 13px 3px #520909;
+	    padding-top:  6%;
+	    box-sizing:border-box;
+
+	}
+	.single{
+		width: 90%;
+		height:96%;
+		border:3px solid red;
+		margin: auto;
+	}
+	.header{
+		text-align: center;
+	}
+	.make-program {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		background-color: cornflowerblue;
+		padding: 6px 14px;
+		border-radius: 6px;
+		color: #fff;
+		font-weight: bold;
+		font-size: 14px;
+		color: #fff !important;
+		font-family: "microsoft yahei";
+	}
+	.make-program2{
+		position: absolute;
+		top: 10px;
+		right: 100px;
+		background-color: cornflowerblue;
+		padding: 6px 14px;
+		border-radius: 6px;
+		color: #fff;
+		font-weight: bold;
+		font-size: 14px;
+		color: #fff !important;
+		font-family: "microsoft yahei";
+	}
+	.make-program:hover {
+		color: #fff;
+		background-color: #5582d4;
+		text-decoration: none;
+	}
+
+	.make-program:active {
+		font-size: 15px;
+	}
+	.make-program2:hover {
+		color: #fff;
+		background-color: #5582d4;
+		text-decoration: none;
+	}
+
+	.make-program2:active {
+		font-size: 15px;
+	}
+	.p1_content{
+		background: none;
+		overflow: inherit;
+	}
+	.p1_content div{
+		float: none;
+		margin-top: 30px;
+	}
+	.p1_content ul li {
+	    margin-top: 10px;
+	    font-size: 18px;
+	}
+	.p1_content li a.content-active{
+	    font-size: 18px;
+	}
+	</style>
+</head>
+<body>
+	<a class="make-program" onclick="makeshow()" >
+		单页投屏 </a>
+	<a class="make-program2" onclick="makeshow2()" >
+			多页投屏 </a>
+	<div class="header">
+		<img src="top02.png" alt="">
+		<!-- <h1>新中共简明党史</h1> -->
+	</div>
+	<div class="box">
+		<div class="single">
+			<div id="app">
+				<div class="content-mask" id="mask">
+					<h5>{{title}}</h5>
+					<p>{{content}}</p>
+				</div>
+				<div class="clearfix p1_content">
+					<div>
+						<h2>1921-1949</h2>
+						<ul id="menu1">
+							<li>
+								<a href="##" @click="show('中国共产党诞生和中共一大')">中国共产党诞生和中共一大</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中共二大')">中共二大</a>
+							</li>
+							<li>
+								<a href="##" @click="show('安源路矿工人大罢工')">安源路矿工人大罢工</a>
+							</li>
+							<li>
+								<a href="##" @click="show('京汉铁路工人大罢工')">京汉铁路工人大罢工</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中共三大')">中共三大</a>
+							</li>
+							<li>
+								<a href="##" @click="show('国民党一大与第一次国共合作')">国民党一大与第一次国共合作</a>
+							</li>
+							<li>
+								<a href="##" @click="show('黄埔军校')">黄埔军校</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中共四大')">中共四大</a>
+							</li>
+							<li>
+								<a href="##" @click="show('五卅运动')">五卅运动</a>
+							</li>
+							<li>
+								<a href="##" @click="show('三一八惨案')">三一八惨案</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中共五大')">中共五大</a>
+							</li>
+							<li>
+								<a href="##" @click="show('南昌起义')">南昌起义</a>
+							</li>
+							<li>
+								<a href="##" @click="show('八七会议')">八七会议</a>
+							</li>
+							<li>
+								<a href="##" @click="show('秋收起义')">秋收起义</a>
+							</li>
+							<li>
+								<a href="##" @click="show('广州起义')">广州起义</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中共六大')">中共六大</a>
+							</li>
+							<li>
+								<a href="##" @click="show('土地革命')">土地革命</a>
+							</li>
+						
+							<li>
+								<a href="##" @click="show('中央革命根据地')">中央革命根据地</a>
+							</li>
+							<li>
+								<a href="##" @click="show('古田会议')">古田会议</a>
+							</li>
+							<li>
+								<a href="##" @click="show('“围剿”与反“围剿”')">“围剿”与反“围剿”</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中共六届四中全会')">中共六届四中全会</a>
+							</li>
+							<li>
+								<a href="##" @click="show('肃反扩大化')">肃反扩大化</a>
+							</li>
+							<li>
+								<a href="##" @click="show('中华苏维埃共和国')">中华苏维埃共和国</a>
+							</li>
+							<li>
+								<a href="##" @click="show('宁都起义')">宁都起义</a>
+							</li>
+							<li>
+								<a href="##" @click="show('长征')">长征</a>
+							</li>
+							<li>
+								<a href="##" @click="show('遵义会议')">遵义会议</a>
+							</li>
+							<li>
+								<a href="##" @click="show('一二·九运动')">一二·九运动</a>
+							</li>
+							<li>
+								<a href="##" @click="show('瓦窑堡会议')">瓦窑堡会议</a>
+							</li>
+							<li>
+								<a href="##" @click="show('东北抗日联军')">东北抗日联军</a>
+							</li>
+							<li>
+								<a href="##" @click="show('西路军')">西路军</a>
+							</li>
+							<li>
+								<a href="##" @click="show('西安事变')">西安事变</a>
+							</li>
+							<li>
+								<a href="##" @click="show('第二次国共合作')">第二次国共合作</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<span>
+							<a href="singlePage.html" class="onpage">1</a>
+							<a href="singlePage1.html">2</a>
+							<a href="singlePage2.html">3</a>
+							<a href="singlePage3.html">4</a>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	var appInstince = new Vue({
+		el: '#app',
+		data: {
+			title: '中国共产党诞生和中共一大',
+			content: '中国共产党第一次全国代表大会于1921年7月23日至31日在上海法租界贝勒路树德里3号（后称望志路106号，现改兴业路76号）和浙江嘉兴南湖召开。出席大会的各地代表共13人。中国共产党第一次全国代表大会鉴于当时党员人数少、地方组织尚不健全，决定暂不成立中央委员会，先建立三人组成的中央局，并选举陈独秀任书记，张国焘为组织主任，李达为宣传主任。党的第一个中央机关由此产生。',
+		},
+		methods: {
+			show(t) {
+				var title = appInstince.title;
+				var content = appInstince.content;
+				var a = t;
+				if (a == '中国共产党诞生和中共一大') {
+					this.title = a;
+					this.content =
+						"中国共产党第一次全国代表大会于1921年7月23日至31日在上海法租界贝勒路树德里3号（后称望志路106号，现改兴业路76号）和浙江嘉兴南湖召开。出席大会的各地代表共13人。中国共产党第一次全国代表大会鉴于当时党员人数少、地方组织尚不健全，决定暂不成立中央委员会，先建立三人组成的中央局，并选举陈独秀任书记，张国焘为组织主任，李达为宣传主任。党的第一个中央机关由此产生。.";
+				};
+				if (a == '南昌起义') {
+					this.title = a;
+					this.content =
+						"八一南昌起义常简称南昌起义或者八一起义，指在1927年8月1日中共联合国民党左派，打响了武装反抗国民党反动派的第一枪，揭开了中国共产党独立领导武装斗争和创建革命军队的序幕。1927年8月1日，中国共产党领导部分国民革命军在江西省南昌市举行的武装起义。起义由周恩来、贺龙、叶挺、朱德、刘伯承、谭平山领导。1933年7月11日，中华苏维埃共和国临时中央政府根据中央革命军事委员会6月30日的建议，决定8月1日为中国工农红军成立纪念日。从此，8月1日成为中国工农红军和后来的中国人民解放军的建军节。.";
+				};
+				if (a == '长征') {
+					this.title = a;
+					this.content =
+						"土地革命战争时期，中国工农红军主力撤离长江南北各苏区，转战两年，到达陕甘苏区的战略转移行动。1934年10月，第五次反围剿失败后，中央主力红军为摆脱国民党军队的包围追击，被迫实行战略性转移，退出中央根据地，进行长征。长征是人类历史上的伟大奇迹，中央红军共进行了380余次战斗，攻占700多座县城，红军牺牲了营以上干部多达430余人，平均年龄不到30岁，共击溃国民党军数百个团，其间共经过14个省，翻越18座大山，跨过24条大河，走过荒草地，翻过雪山，行程约二万五千里，红一方面军于1935年10月到达陕北，与陕北红军胜利会师。1936年10月，红二、四方面军到达甘肃会宁地区，同红一方面军会师。红军三大主力会师，标志着万里长征的胜利结束。";
+				};
+				if (a == '中共二大') {
+					this.title = a;
+					this.content =
+						"1922年7月16日至23日在上海召开。大会根据列宁关于民族和殖民地问题的理论和中国社会半殖民地半封建的性质，制定了党的最高纲领和最低纲领。最低纲领即中国现阶段的革命任务是：“(一)消除内乱，打倒军阀，建设国内和平；(二)推翻国际帝国主义的压迫，达到中华民族完全独立；(三)统一中国本部(东三省在内)为真正民主共和国。”最高纲领，即“它的目的是要组织无产阶级，用阶级斗争的手段，建立劳农专政的政治，铲除私有财产制度，渐次达到一个共产主义的社会”。这次大会在中国近代历史上第一次明确提出了彻底地反帝反封建的民主革命任务，为中国各族人民的革命斗争指明了方向。";
+				};
+
+				if (a == '安源路矿工人大罢工') {
+					this.title = a;
+					this.content =
+						"安源路矿工人大罢工是中国共产党成立初期组织的一场大型的罢工运动。1922年9月14日，安源路矿工人为要求当局承认俱乐部有工人代表的权利和增加工资举行罢工。路矿当局勾结军阀派兵企图镇压。在共产党人刘少奇、李立三等的领导下，一万七千多工人英勇斗争，迫使路矿当局承认工人提出的大部分条件，18日罢工取得了胜利。安源路矿罢工的胜利，显示了中国工人阶级的伟大力量。";
+				};
+				if (a == '京汉铁路工人大罢工') {
+					this.title = a;
+					this.content =
+						"京汉铁路工人大罢工是中国共产党领导的第一次工人运动高潮的顶点，罢工最终以失败告终，但它进一步显示了中国工人阶级的力量，扩大了党在全国人民中的影响。1923年2月7日在吴佩孚的命令下湖北督军萧耀南借口调解工潮，诱骗工会代表到江岸工会会所“谈判”，工会代表在去工会办事处途中，遭到反动军队的枪击，赤手空拳的工人纠察队当场被打死30多人、打伤200多人，造成了震惊中外的“二·七”惨案";
+				};
+				if (a == '中共三大') {
+					this.title = a;
+					this.content =
+						"党的“三大”所确定的建立国共合作革命统一战线的策略，促进了第一次国共合作的实现，使共产党活动的政治舞台迅速扩大，加速了中国革命的步伐，为波澜壮阔的第一次大革命作了准备。";
+				};
+				if (a == '国民党一大与第一次国共合作') {
+					this.title = a;
+					this.content =
+						"1924年1月中国国民党第一次全国代表大会的召开，标志着国民党改组的完成和国共合作的正式建立。第一次国共合作的形成，极大地推动了中国民主革命的进程。但是，革命统一战线仅维持了三年半时间，在革命形势一片大好，即将取得国民革命胜利之时，国民党右派却突然叛变革命，1927年，蒋介石制造四一二政变，汪精卫制造七一五政变，疯狂屠杀共产党员，革命群众和国民党左派，国共合作宣告破裂。虽然轰轰烈烈的第一次国民大革命失败 ，但它基本推翻了北洋军阀的统治。";
+				};
+				if (a == '黄埔军校') {
+					this.title = a;
+					this.content =
+						"黄埔军校是中国近代最著名的一所军事学校，培养了许多在抗日战争和国共内战中闻名的指挥官，主要将领出自第一次国共合作时期的一至六期，军校在创立目的是为国民革命训练军官，是国民政府北伐战争统一中国的主要军力。1924年国民党建校时期名称为“中国国民党陆军军官学校”，1926年改名扩大为“中央军事政治学校”，1929年改名“国民革命军黄埔军官学校”，1931年南京国民政府改制为“中央陆军军官学校”，到1946年末改名“中华民国陆军军官学校”。1950年10月台湾当局在台湾高雄凤山区复建“陆军军官学校”延续至今。";
+				};
+				if (a == '中共四大') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '五卅运动') {
+					this.title = a;
+					this.content =
+						"五卅（sà）运动是一次伟大的群众性的反帝爱国运动，它大大提高了全国人民的觉悟程度和组织力量，在全国范围内为北伐战争准备了群众基础，并将国民革命推向高潮，从而揭开了1925-1927年中国大革命的序幕。正如著名工人运动领袖邓中夏所说：“五卅运动以后，革命高潮，一泻汪洋，于是构成一九二五至一九二七年的中国大革命”。";
+				};
+				if (a == '三一八惨案') {
+					this.title = a;
+					this.content =
+						"1926年3月12日，冯玉祥的国民军与奉系军阀作战期间，日本军舰掩护奉军军舰驶进天津大沽口，炮击国民军，守军死伤十余名。国民军坚决还击，将日舰驱逐出大沽口。日本竟联合英美等八国于16日向段祺瑞政府发出最后通牒，提出撤除大沽口国防设施的无理要求。3月18日，北京群众五千余人，由李大钊主持，在天安门集会抗议，要求拒绝八国通牒。段祺瑞执政府（段祺瑞当时不在执政府，亦未命令开枪）竟下令开枪，当场打死四十七人，伤二百余人，李大钊、陈乔年均在斗争中负伤。";
+				};
+				if (a == '中共五大') {
+					this.title = a;
+					this.content =
+						"大会选举了新的中央委员会，选出陈独秀等２９名中央委员和毛泽东等１１名候补中央委员。新的中央委员会仍选举陈独秀为总书记，选举陈独秀、张国焘、蔡和森为中央政治局常务委员会委员。大会选举了中央监察委员会。党的第五次全国代表大会虽然召开在革命的危急关头，却没有承担起挽救革命的任务。但周恩来、任弼时等一批对陈独秀的右倾错误有所认识、有所抵制的同志，被选进了新的中央委员会，这为后来纠正陈独秀的右倾错误，提供了组织上的准备。";
+				};
+				if (a == '八七会议') {
+					this.title = a;
+					this.content =
+						"八七会议是第一次国内革命战争失败以后，在关系党和革命事业前途和命运的关键时刻，中共中央政治局于1927年8月7日在汉口召开的紧急会议。会议批判和纠正了陈独秀右倾机会主义错误，撤消了他在党内的职务，选出了新的临时中央政治局，确定了土地革命和武装斗争的总方针，决定发动秋收起义。毛泽东出席了这次会议，并提出了著名的“枪杆子里出政权”的论断。会议通过了《中国共产党中央执行委员会告全党党员书》等议案。八七会议在中国革命紧急关头及时地向党和全国人民指明了斗争方向，反对政治上的“右”倾机会主义，使党在革命中前进了一大步。这次会议具有重要的历史地位，毛泽东提出了“枪杆子里出政权”的著名思想。给正处于思想混乱和组织涣散的中国共产党指明了新的出路，为挽救党和革命作出了巨大贡献。";
+				};
+				if (a == '秋收起义') {
+					this.title = a;
+					this.content =
+						"秋收起义是毛泽东在湖南东部和江西西部领导的工农革命军（即红军）举行的一次武装起义，1927年9月9日，秋收起义部队在文家市会师，毛泽东主持前委会议，及时作出从进攻大城市转向农村进军的决定，初步形成了农村包围城市的战略思想，是继南昌起义之后，中国共产党领导的又一次著名的武装起义，是中共党史军史上的三大起义之一（另一个是1927年中共党人发动反抗国民党右派的起义——广州起义）。中国人民革命史开始了具有决定意义的新起点。1977年江西省在修水县和铜鼓县建立了秋收起义纪念馆。1998年在萍乡市建立了秋收起义广场。1993年导演周康渝以秋收起义为题材拍摄了同名电影。";
+				};
+				if (a == '广州起义') {
+					this.title = a;
+					this.content =
+						"1910年11月孙中山、黄兴、赵声等革命党人在马来半岛的槟榔屿召开庇能会议，决定再次在广州发动武装起义，黄兴担任总指挥，在越华路小东营五号设立起义总指挥部。1911年4月27日下午5时30分，黄兴率130余名敢死队员直扑两广总督署，发动了中国同盟会的第十次武装起义广州起义。敢死队突入总督署，总督张鸣岐逃走，起义军焚毁总督署后，在东辕门外与水师提督李准派来弹压起义的北洋军短兵相接。起义军浴血奋战，终因寡不敌众而不幸失败。起义失败后，黄兴负伤撤回香港，喻培伦、方声洞，林觉民等革命志士牺牲，牺牲的中国同盟会会员有名可考者八十六人，其中七十二人的遗体由潘达微寻获安葬于广州红花岗。潘达微将红花岗改名为黄花岗，这次起义因此被称为黄花岗起义。";
+				};
+				if (a == '中共六大') {
+					this.title = a;
+					this.content =
+						"大会批判了陈独秀的右倾投降主义和瞿秋白的“左”倾冒险主义错误。指出中国的社会性质仍然是半殖民地半封建社会，中国现阶段的革命是资产阶级民主革命，革命的中心任务是反对帝国主义和封建主义，实行土地革命，建立工农民主专政。并指出党在当时的总任务是争取群众，准备暴动。这次大会的路线基本上是正确的，对后来中国革命的发展起了积极的作用。";
+				};
+				if (a == '土地革命') {
+					this.title = a;
+					this.content =
+						"第二次国内革命战争（英文：Agrarian Revolutionary War），中国共产党领导中国工农红军和中国人民为反对国民党蒋介石集团的反动统治，废除封建土地制度，建立工农民主政权而进行的革命战争。又称第二次国内革命战争。1924～1927年，中国人民反对帝国主义和封建主义的大革命，在中国共产党和中国国民党的合作下曾经取得很大胜利。然而，1927年4月和7月，中国国民党内的蒋介石、汪精卫集团先后背叛孙中山制定的联俄、联共、扶助农工三大政策和反帝反封建的纲领，勾结帝国主义，发动反革命政变，血腥屠杀共产党人和革命人民，使大革命 [1]  最后遭到失败。蒋介石集团在帝国主义支持下，攫取了全国性政权，建立起强大的军事力量，代表帝国主义和中国地主阶级、买办资产阶级的利益，对中国人民实行残暴统治。中国共产党为了完成中国人民反帝反封建的革命任务，领导人民继续战斗，开始了土地革命战争的新的历史时期。各地相继举行武装起义，实行工农武装割据，中国共产党人从大革命失败的惨痛教训中，逐步认识到独立领导武装斗争和组织革命军队的极端重要性。";
+				};
+				if (a == '中央革命根据地') {
+					this.title = a;
+					this.content =
+						"中央革命根据地(Central Revolutionary Base Area)是1931年11月在赣南、闽西革命根据地的基础上发展起来的，亦称中央苏区，位于江西南部、福建西部，广东北部，是土地革命战争时期全国最大的革命根据地，是全国苏维埃运动的中心区域，还是中华苏维埃共和国党、政、军首脑机关所在地。";
+				};
+				if (a == '古田会议') {
+					this.title = a;
+					this.content =
+						"古田会议，是红四军在1929年12月28日至29日在福建省龙岩市上杭县古田召开的第九次党的代表大会。即红军第四军第九次党代表大会。因在福建省上杭县古田村召开，史称为“古田会议”。这次会议在中国共产党和工农红军的发展史上有着极其重要的意义。  此次会议后，毛泽东重新当选为书记。";
+				};
+				if (a == '“围剿”与反“围剿”') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '肃反扩大化') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '中华苏维埃共和国') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '宁都起义') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '遵义会议') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '一二·九运动') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '瓦窑堡会议') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '东北抗日联军') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '西路军') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '西安事变') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '第二次国共合作') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+				if (a == '中共六届四中全会') {
+					this.title = a;
+					this.content =
+						"党的“四大”关于无产阶级在民主革命中领导权和农民同盟军问题的阐述，表明党已经把新民主主义革命基本思想的要点提出来了，对中国革命规律的认识又前进了一步。";
+				};
+			},
+		},
+	});
+</script>
+<script>
+	function makeshow() {
+		var share = [{
+			weburl: '/faker/dsbk/singlePage.html',
+			
+		}];
+		var url = '/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+		window.location.href = url;
+	}
+	function makeshow2(){
+		var share=[{
+			weburl:'/faker/dsbk/singlePage.html',
+			playtime:3600,
+		},{
+			weburl:'/faker/dsbk/singlePage1.html',
+			playtime:3600,
+		},{
+			weburl:'/faker/dsbk/singlePage2.html',
+			playtime:3600,
+		},{
+			weburl:'/faker/dsbk/singlePage3.html',
+			playtime:3600,
+		},];
+		var url='/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+		window.location.href =url;
+	}
+	window.onload = function () {
+		var mask = document.getElementById('mask');
+		var oLi = document.querySelectorAll(".p1_content li a");
+		var h = document.body.clientHeight;
+		var w = document.body.clientWidth;
+		var ap = document.querySelectorAll(".make-program");
+		mask.style.opacity = 0;
+		ap[0].onclick= function(){
+	      var This = this;
+	     setTimeout(function(){
+	       This.style.opacity = 0;
+	     },500)
+	    };
+		for (var i = 0; i < oLi.length; i++) {
+			oLi[i].i = i;
+			oLi[i].onclick = function () {
+				var aL = oLi[this.i];
+				for (var j = 0; j < oLi.length; j++) {
+					oLi[j].className = " ";
+				};
+				aL.className = "content-active";
+				var t = aL.offsetTop;
+				var l = aL.offsetLeft;
+				setTimeout(function () {
+					mask.style.top = t - mask.offsetHeight + 'px';
+					if (mask.offsetTop < 0) {
+						mask.style.top = 10 + 'px';
+					};
+					if (mask.offsetTop + mask.offsetHeight > h) {
+						mask.style.top = 5 + 'px';
+					};
+					if (l >= (w / 2)) {
+						mask.style.left = l + mask.offsetWidth - 50 + 'px';
+
+					} else {
+						mask.style.left = l - mask.offsetWidth - 30 + 'px';
+					};
+					if ((l - mask.offsetWidth) < 0) {
+						mask.style.left = 10 + 'px';
+					};
+					setTimeout(function () {
+						mask.style.opacity = 100;
+					}, 100);
+				}, 10)
+
+			}
+		};
+
+		var oMenu1 = document.getElementById("menu1");
+		var aList1= document.querySelectorAll(".p1_content li a");
+		// var aList2= document.querySelectorAll("#menu2 li a");
+
+		function selfrun(x){
+			function run(){
+				function doScaledTimeout(i) {
+					setTimeout(function() {
+					   x[i].click();
+					}, i * 5000);
+				};
+				for (var i = 0; i < x.length; ++i){
+					doScaledTimeout(i);
+				}
+			}
+			run();
+			setInterval(function(i){
+				run()
+			}, x.length*5000)
+		};
+
+		selfrun(aList1);
+		// selfrun(aList2);
+	}
+</script>
+</html>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.um.bean.JoinPartyOrgUser;
 import com.zltel.broadcast.um.service.JoinPartyOrgUserService;
 
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,22 @@ public class JoinPartyOrgUserController extends BaseController {
 	 * @param conditions 条件
 	 * @return
 	 */
+	@RequestMapping(value="/insertJoinPartyOrgStep", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"party:user:insert"})
+	@ApiOperation(value = "申请入党")
+	public R insertJoinPartyOrgStep(@RequestParam("submitDate") String submitDate) {
+		try {
+			return joinPartyOrgUserService.insertJoinPartyOrgStep(submitDate);
+		} catch (Exception e) {
+			return R.error().setMsg("操作失败");
+		}
+	}
+	
+	/**
+	 * 申请入党
+	 * @param conditions 条件
+	 * @return
+	 */
 	@RequestMapping(value="/insertJoinPartyOrgUsers", method=RequestMethod.POST)
 	@RequiresPermissions(value = {"party:user:insert"})
 	@ApiOperation(value = "申请入党")
@@ -55,6 +72,37 @@ public class JoinPartyOrgUserController extends BaseController {
 			return joinPartyOrgUserService.insertJoinPartyOrgUsers(conditions);
 		} catch (Exception e) {
 			return R.error().setMsg("操作失败");
+		}
+	}
+	
+	/**
+	 * 申请入党-选择组织
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/insertJpou", method=RequestMethod.POST)
+	@RequiresPermissions(value = {"party:user:insert"})
+	@ApiOperation(value = "申请入党-选择组织")
+	public R insertJpou(JoinPartyOrgUser jpou) {
+		try {
+			return joinPartyOrgUserService.insertJpou(jpou);
+		} catch (Exception e) {
+			return R.error().setMsg("系统出错");
+		}
+	}
+	
+	/**
+     * 删除此步骤
+     * @param jpos
+     * @return
+     */
+	@RequestMapping(value="/deleteJoinPartyOrgSteps", method=RequestMethod.POST)
+	@ApiOperation(value = "删除此步骤")
+	public R deleteJoinPartyOrgSteps(JoinPartyOrgUser jpou) {
+		try {
+			return joinPartyOrgUserService.deleteJoinPartyOrgSteps(jpou);
+		} catch (Exception e) {
+			return R.error().setMsg("删除失败");
 		}
 	}
 }

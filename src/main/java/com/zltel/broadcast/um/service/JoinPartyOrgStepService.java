@@ -31,4 +31,11 @@ public interface JoinPartyOrgStepService {
      * @return
      */
     public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos);
+    
+    /**
+     * 查询申请入党人员的信息
+     * @param conditions
+     * @return
+     */
+    public R queryUserJoinPartyOrgSteps(Map<String, Object> conditions);
 }

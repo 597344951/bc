@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.bean;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class BaseUserInfo {
@@ -77,9 +78,9 @@ public class BaseUserInfo {
     
     private Integer firstLineSituation;
     
-    private Integer income;
+    private BigDecimal income;
     
-    private Integer partyProportion;
+    private BigDecimal partyProportion;
     
     private Integer devPeople;
     
@@ -91,19 +92,19 @@ public class BaseUserInfo {
 		this.devPeople = devPeople;
 	}
 
-	public Integer getIncome() {
+	public BigDecimal getIncome() {
 		return income;
 	}
 
-	public void setIncome(Integer income) {
+	public void setIncome(BigDecimal income) {
 		this.income = income;
 	}
 
-	public Integer getPartyProportion() {
+	public BigDecimal getPartyProportion() {
 		return partyProportion;
 	}
 
-	public void setPartyProportion(Integer partyProportion) {
+	public void setPartyProportion(BigDecimal partyProportion) {
 		this.partyProportion = partyProportion;
 	}
 

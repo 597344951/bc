@@ -29,8 +29,8 @@
 <body>
 	<!-- container -->
 	<!-- header -->
-	<a class="make-program"
-		onclick="makeshow()" >节目制作</a>
+	<!-- <a class="make-program"
+		onclick="makeshow()" >节目制作</a> -->
 	<div id="home" class="header" >
 		<div class="container">
 			<!-- top-hedader -->
@@ -41,7 +41,7 @@
 					<div class="navigation">
 						<div class="logo">
 							<h1>
-								<a href="index.html"> <span>人</span>物简介
+								<a href=""> <span>人</span>物简介
 								</a>
 							</h1>
 						</div>

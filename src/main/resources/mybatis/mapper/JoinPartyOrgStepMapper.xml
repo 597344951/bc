@@ -149,4 +149,34 @@
 		  jpos.process_id = #{processId}
 	  </if>
   </select>
+  
+  <!-- 查询用户入党的步骤信息 -->
+  <select id="queryUserJoinPartyOrgSteps" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+  	  jpos.id id,
+	  jpos.process_id processId,
+	  jpos.step_status stepStatus,
+	  jpop.file isFile,
+	  jpos.step_status stepStatus,
+	  jpos.step_status_reason stepStatusReason,
+	  jpos.time stepTime
+	from
+	  join_party_org_step jpos 
+	  inner join join_party_org_process jpop on jpos.process_id = jpop.id 
+	  inner join join_party_org_user jpou on jpou.id = jpos.join_id
+	where 
+	  1 = 1
+	  <if test="joinId != null and joinId != ''"> and 
+		  jpos.join_id = #{joinId}
+	  </if>
+	  <if test="processId != null and processId != ''"> and 
+		  jpos.process_id = #{processId}
+	  </if>
+	  <if test="userId != null and userId != ''"> and 
+		  jpou.user_id = #{userId}
+	  </if>
+	  <if test="isHistory != null and isHistory != ''"> and 
+		  jpou.is_history = #{isHistory}
+	  </if>
+  </select>
 </mapper>

@@ -32,5 +32,7 @@ public interface BaseDao<T> {
     List<T> queryForList(PageRowBounds prb);
     /**根据对象参数进行删除**/
     int delete(T record);
+    
+    List<T> query(T record);
 
 }

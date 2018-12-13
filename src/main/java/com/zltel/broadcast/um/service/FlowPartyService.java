@@ -26,4 +26,20 @@ public interface FlowPartyService {
      * @return
      */
     public R queryFlowPartys(Map<String, Object> condition, int pageNum, int pageSize);
+    
+    /**
+     * 添加流动党员
+     * @param request
+     * @param partyUser
+     * @throws Exception
+     */
+    public R insertFlowPartyUserInfo(Map<String, Object> flowPartyUser) throws Exception;
+    
+    /**
+     * 添加流动党员
+     * @param request
+     * @param partyUser
+     * @throws Exception
+     */
+    public R insertFlowPartyUserInfoThisOrg(Map<String, Object> flowPartyUser) throws Exception;
 }

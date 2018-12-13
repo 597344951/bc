@@ -38,7 +38,8 @@
         #{orgId,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
         )
     </insert>
-    <insert id="insertSelective" parameterType="com.zltel.broadcast.threeone.schedule.bean.Schedule" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSelective" parameterType="com.zltel.broadcast.threeone.schedule.bean.Schedule"
+            useGeneratedKeys="true" keyProperty="id">
         insert into threeone_schedule
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -192,6 +193,12 @@
             <if test="timeEndTo != null">
                 <![CDATA[ AND end_time <= #{timeEndTo,jdbcType=TIMESTAMP} ]]>
             </if>
+            <if test="types != null">
+                AND type in
+                <foreach collection="types" item="type" open="(" close=")" separator=",">
+                    #{type,jdbcType=INTEGER}
+                </foreach>
+            </if>
         </where>
         order by start_time
         <if test="turn != null">
@@ -246,4 +253,32 @@
         delete from threeone_schedule_participant
         where schedule_id = #{scheduleId,jdbcType=INTEGER}
     </delete>
+    <select id="selectByUsername" resultType="java.util.Map">
+        SELECT
+            S.id AS id,
+            S.name AS name,
+            S.description AS description,
+            S.type AS type,
+            S.place AS place,
+            S.start_time AS startTime,
+            S.end_time AS endTime,
+            S.state AS state,
+            S.user_id AS userId,
+            S.org_id AS orgId,
+            S.add_date AS addDate,
+            S.update_date AS updateDate,
+            U.base_user_id AS participantId
+        FROM threeone_schedule S
+        INNER JOIN threeone_schedule_participant P ON P.schedule_id = S.id
+        INNER JOIN base_user_info U ON U.base_user_id = P.user_id
+        INNER JOIN sys_user SU ON SU.username = U.id_card
+        WHERE SU.username = #{username}
+        <if test="types != null">
+            AND S.type in
+            <foreach collection="types" item="type" open="(" close=")" separator=",">
+                #{type,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>

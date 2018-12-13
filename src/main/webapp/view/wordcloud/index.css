@@ -1,0 +1,28 @@
+body {
+    overflow: auto !important;
+}
+.line {
+    text-align: center;
+}
+.el-main {
+    padding: 20px 80px;
+}
+.el-switch {
+    margin-top: 10px;
+}
+.shape {
+    display: inline-block;
+    margin: 5px;
+}
+.shape:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 255, 0.329);
+}
+.shape .el-card__body {
+    padding: 2px;
+}
+.shape img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+}

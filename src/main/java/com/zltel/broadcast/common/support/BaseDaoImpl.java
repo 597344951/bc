@@ -3,6 +3,7 @@ package com.zltel.broadcast.common.support;
 import java.util.List;
 
 import com.github.pagehelper.PageRowBounds;
+import com.zltel.broadcast.common.exception.RRException;
 
 /**
  * 基础默认查询方法实现
@@ -80,8 +81,12 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 
     @Override
     public int delete(T record) {
+        if (null == record) throw RRException.makeThrow("删除条件不能为空");
         return this.getInstince().delete(record);
     }
 
+    public List<T> query(T record) {
+        return this.getInstince().query(record);
+    }
 
 }

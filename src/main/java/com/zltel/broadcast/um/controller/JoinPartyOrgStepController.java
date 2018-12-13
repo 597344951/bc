@@ -43,6 +43,21 @@ public class JoinPartyOrgStepController extends BaseController {
 	}
 	
 	/**
+	 * 查询申请入党人员进行步骤
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryUserJoinPartyOrgSteps", method=RequestMethod.POST)
+	@ApiOperation(value = "查询申请入党人员进行步骤")
+	public R queryUserJoinPartyOrgSteps(@RequestParam Map<String, Object> conditions) {
+		try {
+			return joinPartyOrgStepService.queryUserJoinPartyOrgSteps(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("查询申请入党人员进行步骤失败");
+		}
+	}
+	
+	/**
      * 变更此步骤的信息
      * @param jpos
      * @return

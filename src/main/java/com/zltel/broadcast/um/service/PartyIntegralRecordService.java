@@ -24,10 +24,12 @@ public interface PartyIntegralRecordService {
 	}
 	
 	public enum IcType {
-		ACTIVE("按时参加党内活动"),
-		MONEY("按时足额缴纳党费"),
+		ACTIVE("参加组织生活"),
+		MONEY("缴纳党费"),
 		QUESTION_AND_ANSWER("知识问答"),
-		WATCH_VIDEO("观看视频");
+		WATCH_VIDEO("观看视频"),
+		COMPLY_WITH_FARO("遵纪守法"),
+		LEARNING_AND_EDUCATION("学习教育");
 	    
 	    private final String name;
 	    

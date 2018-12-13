@@ -14,7 +14,6 @@
 		body {
 			position: relative;
 		}
-
 		.make-program {
 			position: absolute;
 			top: 10px;
@@ -28,7 +27,19 @@
 			color: #fff !important;
 			font-family: "microsoft yahei";
 		}
-
+		.make-program2{
+			position: absolute;
+			top: 10px;
+			right: 100px;
+			background-color: cornflowerblue;
+			padding: 6px 14px;
+			border-radius: 6px;
+			color: #fff;
+			font-weight: bold;
+			font-size: 14px;
+			color: #fff !important;
+			font-family: "microsoft yahei";
+		}
 		.make-program:hover {
 			color: #fff;
 			background-color: #5582d4;
@@ -36,6 +47,15 @@
 		}
 
 		.make-program:active {
+			font-size: 15px;
+		}
+		.make-program2:hover {
+			color: #fff;
+			background-color: #5582d4;
+			text-decoration: none;
+		}
+
+		.make-program2:active {
 			font-size: 15px;
 		}
 		#app{
@@ -46,7 +66,9 @@
 
 <body>
 	<a class="make-program" onclick="makeshow()" >
-		节目制作 </a>
+		单页投屏 </a>
+	<a class="make-program2" onclick="makeshow2()" >
+			多页投屏 </a>
 	<div id="app">
 		<div class="top02 clear w980">
 			<img src="top01.jpg" width="488" height="167" />
@@ -59,107 +81,107 @@
 		<div class="clearfix p1_content">
 			<div>
 				<h2>1921-1949</h2>
-				<ul>
+				<ul id="menu1">
 					<li>
-						<a href='##' @click="show('中国共产党诞生和中共一大')">中国共产党诞生和中共一大</a>
+						<a href="##" @click="show('中国共产党诞生和中共一大')">中国共产党诞生和中共一大</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中共二大')">中共二大</a>
+						<a href="##" @click="show('中共二大')">中共二大</a>
 					</li>
 					<li>
-						<a href='##' @click="show('安源路矿工人大罢工')">安源路矿工人大罢工</a>
+						<a href="##" @click="show('安源路矿工人大罢工')">安源路矿工人大罢工</a>
 					</li>
 					<li>
-						<a href='##' @click="show('京汉铁路工人大罢工')">京汉铁路工人大罢工</a>
+						<a href="##" @click="show('京汉铁路工人大罢工')">京汉铁路工人大罢工</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中共三大')">中共三大</a>
+						<a href="##" @click="show('中共三大')">中共三大</a>
 					</li>
 					<li>
-						<a href='##' @click="show('国民党一大与第一次国共合作')">国民党一大与第一次国共合作</a>
+						<a href="##" @click="show('国民党一大与第一次国共合作')">国民党一大与第一次国共合作</a>
 					</li>
 					<li>
-						<a href='##' @click="show('黄埔军校')">黄埔军校</a>
+						<a href="##" @click="show('黄埔军校')">黄埔军校</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中共四大')">中共四大</a>
+						<a href="##" @click="show('中共四大')">中共四大</a>
 					</li>
 					<li>
-						<a href='##' @click="show('五卅运动')">五卅运动</a>
+						<a href="##" @click="show('五卅运动')">五卅运动</a>
 					</li>
 					<li>
-						<a href='##' @click="show('三一八惨案')">三一八惨案</a>
+						<a href="##" @click="show('三一八惨案')">三一八惨案</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中共五大')">中共五大</a>
+						<a href="##" @click="show('中共五大')">中共五大</a>
 					</li>
 					<li>
-						<a href='##' @click="show('南昌起义')">南昌起义</a>
+						<a href="##" @click="show('南昌起义')">南昌起义</a>
 					</li>
 					<li>
-						<a href='##' @click="show('八七会议')">八七会议</a>
+						<a href="##" @click="show('八七会议')">八七会议</a>
 					</li>
 					<li>
-						<a href='##' @click="show('秋收起义')">秋收起义</a>
+						<a href="##" @click="show('秋收起义')">秋收起义</a>
 					</li>
 					<li>
-						<a href='##' @click="show('广州起义')">广州起义</a>
+						<a href="##" @click="show('广州起义')">广州起义</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中共六大')">中共六大</a>
+						<a href="##" @click="show('中共六大')">中共六大</a>
 					</li>
 					<li>
-						<a href='##' @click="show('土地革命')">土地革命</a>
+						<a href="##" @click="show('土地革命')">土地革命</a>
 					</li>
 				</ul>
 			</div>
 			<div class="fl">
 				<h2>1921-1949</h2>
-				<ul>
+				<ul id="menu2">
 					<li>
-						<a href='##' @click="show('中央革命根据地')">中央革命根据地</a>
+						<a href="##" @click="show('中央革命根据地')">中央革命根据地</a>
 					</li>
 					<li>
-						<a href='##' @click="show('古田会议')">古田会议</a>
+						<a href="##" @click="show('古田会议')">古田会议</a>
 					</li>
 					<li>
-						<a href='##' @click="show('“围剿”与反“围剿”')">“围剿”与反“围剿”</a>
+						<a href="##" @click="show('“围剿”与反“围剿”')">“围剿”与反“围剿”</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中共六届四中全会')">中共六届四中全会</a>
+						<a href="##" @click="show('中共六届四中全会')">中共六届四中全会</a>
 					</li>
 					<li>
-						<a href='##' @click="show('肃反扩大化')">肃反扩大化</a>
+						<a href="##" @click="show('肃反扩大化')">肃反扩大化</a>
 					</li>
 					<li>
-						<a href='##' @click="show('中华苏维埃共和国')">中华苏维埃共和国</a>
+						<a href="##" @click="show('中华苏维埃共和国')">中华苏维埃共和国</a>
 					</li>
 					<li>
-						<a href='##' @click="show('宁都起义')">宁都起义</a>
+						<a href="##" @click="show('宁都起义')">宁都起义</a>
 					</li>
 					<li>
-						<a href='##' @click="show('长征')">长征</a>
+						<a href="##" @click="show('长征')">长征</a>
 					</li>
 					<li>
-						<a href='##' @click="show('遵义会议')">遵义会议</a>
+						<a href="##" @click="show('遵义会议')">遵义会议</a>
 					</li>
 					<li>
-						<a href='##' @click="show('一二·九运动')">一二·九运动</a>
+						<a href="##" @click="show('一二·九运动')">一二·九运动</a>
 					</li>
 					<li>
-						<a href='##' @click="show('瓦窑堡会议')">瓦窑堡会议</a>
+						<a href="##" @click="show('瓦窑堡会议')">瓦窑堡会议</a>
 					</li>
 					<li>
-						<a href='##' @click="show('东北抗日联军')">东北抗日联军</a>
+						<a href="##" @click="show('东北抗日联军')">东北抗日联军</a>
 					</li>
 					<li>
-						<a href='##' @click="show('西路军')">西路军</a>
+						<a href="##" @click="show('西路军')">西路军</a>
 					</li>
 					<li>
-						<a href='##' @click="show('西安事变')">西安事变</a>
+						<a href="##" @click="show('西安事变')">西安事变</a>
 					</li>
 					<li>
-						<a href='##' @click="show('第二次国共合作')">第二次国共合作</a>
+						<a href="##" @click="show('第二次国共合作')">第二次国共合作</a>
 					</li>
 				</ul>
 
@@ -357,17 +379,41 @@
 	function makeshow() {
 		var share = [{
 			weburl: '/faker/dsbk/index.html',
-			playtime: 5 * 1000
+			
 		}];
 		var url = '/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
 		window.location.href = url;
+	}
+	function makeshow2(){
+		var share=[{
+			weburl:'/faker/dsbk/index.html',
+			playtime:3600,
+		},{
+			weburl:'/faker/dsbk/index-1.html',
+			playtime:3600,
+		},{
+			weburl:'/faker/dsbk/index-2.html',
+			playtime:3600,
+		},{
+			weburl:'/faker/dsbk/index-3.html',
+			playtime:3600,
+		},];
+		var url='/view/publish/new.jsp?title=党史百科&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+		window.location.href =url;
 	}
 	window.onload = function () {
 		var mask = document.getElementById('mask');
 		var oLi = document.querySelectorAll(".p1_content li a");
 		var h = document.body.clientHeight;
 		var w = document.body.clientWidth;
+		var ap = document.querySelectorAll(".make-program");
 		mask.style.opacity = 0;
+		ap[0].onclick= function(){
+	      var This = this;
+	     setTimeout(function(){
+	       This.style.opacity = 0;
+	     },500)
+	    };
 		for (var i = 0; i < oLi.length; i++) {
 			oLi[i].i = i;
 			oLi[i].onclick = function () {
@@ -378,7 +424,6 @@
 				aL.className = "content-active";
 				var t = aL.offsetTop;
 				var l = aL.offsetLeft;
-				console.log(mask.offsetTop);
 				setTimeout(function () {
 					mask.style.top = t - mask.offsetHeight + 'px';
 					if (mask.offsetTop < 0) {
@@ -403,6 +448,30 @@
 
 			}
 		};
+
+		var oMenu1 = document.getElementById("menu1");
+		var aList1= document.querySelectorAll(".p1_content li a");
+		// var aList2= document.querySelectorAll("#menu2 li a");
+
+		function selfrun(x){
+			function run(){
+				function doScaledTimeout(i) {
+					setTimeout(function() {
+					   x[i].click();
+					}, i * 5000);
+				};
+				for (var i = 0; i < x.length; ++i){
+					doScaledTimeout(i);
+				}
+			}
+			run();
+			setInterval(function(i){
+				run()
+			}, x.length*5000)
+		};
+
+		selfrun(aList1);
+		// selfrun(aList2);
 	}
 </script>
 

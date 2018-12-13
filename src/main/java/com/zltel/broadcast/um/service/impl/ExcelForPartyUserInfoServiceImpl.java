@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,10 +43,8 @@ import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.util.PasswordHelper;
-import com.zltel.broadcast.um.bean.AcademicDegreeLevel;
 import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.bean.EducationLevel;
-import com.zltel.broadcast.um.bean.FirstLineType;
 import com.zltel.broadcast.um.bean.JoinPartyBranchType;
 import com.zltel.broadcast.um.bean.NationType;
 import com.zltel.broadcast.um.bean.OrganizationDuty;
@@ -56,10 +55,8 @@ import com.zltel.broadcast.um.bean.SysRole;
 import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.bean.SysUserRole;
 import com.zltel.broadcast.um.bean.WorkNatureType;
-import com.zltel.broadcast.um.dao.AcademicDegreeLevelMapper;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
 import com.zltel.broadcast.um.dao.EducationLevelMapper;
-import com.zltel.broadcast.um.dao.FirstLineTypeMapper;
 import com.zltel.broadcast.um.dao.JoinPartyBranchTypeMapper;
 import com.zltel.broadcast.um.dao.NationTypeMapper;
 import com.zltel.broadcast.um.dao.OrganizationDutyMapper;
@@ -90,11 +87,7 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
     @Autowired
     private EducationLevelMapper educationLevelMapper;
     @Autowired
-    private AcademicDegreeLevelMapper academicDegreeLevelMapper;
-    @Autowired
     private WorkNatureTypeMapper workNatureTypeMapper;
-    @Autowired
-    private FirstLineTypeMapper firstLineTypeMapper;
     @Autowired
     private JoinPartyBranchTypeMapper joinPartyBranchTypeMapper;
     @Autowired
@@ -332,59 +325,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				thisValidateSuccess = false;
 		        validataErrorMsg.append("第" + (i + 1) + "行手机号码格得用文本格式，数字格式会出现格式化问题，请避免使用复制过来的日期，可能会导致单元格设置的异常，尽量使用手写，纯数字设置文本格式成功时左上角会有绿色的三角。\r\n");
 			}
-            // QQ
-            if (row.getCell(5) != null && StringUtil.isNotEmpty(row.getCell(5).getStringCellValue())) {
-                if (RegexUtil.isQq(row.getCell(5).getStringCellValue())) {
-                    baseUserInfo.setQq(row.getCell(5).getStringCellValue());
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行QQ号码格式不正确。\r\n");
-                }
-            } else {
-                baseUserInfo.setQq(null);
-            }
-            // 微信
-            if (row.getCell(6) != null && StringUtil.isNotEmpty(row.getCell(6).getStringCellValue())) {
-                if (RegexUtil.isWechat(row.getCell(6).getStringCellValue())) {
-                    baseUserInfo.setWechat(row.getCell(6).getStringCellValue());
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行微信格式不正确。\r\n");
-                }
-            } else {
-                baseUserInfo.setWechat(null);
-            }
-            // 邮箱
-            if (row.getCell(7) != null && StringUtil.isNotEmpty(row.getCell(7).getStringCellValue())) {
-                if (RegexUtil.isEmail(row.getCell(7).getStringCellValue())) {
-                    baseUserInfo.setEmail(row.getCell(7).getStringCellValue());
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行邮箱格式不正确。\r\n");
-                }
-            } else {
-                baseUserInfo.setEmail(null);
-            }
-            // 入学时间
-            if (row.getCell(8) != null) {
-                baseUserInfo.setEnrolmentTime(row.getCell(8).getDateCellValue());
-            } 
-            // 毕业时间
-            if (row.getCell(9) != null) {
-                baseUserInfo.setGraduationTime(row.getCell(9).getDateCellValue());
-            } 
-            // 毕业学校
-            if (row.getCell(10) != null && StringUtil.isNotEmpty(row.getCell(10).getStringCellValue())) {
-                baseUserInfo.setGraduationSchool(row.getCell(10).getStringCellValue());
-            } 
-            // 学习专业
-            if (row.getCell(11) != null && StringUtil.isNotEmpty(row.getCell(11).getStringCellValue())) {
-                baseUserInfo.setMajor(row.getCell(11).getStringCellValue());
-            } 
             // 学历
-            if (row.getCell(12) != null && StringUtil.isNotEmpty(row.getCell(12).getStringCellValue())) {
+            if (row.getCell(5) != null && StringUtil.isNotEmpty(row.getCell(5).getStringCellValue())) {
                 EducationLevel el = new EducationLevel();
-                el.setName(row.getCell(12).getStringCellValue());
+                el.setName(row.getCell(5).getStringCellValue());
                 List<EducationLevel> els = educationLevelMapper.queryEducationLevels(el);
                 if (els != null && els.size() == 1) {
                     baseUserInfo.setEducation(els.get(0).getEduLevelEid());
@@ -393,23 +337,9 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                     validataErrorMsg.append("第" + (i + 1) + "行学历填写错误。\r\n");
                 }
             } 
-            // 学位
-            if (row.getCell(13) != null && StringUtil.isNotEmpty(row.getCell(13).getStringCellValue())) {
-                AcademicDegreeLevel adl = new AcademicDegreeLevel();
-                adl.setName(row.getCell(13).getStringCellValue());
-                List<AcademicDegreeLevel> adls = academicDegreeLevelMapper.queryAcademicDegreeLevels(adl);
-                if (adls != null && adls.size() == 1) {
-                    baseUserInfo.setAcademicDegree(adls.get(0).getAdDAid());
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行学位填写错误。\r\n");
-                }
-            } else {
-                baseUserInfo.setAcademicDegree(null);
-            }
             // 家庭住址
-            if (row.getCell(14) != null && StringUtil.isNotEmpty(row.getCell(14).getStringCellValue())) {
-                String[] homeAddress = row.getCell(14).getStringCellValue().split("-");
+            if (row.getCell(6) != null && StringUtil.isNotEmpty(row.getCell(6).getStringCellValue())) {
+                String[] homeAddress = row.getCell(6).getStringCellValue().split("-");
                 if (homeAddress.length == 4) {
                     baseUserInfo.setHomeAddressProvince(homeAddress[0]);
                     baseUserInfo.setHomeAddressCity(homeAddress[1]);
@@ -428,8 +358,8 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                 baseUserInfo.setNativePlace(null);
             }
             // 现居住地址
-            if (row.getCell(15) != null && StringUtil.isNotEmpty(row.getCell(15).getStringCellValue())) {
-                String[] presentAddress = row.getCell(15).getStringCellValue().split("-");
+            if (row.getCell(7) != null && StringUtil.isNotEmpty(row.getCell(7).getStringCellValue())) {
+                String[] presentAddress = row.getCell(7).getStringCellValue().split("-");
                 if (presentAddress.length == 4) {
                     baseUserInfo.setPresentAddressProvince(presentAddress[0]);
                     baseUserInfo.setPresentAddressCity(presentAddress[1]);
@@ -445,26 +375,14 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                 baseUserInfo.setPresentAddressArea(null);
                 baseUserInfo.setPresentAddressDetail(null);
             }
-            if (row.getCell(16) != null) {
-                baseUserInfo.setSpecialityLiterature(row.getCell(16).getStringCellValue());
-            }
-            if (row.getCell(17) != null) {
-                baseUserInfo.setSpecialityMajor(row.getCell(17).getStringCellValue());
-            }
-            if (row.getCell(18) != null) {
-                baseUserInfo.setMarriageStatus(row.getCell(18).getStringCellValue());
-            }
-            if (row.getCell(19) != null) {
-                baseUserInfo.setChildrenStatus(row.getCell(19).getStringCellValue());
-            }
             // 工作单位
-            if (row.getCell(20) != null) {
-                baseUserInfo.setWorkUnit(row.getCell(20).getStringCellValue());
+            if (row.getCell(8) != null) {
+                baseUserInfo.setWorkUnit(row.getCell(8).getStringCellValue());
             }
             // 工作性质
-            if (row.getCell(21) != null && StringUtil.isNotEmpty(row.getCell(21).getStringCellValue())) {
+            if (row.getCell(9) != null && StringUtil.isNotEmpty(row.getCell(9).getStringCellValue())) {
                 WorkNatureType wnt = new WorkNatureType();
-                wnt.setName(row.getCell(21).getStringCellValue());
+                wnt.setName(row.getCell(9).getStringCellValue());
                 List<WorkNatureType> wnts = workNatureTypeMapper.queryWorkNatureTypes(wnt);
                 if (wnts != null && wnts.size() == 1) {
                     baseUserInfo.setWorkNature(wnts.get(0).getWorkNatureId());
@@ -477,8 +395,8 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
             }
             // 参加工作时间
             try {
-				if (row.getCell(22) != null) {
-				    baseUserInfo.setJoinWorkDate(row.getCell(22).getDateCellValue());
+				if (row.getCell(10) != null) {
+				    baseUserInfo.setJoinWorkDate(row.getCell(10).getDateCellValue());
 				} else {
 				    baseUserInfo.setJoinWorkDate(null);
 				}
@@ -486,37 +404,11 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
 				thisValidateSuccess = false;
                 validataErrorMsg.append("第" + (i + 1) + "行日期转换错误，请避免使用复制过来的日期，可能会导致单元格设置的异常，尽量使用手写。\r\n");
 			}
-            // 参加工作时长
-            if (row.getCell(23) != null) {
-                try {
-                    baseUserInfo.setAppointmentTimeLength(Integer.parseInt(row.getCell(23).getStringCellValue()));
-                } catch (Exception e) {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行请填写正确的工作时长。\r\n");
-                    logout.error(e.getMessage(), e);
-                }
-            } else {
-                baseUserInfo.setAppointmentTimeLength(null);
-            }
-            // 一线情况
-            if (row.getCell(24) != null && StringUtil.isNotEmpty(row.getCell(24).getStringCellValue())) {
-                FirstLineType flt = new FirstLineType();
-                flt.setFirstLineTypeName(row.getCell(24).getStringCellValue());
-                List<FirstLineType> flts = firstLineTypeMapper.queryFirstLineTypes(flt);
-                if (flts != null && flts.size() == 1) {
-                    baseUserInfo.setFirstLineSituation(flts.get(0).getFltId());
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行加工作一线情况选择有误。\r\n");
-                }
-            } else {
-                baseUserInfo.setFirstLineSituation(null);
-            }
             // 是否积极份子
-            if (row.getCell(25) != null && StringUtil.isNotEmpty(row.getCell(25).getStringCellValue())) {
-                if ("是".equals(row.getCell(25).getStringCellValue())) {
+            if (row.getCell(11) != null && StringUtil.isNotEmpty(row.getCell(11).getStringCellValue())) {
+                if ("是".equals(row.getCell(11).getStringCellValue())) {
                     baseUserInfo.setPositiveUser(1);
-                } else if ("否".equals(row.getCell(25).getStringCellValue())) {
+                } else if ("否".equals(row.getCell(11).getStringCellValue())) {
                     baseUserInfo.setPositiveUser(0);
                 } else {
                     thisValidateSuccess = false;
@@ -527,10 +419,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
             }
 
             // 党员类型
-            if (row.getCell(26) != null && StringUtil.isNotEmpty(row.getCell(26).getStringCellValue())) {
-                if ("正式党员".equals(row.getCell(26).getStringCellValue())) {
+            if (row.getCell(12) != null && StringUtil.isNotEmpty(row.getCell(12).getStringCellValue())) {
+                if ("正式党员".equals(row.getCell(12).getStringCellValue())) {
                     partyUserInfo.setType(1);
-                } else if ("预备党员".equals(row.getCell(26).getStringCellValue())) {
+                } else if ("预备党员".equals(row.getCell(12).getStringCellValue())) {
                     partyUserInfo.setType(0);
                 } else {
                     thisValidateSuccess = false;
@@ -541,10 +433,10 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                 validataErrorMsg.append("第" + (i + 1) + "行党员类型不能为空。\r\n");
             }
             // 党员状态
-            if (row.getCell(27) != null && StringUtil.isNotEmpty(row.getCell(27).getStringCellValue())) {
-                if ("正常".equals(row.getCell(27).getStringCellValue())) {
+            if (row.getCell(13) != null && StringUtil.isNotEmpty(row.getCell(13).getStringCellValue())) {
+                if ("正常".equals(row.getCell(13).getStringCellValue())) {
                     partyUserInfo.setStatus(1);
-                } else if ("停止党籍".equals(row.getCell(27).getStringCellValue())) {
+                } else if ("停止党籍".equals(row.getCell(13).getStringCellValue())) {
                     partyUserInfo.setStatus(0);
                 } else {
                     thisValidateSuccess = false;
@@ -556,11 +448,11 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
             }
             // 入党时间
             try {
-				if (row.getCell(28) != null) {
-				    partyUserInfo.setJoinDateFormal(row.getCell(28).getDateCellValue());
+				if (row.getCell(14) != null) {
+				    partyUserInfo.setJoinDateFormal(row.getCell(14).getDateCellValue());
 				} else {
 				    // 两个时间必有一个
-				    if (row.getCell(29) != null) {
+				    if (row.getCell(15) != null) {
 
 				    } else {
 				        thisValidateSuccess = false;
@@ -572,11 +464,11 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                 validataErrorMsg.append("第" + (i + 1) + "行入党日期转换错误，请避免使用复制过来的日期，可能会导致单元格设置的异常，尽量使用手写。\r\n");
 			}
             // 预备党员入党时间
-            if (row.getCell(29) != null) {
-                partyUserInfo.setJoinDateReserve(row.getCell(29).getDateCellValue());
+            if (row.getCell(15) != null) {
+                partyUserInfo.setJoinDateReserve(row.getCell(15).getDateCellValue());
             } else {
                 // 两个时间必有一个
-                if (row.getCell(28) != null) {
+                if (row.getCell(14) != null) {
 
                 } else {
                     thisValidateSuccess = false;
@@ -584,9 +476,9 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                 }
             }
             // 如何加入党支部
-            if (row.getCell(30) != null && StringUtil.isNotEmpty(row.getCell(30).getStringCellValue())) {
+            if (row.getCell(16) != null && StringUtil.isNotEmpty(row.getCell(16).getStringCellValue())) {
                 JoinPartyBranchType jpbt = new JoinPartyBranchType();
-                jpbt.setJoinType(row.getCell(30).getStringCellValue());
+                jpbt.setJoinType(row.getCell(16).getStringCellValue());
                 List<JoinPartyBranchType> jpbts = joinPartyBranchTypeMapper.queryJoinPartyBranchTypes(jpbt);
                 if (jpbts != null && jpbts.size() == 1) {
                     partyUserInfo.setJoinPartyBranchTypeId(jpbts.get(0).getJpbtId());
@@ -597,109 +489,28 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
             } else {
                 partyUserInfo.setJoinPartyBranchTypeId(null);
             }
-            // 是否党务工作者
-            if (row.getCell(31) != null && StringUtil.isNotEmpty(row.getCell(31).getStringCellValue())) {
-                if ("是".equals(row.getCell(31).getStringCellValue())) {
-                    partyUserInfo.setPartyStaff(1);
-                } else if ("否".equals(row.getCell(31).getStringCellValue())) {
-                    partyUserInfo.setPartyStaff(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否党务工作者选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setPartyStaff(null);
-            }
-            // 是否党代表
-            if (row.getCell(32) != null && StringUtil.isNotEmpty(row.getCell(32).getStringCellValue())) {
-                if ("是".equals(row.getCell(32).getStringCellValue())) {
-                    partyUserInfo.setPartyRepresentative(1);
-                } else if ("否".equals(row.getCell(32).getStringCellValue())) {
-                    partyUserInfo.setPartyRepresentative(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否党务代表选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setPartyRepresentative(null);
-            }
-            // 是否志愿者
-            if (row.getCell(33) != null && StringUtil.isNotEmpty(row.getCell(33).getStringCellValue())) {
-                if ("是".equals(row.getCell(33).getStringCellValue())) {
-                    partyUserInfo.setVolunteer(1);
-                } else if ("否".equals(row.getCell(33).getStringCellValue())) {
-                    partyUserInfo.setVolunteer(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否志愿者选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setVolunteer(null);
-            }
-            // 是否困难党员
-            if (row.getCell(34) != null && StringUtil.isNotEmpty(row.getCell(34).getStringCellValue())) {
-                if ("是".equals(row.getCell(34).getStringCellValue())) {
-                    partyUserInfo.setDifficultUser(1);
-                } else if ("否".equals(row.getCell(34).getStringCellValue())) {
-                    partyUserInfo.setDifficultUser(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否困难党员选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setDifficultUser(null);
-            }
-            // 是否先进党员
-            if (row.getCell(35) != null && StringUtil.isNotEmpty(row.getCell(35).getStringCellValue())) {
-                if ("是".equals(row.getCell(35).getStringCellValue())) {
-                    partyUserInfo.setAdvancedUser(1);
-                } else if ("否".equals(row.getCell(35).getStringCellValue())) {
-                    partyUserInfo.setAdvancedUser(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否先进党员选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setAdvancedUser(null);
-            }
-            // 是否发展党员
-            if (row.getCell(36) != null && StringUtil.isNotEmpty(row.getCell(36).getStringCellValue())) {
-                if ("是".equals(row.getCell(36).getStringCellValue())) {
-                    partyUserInfo.setDevelopUser(1);
-                } else if ("否".equals(row.getCell(36).getStringCellValue())) {
-                    partyUserInfo.setDevelopUser(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否发展党员选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setDevelopUser(null);
-            }
-            // 是否失联党员
-            if (row.getCell(37) != null && StringUtil.isNotEmpty(row.getCell(37).getStringCellValue())) {
-                if ("是".equals(row.getCell(37).getStringCellValue())) {
-                    partyUserInfo.setMissingUser(1);
-                } else if ("否".equals(row.getCell(37).getStringCellValue())) {
-                    partyUserInfo.setMissingUser(0);
-                } else {
-                    thisValidateSuccess = false;
-                    validataErrorMsg.append("第" + (i + 1) + "行是否失联党员选择有误。\r\n");
-                }
-            } else {
-                partyUserInfo.setMissingUser(null);
-            }
             // 党员介绍
-            if (row.getCell(38) != null) {
-                partyUserInfo.setIntroduce(row.getCell(38).getStringCellValue());
+            if (row.getCell(17) != null) {
+                partyUserInfo.setIntroduce(row.getCell(17).getStringCellValue());
+            }
+            // 收入
+            if (row.getCell(18) != null) {
+            	Double income = row.getCell(18).getNumericCellValue();
+                baseUserInfo.setIncome(new BigDecimal(income));
+            }
+            // 党费占收入百分比
+            if (row.getCell(19) != null) {
+            	Double party_proportion = row.getCell(19).getNumericCellValue();
+                baseUserInfo.setPartyProportion(new BigDecimal(party_proportion));
             }
 
             // 组织编号
-            if (row.getCell(39) != null && row.getCell(40) != null) {
+            if (row.getCell(20) != null && row.getCell(21) != null) {
                 Integer orgRltInfoId;
                 Integer orgRltDutyId;
                 try {
-                    orgRltInfoId = Integer.parseInt(row.getCell(39).getStringCellValue());
-                    orgRltDutyId = Integer.parseInt(row.getCell(40).getStringCellValue());
+                    orgRltInfoId = Integer.parseInt(row.getCell(20).getStringCellValue());
+                    orgRltDutyId = Integer.parseInt(row.getCell(21).getStringCellValue());
                 } catch (Exception e) {
                     thisValidateSuccess = false;
                     validataErrorMsg.append("第" + (i + 1) + "行请填写正确的组织编号和职责编号。\r\n");
@@ -726,18 +537,18 @@ public class ExcelForPartyUserInfoServiceImpl extends BaseDaoImpl<Object> implem
                     validataErrorMsg.append("第" + (i + 1) + "行在组织里不存在此职位\r\n");
                 }
             } else {
-                if (row.getCell(39) == null && row.getCell(40) != null) {
+                if (row.getCell(20) == null && row.getCell(21) != null) {
                     thisValidateSuccess = false;
                     validataErrorMsg.append("第" + (i + 1) + "行请填写所在组织编号。\r\n");
-                } else if (row.getCell(39) != null && row.getCell(40) == null) {
+                } else if (row.getCell(20) != null && row.getCell(21) == null) {
                     thisValidateSuccess = false;
                     validataErrorMsg.append("第" + (i + 1) + "行请填写所在组织职责。\r\n");
                 }
             }
 
             // 加入组织时间
-            if (row.getCell(41) != null) {
-                orgRelation.setOrgRltJoinTime(row.getCell(41).getDateCellValue());
+            if (row.getCell(22) != null) {
+                orgRelation.setOrgRltJoinTime(row.getCell(22).getDateCellValue());
             } else {
                 orgRelation.setOrgRltJoinTime(new Date());
             }

@@ -108,6 +108,11 @@ public class ResourceMaterialServiceImpl extends BaseDaoImpl<ResourceMaterial> i
        return this.mapper.orgUsedStoreSize(orgid);
     }
 
+    @Override
+    public List<ResourceMaterial> queryLearnResource(ResourceMaterial record, Pager pager) {
+        return this.mapper.queryLearnResource(record,pager);
+    }
+
 
 
 }

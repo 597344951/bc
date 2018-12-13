@@ -39,8 +39,8 @@
     <result column="join_work_date" jdbcType="TIMESTAMP" property="joinWorkDate" />
     <result column="appointment_time_length" jdbcType="INTEGER" property="appointmentTimeLength" />
     <result column="first_line_situation" jdbcType="INTEGER" property="firstLineSituation" />
-    <result column="income" jdbcType="INTEGER" property="income" />
-    <result column="party_proportion" jdbcType="INTEGER" property="partyProportion" />
+    <result column="income" jdbcType="DECIMAL" property="income" />
+    <result column="party_proportion" jdbcType="DECIMAL" property="partyProportion" />
     <result column="dev_people" jdbcType="INTEGER" property="devPeople" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -92,11 +92,11 @@
       #{isParty,jdbcType=INTEGER}, #{positiveUser,jdbcType=INTEGER},
       #{workUnit,jdbcType=VARCHAR}, 
       #{workNature,jdbcType=INTEGER}, #{joinWorkDate,jdbcType=TIMESTAMP}, #{appointmentTimeLength,jdbcType=INTEGER}, 
-      #{firstLineSituation,jdbcType=INTEGER}, #{income,jdbcType=INTEGER}, #{partyProportion,jdbcType=INTEGER},
+      #{firstLineSituation,jdbcType=INTEGER}, #{income,jdbcType=DECIMAL}, #{partyProportion,jdbcType=DECIMAL},
       #{devPeople,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.BaseUserInfo">
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.BaseUserInfo" useGeneratedKeys="true" keyProperty="baseUserId" keyColumn="base_user_id">
     insert into base_user_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="baseUserId != null">
@@ -333,10 +333,10 @@
         #{firstLineSituation,jdbcType=INTEGER},
       </if>
       <if test="income != null">
-        #{income,jdbcType=INTEGER},
+        #{income,jdbcType=DECIMAL},
       </if>
       <if test="partyProportion != null">
-        #{partyProportion,jdbcType=INTEGER},
+        #{partyProportion,jdbcType=DECIMAL},
       </if>
       <if test="devPeople != null">
         #{devPeople,jdbcType=INTEGER},
@@ -455,10 +455,10 @@
         first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
       </if>
       <if test="income != null">
-        income = #{income,jdbcType=INTEGER},
+        income = #{income,jdbcType=DECIMAL},
       </if>
       <if test="partyProportion != null">
-        party_proportion = #{partyProportion,jdbcType=INTEGER},
+        party_proportion = #{partyProportion,jdbcType=DECIMAL},
       </if>
       <if test="devPeople != null">
         dev_people = #{devPeople,jdbcType=INTEGER},
@@ -504,8 +504,8 @@
       join_work_date = #{joinWorkDate,jdbcType=TIMESTAMP},
       appointment_time_length = #{appointmentTimeLength,jdbcType=INTEGER},
       first_line_situation = #{firstLineSituation,jdbcType=INTEGER},
-      income = #{income,jdbcType=INTEGER},
-      party_proportion = #{partyProportion,jdbcType=INTEGER},
+      income = #{income,jdbcType=DECIMAL},
+      party_proportion = #{partyProportion,jdbcType=DECIMAL},
       dev_people = #{devPeople,jdbcType=INTEGER}
     where base_user_id = #{baseUserId,jdbcType=INTEGER}
   </update>

@@ -5,13 +5,31 @@
             "title": "先进典型",
             "list": [
                 {
-                    "title": "样式一",
+                    "title": "模板一",
                     "url": "/view/xjdx/xjdx/rwfc",
                     "demoUrl":"/faker/xjdx/rwfc.html",
-                    "effect": "",
+                    "effect": "one",
                     "minimum": 2,
                     "maximum": 2,
-                    "tips": "第一张图  建议 宽度 1600 高度 440 以内;第二张图 建议 宽度 400 高度 260 以内;"
+                    "tips": "第一张图  建议 宽度 1600 高度 440 左右;第二张图 建议 宽度 400 高度 260 左右;"
+                },
+                {
+                    "title": "模板二",
+                    "url": "/view/xjdx/xjdx/index2",
+                    "demoUrl":"/faker/xjdx/new_model/index2.html",
+                    "effect": "two",
+                    "minimum": 3,
+                    "maximum": 3,
+                    "tips": "三张图 都建议 宽度 650 高度 400 左右"
+                },
+                {
+                    "title": "模板三(竖屏)",
+                    "url": "/view/xjdx/xjdx/portrait/index",
+                    "demoUrl":"/faker/xjdx/portrait/index.html",
+                    "effect": "three",
+                    "minimum": 3,
+                    "maximum": 3,
+                    "tips": "第一张图  建议 宽度 1280 高度 330 左右;第二、三张图 建议 宽度 473 高度 220 左右;"
                 }
             ]
         }

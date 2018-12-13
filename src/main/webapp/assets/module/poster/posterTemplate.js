@@ -40,11 +40,14 @@ let ins = new Vue({
 			children: 'children',
 			label: 'name'
 		},
+		initBaseCategoryData:{
+			parent:0,
+		},
 		posterCategoryDialog: {
 			title: '',
 			visible: false,
 			mode: '', //insert,update
-			data: {}
+			data:{parent:0,}
 		},
 		editPosterCategoryVisible: false,
 		replaceMetaDataDialog:{
@@ -98,6 +101,8 @@ let ins = new Vue({
 		"filter.useCategory": function (val) {
 			if (this.secondCategory && this.secondCategory.length > 0) {
 				this.filter.useCategory2 = this.secondCategory[0].categoryId
+			}else{
+				this.filter.useCategory2 = 0
 			}
 		}
 	},
@@ -262,7 +267,7 @@ let ins = new Vue({
 		},
 		deletePosterCategory(category) {
 			event.stopPropagation()
-			if(categoryv.children && category.children.length > 0){
+			if(category.children && category.children.length > 0){
 				this.$message({
 					message: '请先删除子分类信息',
 					type: 'warning'
@@ -290,7 +295,7 @@ let ins = new Vue({
 		},
 		resetCategoryInfo() {
 			this.posterCategoryDialog.visible = false
-			this.posterCategoryDialog.data = {}
+			this.posterCategoryDialog.data = this.initBaseCategoryData
 		},
 		saveOrUpdateCategory() {
 			let mode = this.posterCategoryDialog.mode

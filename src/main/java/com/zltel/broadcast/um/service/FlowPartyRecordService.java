@@ -24,4 +24,11 @@ public interface FlowPartyRecordService {
      * @return
      */
     public R queryFlowPartyRecords(Map<String, Object> condition);
+    
+    /**
+     * 查询流动记录
+     * @param condition
+     * @return
+     */
+    public R insertFlowPartyRecords(FlowPartyRecord fp);
 }

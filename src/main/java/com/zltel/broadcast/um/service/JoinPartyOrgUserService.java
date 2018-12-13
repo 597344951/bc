@@ -31,4 +31,25 @@ public interface JoinPartyOrgUserService {
      * @return
      */
     public R insertJoinPartyOrgUsers(Map<String, Object> conditions);
+    
+    /**
+     * 删除此步骤
+     * @param jpos
+     * @return
+     */
+    public R deleteJoinPartyOrgSteps(JoinPartyOrgUser jpou);
+    
+    /**
+     * 申请入党
+     * @param conditions
+     * @return
+     */
+    public R insertJoinPartyOrgStep(String submitDate);
+    
+    /**
+     * 申请入党-选择党组织
+     * @param conditions
+     * @return
+     */
+    public R insertJpou(JoinPartyOrgUser jpou);
 }

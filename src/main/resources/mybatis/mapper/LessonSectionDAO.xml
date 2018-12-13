@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.lesson.dao.LessonSectionDAO">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.lesson.bean.LessonSection">
+		<id column="lesson_id" jdbcType="INTEGER" property="lessonId" />
+		<result column="lesson_unit_id" jdbcType="INTEGER" property="lessonUnitId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="source_type" jdbcType="INTEGER" property="sourceType" />
+		<result column="source_data" jdbcType="VARCHAR" property="sourceData" />
+		<result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+		<result column="credit_hours" jdbcType="INTEGER" property="creditHours" />
+		<result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+		<result column="parent" jdbcType="INTEGER" property="parent" />
+
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.lesson.bean.LessonSection">
+		<result column="descript" jdbcType="LONGVARCHAR" property="descript" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		lesson_id, lesson_unit_id, `name`, source_type, source_data, add_time,
+		credit_hours,parent,sort_num
+	</sql>
+	<sql id="Blob_Column_List">
+		descript
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_section
+		where lesson_id = #{lessonId,jdbcType=INTEGER}
+	</select>
+	<select id="selectListByLessonUnitId" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_section
+		where lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from lesson_section
+		where lesson_id =
+		#{lessonId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.lesson.bean.LessonSection">
+		insert into lesson_section (lesson_id, lesson_unit_id,
+		`name`,
+		source_type, source_data, add_time,
+		credit_hours, descript,parent,sort_num)
+		values
+		(#{lessonId,jdbcType=INTEGER}, #{lessonUnitId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{sourceType,jdbcType=INTEGER}, #{sourceData,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP},
+		#{creditHours,jdbcType=INTEGER}, #{descript,jdbcType=LONGVARCHAR},#{parent},#{sortNum})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.lesson.bean.LessonSection">
+		insert into lesson_section
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="lessonId != null">
+				lesson_id,
+			</if>
+			<if test="lessonUnitId != null">
+				lesson_unit_id,
+			</if>
+			<if test="name != null">
+				`name`,
+			</if>
+			<if test="sourceType != null">
+				source_type,
+			</if>
+			<if test="sourceData != null">
+				source_data,
+			</if>
+			<if test="addTime != null">
+				add_time,
+			</if>
+			<if test="creditHours != null">
+				credit_hours,
+			</if>
+			<if test="descript != null">
+				descript,
+			</if>
+			<if test="sortNum != null">
+				sort_num,
+			</if>
+			<if test="parent != null">
+				parent,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="lessonId != null">
+				#{lessonId,jdbcType=INTEGER},
+			</if>
+			<if test="lessonUnitId != null">
+				#{lessonUnitId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceType != null">
+				#{sourceType,jdbcType=INTEGER},
+			</if>
+			<if test="sourceData != null">
+				#{sourceData,jdbcType=VARCHAR},
+			</if>
+			<if test="addTime != null">
+				#{addTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditHours != null">
+				#{creditHours,jdbcType=INTEGER},
+			</if>
+			<if test="descript != null">
+				#{descript,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="sortNum != null">
+				#{sortNum},
+			</if>
+			<if test="parent != null">
+				#{parent},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonSection">
+		update lesson_section
+		<set>
+			<if test="lessonUnitId != null">
+				lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				`name` = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceType != null">
+				source_type = #{sourceType,jdbcType=INTEGER},
+			</if>
+			<if test="sourceData != null">
+				source_data = #{sourceData,jdbcType=VARCHAR},
+			</if>
+			<if test="addTime != null">
+				add_time = #{addTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditHours != null">
+				credit_hours = #{creditHours,jdbcType=INTEGER},
+			</if>
+			<if test="descript != null">
+				descript = #{descript,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="sortNum != null">
+				sort_num = #{sortNum},
+			</if>
+			<if test="parent != null">
+				parent=#{parent},
+			</if>
+		</set>
+		where lesson_id = #{lessonId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonSection">
+		update lesson_section
+		set lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER},
+		`name` =
+		#{name,jdbcType=VARCHAR},
+		source_type = #{sourceType,jdbcType=INTEGER},
+		source_data =
+		#{sourceData,jdbcType=VARCHAR},
+		add_time = #{addTime,jdbcType=TIMESTAMP},
+		credit_hours =
+		#{creditHours,jdbcType=INTEGER},
+		descript = #{descript,jdbcType=LONGVARCHAR},
+		sort_num = #{sortNum},
+		parent=#{parent}
+		where lesson_id =
+		#{lessonId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonSection">
+		update lesson_section
+		set lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER},
+		`name` =
+		#{name,jdbcType=VARCHAR},
+		source_type = #{sourceType,jdbcType=INTEGER},
+		source_data =
+		#{sourceData,jdbcType=VARCHAR},
+		add_time = #{addTime,jdbcType=TIMESTAMP},
+		credit_hours =
+		#{creditHours,jdbcType=INTEGER}
+		where lesson_id = #{lessonId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询 LessonSection -->
+	<select id="query" parameterType="com.zltel.broadcast.lesson.bean.LessonSection"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_section
+		<where>
+			<include refid="LessonSectionWhereParams" />
+		</where>
+	</select>
+	<delete id="delete" parameterType="com.zltel.broadcast.lesson.bean.LessonSection">
+		delete from lesson_section
+		<where>
+			<include refid="LessonSectionWhereParams" />
+			or 1!=1
+		</where>
+	</delete>
+
+	<!-- 查询条件 LessonSection -->
+	<sql id="LessonSectionWhereParams">
+		<if test="creditHours != null">
+			AND credit_hours=#{creditHours}
+		</if>
+		<if test="lessonUnitId != null">
+			AND lesson_unit_id=#{lessonUnitId}
+		</if>
+		<if test="addTime != null">
+			AND add_time=#{addTime}
+		</if>
+		<if test="sourceType != null">
+			AND source_type=#{sourceType}
+		</if>
+		<if test="name != null">
+			AND name=#{name}
+		</if>
+		<if test="lessonId != null">
+			AND lesson_id=#{lessonId}
+		</if>
+		<if test="sourceData != null">
+			AND source_data=#{sourceData}
+		</if>
+		<if test="descript != null">
+			AND descript=#{descript}
+		</if>
+	</sql>
+
+</mapper>

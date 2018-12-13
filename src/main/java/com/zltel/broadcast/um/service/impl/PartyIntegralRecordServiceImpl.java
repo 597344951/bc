@@ -29,6 +29,7 @@ import com.zltel.broadcast.um.dao.SysUserMapper;
 import com.zltel.broadcast.um.service.IntegralConstituteService;
 import com.zltel.broadcast.um.service.PartyIntegralRecordService;
 import com.zltel.broadcast.um.util.DateUtil;
+import com.zltel.broadcast.um.util.RegexUtil;
 
 @Service
 public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRecord> implements PartyIntegralRecordService {
@@ -124,6 +125,7 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     	Map<String, Object> conditions = new HashMap<>();
     	conditions.put("orgInfoId", pir.getOrgId());
     	conditions.put("idCard", su.getUsername());
+    	if (!RegexUtil.isIDCard(su.getUsername())) return false;
     	List<Map<String, Object>> partyUsers = partyUserInfoMapper.queryPartyUserInfos(conditions);	//查询出该用户的信息
     	if (partyUsers == null || partyUsers.size() != 1) 
     		return false;

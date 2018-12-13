@@ -135,6 +135,7 @@
 	  bui.id_card idCard,
 	  jpou.join_org_id joinOrgId,
 	  _oi.org_info_name orgInfoName,
+	  jpou.join_org_id joinOrgId,
 	  jpou.join_party_type joinPartyTypeId,
 	  jpbt.join_type joinPartyType,
 	  jpou.join_status joinStatus,
@@ -157,6 +158,35 @@
 	  </if>
 	  <if test="isHistory != null and isHistory != ''"> and 
 		  jpou.is_history = #{isHistory}
+	  </if>
+  </select>
+  
+  <select id="queryJpouIsJoin" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgUser" resultType="java.util.HashMap">
+  	select
+	  jpou.id id, 
+	  jpou.user_id userId, 
+	  jpou.join_org_id joinOrgId, 
+	  jpou.join_party_type joinPartyType, 
+	  jpou.join_status joinStatus, 
+	  jpou.time time, 
+	  jpou.now_step nowStep, 
+	  jpou.is_history isHistory,
+	  _oi.org_info_name orgInfoName,
+	  jpbt.join_type joinType
+	from 
+	  join_party_org_user jpou
+	  inner join organization_information _oi on jpou.join_org_id = _oi.org_info_id
+	  inner join join_party_branch_type jpbt on jpou.join_party_type = jpbt.jpbt_id
+	where 
+	  1 = 1
+	  <if test="userId != null"> and 
+		  jpou.user_id = #{userId}
+	  </if>
+	  <if test="isHistory != null"> and 
+		  jpou.is_history = #{isHistory}
+	  </if>
+	  <if test="joinOrgId != null"> and 
+		  jpou.join_org_id = #{joinOrgId}
 	  </if>
   </select>
 </mapper>

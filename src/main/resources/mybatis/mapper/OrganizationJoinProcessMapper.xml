@@ -95,6 +95,37 @@
       <if test="orgId != null and orgId != ''"> and
        	org_id = #{orgId}
       </if>
+      <if test="indexNum != null and indexNum != ''"> and 
+       	index_num = #{indexNum}
+      </if>
+      <if test="processId != null and processId != ''"> and
+       	process_id = #{processId}
+      </if>
     order by index_num asc
+  </select>
+  
+  <select id="queryOrgOjp" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    select
+	  ojp.id id,
+	  ojp.org_id orgId,
+	  ojp.process_id processId,
+	  jpop.name name,
+	  ojp.index_num indexNum,
+	  jpop.file isFile
+	from
+	  organization_join_process ojp 
+	  inner join join_party_org_process jpop on ojp.process_id = jpop.id
+	where 
+	  1 = 1
+	  <if test="orgId != null and orgId != ''"> and
+       	ojp.org_id = #{orgId}
+      </if>
+      <if test="processId != null and processId != ''"> and
+       	ojp.process_id = #{processId}
+      </if>
+      <if test="indexNum != null and indexNum != ''"> and
+       	ojp.index_num = #{indexNum}
+      </if>
+    order by ojp.index_num asc
   </select>
 </mapper>

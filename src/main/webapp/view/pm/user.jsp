@@ -17,6 +17,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	body {
 		
 	}
+	.el-textarea.el-input--small {
+		width: 230px;
+	}
+	.el-input.el-input--small {
+		width: 230px;
+	}
 	#partyUser_manager_pagesdididi {
 		text-align: center;
 	}
@@ -164,7 +170,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				  			class="margin-left-10"
 				  			v-if="signInAccountType != 'party_role'"
 							placement="bottom" 
-						  	width="200" 
+						  	width="230" 
 						  	trigger="click" >
 						  	<el-button size="small" type="primary" slot="reference">
 						  		<i class="el-icon-search"></i>
@@ -369,7 +375,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									</span>
 								</el-row>
 								<el-row :gutter="20">
-									<el-col :span="24"><span class="partyUserTitleFont">基本信息</span></el-col>
+									<span style="margin-left: 10px;" class="partyUserTitleFont">基本信息</span>
+									<a v-if="!more_info.bui_info" href="javascript: void(0)" @click="more_info.bui_info=true">
+										<span style="margin-left: 10px;">查看更多</span>
+									</a>
+									<a v-if="more_info.bui_info" href="javascript: void(0)" @click="more_info.bui_info=false">
+										<span style="margin-left: 10px;">取消查看</span>
+									</a>
 								</el-row>
 								<el-row :gutter="20" style="margin-bottom: 0px;">
 									<el-col :span="6">
@@ -439,70 +451,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
-												毕业学校：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.graduationSchool}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												学习专业：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.major}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												学历：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.education}}
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												学位：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.academicDegree}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												特长（文艺）：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.specialityLiterature}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												特长（专业）：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.specialityMajor}}
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
 												身份证号码：
 											</el-col>
 											<el-col :span="15">
@@ -535,134 +483,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									<el-col :span="6">
 										<el-row :gutter="20">
 											<el-col :span="9" style="text-align: right;">
-												微信号：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.wechat}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												QQ号：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.qq}}
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												入学时间：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.enrolmentTime}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												毕业时间：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.graduationTime}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												婚姻状况：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.marriageStatus}}
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												子女状况：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.childrenStatus}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												是否积极份子：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.positiveUserName}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												工作单位：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.workUnit}}
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												工作性质：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.workNature}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													加入工作时间：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.joinWorkDate}}
-												</el-col>
-											</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												聘任时长：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.appointmentTimeLength}} 年
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-								<el-row :gutter="20" style="margin-bottom: 0px;">
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												一线情况：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.firstLineTypeName}}
-											</el-col>
-										</el-row>
-									</el-col>
-									<el-col :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
 												现住址：
 											</el-col>
 											<el-col :span="15">
@@ -687,21 +507,244 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										</el-row>
 									</el-col>
 								</el-row>
-								<el-row>
-									<el-col v-if="scope.row.devPeople != null && scope.row.devPeople != ''" :span="6">
-										<el-row :gutter="20">
-											<el-col :span="9" style="text-align: right;">
-												是否发展对象：
-											</el-col>
-											<el-col :span="15">
-												{{scope.row.devPeople == 1 ? '是' : '否'}}
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
+
+								<template v-if="more_info.bui_info">
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													毕业学校：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.graduationSchool}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													学习专业：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.major}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													学历：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.education}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													学位：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.academicDegree}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													特长（文艺）：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.specialityLiterature}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													特长（专业）：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.specialityMajor}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													微信号：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.wechat}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													QQ号：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.qq}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													入学时间：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.enrolmentTime}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													毕业时间：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.graduationTime}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													婚姻状况：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.marriageStatus}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													子女状况：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.childrenStatus}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否积极份子：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.positiveUserName}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													工作单位：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.workUnit}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													工作性质：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.workNature}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														加入工作时间：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.joinWorkDate}}
+													</el-col>
+												</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													聘任时长：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.appointmentTimeLength}} 年
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row :gutter="20" style="margin-bottom: 0px;">
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													一线情况：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.firstLineTypeName}}
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													收入：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.income == null ? '0' : scope.row.income}} 元
+												</el-col>
+											</el-row>
+										</el-col>
+										<el-col :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													党费占收入比：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.partyProportion == null ? '0' : scope.row.partyProportion}} %
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+									<el-row>
+										<el-col v-if="scope.row.devPeople != null && scope.row.devPeople != ''" :span="6">
+											<el-row :gutter="20">
+												<el-col :span="9" style="text-align: right;">
+													是否发展对象：
+												</el-col>
+												<el-col :span="15">
+													{{scope.row.devPeople == 1 ? '是' : '否'}}
+												</el-col>
+											</el-row>
+										</el-col>
+									</el-row>
+								</template>
 								<template v-if="scope.row.isParty == 1">
 									<el-row :gutter="20">
-										<el-col :span="24"><span class="partyUserTitleFont">党员信息</span></el-col>
+										<span style="margin-left: 10px;" class="partyUserTitleFont">党员信息</span>
+										<a v-if="!more_info.pui_info" href="javascript: void(0)" @click="more_info.pui_info=true">
+											<span style="margin-left: 10px;">查看更多</span>
+										</a>
+										<a v-if="more_info.pui_info" href="javascript: void(0)" @click="more_info.pui_info=false">
+											<span style="margin-left: 10px;">取消查看</span>
+										</a>
 									</el-row>
 									<el-row :gutter="20" style="margin-bottom: 0px;">
 										<el-col :span="6">
@@ -735,103 +778,106 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											</el-row>
 										</el-col>
 									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													入党时间 (预备)：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.joinDateReserve}}
-												</el-col>
-											</el-row>
-										</el-col>
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													如何加入党支部：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.joinPartyBranchType}}
-												</el-col>
-											</el-row>
-										</el-col>
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否党务工作者：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.partyStaffName}}
-												</el-col>
-											</el-row>
-										</el-col>
-									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否党代表：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.partyRepresentativeName}}
-												</el-col>
-											</el-row>
-										</el-col>
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否志愿者：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.volunteerName}}
-												</el-col>
-											</el-row>
-										</el-col>
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否困难党员：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.difficultUserName}}
-												</el-col>
-											</el-row>
-										</el-col>
-									</el-row>
-									<el-row :gutter="20" style="margin-bottom: 0px;">
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否失联党员：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.missingUserName}}
-												</el-col>
-											</el-row>
-										</el-col>
-									</el-row>
-									<el-row v-if="signInAccountType != 'party_role'" :gutter="20" style="margin-bottom: 0px;">
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否先进党员：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.advancedUserName}}
-												</el-col>
-											</el-row>
-										</el-col>
-										<el-col :span="6">
-											<el-row :gutter="20">
-												<el-col :span="9" style="text-align: right;">
-													是否发展党员：
-												</el-col>
-												<el-col :span="15">
-													{{scope.row.developUserName}}
-												</el-col>
-											</el-row>
-										</el-col>
+									<template v-if="more_info.pui_info">
+										<el-row :gutter="20" style="margin-bottom: 0px;">
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														入党时间 (预备)：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.joinDateReserve}}
+													</el-col>
+												</el-row>
+											</el-col>
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														如何加入党支部：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.joinPartyBranchType}}
+													</el-col>
+												</el-row>
+											</el-col>
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否党务工作者：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.partyStaffName}}
+													</el-col>
+												</el-row>
+											</el-col>
+										</el-row>
+										<el-row :gutter="20" style="margin-bottom: 0px;">
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否党代表：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.partyRepresentativeName}}
+													</el-col>
+												</el-row>
+											</el-col>
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否志愿者：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.volunteerName}}
+													</el-col>
+												</el-row>
+											</el-col>
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否困难党员：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.difficultUserName}}
+													</el-col>
+												</el-row>
+											</el-col>
+										</el-row>
+										<el-row :gutter="20" style="margin-bottom: 0px;">
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否失联党员：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.missingUserName}}
+													</el-col>
+												</el-row>
+											</el-col>
+										</el-row>
+										<el-row v-if="signInAccountType != 'party_role'" :gutter="20" style="margin-bottom: 0px;">
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否先进党员：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.advancedUserName}}
+													</el-col>
+												</el-row>
+											</el-col>
+											<el-col :span="6">
+												<el-row :gutter="20">
+													<el-col :span="9" style="text-align: right;">
+														是否发展党员：
+													</el-col>
+													<el-col :span="15">
+														{{scope.row.developUserName}}
+													</el-col>
+												</el-row>
+											</el-col>
+										</el-row>
+									</template>
 									</el-row>
 									<el-row v-if="false" :gutter="20">
 										<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
@@ -967,10 +1013,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-table-column label="姓名" prop="name" width=100></el-table-column>
 						<el-table-column label="性别" prop="sex" width=50></el-table-column>
 						<el-table-column label="电话" prop="mobilePhone"></el-table-column>
+						<el-table-column label="党员状态" prop="statusName"></el-table-column>
 						<el-table-column label="邮箱" prop="email"></el-table-column>
 						<el-table-column label="籍贯" prop="nativePlace"></el-table-column>
 						<el-table-column label="生日" prop="birthDate"></el-table-column>
-						<el-table-column fixed="right" label="操作" width=270>
+						<el-table-column fixed="right" label="操作" width=320>
 							<template slot-scope="scope">
 								<shiro:hasPermission name="party:user:delete">  
 									<el-button @click="partyUser_manager_deletePartyUserInfo(scope.row)" type="text" size="small">删除</el-button>
@@ -986,7 +1033,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								<template>
 									<el-button 
 										v-if="scope.row.joinPartyUserInfo == null && scope.row.isParty != 1"
-										@click="openApplyJoinPartyOrgDialog(scope.row)" 
+										@click="open_join_org_info_dialog(scope.row)" 
 										type="text" size="small">申请入党
 									</el-button>
 									<el-button 
@@ -996,6 +1043,26 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										type="text" size="small">申请状态
 									</el-button>
 								</template>
+								<template v-if="scope.row.isParty == 1 && scope.row.type == 1">
+									<el-button 
+										v-if="scope.row.turnOutPartyUserInfo == null && 
+											scope.row.statusName != '流动党员'"
+										@click="open_turn_out_select_org_dialog(scope.row)" 
+										type="text" size="small">组织关系转出
+									</el-button>
+									<el-button 
+										style="color: red;"
+										v-if="scope.row.turnOutPartyUserInfo != null"
+										@click="open_turn_out_org_dialog(scope.row)" 
+										type="text" size="small">转出状态
+									</el-button>
+								</template>
+								<el-button 
+									v-if="scope.row.isParty == 1 && scope.row.statusName != '流动党员'
+										&& scope.row.turnOutPartyUserInfo == null"
+									@click="open_inser_flow_party_dialog(scope.row)" 
+									type="text" size="small">流动
+								</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -1003,10 +1070,83 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			</el-main>
 		</el-container>
 
+		<!-- 弹窗 -->
+		<el-dialog @close="" title="添加流动党员信息" :visible.sync="insert_flow_party.main_dialog">
+			<div>
+				<div style="margin: 5px;">
+					<el-form label-position="left" size="small" :model="insert_flow_party.insert_flow_party_form" 
+						status-icon :rules="insert_flow_party.insert_flow_party_form_rules" 
+						ref="insert_flow_party_form" label-width="80px">
+						<div>
+							<el-form-item label="流动区域" prop="flowAddress_pca">
+								<el-cascader clearable :props="insert_flow_party.address_prop"
+									v-model="insert_flow_party.insert_flow_party_form.flowAddress_pca"
+									separator="/"
+									placeholder="可搜索地点" :options="insert_flow_party.address_pca" 
+									filterable >
+								</el-cascader>
+							</el-form-item>
+						</div>
+						<div>
+							<el-form-item label="详细地址" prop="flowAddressDetail">
+								<el-input clearable v-model="insert_flow_party.insert_flow_party_form.flowAddressDetail" placeholder="11位手机号码"></el-input>
+							</el-form-item>
+						</div>
+						<div>
+							<el-form-item label="流动原因" prop="reason">
+								<el-input
+									type="textarea"
+									:autosize="{ minRows: 3, maxRows: 5}"
+									placeholder="请输入流动原因"
+									v-model="insert_flow_party.insert_flow_party_form.reason">
+								</el-input>
+							</el-form-item>
+						</div>
+						
+					</el-form>
+				</div>
+				<div style="margin: 5px;">
+					<el-button size="small" type="primary" @click="inser_flow_party_submit">添加流动党员</el-button>
+					<el-button size="small" @click="reset_flow_party_form">重置信息</el-button>
+				</div>
+			</div>
+		</el-dialog>
 
-
-
-
+		<el-dialog @close="reset_join_org_info" title="选择组织" :visible.sync="join_org_info_dialog" width="240px">
+			<div style="margin: 10px;">
+				<div>
+					<el-select size="small" clearable 
+						@change="check_org_hava_join_process"
+						v-model="join_org_info.orgId" placeholder="请选择党组织">
+						<el-option
+							v-for="item in join_org_info.orgInfosSelect"
+							:key="item.orgInfoId"
+							:label="item.orgInfoName"
+							:value="item.orgInfoId">
+							<span style="float: left; margin-right: 15px;">{{item.orgInfoName}}</span>
+							<span style="float: right;">{{item.orgInfoId}}</span>
+						</el-option>
+					</el-select>
+				</div>
+				<div style="margin-top: 10px;">
+					<el-select size="small" clearable 
+						v-model="join_org_info.joinType" placeholder="请选择加入党组织方式">
+						<el-option
+							v-for="item in join_org_info.joinOrgTypeSelects"
+							:key="item.jpbtId"
+							:label="item.joinType"
+							:value="item.jpbtId">
+						</el-option>
+					</el-select>
+				</div>
+				<div style="margin-top: 10px;">
+					<el-button 
+						@click="set_join_org_info" 
+						type="primary" size="small">提交
+					</el-button>
+				</div>
+			</div>
+		</el-dialog>
 
 		<el-dialog title="导入党员错误信息" :visible.sync="partyUser_manager_importPartyUserExcelErrorMsgDialog" width="50%">
 			<span style="margin: 0 15px">
@@ -1037,7 +1177,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				<!-- 公共提示信息 -->
 				<span style="font-size: 12px;">
 					<!-- thisStepInfoNull代表没有查询到这个步骤信息 -->
-					<el-row v-if="joinPartyOrg.joinPartyOrgStepInfo.stepStatus != null">	
+					<el-row v-if="(joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus != null && 
+							joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus != '') || 
+							joinPartyOrg.joinPartyOrgStepNum < joinPartyOrg.joinPartyOrgStepNumNow">	
 						<p>
 							提交时间：{{joinPartyOrg.joinPartyOrgStepInfo.stepTime}}
 						</p>
@@ -1045,7 +1187,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							希望加入的组织：{{joinPartyOrg.userInfo.joinPartyUserInfo.orgInfoName}}
 						</p>
 						<p>
-							加入方式：{{joinPartyOrg.userInfo.joinPartyUserInfo.joinPartyType}}
+							加入方式：{{joinPartyOrg.userInfo.joinPartyUserInfo.joinType}}
 						</p>
 						<p>审核状态：
 							<span :style="joinPartyOrg.joinPartyOrgStepInfo.stepStatus == 'success' ? 
@@ -1055,86 +1197,94 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								{{joinPartyOrg.joinPartyOrgStepInfo.stepStatus}}
 							</span>
 						</p>
-						<p>
+						<p v-if="joinPartyOrg.joinPartyOrgStepInfo.stepStatusReason != null && 
+								joinPartyOrg.joinPartyOrgStepInfo.stepStatusReason != ''">
 							附加消息：{{joinPartyOrg.joinPartyOrgStepInfo.stepStatusReason}}
 						</p>
+						<template v-if="joinPartyOrg.joinPartyOrgStepInfo.stepFiles != null
+							&& joinPartyOrg.joinPartyOrgStepInfo.stepFiles.length > 0">
+							<p style="margin-bottom: 10px;">以下是你本次上传的资料：</p>
+							<template v-for="item in joinPartyOrg.joinPartyOrgStepInfo.stepFiles">
+								<div style="width: 80px; height: 150px; float: left; margin-right: 10px; margin-bottom: 10px;">
+									<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.1.8:3000' + item.filePath" :title="item.fileTitle">
+										<div style="text-align: center">
+											<img 
+												:src="getFileTypeImg(item.fileType)" style="width: 60px; height: 80px;" />
+										</div>
+										<div>
+											<p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">
+												{{item.fileTitle}}
+											</p>
+										</div>
+									</a>
+								</div>
+							</template>
+						</template>
 					</el-row>
 				</span>
 				<!-- 公共材料提交 -->
-				<el-row v-if="joinPartyOrg.joinPartyOrgStepInfo.stepStatus == null">
-					<el-form size="small" :model="joinPartyOrg.applyJoinPartyOrgForm" status-icon 
-						:rules="joinPartyOrg.applyJoinPartyOrgRules" 
-						label-position="top"
-						ref="applyJoinPartyOrgForm" label-width="100px">
-						<!-- 没有申请入党记录，第一次申请入党，填写希望加入的组织，后续有记录就不显示加入组织了 -->
-						<span v-if="joinPartyOrg.userInfo.joinPartyUserInfo == null">	
-							<el-form-item label="选择组织" prop="orgInfoId">
-								<el-select size="small" clearable 
-										v-model="joinPartyOrg.applyJoinPartyOrgForm.orgInfoId" placeholder="党组织">
-									<el-option
-										v-for="item in joinPartyOrg.orgInfosSelect"
-										:key="item.orgInfoId"
-										:label="item.orgInfoName"
-										:value="item.orgInfoId">
-										<span style="float: left; margin-right: 15px;">{{item.orgInfoName}}</span>
-										<span style="float: right;">{{item.orgInfoId}}</span>
-									</el-option>
-								</el-select>
-							</el-form-item>
-
-							<el-form-item label="加入方式" prop="joinOrgType">
-								<el-select size="small" clearable 
-										v-model="joinPartyOrg.applyJoinPartyOrgForm.joinOrgType" placeholder="加入党组织方式">
-									<el-option
-										v-for="item in joinPartyOrg.joinOrgTypeSelects"
-										:key="item.jpbtId"
-										:label="item.joinType"
-										:value="item.jpbtId">
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</span>
-						<span v-if="(joinPartyOrg.flag.flagContent || joinPartyOrg.flag.flagFile) && joinPartyOrg.commonTips != null">
-							<p>{{joinPartyOrg.commonTips}}</p>
-						</span>
-						<span v-if="joinPartyOrg.flag.flagContent">
-							
-						</span>
-						<!-- 需要申请人操作时提供材料提交 -->
-						<span v-if="joinPartyOrg.flag.flagFile">
-							<el-upload
-								style="width: 360px" 
-								drag
-								action=""
-								ref="upload_joinPartyOrg" 
-								:auto-upload="false" 
-								:multiple="true">
-								<i class="el-icon-upload"></i>
-								<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-								<div class="el-upload__tip" slot="tip">只能上传doc或docx文件</div>
-							</el-upload>
-						</span>
-					</el-form>
+				<el-row v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow && 
+						(joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == null || 
+						joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == '')">
+					<!-- 需要申请人操作时提供材料提交 -->
+					<span v-if="joinPartyOrg.flag.flagFile">
+						<el-upload
+							style="width: 360px" 
+							drag
+							action=""
+							ref="upload_joinPartyOrg" 
+							:auto-upload="false" 
+							:multiple="true">
+							<i class="el-icon-upload"></i>
+							<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+							<div class="el-upload__tip" slot="tip">请上传审核需要的相关资料</div>
+						</el-upload>
+					</span>
 				</el-row>
 
 				<el-row>
-					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum > 1" size="small" @click="joinPartyOrgStepSet('s')">
+					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum > 0" size="small" @click="joinPartyOrgStepSet('s')">
 						查看上一步结果
 					</el-button>
 					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum < joinPartyOrg.joinPartyOrgStepNumNow" 
 						size="small" @click="joinPartyOrgStepSet('x')">查看下一步结果
 					</el-button>
-					<el-button v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow && 
-						joinPartyOrg.joinPartyOrgStepInfo.stepStatus == 'success'" 
-						size="small" type="primary" @click="joinPartyOrgStepSet('x')">审核通过，下一步
-					</el-button>
 					<!-- 该步骤有提交材料并且步骤对应 -->
 					<el-button 
-						v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow + 1 && 
-						joinPartyOrg.flag.flagFile" 
+						v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow && 
+							(joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == null || 
+							joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == '')" 
 						size="small" type="primary" @click="submitJoinPartyOrg">提交
 					</el-button>
+					<el-button 
+						v-if="joinPartyOrg.joinPartyOrgStepNum == joinPartyOrg.joinPartyOrgStepNumNow && 
+							joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == 'wait' && 
+							joinPartyOrg.nowProcessInfo.isFile" 
+						size="small" type="primary" @click="open_join_supplement_dialog">补充材料
+					</el-button>
 				</el-row>
+			</div>
+		</el-dialog>
+
+		<el-dialog @close="" title="补充材料" :visible.sync="join_supplement.dialog">
+			<div v-loading="join_supplement.uploading" element-loading-text="资料提交中，请稍后..." style="width: 100%">
+					<div style="margin-bottom:15px;">
+						<el-upload
+							style="width: 360px" 
+							drag
+							action=""
+							ref="supplement_file" 
+							:auto-upload="false" 
+							:multiple="true">
+							<i class="el-icon-upload"></i>
+							<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+							<div class="el-upload__tip" slot="tip">请上传审核需要的相关资料</div>
+						</el-upload>
+					</div>
+					<div style="margin-bottom: 10px;">
+						<el-button size="small" type="primary" @click="upload_supplement_files">确认补充
+						</el-button>
+					</div>
 			</div>
 		</el-dialog>
 
@@ -1597,6 +1747,21 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-col>
 					</el-row>
 
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="收入：" prop="income">
+								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.income" placeholder="填写收入">
+								</el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党费占比：" prop="partyProportion">
+								<el-input clearable v-model="partyUser_manager_insertPartyUserForm.partyProportion" placeholder="党费占收入比">
+								</el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
+
 					<el-row v-if="false" :gutter="20">
 						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
 					</el-row>
@@ -2034,6 +2199,21 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						</el-col>
 					</el-row>
 
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<el-form-item label="收入：" prop="income">
+								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.income" placeholder="填写收入">
+								</el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span="6">
+							<el-form-item label="党费占比：" prop="partyProportion">
+								<el-input clearable v-model="partyUser_manager_updatePartyUserForm.partyProportion" placeholder="党费占收入比">
+								</el-input>
+							</el-form-item>
+						</el-col>
+					</el-row>
+
 					<el-row v-if="false" :gutter="20">
 						<el-col :span="24"><span class="partyUserTitleFont">个人简介</span></el-col>
 					</el-row>
@@ -2326,6 +2506,187 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</el-row>
 			</el-form>
 		</el-dialog>
+
+		<el-dialog @close="reset_turn_out_org_dialog" title="党员组织关系转出" :visible.sync="turn_out_org.main_dialog">
+			<div v-loading="turn_out_org.turn_out_submit_loading" element-loading-text="资料提交中，请稍后..." style="width: 100%">
+				<div>
+					<el-steps :active="turn_out_org.stepNum" finish-status="success">
+						<template v-for="item in turn_out_org.all_process">
+							<el-step :title="item.name" :status="item.status"></el-step>
+						</template>
+					</el-steps>
+				</div>
+				<div style="font-size: 16px; margin-top: 10px; font-weight: bold" 
+						v-if="turn_out_org.stepNum == turn_out_org.stepNumNow && 
+					turn_out_org.stepInfo.stepStatus == 'success'">
+					<p>你的申请已通过，请等待组织的分配...</p>
+				</div>
+
+				<!-- 公共提示信息 -->
+				<span style="font-size: 12px; margin-top: 10px;">
+					<!-- thisStepInfoNull代表没有查询到这个步骤信息 -->
+					<el-row v-if="(turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus != null && 
+							turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus != '') || 
+							turn_out_org.stepNum < turn_out_org.stepNumNow">	
+						<p>
+							提交时间：{{turn_out_org.stepInfo.stepTime}}
+						</p>
+						<p>
+							方向：{{turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName == null || 
+								turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName == '' ? 
+								'非本平台组织' : '本平台组织'}}
+						</p>
+						<p>
+							转入组织：{{turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName == null || 
+								turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName == '' ? 
+								turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName : 
+								turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName}}
+						</p>
+						<p>审核状态：
+							<span :style="turn_out_org.stepInfo.stepStatus == 'success' ? 
+								'color: green; font-weight: bold;' : turn_out_org.stepInfo.stepStatus == 'wait' ? 
+								'color: #808080; font-weight: bold;' : turn_out_org.stepInfo.stepStatus == 'error' ? 
+								'color: red; font-weight: bold;' : 'color: black; font-weight: bold;'">
+								{{turn_out_org.stepInfo.stepStatus}}
+							</span>
+						</p>
+						<p v-if="turn_out_org.stepInfo.stepStatusReason != null && 
+								turn_out_org.stepInfo.stepStatusReason != ''">
+							附加消息：{{turn_out_org.stepInfo.stepStatusReason}}
+						</p>
+						<template v-if="turn_out_org.stepInfo.stepFiles != null
+							&& turn_out_org.stepInfo.stepFiles.length > 0">
+							<p style="margin-bottom: 10px;">以下是你本次上传的资料：</p>
+							<template v-for="item in turn_out_org.stepInfo.stepFiles">
+								<div style="width: 80px; height: 150px; float: left; margin-right: 10px; margin-bottom: 10px;">
+									<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.1.8:3000' + item.filePath" :title="item.fileTitle">
+										<div style="text-align: center">
+											<img 
+												:src="getFileTypeImg(item.fileType)" style="width: 60px; height: 80px;" />
+										</div>
+										<div>
+											<p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">
+												{{item.fileTitle}}
+											</p>
+										</div>
+									</a>
+								</div>
+							</template>
+						</template>
+					</el-row>
+				</span>
+
+				<!-- 公共材料提交 -->
+				<div style="margin-top: 10px;" 
+					v-if="turn_out_org.stepNum == turn_out_org.stepNumNow && 
+						(turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == null || 
+						turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == '')">
+					<!-- 需要申请人操作时提供材料提交 -->
+					<span v-if="turn_out_org.flag.flagFile">
+						<el-upload
+							style="width: 360px" 
+							drag
+							action=""
+							ref="upload_turn_out_file" 
+							:auto-upload="false" 
+							:multiple="true">
+							<i class="el-icon-upload"></i>
+							<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+							<div class="el-upload__tip" slot="tip">请上传党部开具的介绍信，没有请自行打印</div>
+						</el-upload>
+					</span>
+				</div>
+
+				<el-row style="margin: 10px 0px;">
+					<el-button v-if="turn_out_org.stepNum > 0" size="small" @click="turnOutOrgStepSet('s')">
+						查看上一步结果
+					</el-button>
+					<el-button v-if="turn_out_org.stepNum < turn_out_org.stepNumNow" 
+						size="small" @click="turnOutOrgStepSet('x')">查看下一步结果
+					</el-button>
+					<!-- 该步骤有提交材料并且步骤对应 -->
+					<el-button 
+						v-if="turn_out_org.stepNum == turn_out_org.stepNumNow && 
+							(turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == null || 
+							turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == '')" 
+						size="small" type="primary" @click="submitTurnOutOrgParty">提交
+					</el-button>
+					<el-button 
+						v-if="turn_out_org.stepNum == turn_out_org.stepNumNow && 
+						turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == 'wait' &&
+						turn_out_org.nowProcessInfo.isFile" 
+						size="small" type="primary" @click="open_turn_out_supplement_dialog">补充材料
+					</el-button>
+
+
+					<el-button v-if="turn_out_org.stepNum == 0 && 
+						turn_out_org.stepInfo.stepStatus == 'success'" 
+						type="primary" size="small" @click="">打印党支部介绍信
+					</el-button>
+					<el-button v-if="turn_out_org.stepNum == 1 && 
+						turn_out_org.stepInfo.stepStatus == 'success'" 
+						type="primary" size="small" @click="">打印上级党组织介绍信
+					</el-button>
+				</el-row>
+			</div>
+		</el-dialog>
+
+		<el-dialog @close="" title="组织关系转移申请材料补充" :visible.sync="turn_out_supplement.dialog">
+			<div v-loading="turn_out_supplement.uploading" element-loading-text="资料提交中，请稍后..." style="width: 100%">
+					<div style="margin-bottom:15px;">
+						<el-upload
+							style="width: 360px" 
+							drag
+							action=""
+							ref="turn_out_supplement_file" 
+							:auto-upload="false" 
+							:multiple="true">
+							<i class="el-icon-upload"></i>
+							<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+							<div class="el-upload__tip" slot="tip">请上传审核需要的相关资料</div>
+						</el-upload>
+					</div>
+					<div style="margin-bottom: 10px;">
+						<el-button size="small" type="primary" @click="turn_out_upload_supplement_files">确认补充
+						</el-button>
+					</div>
+			</div>
+		</el-dialog>
+
+		<el-dialog @close="reset_turn_out_select_org_dialog" title="选择转入组织" :visible.sync="turn_out_select_org.main_dialog" width="280px">
+			<div style="margin: 10px;">
+				<div>
+					<el-select size="small" placeholder="是否本平台组织" clearable v-model="turn_out_select_org.havaThisOrg">
+						<el-option label="是" value="1"></el-option>
+						<el-option label="否" value="0"></el-option>
+					</el-select>
+				</div>
+				<div style="margin-top: 10px;" v-if="turn_out_select_org.havaThisOrg == '0'">
+					<el-input clearable size="small" 
+						v-model="turn_out_select_org.otherOrgName" placeholder="组织名"></el-input>
+				</div>
+				<div style="margin-top: 10px;" v-if="turn_out_select_org.havaThisOrg == '1'">
+					<el-select size="small" clearable 
+						@change="check_org_hava_turn_out_process"
+						v-model="turn_out_select_org.submit.orgId" placeholder="请选择党组织">
+						<el-option
+							v-for="item in turn_out_select_org.orgInfos"
+							:key="item.orgInfoId"
+							:label="item.orgInfoName"
+							:value="item.orgInfoId">
+							<span style="float: left; margin-right: 15px;">{{item.orgInfoName}}</span>
+							<span style="float: right;">{{item.orgInfoId}}</span>
+						</el-option>
+					</el-select>
+				</div>
+				<div style="margin-top: 10px;">
+					<el-button 
+						@click="set_turn_out_org_info" 
+						type="primary" size="small">提交
+					</el-button>
+				</div>
+			</div>
+		</el-dialog>
 	</div>
 </body>
 
@@ -2334,6 +2695,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			more_info: {
+				bui_info: false,
+				pui_info: false
+			},
 			partyUser_manager_jumpToUserDetailInfoArray: [],	/*点击卡片跳转到详细信息，用于保存值，赋值给rowkey以便展开信息*/
 			dis_h_v: true,
 			partyUser_manager_importPartyUserExcelErrorMsg: null,	/*导入党员校验错误信息*/
@@ -2365,6 +2730,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			partyUser_manager_joinOrgInfoDialog: false,		/*加入组织信息窗口*/
 			partyUser_manager_updatePartyUserIdPhotoDialog: false,	/*修改党员证件照*/
 			partyUser_manager_importPartyUserExcelErrorMsgDialog: false,	/*导入党员显示错误校验信息*/
+			join_org_info_dialog: false,	//入党时选择加入组织
 			partyUser_manager_pager: {	/*初始化分页信息*/
 				pageNum: 1,		/* 当前页 */
 				pageSize: 10,	/* 页面大小 */
@@ -2388,7 +2754,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				nativePlace:null,
 				academicDegree: null,
 				education: null,
-				isParty: 0
+				isParty: 0,
+				income: null,
+				partyProportion: null
 			},
 			partyUser_manager_updatePartyUserForm: {	 /*修改党员信息绑定 */
 				id: null,
@@ -2437,9 +2805,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				introduce: null,
 				idPhotoImg: [],	/*用户的当前头像*/
 				isParty: 0,
-				idPhoto: null
+				idPhoto: null,
+				income: null,
+				partyProportion: null
 			},
 			partyUser_manager_updatePartyUserRules: {	/*修改党员信息验证*/
+				income: [
+					{ pattern: /^\d+(\.\d{1,2})?$/, message: '收入输入错误', trigger: 'blur'}
+				],
+				partyProportion: [
+					{ pattern: /^\d{1,2}(\.\d{1,2})?$/, message: '党费占比输入错误', trigger: 'blur'}
+				],
 				name: [
 					{ required: true, message: '请输入身份姓名!', trigger: 'blur' },
 					{ pattern: /^[\u4e00-\u9fa5.·]+$/, message: '请输入正确的姓名!'}	
@@ -2486,6 +2862,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				]
 			},	
 			partyUser_manager_insertPartyUserRules: {	/* 添加党员信息校验 */
+				income: [
+					{ pattern: /^\d+(\.\d{1,2})?$/, message: '收入输入错误', trigger: 'blur'}
+				],
+				partyProportion: [
+					{ pattern: /^\d{1,2}(\.\d{1,2})?$/, message: '党费占比输入错误', trigger: 'blur'}
+				],
 				name: [
 					{ required: true, message: '请输入身份姓名!', trigger: 'blur' },
 					{ pattern: /^[\u4e00-\u9fa5.·]+$/, message: '请输入正确的姓名!'}	
@@ -2803,41 +3185,99 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				applyJoinPartyOrgDialog: false,	/*申请入党弹窗*/
 				joinPartyOrgStepNum: 1,	//当前步骤条步骤，控制步骤条
 				joinPartyOrgStepNumNow: 0,	//申请进度到第几步，来自数据库
-				joinPartyOrgProcess: [],
+				nowProcessInfo: {
+					isFile: null
+				},
+				joinPartyOrgProcess: [],	//步骤条信息
 				userInfo: {
-					joinPartyUserInfo: null
+					joinPartyUserInfo: {
+						nowStep: null
+					}
 				},	//当前用户信息
-				joinPartyOrgLoading: false,
-
-				getJoinPartyOrgStepInfoOver: false,	//该请求是否完成
-				getJoinPartyOrgProcessOver: false,	//请求是否完成
+				joinPartyOrgLoading: false,	//个性提示上传中
 				joinPartyOrgStepInfo: {
 					stepStatus: null	//步骤需要这个变量，现初始化
 				},	//当前步骤信息
 				flag: {	//控制显示提交控件来控制提交哪些材料
-					flagContent: false,
 					flagFile: false
-				},
-				commonTips: null,	//公共提示信息
-				applyJoinPartyOrgForm: {
-					userId: null,
-					orgInfoId: null,
-					joinOrgType: null
-				},
-				applyJoinPartyOrgRules: {
-					orgInfoId: [
-						{ required: true, message: '请选择想要加入的组织', trigger: 'blur' }
-					],
-					joinOrgType: [
-						{ required: true, message: '请选择加入党的方式', trigger: 'blur' }
-					]
-				},
-				orgInfosSelect: [],
-				joinOrgTypeSelects: []
+				}
 			},
 			zidonghuachengxu_videoVariable: {
 				userInfo: null,
 				joinOrgFile: []
+			},
+			join_org_info: {
+				userId: null,
+				orgId: null,
+				joinType: null,
+				orgInfosSelect: [],
+				joinOrgTypeSelects: []
+			},
+			join_supplement: {	//入党申请材料补充
+				dialog: false,
+				uploading: false
+			},
+			turn_out_org: {	//党员转出
+				main_dialog: false,
+				turn_out_submit_loading: false,
+				stepNum: 0,
+				stepNumNow: 0,
+				all_process: null,	//全部步骤
+				userInfo: {
+					turnOutPartyUserInfo: {
+						nowStep: null
+					}
+				},
+				flag: {
+					flagFile: false
+				},
+				stepInfo: {
+					stepTime: null,
+					stepStatus: null
+				},
+				nowProcessInfo: {
+					isFile: null
+				}
+			},
+			turn_out_select_org: {
+				main_dialog: false,
+				orgInfos: null,
+				userInfo: null,
+				havaThisOrg: '',
+				otherOrgName: null,
+				submit: {
+					orgId: null
+				}
+			},
+			turn_out_supplement: {
+				dialog: false,
+				uploading: false
+			},
+			insert_flow_party: {
+				main_dialog: false,
+				address_prop: {	/* 地址prop */
+					value: "name",
+					label: "name",
+					children: "children"
+				},
+				address_pca: pca,	/* 省市区三级联动数据 */
+				insert_flow_party_form: {
+					userId: null,
+					flowAddress_pca: null,
+					flowAddressDetail: null,
+					flowAddressProvince: null,
+					flowAddressCity: null,
+					flowAddressArea: null,
+					reason: null,
+				},
+				insert_flow_party_form_rules: {
+					flowAddressDetail: [
+						{ required: true, message: '请输入详细区域!' }
+					],
+					flowAddress_pca: [
+						{ required: true, message: '请选择流动区域!' }
+					]
+				}
 			}
 		},
 		created: function () {
@@ -2856,6 +3296,674 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			this.getSignInAccountType();
 		},
 		methods: {
+			inser_flow_party_submit() {
+				let obj = this;
+				this.$refs.insert_flow_party_form.validate( function(valid) {
+					if (valid) {
+						var url = "/flow/party/insertFlowPartyUserInfoThisOrg";
+						if (obj.insert_flow_party.insert_flow_party_form.flowAddress_pca != null && 
+							obj.insert_flow_party.insert_flow_party_form.flowAddress_pca != undefined &&
+							obj.insert_flow_party.insert_flow_party_form.flowAddress_pca.length == 3) {
+							obj.insert_flow_party.insert_flow_party_form.flowAddressProvince = obj.insert_flow_party.insert_flow_party_form.flowAddress_pca[0];
+							obj.insert_flow_party.insert_flow_party_form.flowAddressCity = obj.insert_flow_party.insert_flow_party_form.flowAddress_pca[1];
+							obj.insert_flow_party.insert_flow_party_form.flowAddressArea = obj.insert_flow_party.insert_flow_party_form.flowAddress_pca[2];
+						}
+						var t = obj.insert_flow_party.insert_flow_party_form;
+						$.post(url, t, function(data, status){
+							if (data.code == 200) {	/*添加成功*/
+								toast('添加成功',data.msg,'success');
+								obj.insert_flow_party.main_dialog = false;
+								obj.partyUser_manager_queryPartyUserInfos();	/*查找党员信息*/
+								obj.reset_flow_party_form();
+							}
+
+						})
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
+			},
+			reset_flow_party_form() {
+				var obj = this;
+				obj.$refs.insert_flow_party_form.resetFields();
+			},
+			open_inser_flow_party_dialog(row) {
+				let obj = this;
+				obj.insert_flow_party.insert_flow_party_form.userId = row.id;
+				obj.insert_flow_party.main_dialog = true;
+			},
+			turn_out_upload_supplement_files() {	//组织关系转移补充材料上传
+				let obj = this;
+				var supplementFiles = obj.$refs.turn_out_supplement_file.uploadFiles;
+				if (supplementFiles == null || supplementFiles.length == 0) {
+					obj.$message({
+						type: 'error',
+						message: '请上传文件'
+					});
+					return;
+				}
+
+				obj.$confirm(
+					'确认要上传此次补充材料吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		obj.turn_out_supplement.uploading = true;	//提示正在上传中
+					var supplementFileUploadCount = 0;	//上传成功的文件数量
+					var supplementFileCount = supplementFiles.length;	//待上传文件数量
+					var supplementFileUploadUrl = new Array;	//上传成功保存保存文件的地址
+
+					for (var i = 0; i < supplementFiles.length; i++) {
+						var formData = new FormData();
+						formData.append("file", supplementFiles[i].raw);
+						$.ajax({
+							url: "http://192.168.1.8:3000/upload",
+							data: formData,
+							type: "Post",
+							cache: false,//上传文件无需缓存
+							processData: false,//用于对data参数进行序列化处理 这里必须false
+							contentType: false, //必须
+							success: function (data) {
+								if (data != null && data != undefined) {
+									if (data.state == "SUCCESS") {
+										let file = {suffix: null, fileName: null, fileUrl: null};
+										let uploadName = data.original;	//上传的文件全名
+										let fileFormat = uploadName.split(".");
+										file.suffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+										file.fileName = uploadName.substring(0, uploadName.lastIndexOf("."));	//文件名
+										file.fileUrl = data.url;
+										supplementFileUploadUrl.push(file);
+
+										supplementFileUploadCount++;
+									} 
+								} 
+							},
+							error: function() {
+								toast('错误','材料上传失败' ,'error');
+								obj.turn_out_supplement.uploading = false;
+								return;
+							},
+							complete: function(XMLHttpRequest, textStatus) {
+								//覆盖默认函数，避免报错
+							}
+						})
+					}
+
+					var timeCount = 0;	//计时，判断是否上传超时
+					var beginInsert = function() {
+						//给予60秒上传时间
+						if (timeCount > 60 * 1000) {
+							toast('错误','上传材料超时' ,'error');
+							obj.turn_out_supplement.uploading = false;
+							return;
+						}
+						if (supplementFileCount == supplementFileUploadCount) {	//实际上传数量和要上传成功数量一致
+							var url = "/turn_out/step/supplementFiles";
+							var shuju = {
+								uploadFiles: supplementFileUploadUrl,
+								stepId: obj.turn_out_org.stepInfo.id
+							}
+							let t = {
+								condition: JSON.stringify(shuju)
+							}
+							$.post(url, t, function(_data, status){
+								if (_data.code == 200) {
+									toast('提示', _data.msg, 'success');
+									obj.turn_out_supplement.dialog = false;
+									obj.turnOutOrgStepSet('z');
+								} 
+								obj.turn_out_supplement.uploading = false;
+							})
+						} else {
+							//否则重新执行方法判断
+							//增加时间
+							timeCount += 100;
+							setTimeout(beginInsert, 100);
+						}
+					}
+					beginInsert();
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });
+		        });
+			},
+			open_turn_out_supplement_dialog() {	//组织关系转移补充材料弹窗
+				let obj = this;
+				obj.turn_out_supplement.dialog = true;
+			},
+			submitTurnOutOrgParty() {
+				var obj = this;
+				obj.turn_out_org.turn_out_submit_loading = true;	//提示正在上传中
+
+				var turnOutFiles = obj.$refs.upload_turn_out_file.uploadFiles;
+
+				if (obj.turn_out_org.flag.flagFile) {	//表示要上传文件
+					if (turnOutFiles == null || turnOutFiles.length == 0) {
+						obj.$message({
+							type: 'error',
+							message: '请上传文件'
+						});  
+						obj.turn_out_org.turn_out_submit_loading = false;
+						return;
+					}
+				}
+				
+				var turnOutFileUploadCount = 0;	//上传成功的文件数量
+				var turnOutFileCount = turnOutFiles.length;	//待上传文件数量
+				var turnOutFileUploadUrl = new Array;	//上传成功保存保存文件的地址
+
+				for (var i = 0; i < turnOutFiles.length; i++) {
+					var formData = new FormData();
+					formData.append("file", turnOutFiles[i].raw);
+					$.ajax({
+						url: "http://192.168.1.8:3000/upload",
+						data: formData,
+						type: "Post",
+						cache: false,//上传文件无需缓存
+						processData: false,//用于对data参数进行序列化处理 这里必须false
+						contentType: false, //必须
+						success: function (data) {
+							if (data != null && data != undefined) {
+								if (data.state == "SUCCESS") {
+									let file = {suffix: null, fileName: null, fileUrl: null};
+									let uploadName = data.original;	//上传的文件全名
+									let fileFormat = uploadName.split(".");
+									file.suffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+									file.fileName = uploadName.substring(0, uploadName.lastIndexOf("."));	//文件名
+									file.fileUrl = data.url;
+									turnOutFileUploadUrl.push(file);
+
+									turnOutFileUploadCount++;
+								} 
+							} 
+						},
+						error: function() {
+							toast('错误','材料上传失败' ,'error');
+							obj.turn_out_org.turn_out_submit_loading = false;
+							return;
+						},
+						complete: function(XMLHttpRequest, textStatus) {
+							//覆盖默认函数，避免报错
+						}
+					})
+				}
+				
+				var timeCount = 0;	//计时，判断是否上传超时
+				var beginInsert = function() {
+					//给予60秒上传时间
+					if (timeCount > 60 * 1000) {
+						toast('错误','上传材料超时' ,'error');
+						obj.turn_out_org.turn_out_submit_loading = false;
+						return;
+					}
+					if (turnOutFileCount == turnOutFileUploadCount) {	//实际上传数量和要上传成功数量一致
+						//根据第几部joinPartyOrgStepNum拿到该步骤的processId
+						let url = "/org/turn_out/queryOrgTurnOutProcess";
+						let t = {
+							orgId: obj.turn_out_org.userInfo.turnOutPartyUserInfo.turnOutOrgId,
+							indexNum: obj.turn_out_org.stepNum
+						}
+						$.post(url, t, function(data, status){
+							if (data.code == 200) {
+								var url = "/toou/user/insertTurnOutOrgPartyStep";
+								var shuju = {
+									processId: data.data[0].processId,
+								 	uploadFiles: turnOutFileUploadUrl,
+									turnOutId: obj.turn_out_org.userInfo.turnOutPartyUserInfo.id
+								}
+								let t = {
+									submitDate: JSON.stringify(shuju)
+								}
+								$.post(url, t, function(_data, status){
+									if (_data.code == 200) {
+										toast('提示',"操作成功",'success');
+										obj.turn_out_org.turn_out_submit_loading = false;
+										obj.turn_out_org.main_dialog = false;
+										obj.partyUser_manager_queryPartyUserInfos();
+									} else {
+										toast('提示',"操作失败",'error');
+										obj.turn_out_org.turn_out_submit_loading = false;
+									}
+								})
+							} 
+						})
+					} else {
+						//否则重新执行方法判断
+						//增加时间
+						timeCount += 100;
+						setTimeout(beginInsert, 100);
+					}
+				}
+				beginInsert();
+			},
+			set_turn_out_org_info() {	//确认转出组织
+				let obj = this;
+
+				if (obj.turn_out_select_org.havaThisOrg == null || 
+					obj.turn_out_select_org.havaThisOrg == '') {
+					obj.$message({
+			            type: 'error',
+			            message: '请选择转入方向'
+			        }); 
+					return;
+				}
+				if (obj.turn_out_select_org.havaThisOrg == '1' && 
+					(obj.turn_out_select_org.submit.orgId == null || obj.turn_out_select_org.submit.orgId == '')) {
+					obj.$message({
+			            type: 'error',
+			            message: '请选择转入组织'
+			        }); 
+					return;
+				}
+				if (obj.turn_out_select_org.havaThisOrg == '0' && 
+					(obj.turn_out_select_org.otherOrgName == null || obj.turn_out_select_org.otherOrgName == '')) {
+					obj.$message({
+			            type: 'error',
+			            message: '请输入转入组织'
+			        }); 
+					return;
+				}
+
+				obj.$confirm(
+					'即进入申请流程，如有选择组织不可变更转入组织，，确认继续吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		var url = "/toou/user/insertToou";
+					var t = {
+						userId: obj.turn_out_select_org.userInfo.id,
+						turnOutOrgId: obj.turn_out_select_org.submit.orgId,
+						otherOrgName: obj.turn_out_select_org.otherOrgName,
+						isHistory: 0
+					}
+					$.post(url, t, function(data, status){
+						if (data != undefined && data.code == 200) {
+							toast("提示", data.msg, "success");
+							obj.reset_turn_out_select_org_dialog();
+							obj.partyUser_manager_queryPartyUserInfos();
+						}
+					})
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });  
+				});
+			},
+			check_org_hava_turn_out_process() {		//检查该组织是否有转出步骤
+				let obj = this;
+
+				var url = "/org/turn_out/queryOrgTurnOutProcess";
+				var t = {
+					orgId: obj.turn_out_select_org.submit.orgId
+				}
+				$.post(url, t, function(data, status){
+					if (data.code != 200) {
+						obj.turn_out_select_org.submit.orgId = null;
+					} 
+				})
+			},
+			reset_turn_out_select_org_dialog() {
+				let obj = this;
+				obj.turn_out_select_org.main_dialog = false;
+				obj.turn_out_select_org.orgInfos = null;
+				obj.turn_out_select_org.userInfo = null;
+				obj.turn_out_select_org.otherOrgName = null;
+				obj.turn_out_select_org.havaThisOrg = '';
+				obj.turn_out_select_org.submit = {
+					orgId: null
+				}
+			},
+			open_turn_out_select_org_dialog(row) {	//选择转出组织弹窗
+				let obj = this;
+				obj.turn_out_select_org.userInfo = row;
+
+				let url = "/org/ifmt/queryOrgInfosSelect";
+				let t = {}
+				$.post(url, t, function(data, status){	//选择加入的党组织
+					if (data.code == 200) {
+						obj.turn_out_select_org.orgInfos = data.data;
+						obj.turn_out_select_org.main_dialog = true;
+					} 
+				})
+			},
+			turnOutOrgStepSet(step) {	//入党步骤条设置
+				var obj = this;
+
+				if (step == 'x') {
+					obj.turn_out_org.stepNum++;
+				} else if (step == 's') {
+					obj.turn_out_org.stepNum--;
+				}
+
+				obj.turn_out_org.stepInfo = {
+					stepTime: null,
+					stepStatus: null
+				};
+				
+				//查询出此步骤的信息
+				let url = "/org/turn_out/queryOrgTurnOutProcess";
+				let t = {
+					orgId: obj.turn_out_org.userInfo.turnOutPartyUserInfo.turnOutOrgId,
+					indexNum: obj.turn_out_org.stepNum
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						obj.turn_out_org.nowProcessInfo = data.data[0];
+						//没标识状态，表示这一步该用户操作，查询此组织此步流程信息，用来设置党员需要操作的信息
+						if ((obj.turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == null || 
+								obj.turn_out_org.userInfo.turnOutPartyUserInfo.joinStatus == '') && 
+								obj.turn_out_org.stepNum == obj.turn_out_org.stepNumNow) {
+							//该步骤为用户操作，设置正在进行状态
+							obj.turn_out_org.all_process[obj.turn_out_org.stepNum].status = "process";
+							obj.turn_out_org.flag.flagFile = data.data[0].isFile;
+						} else {	//否则查询此步审核状态
+							let url = "/turn_out/step/queryUserTurnOutOrgSteps"
+							let t = {
+								userId: obj.turn_out_org.userInfo.id,
+								processId: data.data[0].processId
+							}
+							$.post(url, t, function(data, status){
+								if (data.code == 200) {
+									obj.turn_out_org.stepInfo = data.data[0];
+								}
+							})
+						}
+						obj.turn_out_org.main_dialog = true;
+					} 
+				})
+			},
+			open_turn_out_org_dialog(row) {	//组织关系转出弹窗
+				let obj = this;
+				obj.turn_out_org.userInfo = row;	//保存user信息
+				//查询此人要加入组织的加入流程
+				var url;
+				var t;
+				if (obj.turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName != null && 
+					obj.turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName != '') {
+					url = "/org/turn_out/queryOrgTurnOutProcess";
+					t = {
+						orgId: obj.turn_out_org.userInfo.turnOutPartyUserInfo.turnOutOrgId
+					}
+				} else if(obj.turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName != null && 
+					obj.turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName != '') {
+					url = "/toou/user/queryToopOtherOrg";
+					t = {}
+				} else {
+					obj.$message({
+			            type: 'error',
+			            message: '出现错误'
+			        }); 
+					return;
+				}
+				
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						obj.some_matter(data);
+					}
+				})
+			},
+			some_matter(data) {
+				let obj = this;
+				obj.turn_out_org.all_process = data.data;
+				//查询当前用户进行的流程
+				let url = "/turn_out/step/queryUserTurnOutOrgSteps"
+				let t = {
+					userId: obj.turn_out_org.userInfo.id,
+					isHistory: 0
+				}
+				$.post(url, t, function(_data, status){
+					if (_data.code == 200) {
+						let userProcess = _data.data;
+						for (var i = 0; i < obj.turn_out_org.all_process.length; i++) {	
+							//增加status属性，给步骤条设置状态
+							var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
+							//给已进行的步骤设置状态
+							if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
+								//为wait的步骤为了显示效果将状态手动修改为process，不用提交到数据库
+								_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
+							}
+							_process.id = obj.turn_out_org.all_process[i].id;
+							_process.name = obj.turn_out_org.all_process[i].name;
+							_process.orgId = obj.turn_out_org.all_process[i].orgId;
+							_process.processId = obj.turn_out_org.all_process[i].processId;
+							_process.indexNum = obj.turn_out_org.all_process[i].indexNum;
+							_process.isFile = obj.turn_out_org.all_process[i].isFile;
+							obj.turn_out_org.all_process[i] = _process;
+							//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
+							if (_process.processId == obj.turn_out_org.userInfo.turnOutPartyUserInfo.nowStep) {
+								obj.turn_out_org.stepNum = _process.indexNum;
+								obj.turn_out_org.stepNumNow = _process.indexNum;
+							}
+						}
+						obj.turnOutOrgStepSet('z');
+					}
+				})
+			},
+			reset_turn_out_org_dialog() {
+				let obj = this;
+				obj.turn_out_org.main_dialog = false;
+				obj.turn_out_org.turn_out_submit_loading = false;
+				obj.turn_out_org.stepNum = 0;
+				obj.turn_out_org.stepNumNow = 0;
+				obj.turn_out_org.nowProcessInfo = {
+					isFile: null
+				};
+				obj.turn_out_org.all_process = null;
+				obj.turn_out_org.userInfo = {
+					turnOutPartyUserInfo: {
+						nowStep: null
+					}
+				};
+				obj.turn_out_org.flag = {
+					flagFile: false
+				};
+				obj.turn_out_org.stepInfo = {
+					stepTime: null
+				};
+			},
+			upload_supplement_files() {	//上传补充资料
+				let obj = this;
+				var supplementFiles = obj.$refs.supplement_file.uploadFiles;
+				if (supplementFiles == null || supplementFiles.length == 0) {
+					obj.$message({
+						type: 'error',
+						message: '请上传文件'
+					});
+					return;
+				}
+
+				obj.$confirm(
+					'确认要上传此次补充材料吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		obj.join_supplement.uploading = true;	//提示正在上传中
+					var supplementFileUploadCount = 0;	//上传成功的文件数量
+					var supplementFileCount = supplementFiles.length;	//待上传文件数量
+					var supplementFileUploadUrl = new Array;	//上传成功保存保存文件的地址
+
+					for (var i = 0; i < supplementFiles.length; i++) {
+						var formData = new FormData();
+						formData.append("file", supplementFiles[i].raw);
+						$.ajax({
+							url: "http://192.168.1.8:3000/upload",
+							data: formData,
+							type: "Post",
+							cache: false,//上传文件无需缓存
+							processData: false,//用于对data参数进行序列化处理 这里必须false
+							contentType: false, //必须
+							success: function (data) {
+								if (data != null && data != undefined) {
+									if (data.state == "SUCCESS") {
+										let file = {suffix: null, fileName: null, fileUrl: null};
+										let uploadName = data.original;	//上传的文件全名
+										let fileFormat = uploadName.split(".");
+										file.suffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+										file.fileName = uploadName.substring(0, uploadName.lastIndexOf("."));	//文件名
+										file.fileUrl = data.url;
+										supplementFileUploadUrl.push(file);
+
+										supplementFileUploadCount++;
+									} 
+								} 
+							},
+							error: function() {
+								toast('错误','材料上传失败' ,'error');
+								obj.join_supplement.uploading = false;
+								return;
+							},
+							complete: function(XMLHttpRequest, textStatus) {
+								//覆盖默认函数，避免报错
+							}
+						})
+					}
+
+					var timeCount = 0;	//计时，判断是否上传超时
+					var beginInsert = function() {
+						//给予60秒上传时间
+						if (timeCount > 60 * 1000) {
+							toast('错误','上传材料超时' ,'error');
+							obj.join_supplement.uploading = false;
+							return;
+						}
+						if (supplementFileCount == supplementFileUploadCount) {	//实际上传数量和要上传成功数量一致
+							var url = "/join/file/supplementFiles";
+							var shuju = {
+								uploadFiles: supplementFileUploadUrl,
+								stepId: obj.joinPartyOrg.joinPartyOrgStepInfo.id
+							}
+							let t = {
+								condition: JSON.stringify(shuju)
+							}
+							$.post(url, t, function(_data, status){
+								if (_data.code == 200) {
+									toast('提示', _data.msg, 'success');
+									obj.join_supplement.dialog = false;
+									obj.joinPartyOrgStepSet('z');
+								} 
+								obj.join_supplement.uploading = false;
+							})
+						} else {
+							//否则重新执行方法判断
+							//增加时间
+							timeCount += 100;
+							setTimeout(beginInsert, 100);
+						}
+					}
+					beginInsert();
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });
+		        });
+			},
+			open_join_supplement_dialog() {
+				let obj = this;
+				obj.join_supplement.dialog = true;
+			},
+			check_org_hava_join_process() {	//检查选择组织是否设置了入党流程
+				let obj = this;
+
+				var url = "/org/process/queryOrgOjp";
+				var t = {
+					orgId: obj.join_org_info.orgId
+				}
+				$.post(url, t, function(data, status){
+					if (data.code != 200) {
+						obj.join_org_info.orgId = null;
+					} 
+				})
+			},
+			reset_join_org_info() {
+				let obj = this;
+				obj.join_org_info.orgId = null;
+				obj.join_org_info.joinType = null;
+				obj.join_org_info_dialog = false;
+			},
+			open_join_org_info_dialog(row) {	//加入组织时选择组织弹窗
+				let obj = this;
+				obj.join_org_info.userId = row.id;
+				let url = "/org/ifmt/queryOrgInfosSelect";
+				let t = {}
+				$.post(url, t, function(data, status){	//选择加入的党组织
+					if (data.code == 200) {
+						obj.join_org_info.orgInfosSelect = data.data;
+					} 
+				})
+				url = "/jpbt/queryJoinPartyBranchTypes";
+				t = {}
+				$.post(url, t, function(data, status){	//如何加入
+					if (data.code == 200) {
+						obj.join_org_info.joinOrgTypeSelects = data.data;
+					}
+				})
+				obj.join_org_info_dialog = true;
+			},
+			set_join_org_info() {	//设置入党的信息，要加入的党，加入的方式
+				let obj = this;
+
+				if (obj.join_org_info.orgId == null || obj.join_org_info.orgId == '') {
+					obj.$message({
+			            type: 'error',
+			            message: '请选择加入组织'
+			        }); 
+					return;
+				}
+				if (obj.join_org_info.joinType == null || obj.join_org_info.joinType == '') {
+					obj.$message({
+			            type: 'error',
+			            message: '请选择加入方式'
+			        }); 
+					return;
+				}
+
+				obj.$confirm(
+					'选择后不可更改组织，即进入申请流程，确认继续吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		var url = "/join/user/insertJpou";
+					var t = {
+						userId: obj.join_org_info.userId,
+						joinOrgId: obj.join_org_info.orgId,
+						joinPartyType: obj.join_org_info.joinType,
+						isHistory: 0
+					}
+					$.post(url, t, function(data, status){
+						if (data != undefined && data.code == 200) {
+							toast("提示", data.msg, "success");
+							obj.reset_join_org_info();
+							obj.partyUser_manager_queryPartyUserInfos();
+						}
+					})
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });  
+				});
+			},
 			zidonghuachengxu_video() {	//为了录像
 				var obj = this;
 				setTimeout(() => {
@@ -2915,89 +4023,89 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			submitJoinPartyOrg() {
 				var obj = this;
-				this.$refs["applyJoinPartyOrgForm"].validate( function(valid) {
-					if (valid) {
-						obj.joinPartyOrg.joinPartyOrgLoading = true;
+				obj.joinPartyOrg.joinPartyOrgLoading = true;	//提示正在上传中
 
-						var joinFiles = obj.$refs.upload_joinPartyOrg.uploadFiles;
-						// if (!obj.validataUploadJoinPartyOrgFiles(joinFiles)) {	//验证文件格式
-						// 	obj.joinPartyOrg.joinPartyOrgLoading = false;
-						// 	return;
-						// }
+				var joinFiles = obj.$refs.upload_joinPartyOrg.uploadFiles;
 
-						if (obj.joinPartyOrg.joinPartyOrgStepNum == 1 || obj.joinPartyOrg.joinPartyOrgStepNum == 5) {	//入党第一步必须提交入党申请书
-							if (joinFiles == null || joinFiles.length == 0) {
-								var msggggg = "";
-								if (obj.joinPartyOrg.joinPartyOrgStepNum == 1) {
-									msggggg = "请上传入党申请书";
-								} else if (obj.joinPartyOrg.joinPartyOrgStepNum == 8) {
-									msggggg = "请上传申请预备党员申请书";
-								}
-								toast('错误',msggggg ,'error');
-								obj.joinPartyOrg.joinPartyOrgLoading = false;
-								return;
-							}
+				if (obj.joinPartyOrg.flag.flagFile) {	//表示要上传文件
+					if (joinFiles == null || joinFiles.length == 0) {
+						obj.$message({
+							type: 'error',
+							message: '请上传文件'
+						});  
+						obj.joinPartyOrg.joinPartyOrgLoading = false;
+						return;
+					}
+				}
+				
+				var joinFileUploadCount = 0;	//上传成功的文件数量
+				var joinFileCount = joinFiles.length;	//待上传文件数量
+				var joinFileUploadUrl = new Array;	//上传成功保存保存文件的地址
+
+				for (var i = 0; i < joinFiles.length; i++) {
+					var formData = new FormData();
+					formData.append("file", joinFiles[i].raw);
+					$.ajax({
+						url: "http://192.168.1.8:3000/upload",
+						data: formData,
+						type: "Post",
+						cache: false,//上传文件无需缓存
+						processData: false,//用于对data参数进行序列化处理 这里必须false
+						contentType: false, //必须
+						success: function (data) {
+							if (data != null && data != undefined) {
+								if (data.state == "SUCCESS") {
+									let file = {suffix: null, fileName: null, fileUrl: null};
+									let uploadName = data.original;	//上传的文件全名
+									let fileFormat = uploadName.split(".");
+									file.suffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+									file.fileName = uploadName.substring(0, uploadName.lastIndexOf("."));	//文件名
+									file.fileUrl = data.url;
+									joinFileUploadUrl.push(file);
+
+									joinFileUploadCount++;
+								} 
+							} 
+						},
+						error: function() {
+							toast('错误','材料上传失败' ,'error');
+							obj.joinPartyOrg.joinPartyOrgLoading = false;
+							return;
+						},
+						complete: function(XMLHttpRequest, textStatus) {
+							//覆盖默认函数，避免报错
 						}
-						
-						var joinFileUploadCount = 0;
-						var joinFileCount = joinFiles == null ? 0 : joinFiles.length;
-						var joinFileUploadUrl = "";
-						if (joinFiles != null && joinFiles.length > 0) {	//上传材料
-							for (var i = 0; i < joinFiles.length; i++) {
-								var formData = new FormData();
-								formData.append("file", joinFiles[i].raw);
-								$.ajax({
-				                   	url: "http://192.168.1.8:3000/upload",
-				                   	data: formData,
-				                   	type: "Post",
-				                   	cache: false,//上传文件无需缓存
-				                   	processData: false,//用于对data参数进行序列化处理 这里必须false
-				                   	contentType: false, //必须
-				                   	success: function (data) {
-				                   		if (data != null && data != undefined) {
-				                   			if (data.state == "SUCCESS") {
-												var fileFormat = data.original.split(".");
-												var fileSuffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
-												joinFileUploadUrl += data.url + ",入党申请书-" + obj.joinPartyOrg.userInfo.name + "-" + obj.joinPartyOrg.userInfo.id + "."
-													+ fileSuffix + ",";
-												//上传完成，数量加一，与上传总图片数量比对，如果一致则全部上传完毕，开始事迹内容上传
-												joinFileUploadCount++;
-					                	   	} 
-				                   		} 
-				                   	},
-				                   	error: function() {
-										toast('错误','材料上传失败' ,'error');
-										obj.joinPartyOrg.joinPartyOrgLoading = false;
-				                   		return;
-				                   	},
-				                   	complete: function(XMLHttpRequest, textStatus) {
-				                   		//覆盖默认函数，避免报错
-				                   	}
-				               })
-							}
+					})
+				}
+				
+				var timeCount = 0;	//计时，判断是否上传超时
+				var beginInsert = function() {
+					//给予60秒上传时间
+					if (timeCount > 60 * 1000) {
+						toast('错误','上传材料超时' ,'error');
+						obj.joinPartyOrg.joinPartyOrgLoading = false;
+						return;
+					}
+					if (joinFileCount == joinFileUploadCount) {	//实际上传数量和要上传成功数量一致
+						//根据第几部joinPartyOrgStepNum拿到该步骤的processId
+						let url = "/org/process/queryOrgOjp";
+						let t = {
+							orgId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinOrgId,
+							indexNum: obj.joinPartyOrg.joinPartyOrgStepNum
 						}
-						
-						var timeCount = 0;
-						var beginInsert = function() {
-							if (timeCount > 10 * 1000) {
-								toast('错误','上传材料超时' ,'error');
-								obj.joinPartyOrg.joinPartyOrgLoading = false;
-								return;
-							}
-							if (joinFileCount == joinFileUploadCount) {	//实际上传数量和要上传成功数量一致
-								var url = "/join/user/insertJoinPartyOrgUsers";
-								var t = {
-									userId: obj.joinPartyOrg.applyJoinPartyOrgForm.userId,
-									stepNum: obj.joinPartyOrg.joinPartyOrgStepNum,
-									orgInfoId: obj.joinPartyOrg.applyJoinPartyOrgForm.orgInfoId,
-									joinFileUploadUrl: joinFileUploadUrl,
-									joinOrgType: obj.joinPartyOrg.applyJoinPartyOrgForm.joinOrgType
+						$.post(url, t, function(data, status){
+							if (data.code == 200) {
+								var url = "/join/user/insertJoinPartyOrgStep";
+								var shuju = {
+									processId: data.data[0].processId,
+								 	uploadFiles: joinFileUploadUrl,
+									joinId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.id
 								}
-								if (obj.joinPartyOrg.userInfo.joinPartyUserInfo != null) {
-									t.joinId = obj.joinPartyOrg.userInfo.joinPartyUserInfo.id;
+								let t = {
+									submitDate: JSON.stringify(shuju)
 								}
-								$.post(url, t, function(data, status){
-									if (data.code == 200) {
+								$.post(url, t, function(_data, status){
+									if (_data.code == 200) {
 										toast('提示',"操作成功",'success');
 										obj.joinPartyOrg.joinPartyOrgLoading = false;
 										obj.joinPartyOrg.applyJoinPartyOrgDialog = false;
@@ -3007,167 +4115,158 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 										obj.joinPartyOrg.joinPartyOrgLoading = false;
 									}
 								})
-							} else {
-								timeCount += 50;
-								setTimeout(beginInsert, 50);
-							}
-						}
-						beginInsert();
+							} 
+						})
+					} else {
+						//否则重新执行方法判断
+						//增加时间
+						timeCount += 100;
+						setTimeout(beginInsert, 100);
 					}
-				});
+				}
+				beginInsert();
 			},
 			resetApplyJoinPartyOrgDialog() {	//关闭入党弹窗重置数据
 				var obj = this;
-				if (obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus == null) {	//当没有步骤时，则添加当前步骤信息，此时在充值表单，防止表单未初始化而重置失败
-					obj.$refs["applyJoinPartyOrgForm"].resetFields();
+
+				let joinId = obj.joinPartyOrg.userInfo.joinPartyUserInfo.id;
+				if (obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == 'error') {
+					obj.$confirm(
+						'您的入党申请被拒绝，要删除您的申请记录吗？', 
+						'提示', 
+						{
+							confirmButtonText: '删除',
+							cancelButtonText: '不删除',
+							type: 'error'
+						}
+					).then(function(){
+						let url = "/join/user/deleteJoinPartyOrgSteps"
+						let t = {
+							id: joinId,
+							isHistory: 1
+						}
+						$.post(url, t, function(data, status){
+							if (data.code == 200) {
+								obj.$message({
+									type: 'success',
+									message: data.msg
+								}); 
+							}
+						})
+					}).catch(function(){
+						obj.$message({
+							type: 'info',
+							message: '已取消'
+						}); 
+					});
 				}
+
 				obj.joinPartyOrg.joinPartyOrgStepNum = 1;
 				obj.joinPartyOrg.joinPartyOrgStepNumNow = 0;
 				obj.joinPartyOrg.joinPartyOrgStepInfo = {
 					stepStatus: null
 				};
 				obj.joinPartyOrg.userInfo = {
-					joinPartyUserInfo: null
+					joinPartyUserInfo: {
+						nowStep: null
+					}
 				};
-				obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = false;
-				obj.joinPartyOrg.getJoinPartyOrgProcessOver = false;
+				obj.joinPartyOrg.nowProcessInfo = {
+					isFile: null
+				}
+				obj.joinPartyOrg.flag.flagFile = false;	//空值文件上传
 				obj.joinPartyOrg.joinPartyOrgProcess = [];
-				obj.joinPartyOrg.commonTips = null;
 				obj.joinPartyOrg.joinPartyOrgLoading = false;
 			},
 			joinPartyOrgStepSet(step) {	//入党步骤条设置
 				var obj = this;
 
-				//重置公共提示信息
-				obj.joinPartyOrg.commonTips = null;
-				obj.joinPartyOrg.flag.flagFile = false;
-				obj.joinPartyOrg.flag.flagContent = false;
-
-				if (step == 's') {
-					obj.joinPartyOrg.joinPartyOrgStepNum--;
-				} else {					
+				if (step == 'x') {
 					obj.joinPartyOrg.joinPartyOrgStepNum++;
+				} else if (step == 's') {
+					obj.joinPartyOrg.joinPartyOrgStepNum--;
 				}
 
-				obj.queryJoinPartyOrgSteps(obj.joinPartyOrg.joinPartyOrgStepNum);	//查询当前进行的步骤信息
-				var timeCount = 0;
-				var initSomeThings = function() {
-					if (timeCount > 2000) {
-						toast('错误','请求数据超时' ,'error');
-						return;
-					}
-					//等待步骤条信息和当前步骤信息请求完成，设置步骤条显示状态
-					if (obj.joinPartyOrg.getJoinPartyOrgProcessOver && obj.joinPartyOrg.getJoinPartyOrgStepInfoOver) {
-						obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = false;
-
-						if (obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus != null) {
-							if (obj.joinPartyOrg.joinPartyOrgProcess.length >= obj.joinPartyOrg.joinPartyOrgStepNumNow) {
-								obj.joinPartyOrg.joinPartyOrgProcess[obj.joinPartyOrg.joinPartyOrgStepNum - 1].status = 
-									obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus == "wait" ? "process" : obj.joinPartyOrg.joinPartyOrgStepInfo.stepStatus;
-								obj.joinPartyOrg.applyJoinPartyOrgDialog = true;
-							}
-						} else {	//没有申请入党记录，开始申请入党
-							obj.joinPartyOrg.joinPartyOrgProcess[obj.joinPartyOrg.joinPartyOrgStepNum - 1].status = "process";
-							if (obj.joinPartyOrg.joinPartyOrgStepNum == 1) {
-								url = "/org/ifmt/queryOrgInfosSelect";
-								t = {
-									
-								}
-								$.post(url, t, function(data, status){	//选择加入的党组织
-									if (data.code == 200) {
-										obj.joinPartyOrg.orgInfosSelect = data.data;
-									} 
-								})
-
-								var url = "/jpbt/queryJoinPartyBranchTypes";
-								var t = {
-								}
-								$.post(url, t, function(data, status){	//如何加入
-									if (data.code == 200) {
-										obj.joinPartyOrg.joinOrgTypeSelects = data.data;
-									}
-
-								})
-
-								obj.joinPartyOrg.commonTips = "请上传入党申请书，组织要求上交纸质申请此处拍照上传";
-								obj.joinPartyOrg.flag.flagFile = true;
-							} else if (obj.joinPartyOrg.joinPartyOrgStepNum == 8) {
-								obj.joinPartyOrg.commonTips = "请上传转正申请书，组织要求上交纸质申请此处拍照上传";
-								obj.joinPartyOrg.flag.flagFile = true;
-							}
-							
-							obj.joinPartyOrg.applyJoinPartyOrgDialog = true;
-						}
-					} else {
-						timeCount += 50;
-						setTimeout(initSomeThings, 50)
-					}
-				}
-				initSomeThings();
-			},
-			openApplyJoinPartyOrgDialog(userInfo) {	//打开入党弹窗
-				var obj = this;
-
-				var url = "/join/process/queryJoinPartyOrgProcess";
-				var t = {
-					
+				obj.joinPartyOrg.joinPartyOrgStepInfo = null;
+				
+				//查询出此步骤的信息
+				let url = "/org/process/queryOrgOjp";
+				let t = {
+					orgId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinOrgId,
+					indexNum: obj.joinPartyOrg.joinPartyOrgStepNum
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
-						obj.joinPartyOrg.joinPartyOrgProcess = data.data;
-
-						if (obj.joinPartyOrg.joinPartyOrgProcess != null && obj.joinPartyOrg.joinPartyOrgProcess.length > 0) {
-							for (var i = 0; i < obj.joinPartyOrg.joinPartyOrgProcess.length; i++) {	//增加status属性，以便给步骤条设置状态
-								var _process = {id: null, name: null, nameEn: null, describes: null, status: 'wait'};
-								if (userInfo.joinPartyUserInfo != null && i <= userInfo.joinPartyUserInfo.nowStep - 2) {
-									_process.status = "success";
-								}
-								_process.id = obj.joinPartyOrg.joinPartyOrgProcess[i].id;
-								_process.name = obj.joinPartyOrg.joinPartyOrgProcess[i].name;
-								_process.nameEn = obj.joinPartyOrg.joinPartyOrgProcess[i].nameEn;
-								_process.describes = obj.joinPartyOrg.joinPartyOrgProcess[i].describes;
-								obj.joinPartyOrg.joinPartyOrgProcess[i] = _process;
+						obj.joinPartyOrg.nowProcessInfo = data.data[0];
+						//没标识状态，表示这一步该用户操作，查询此组织此步流程信息，用来设置党员需要操作的信息
+						if ((obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == null || 
+								obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinStatus == '') && 
+								obj.joinPartyOrg.joinPartyOrgStepNum == obj.joinPartyOrg.joinPartyOrgStepNumNow) {
+							//该步骤为用户操作，设置正在进行状态
+							obj.joinPartyOrg.joinPartyOrgProcess[obj.joinPartyOrg.joinPartyOrgStepNum].status = "process";
+							obj.joinPartyOrg.flag.flagFile = data.data[0].isFile;
+						} else {	//否则查询此步审核状态
+							let url = "/join/step/queryUserJoinPartyOrgSteps"
+							let t = {
+								userId: obj.joinPartyOrg.userInfo.id,
+								processId: data.data[0].processId
 							}
-							obj.joinPartyOrg.getJoinPartyOrgProcessOver = true;
-						} 
+							$.post(url, t, function(data, status){
+								if (data.code == 200) {
+									obj.joinPartyOrg.joinPartyOrgStepInfo = data.data[0];
+								}
+							})
+						}
+						obj.joinPartyOrg.applyJoinPartyOrgDialog = true;
 					} 
 				})
-
-
-				obj.joinPartyOrg.userInfo = userInfo;	//一定存在
-				obj.joinPartyOrg.applyJoinPartyOrgForm.userId = obj.joinPartyOrg.userInfo.id;
-				if (obj.joinPartyOrg.userInfo.joinPartyUserInfo != null) {
-					obj.joinPartyOrg.joinPartyOrgStepNum = obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep;	//设置当前步骤，默认1
-					obj.joinPartyOrg.joinPartyOrgStepNumNow = obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep;
-				}
-
-				//在joinPartyOrgStepSet方法中步骤会+1，为了查询当前步骤，步骤先-1
-				obj.joinPartyOrg.joinPartyOrgStepNum--;
-				obj.joinPartyOrgStepSet('x');
 			},
-			queryJoinPartyOrgSteps(stepNum) {	//查询步骤信息
+			openApplyJoinPartyOrgDialog(userInfo) {	//打开入党弹窗
 				var obj = this;
-				if (obj.joinPartyOrg.userInfo.joinPartyUserInfo == null) {
-					obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = true;
-					obj.joinPartyOrg.joinPartyOrgStepInfo = {
-						stepStatus: null	//步骤需要这个变量，现初始化
-					}
-					return;
-				}
-				url = "/join/step/queryJoinPartyOrgSteps";
+				obj.joinPartyOrg.userInfo = userInfo;	//保存user信息
+				//查询此人要加入组织的加入流程
+				var url = "/org/process/queryOrgOjp";
 				var t = {
-					joinId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.id,
-					processId: stepNum
+					orgId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinOrgId
 				}
+
 				$.post(url, t, function(data, status){
-					if (data.code == 200 && data.data != undefined && data.data != null) {
-						obj.joinPartyOrg.joinPartyOrgStepInfo = data.data;
-					} else {
-						obj.joinPartyOrg.joinPartyOrgStepInfo = {
-							stepStatus: null	//步骤需要这个变量，现初始化
+					if (data.code == 200) {
+						obj.joinPartyOrg.joinPartyOrgProcess = data.data;
+						//当前用户进行的流程
+						let url = "/join/step/queryUserJoinPartyOrgSteps"
+						let t = {
+							userId: obj.joinPartyOrg.userInfo.id,
+							isHistory: 0
 						}
-					}
-					obj.joinPartyOrg.getJoinPartyOrgStepInfoOver = true;
+						$.post(url, t, function(_data, status){
+							if (_data.code == 200) {
+								let userProcess = _data.data;
+								for (var i = 0; i < obj.joinPartyOrg.joinPartyOrgProcess.length; i++) {	
+									//增加status属性，给步骤条设置状态
+									var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
+									//给已进行的步骤设置状态
+									if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
+										//为wait的步骤为了显示效果将状态手动修改为process，不用提交到数据库
+										_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
+									}
+									_process.id = obj.joinPartyOrg.joinPartyOrgProcess[i].id;
+									_process.name = obj.joinPartyOrg.joinPartyOrgProcess[i].name;
+									_process.orgId = obj.joinPartyOrg.joinPartyOrgProcess[i].orgId;
+									_process.processId = obj.joinPartyOrg.joinPartyOrgProcess[i].processId;
+									_process.indexNum = obj.joinPartyOrg.joinPartyOrgProcess[i].indexNum;
+									_process.isFile = obj.joinPartyOrg.joinPartyOrgProcess[i].isFile;
+									obj.joinPartyOrg.joinPartyOrgProcess[i] = _process;
+									//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
+									if (_process.processId == obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep) {
+										obj.joinPartyOrg.joinPartyOrgStepNum = _process.indexNum;
+										obj.joinPartyOrg.joinPartyOrgStepNumNow = _process.indexNum;
+									}
+								}
+								obj.joinPartyOrgStepSet('z');
+							}
+						})
+					} 
 				})
 			},
 
@@ -3937,6 +5036,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				obj.partyUser_manager_updatePartyUserForm.missingUser = row.missingUser;
 				obj.partyUser_manager_updatePartyUserForm.introduce = row.introduce;
 				obj.partyUser_manager_updatePartyUserForm.isParty = row.isParty;
+				obj.partyUser_manager_updatePartyUserForm.income = row.income;
+				obj.partyUser_manager_updatePartyUserForm.partyProportion = row.partyProportion;
 				obj.partyUser_manager_updatePartyUserDialog = true;
 			},
 			partyUser_manager_insertPartyUser() {	/* 添加用户 */
@@ -4255,6 +5356,19 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					window.open ('/view/pm/tp/002/index.jsp?id='+row.id, 'newwindow', 'height='+ height, 'width='+ width);
 				}
 				
+			},
+			getFileTypeImg(fileType) {
+				if (fileType == "doc") {
+					return "/view/pm/fileTypeImg/doc.png";
+				} else if (fileType == "docx") {
+					return "/view/pm/fileTypeImg/docx.png";
+				} else if (fileType == "jpg") {
+					return "/view/pm/fileTypeImg/jpg.png";
+				} else if (fileType == "xls" || fileType == "xlsx") {
+					return "/view/pm/fileTypeImg/xls.png";
+				} else if (fileType == "ppt" || fileType == "pptx") {
+					return "/view/pm/fileTypeImg/ppt.jpg";
+				} 
 			}
 		}
 	});

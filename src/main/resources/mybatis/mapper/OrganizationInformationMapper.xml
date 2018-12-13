@@ -56,7 +56,7 @@
       #{orgInfoNatureId,jdbcType=INTEGER}, #{orgInfoLevel,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation">
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationInformation" useGeneratedKeys="true" keyProperty="orgInfoId" keyColumn="org_info_id">
     insert into organization_information
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orgInfoId != null">

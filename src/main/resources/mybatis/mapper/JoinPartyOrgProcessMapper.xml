@@ -6,9 +6,10 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="name_en" jdbcType="VARCHAR" property="nameEn" />
     <result column="describes" jdbcType="VARCHAR" property="describes" />
+    <result column="file" jdbcType="BIT" property="file" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, name_en, describes
+    id, name, name_en, describes, file
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -22,9 +23,9 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgProcess">
     insert into join_party_org_process (id, name, name_en, 
-      describes)
+      describes, file)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{nameEn,jdbcType=VARCHAR}, 
-      #{describes,jdbcType=VARCHAR})
+      #{describes,jdbcType=VARCHAR}, #{file,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgProcess">
     insert into join_party_org_process
@@ -41,6 +42,9 @@
       <if test="describes != null">
         describes,
       </if>
+      <if test="file != null">
+        file,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -54,6 +58,9 @@
       </if>
       <if test="describes != null">
         #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="file != null">
+        #{file,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -69,6 +76,9 @@
       <if test="describes != null">
         describes = #{describes,jdbcType=VARCHAR},
       </if>
+      <if test="file != null">
+        file = #{file,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -76,7 +86,8 @@
     update join_party_org_process
     set name = #{name,jdbcType=VARCHAR},
       name_en = #{nameEn,jdbcType=VARCHAR},
-      describes = #{describes,jdbcType=VARCHAR}
+      describes = #{describes,jdbcType=VARCHAR},
+      file = #{file,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
@@ -85,6 +96,16 @@
     	<include refid="Base_Column_List" /> 
     from 
     	join_party_org_process
+    order by id asc
+  </select>
+  
+  <select id="queryJoinPartyOrgProcessByProcessId" parameterType="com.zltel.broadcast.um.bean.JoinPartyOrgProcess" resultMap="BaseResultMap">
+  	select 
+    	<include refid="Base_Column_List" /> 
+    from 
+    	join_party_org_process
+    where
+    	id = #{id}
     order by id asc
   </select>
 </mapper>

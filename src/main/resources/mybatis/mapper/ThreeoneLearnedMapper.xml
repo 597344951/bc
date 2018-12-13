@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.threeone.dao.ThreeoneLearnedMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.threeone.bean.ThreeoneLearned">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="schedule_id" jdbcType="INTEGER" property="scheduleId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.threeone.bean.ThreeoneLearnedWithBLOBs">
+    <result column="learned" jdbcType="LONGVARCHAR" property="learned" />
+    <result column="annex" jdbcType="LONGVARCHAR" property="annex" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, schedule_id, user_id, update_date, add_date
+  </sql>
+  <sql id="Blob_Column_List">
+    learned, annex
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from threeone_learned
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from threeone_learned
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.threeone.bean.ThreeoneLearnedWithBLOBs">
+    insert into threeone_learned (id, schedule_id, user_id, 
+      update_date, add_date, learned, 
+      annex)
+    values (#{id,jdbcType=INTEGER}, #{scheduleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{addDate,jdbcType=TIMESTAMP}, #{learned,jdbcType=LONGVARCHAR}, 
+      #{annex,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.threeone.bean.ThreeoneLearnedWithBLOBs">
+    insert into threeone_learned
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="scheduleId != null">
+        schedule_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="addDate != null">
+        add_date,
+      </if>
+      <if test="learned != null">
+        learned,
+      </if>
+      <if test="annex != null">
+        annex,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="scheduleId != null">
+        #{scheduleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addDate != null">
+        #{addDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="learned != null">
+        #{learned,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="annex != null">
+        #{annex,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.threeone.bean.ThreeoneLearnedWithBLOBs">
+    update threeone_learned
+    <set>
+      <if test="scheduleId != null">
+        schedule_id = #{scheduleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addDate != null">
+        add_date = #{addDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="learned != null">
+        learned = #{learned,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="annex != null">
+        annex = #{annex,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zltel.broadcast.threeone.bean.ThreeoneLearnedWithBLOBs">
+    update threeone_learned
+    set schedule_id = #{scheduleId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      add_date = #{addDate,jdbcType=TIMESTAMP},
+      learned = #{learned,jdbcType=LONGVARCHAR},
+      annex = #{annex,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.threeone.bean.ThreeoneLearned">
+    update threeone_learned
+    set schedule_id = #{scheduleId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      add_date = #{addDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByScheduleAndUser" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from threeone_learned
+    <where>
+      <if test="scheduleId != null">
+        AND schedule_id = #{scheduleId,jdbcType=INTEGER}
+      </if>
+      <if test="userId != null">
+        AND user_id = #{userId,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+</mapper>

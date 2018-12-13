@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.report.dao.ReportSubmitTypeMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.report.bean.ReportSubmitType">
+		<id column="type_id" jdbcType="INTEGER" property="typeId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="orgid" jdbcType="INTEGER" property="orgid" />
+		<result column="order_num" jdbcType="INTEGER" property="orderNum" />
+		<result column="parent" jdbcType="INTEGER" property="parent" />
+		<result column="time" jdbcType="TIMESTAMP" property="time" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		type_id, name, remark, orgid, order_num, parent, time
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from report_submit_type
+		where type_id = #{typeId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from report_submit_type
+		where type_id =
+		#{typeId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.report.bean.ReportSubmitType">
+		insert into report_submit_type (type_id, name, remark,
+		orgid, order_num, parent,
+		time
+		)
+		values (#{typeId,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+		#{orgid,jdbcType=INTEGER},
+		#{orderNum,jdbcType=INTEGER}, #{parent,jdbcType=INTEGER},
+		#{time,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.report.bean.ReportSubmitType">
+		insert into report_submit_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="typeId != null">
+				type_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="orgid != null">
+				orgid,
+			</if>
+			<if test="orderNum != null">
+				order_num,
+			</if>
+			<if test="parent != null">
+				parent,
+			</if>
+			<if test="time != null">
+				time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="orgid != null">
+				#{orgid,jdbcType=INTEGER},
+			</if>
+			<if test="orderNum != null">
+				#{orderNum,jdbcType=INTEGER},
+			</if>
+			<if test="parent != null">
+				#{parent,jdbcType=INTEGER},
+			</if>
+			<if test="time != null">
+				#{time,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.report.bean.ReportSubmitType">
+		update report_submit_type
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="orgid != null">
+				orgid = #{orgid,jdbcType=INTEGER},
+			</if>
+			<if test="orderNum != null">
+				order_num = #{orderNum,jdbcType=INTEGER},
+			</if>
+			<if test="parent != null">
+				parent = #{parent,jdbcType=INTEGER},
+			</if>
+			<if test="time != null">
+				time = #{time,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where type_id = #{typeId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.report.bean.ReportSubmitType">
+		update report_submit_type
+		set name = #{name,jdbcType=VARCHAR},
+		remark =
+		#{remark,jdbcType=VARCHAR},
+		orgid = #{orgid,jdbcType=INTEGER},
+		order_num =
+		#{orderNum,jdbcType=INTEGER},
+		parent = #{parent,jdbcType=INTEGER},
+		time =
+		#{time,jdbcType=TIMESTAMP}
+		where type_id = #{typeId,jdbcType=INTEGER}
+	</update>
+	<select id="query" parameterType="com.zltel.broadcast.report.bean.ReportSubmitType"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from report_submit_type
+		<where>
+			<include refid="ReportSubmitTypeParams" />
+		</where>
+	</select>
+	<!-- 查询条件 ReportSubmitType -->
+	<sql id="ReportSubmitTypeParams">
+		<if test="parent != null">
+			AND parent=#{parent}
+		</if>
+		<if test="name != null">
+			AND name=#{name}
+		</if>
+		<if test="orderNum != null">
+			AND order_num=#{orderNum}
+		</if>
+		<if test="typeId != null">
+			AND type_id=#{typeId}
+		</if>
+		<if test="remark != null">
+			AND remark=#{remark}
+		</if>
+		<if test="orgid != null">
+			AND (orgid=#{orgid} or orgid=0 )
+		</if>
+	</sql>
+</mapper>

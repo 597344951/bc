@@ -207,37 +207,49 @@
 	
 	
 	<select id="querySysUsers" parameterType="com.zltel.broadcast.um.bean.SysUser" resultMap="BaseResultMap">
-		select
-			<include refid="Base_Column_List" />
-		from sys_user
-		where 
+		SELECT
+			SU.user_id,
+			case when U.name is null then SU.username else U.name end as username,
+			SU.password,
+			SU.salt,
+			SU.email,
+			SU.mobile,
+			SU.theme,
+			SU.status,
+			SU.org_id,
+			SU.create_time,
+			SU.user_type,
+			SU.last_sign_in_time
+		FROM sys_user SU
+		LEFT JOIN base_user_info U ON SU.username = U.id_card
+		WHERE
 			1 = 1
-			<if test="userId != null"> and 
-				user_id = #{userId}
+			<if test="userId != null"> and
+				SU.user_id = #{userId}
 			</if>
-			<if test="username != null"> and 
-				username = #{username}
+			<if test="username != null"> and
+				SU.username = #{username}
 			</if>
-			<if test="email != null"> and 
-				email = #{email}
+			<if test="email != null"> and
+				SU.email = #{email}
 			</if>
-			<if test="mobile != null"> and 
-				mobile = #{mobile}
+			<if test="mobile != null"> and
+				SU.mobile = #{mobile}
 			</if>
-			<if test="theme != null and theme != ''"> and 
-				theme = #{theme}
+			<if test="theme != null and theme != ''"> and
+				SU.theme = #{theme}
 			</if>
-			<if test="status != null"> and 
-				status = #{status}
+			<if test="status != null"> and
+				SU.status = #{status}
 			</if>
-			<if test="orgId != null"> and 
-				org_id = #{orgId}
+			<if test="orgId != null"> and
+				SU.org_id = #{orgId}
 			</if>
-			<if test="afterTime != null"> and 
-				create_time >= #{afterTime}
+			<if test="afterTime != null"> and
+				SU.create_time >= #{afterTime}
 			</if>
-			<if test="beforeTime != null"> and 
-				create_time &lt;= #{beforeTime}
+			<if test="beforeTime != null"> and
+				SU.create_time &lt;= #{beforeTime}
 			</if>
 	</select>
 	

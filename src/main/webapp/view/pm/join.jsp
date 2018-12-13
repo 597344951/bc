@@ -79,7 +79,7 @@
 			</el-main>
 		</el-container>
 
-		<el-dialog title="申请入党" :visible.sync="joinPartyOrgUser.joinStatus.dialog" width="80%">
+		<el-dialog @close="reset_join_party_org_dialog" title="申请入党" :visible.sync="joinPartyOrgUser.joinStatus.dialog" width="80%">
 			<!-- <el-form size="small" :model="" status-icon :rules="" 
 				ref="" label-width="100px"> -->
 				<el-row>
@@ -111,13 +111,18 @@
 								{{joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepStatus}}
 							</span>
 						</p>
-						<p>
+						<p v-if="joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepStatusReason != null && 
+								joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepStatusReason != ''">
 							附加消息：{{joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepStatusReason}}
 						</p>
 					</el-row>
+					<template v-if="joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo == null">
+						<p>请等待用户将资料上传完毕</p>
+					</template>
 
 					<el-row v-if="joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo != null 
-						&& joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepFiles != null">
+						&& joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepFiles != null
+						&& joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepFiles.length > 0">
 						<p style="margin-bottom: 10px;">以下是上传的附加材料：</p>
 						<template v-for="item in joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepFiles">
 							<div style="width: 80px; height: 150px; float: left; margin-right: 10px; margin-bottom: 10px;">
@@ -138,22 +143,20 @@
 				</span>
 
 				<el-row style="margin-bottom: 10px;">
-					<el-button v-if="joinPartyOrgUser.joinStatus.stepNum > 1" 
+					<el-button v-if="joinPartyOrgUser.joinStatus.stepNum > 0" 
 						size="small" @click="joinStatusStepSet('s')">查看上一步结果
 					</el-button>
 					<el-button v-if="joinPartyOrgUser.joinStatus.stepNum < joinPartyOrgUser.joinStatus.stepNumNow" 
 						size="small" @click="joinStatusStepSet('x')">查看下一步结果
 					</el-button>
-					<template v-if="joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo != null" >
-						<el-button v-if="joinPartyOrgUser.joinStatus.stepNum == joinPartyOrgUser.joinStatus.stepNumNow
-							&& joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepStatus == 'wait'" 
-							size="small" type="danger" @click="openJoinPartyOrgStepReasonDialog('error')">拒绝
-						</el-button>
-						<el-button v-if="joinPartyOrgUser.joinStatus.stepNum == joinPartyOrgUser.joinStatus.stepNumNow
-							&& joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepStatus == 'wait'" 
-							size="small" type="primary" @click="openJoinPartyOrgStepReasonDialog('success')">通过
-						</el-button>
-					</template>
+					<el-button v-if="joinPartyOrgUser.joinStatus.stepNum == joinPartyOrgUser.joinStatus.stepNumNow
+						&& joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinStatus == 'wait'" 
+						size="small" type="danger" @click="openJoinPartyOrgStepReasonDialog('error')">拒绝入党申请
+					</el-button>
+					<el-button v-if="joinPartyOrgUser.joinStatus.stepNum == joinPartyOrgUser.joinStatus.stepNumNow
+						&& joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinStatus == 'wait'" 
+						size="small" type="primary" @click="openJoinPartyOrgStepReasonDialog('success')">本次通过
+					</el-button>
 				</el-row>
 			<!-- </el-form> -->
 		</el-dialog>
@@ -213,7 +216,9 @@
 					process: [],	//所有的步骤信息
 					getJoinPartyOrgProcessOver: false,	//是否查询完成
 					joinPartyOrgStepInfo: null,
-					joinPartyOrgUserInfo: null
+					joinPartyOrgUserInfo: {
+						joinStatus: null
+					}
 				}
 			},
 			zidonghuachengxu_videoVariable: {
@@ -300,7 +305,8 @@
 						obj.joinPartyOrgUser.update.setStepStatus.stepStatus == 'error' ? '拒绝申请' : '审核通过' 
 						: obj.joinPartyOrgUser.update.setStepStatus.stepReason,
 					joinId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.id,
-					processId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.nowStep
+					processId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.nowStep,
+					isFile: obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.isFile
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
@@ -396,68 +402,83 @@
 				var obj = this;
 				obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo = joinPartyOrgUserInfo;
 
-				var url = "/join/process/queryJoinPartyOrgProcess";
+				var url = "/org/process/queryOrgOjp";
 				var t = {
-					
+					orgId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinOrgId
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
 						obj.joinPartyOrgUser.joinStatus.process = data.data;
-
-						if (obj.joinPartyOrgUser.joinStatus.process != null && obj.joinPartyOrgUser.joinStatus.process.length > 0) {
-							for (var i = 0; i < obj.joinPartyOrgUser.joinStatus.process.length; i++) {	//增加status属性，以便给步骤条设置状态
-								var _process = {id: null, name: null, nameEn: null, describes: null, status: 'wait'};
-								if (i <= joinPartyOrgUserInfo.nowStep - 2) {
-									_process.status = "success";
+						//当前用户进行的流程
+						let url = "/join/step/queryUserJoinPartyOrgSteps"
+						let t = {
+							userId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.baseUserId,
+							isHistory: 0
+						}
+						$.post(url, t, function(_data, status){
+							if (_data.code == 200) {
+								let userProcess = _data.data;
+								for (var i = 0; i < obj.joinPartyOrgUser.joinStatus.process.length; i++) {	
+									//增加status属性，给步骤条设置状态
+									var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
+									//给已进行的步骤设置状态
+									if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
+										_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
+									}
+									_process.id = obj.joinPartyOrgUser.joinStatus.process[i].id;
+									_process.name = obj.joinPartyOrgUser.joinStatus.process[i].name;
+									_process.orgId = obj.joinPartyOrgUser.joinStatus.process[i].orgId;
+									_process.processId = obj.joinPartyOrgUser.joinStatus.process[i].processId;
+									_process.indexNum = obj.joinPartyOrgUser.joinStatus.process[i].indexNum;
+									_process.isFile = obj.joinPartyOrgUser.joinStatus.process[i].isFile;
+									obj.joinPartyOrgUser.joinStatus.process[i] = _process;
+									//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
+									if (_process.processId == obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.nowStep) {
+										obj.joinPartyOrgUser.joinStatus.stepNum = _process.indexNum;	//设置当前步骤，默认1
+										obj.joinPartyOrgUser.joinStatus.stepNumNow = _process.indexNum;
+									}
 								}
-								_process.id = obj.joinPartyOrgUser.joinStatus.process[i].id;
-								_process.name = obj.joinPartyOrgUser.joinStatus.process[i].name;
-								_process.nameEn = obj.joinPartyOrgUser.joinStatus.process[i].nameEn;
-								_process.describes = obj.joinPartyOrgUser.joinStatus.process[i].describes;
-								obj.joinPartyOrgUser.joinStatus.process[i] = _process;
+								obj.joinStatusStepSet('z');
 							}
-							obj.joinPartyOrgUser.joinStatus.getJoinPartyOrgProcessOver = true;
-						} 
+						})
 					} 
 				})
-
-				obj.joinPartyOrgUser.joinStatus.stepNum = joinPartyOrgUserInfo.nowStep;	//设置当前步骤，默认1
-				obj.joinPartyOrgUser.joinStatus.stepNumNow = joinPartyOrgUserInfo.nowStep;
-
-				//在joinStatusStepSet方法中步骤会+1，为了查询当前步骤，步骤先-1
-				obj.joinPartyOrgUser.joinStatus.stepNum--;
-				obj.joinStatusStepSet('x');
-
-				obj.joinPartyOrgUser.joinStatus.dialog = true;
 			},
 			joinStatusStepSet(step) {	//设置步骤条
 				var obj = this;
 
 				if (step == 's') {
 					obj.joinPartyOrgUser.joinStatus.stepNum--;
-				} else {					
+				} else if (step == 'x') {					
 					obj.joinPartyOrgUser.joinStatus.stepNum++;
 				}
+				obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo = null;
 
-				var initSomeThings = function() {
-					if (obj.joinPartyOrgUser.joinStatus.getJoinPartyOrgProcessOver) {
-						url = "/join/step/queryJoinPartyOrgSteps";
-						var t = {
-							joinId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.id,
-							processId: obj.joinPartyOrgUser.joinStatus.stepNum
+				//查询出此步骤的信息
+				let url = "/org/process/queryOrgOjp";
+				let t = {
+					orgId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinOrgId,
+					indexNum: obj.joinPartyOrgUser.joinStatus.stepNum
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						let url = "/join/step/queryUserJoinPartyOrgSteps"
+						let t = {
+							userId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.baseUserId,
+							processId: data.data[0].processId
 						}
 						$.post(url, t, function(data, status){
-							if (data.code == 200 && data.data != undefined && data.data != null) {
-								obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo = data.data;
-								obj.joinPartyOrgUser.joinStatus.process[obj.joinPartyOrgUser.joinStatus.stepNum - 1].status 
-									= data.data.stepStatus == "wait" ? "process" : data.data.stepStatus;
-							} 
+							if (data.code == 200 && data.data != null && data.data != undefined) {
+								obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo = data.data[0];
+							}
+							obj.joinPartyOrgUser.joinStatus.dialog = true;
 						})
-					} else {
-						setTimeout(initSomeThings, 50)
 					}
-				}
-				initSomeThings();
+				})
+			},
+			reset_join_party_org_dialog() {
+				let obj = this;
+				obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo = null;
 			},
 			resetStepReason() {
 				var obj = this;

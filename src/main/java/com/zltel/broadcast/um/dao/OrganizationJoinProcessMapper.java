@@ -1,6 +1,7 @@
 package com.zltel.broadcast.um.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.um.bean.OrganizationJoinProcess;
@@ -31,4 +32,11 @@ public interface OrganizationJoinProcessMapper extends BaseDao<OrganizationJoinP
      * @return
      */
     public List<OrganizationJoinProcess> queryOjp(OrganizationJoinProcess ojp);
+    
+    /**
+     * 查询
+     * @param orgId
+     * @return
+     */
+    public List<Map<String, Object>> queryOrgOjp(Map<String, Object> condition);
 }

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.lesson.dao.LessonUnitTestDAO">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		<id column="test_id" jdbcType="INTEGER" property="testId" />
+		<result column="lesson_unit_id" jdbcType="INTEGER" property="lessonUnitId" />
+		<result column="test_type" jdbcType="INTEGER" property="testType" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		<result column="descript" jdbcType="LONGVARCHAR" property="descript" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		test_id, lesson_unit_id, test_type, `name`
+	</sql>
+	<sql id="Blob_Column_List">
+		descript
+	</sql>
+	<select id="selectListByLessonUnitId" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_unit_test
+		where lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_unit_test
+		where test_id = #{testId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from lesson_unit_test
+		where test_id =
+		#{testId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		insert into lesson_unit_test (test_id, lesson_unit_id,
+		test_type,
+		`name`, descript)
+		values (#{testId,jdbcType=INTEGER}, #{lessonUnitId,jdbcType=INTEGER},
+		#{testType,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR}, #{descript,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		insert into lesson_unit_test
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="testId != null">
+				test_id,
+			</if>
+			<if test="lessonUnitId != null">
+				lesson_unit_id,
+			</if>
+			<if test="testType != null">
+				test_type,
+			</if>
+			<if test="name != null">
+				`name`,
+			</if>
+			<if test="descript != null">
+				descript,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="testId != null">
+				#{testId,jdbcType=INTEGER},
+			</if>
+			<if test="lessonUnitId != null">
+				#{lessonUnitId,jdbcType=INTEGER},
+			</if>
+			<if test="testType != null">
+				#{testType,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="descript != null">
+				#{descript,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		update lesson_unit_test
+		<set>
+			<if test="lessonUnitId != null">
+				lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER},
+			</if>
+			<if test="testType != null">
+				test_type = #{testType,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				`name` = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="descript != null">
+				descript = #{descript,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where test_id = #{testId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		update lesson_unit_test
+		set lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER},
+		test_type = #{testType,jdbcType=INTEGER},
+		`name` = #{name,jdbcType=VARCHAR},
+		descript =
+		#{descript,jdbcType=LONGVARCHAR}
+		where test_id = #{testId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		update lesson_unit_test
+		set lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER},
+		test_type = #{testType,jdbcType=INTEGER},
+		`name` = #{name,jdbcType=VARCHAR}
+		where test_id =
+		#{testId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询 LessonUnitTest -->
+	<select id="query" parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_unit_test
+		<where>
+			<include refid="LessonUnitTestWhereParams" />
+		</where>
+	</select>
+	<delete id="delete" parameterType="com.zltel.broadcast.lesson.bean.LessonUnitTest">
+		delete from lesson_unit_test
+		<where>
+			<include refid="LessonUnitTestWhereParams" />
+			or 1!=1
+		</where>
+	</delete>
+	<!-- 查询条件 LessonUnitTest -->
+	<sql id="LessonUnitTestWhereParams">
+		<if test="lessonUnitId != null">
+			AND lesson_unit_id=#{lessonUnitId}
+		</if>
+		<if test="name != null">
+			AND name=#{name}
+		</if>
+		<if test="testType != null">
+			AND test_type=#{testType}
+		</if>
+		<if test="testId != null">
+			AND test_id=#{testId}
+		</if>
+		<if test="descript != null">
+			AND descript=#{descript}
+		</if>
+	</sql>
+
+
+</mapper>

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.um.bean.FlowPartyRecord;
 import com.zltel.broadcast.um.service.FlowPartyRecordService;
 
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +41,22 @@ public class FlowPartyRecordController {
 			return flowPartyRecordService.queryFlowPartyRecords(condition);
 		} catch (Exception e) {
 			return R.error().setMsg("查询失败");
+		}
+	}
+	
+	/**
+	 * 添加流动党员记录
+	 * @param condition 条件
+	 * @return
+	 */
+	@RequestMapping(value="/insertFlowPartyRecords", method=RequestMethod.POST)
+	@LogPoint("添加流动党员记录")
+	@ApiOperation(value = "添加流动党员记录")
+	public R insertFlowPartyRecords(FlowPartyRecord fp) {
+		try {
+			return flowPartyRecordService.insertFlowPartyRecords(fp);
+		} catch (Exception e) {
+			return R.error().setMsg("添加失败");
 		}
 	}
 }

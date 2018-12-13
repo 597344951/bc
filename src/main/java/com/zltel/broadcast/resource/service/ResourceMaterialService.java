@@ -24,4 +24,6 @@ public interface ResourceMaterialService extends BaseDao<ResourceMaterial> {
     public void loadOtherInfo(ResourceMaterial rm);
     /**查询指定组织 素材存储**/
     Long orgUsedStoreSize(Integer orgid);
+    /**查询学习素材**/
+    List<ResourceMaterial> queryLearnResource(ResourceMaterial record, Pager pager);
 }

@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.service;
 
+import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.um.bean.JoinPartyOrgFile;
 
 public interface JoinPartyOrgFileService {
@@ -14,4 +15,11 @@ public interface JoinPartyOrgFileService {
     int updateByPrimaryKeySelective(JoinPartyOrgFile record);
 
     int updateByPrimaryKey(JoinPartyOrgFile record);
+    
+    /**
+     * 补充材料
+     * @param condition
+     * @return
+     */
+    public R supplementFiles(String condition);
 }

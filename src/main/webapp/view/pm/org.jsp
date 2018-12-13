@@ -442,7 +442,7 @@
 						<el-table-column label="组织名" prop="orgInfoName"></el-table-column>
 						<el-table-column label="组织管理所在省" prop="orgInfoCommitteeProvince"></el-table-column>
 						<el-table-column label="组织管理所在市" prop="orgInfoCommitteeCity"></el-table-column>
-						<el-table-column label="操作" width=370>
+						<el-table-column label="操作" width=420>
 							<template slot-scope="scope">
 								<shiro:hasPermission name="party:user:delete">  
 									<el-button @click="partyOrg_manager_deleteOrgInfo(scope.row)" type="text" size="small">删除</el-button>
@@ -466,6 +466,10 @@
 									@click="open_update_join_process_dialog(scope.row)" 
 									type="text" size="small">调整入党流程
 								</el-button>
+								<el-button 
+									@click="open_into_org_user_dialog(scope.row)" 
+									type="text" size="small">转入用户
+								</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -475,6 +479,12 @@
 
 
 		<el-dialog @close="reset_join_party" title="变更入党流程" :visible.sync="join_process_dialog" width="70%">
+			<div style="margin-bottom: 10px;">
+				<p style="font-size:16px; font-weight: bold;">提示</p>
+				<p style="font-size:12px; color: red;">
+					步骤必须含有“确认入党积极份子”、“会议确认发展对象”、“确定预备党员”、“提交转正申请”这四步且按照此顺序排列
+				</p>
+			</div>
 			<div style="float: left; margin-bottom: 20px; margin-right: 20px;">
 				<el-transfer
 					v-model="join_party_org.org_process"
@@ -543,19 +553,19 @@
 								@node-click="partyOrg_manager_setIntegralparentId">
 								<span class="custom-tree-node" slot-scope="{ node, data }">
 									<span>{{ node.label }}</span>
-									<span>
-									  	<el-button
+									<span v-if="data.data.isInnerIntegral != 1 && data.data.icId != -1">
+										<el-button
 											type="text"
 											size="mini"
 											@click="() => update_integral_con(node, data)">
 											修改
-									  	</el-button>
-									  	<el-button
+										</el-button>
+										<el-button
 											type="text"
 											size="mini"
 											@click="() => delete_integral_con(node, data)">
 											删除
-									  	</el-button>
+										</el-button>
 									</span>
 								</span>
 						  	</el-tree>
@@ -913,6 +923,66 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
+
+		<el-dialog @close="" title="转入组织党员列表" :visible.sync="into_org_user.dialog">
+			<div>
+				<el-table 
+					row-key="id"
+					size="small" 
+					:data="into_org_user.query.page.list" 
+					style="width: 100%">
+					<el-table-column label="转移编号" prop="id" width="100"></el-table-column>
+					<el-table-column label="姓名" prop="name" width="100"></el-table-column>
+					<el-table-column label="性别" prop="sex" width="100"></el-table-column>
+					<el-table-column label="身份证号码" prop="idCard" width="200"></el-table-column>
+					<el-table-column label="状态">
+						<template slot-scope="scope">
+							<el-button 
+								style="color: red; "
+								v-if="scope.row.nowStep == scope.row.maxOrgProcess.processId && 
+									scope.row.joinStatus == 'success'"
+								@click="openTurnOutOrgDutyDialog(scope.row)" 
+								type="text" size="small">指定职责
+							</el-button>
+							<p v-if="scope.row.nowStep != scope.row.maxOrgProcess.processId || 
+								scope.row.joinStatus != 'success'">
+								对方组织审核中
+							</p>
+						</template>
+					</el-table-column>
+				</el-table>
+			</div>
+			<div style="margin: 10px 0px; text-align: center;">
+				<el-pagination
+					layout="total, prev, pager, next, jumper" 
+					@current-change="open_into_org_user_dialog"
+					:current-page.sync="into_org_user.query.page.pageNum"
+					:page-size.sync="into_org_user.query.page.pageSize"
+					:total="into_org_user.query.page.total">
+			  	</el-pagination>
+			</div>
+		</el-dialog>
+
+		<el-dialog @close="" title="指定职责" :visible.sync="turnOutDuty.dialog">
+			<div>
+				<el-tree :default-expand-all="true" 
+					node-key="id" 
+					ref="turnOutOrgInfoTree"
+					show-checkbox 
+					:expand-on-click-node="false" 
+					:highlight-current="true" 
+					:data="turnOutDuty.orgDutyTreesForOrgInfo" 
+					:props="turnOutOrgInfoOrgDutyTreesForOrgInfoProps" 
+					:check-strictly="true" >
+				</el-tree>
+			</div>
+			<div style="margin: 10px;">
+				<el-button 
+					@click="turnOutUpdateOrgRelation" 
+					type="primary" size="small">确认
+				</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </body>
 
@@ -1106,6 +1176,32 @@
 				process: [],
 				org_process: [],
 				org_process_checked: []
+			},
+			into_org_user: {
+				dialog: false,
+				userInfo: null,
+				query: {
+					page: {
+						pageNum: 1,		/* 当前页 */
+						pageSize: 6,	/* 页面大小 */
+						total: 0,
+						list: []
+					},
+					conditions: {	//搜索条件
+						idCard: null
+					}
+				}
+			},
+			turnOutDuty: {
+				dialog: false,
+				orgDutyTreesForOrgInfo: [],
+				userInfo: null
+			},
+			turnOutOrgInfoOrgDutyTreesForOrgInfoProps: {
+				children: 'children',
+				label: function(_data, node){
+					return _data.data.orgDutyName;
+				}
 			}
 		},
 		created: function () {
@@ -1121,6 +1217,101 @@
 			this.getItaf();
 		},
 		methods: {
+			turnOutUpdateOrgRelation() {
+				var obj = this;
+				var checkedKeys = [];
+				checkedKeys = obj.$refs.turnOutOrgInfoTree.getCheckedKeys(false);
+				if (checkedKeys.length == 0) {
+					toast('错误',"请选择该用户在此组织担任的职责",'error');
+					return;
+				}
+				obj.$confirm(
+					'同意后将加入申请的组织，本条申请流程完毕，将会消失，确认？', 
+					'提示', 
+					{
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}
+				).then(function(){			
+					var url = "/toou/user/insertOrgRelation";
+					var t = {
+						turnOutId: obj.turnOutDuty.userInfo.id,
+						orgRltUserId: obj.turnOutDuty.userInfo.baseUserId,
+						orgRltInfoId: obj.turnOutDuty.userInfo.turnOutOrgId,
+						orgRltDutys: checkedKeys
+					}
+					$.post(url, t, function(datas, status){
+						if (datas.code == 200) {
+							toast('成功',datas.msg,'success');
+							obj.turnOutDuty.dialog = false;
+							obj.open_into_org_user_dialog(obj.into_org_user.userInfo);
+						}
+						
+					})
+				}).catch(function(){
+					obj.$message({
+						type: 'info',
+						message: '已取消此操作'
+					});  
+				});
+			},
+			openTurnOutOrgDutyDialog(row) {
+				let obj = this;
+				obj.turnOutDuty.userInfo = row;
+
+				let url = "/org/duty/queryOrgDutyTreeForOrgInfo";
+				let t = {
+					orgDutyOrgInfoId: row.turnOutOrgId
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						if (datas.data != undefined) {
+							obj.turnOutDuty.orgDutyTreesForOrgInfo = datas.data;
+							obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(obj.turnOutDuty.orgDutyTreesForOrgInfo);
+						} else {
+							obj.turnOutDuty.orgDutyTreesForOrgInfo = [];
+						}
+					}
+					
+				})
+
+				obj.turnOutDuty.dialog = true;
+			},
+			forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTrees){	/* 向树里添加id属性，方便设置node-key */
+				var obj = this;
+				if(menuTrees != null) {
+					for (var i = 0; i < menuTrees.length; i++) {
+						var menuTree = menuTrees[i];
+						menuTree.id = menuTree.data.orgDutyId;                            
+						obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTree.children);
+					}
+				}
+			},
+			open_into_org_user_dialog(row) {
+				let obj = this;
+				obj.into_org_user.userInfo = row;
+				
+				var url = "/toou/user/queryTurnOutOrgPartyUsers";
+				var t = {
+					pageNum: obj.into_org_user.query.page.pageNum,
+					pageSize: obj.into_org_user.query.page.pageSize,
+					orgId: obj.into_org_user.userInfo.orgInfoId,
+					isHistory: 0
+				}
+				$.post(url, t, function(data, status){
+					if (data.code == 200) {
+						if (data.data == undefined) {	
+							obj.into_org_user.query.page.pageNum = 1;
+							obj.into_org_user.query.page.total = 0;
+							obj.into_org_user.query.page.list = new Array();/* 没有查询到数据时，初始化页面信息，使页面正常显示 */
+						} else {
+							obj.into_org_user.query.page = data.data;
+						}
+						obj.into_org_user.dialog = true;
+					}
+				})
+			},
 			insert_org_join_process() {
 				let obj = this;
 				if (obj.join_party_org.org_process == null || obj.join_party_org.org_process.length < 1) {

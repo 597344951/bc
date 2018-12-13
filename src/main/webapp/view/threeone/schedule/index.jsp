@@ -1,5 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<%
+    String meetingType = request.getParameter("meetingType");
+    meetingType = meetingType == null ? "threeone" : meetingType;
+%>
 <html>
 
 <head>
@@ -15,7 +19,8 @@
         <el-container>
             <el-header>
                 <el-card shadow="always" class="banner">
-                    <p>三会一课日程</p>
+                    <p v-if="meetingType == 'threeone'">三会一课</p>
+                    <p v-if="meetingType == 'life'">组织生活会</p>
                     <div>
                         <el-button type="primary" icon="el-icon-plus" @click="scheduleAddFormShow = true; operate = 'add'">新建</el-button>
                     </div>
@@ -26,14 +31,15 @@
             </el-main>
         </el-container>
         <!-- 添加日程弹出框 -->
-        <el-dialog title="添加日程" :visible.sync="scheduleAddFormShow">
+        <el-dialog title="添加会议" :visible.sync="scheduleAddFormShow">
             <el-form ref="scheduleForm" :model="schedule" :rules="scheduleRule" label-width="80px">
                 <el-form-item label="类 型" prop="type">
                     <el-select v-model="schedule.type" placeholder="请选择会议类型" style="width: 100%;">
-                        <el-option label="党员小组会" value="1"></el-option>
-                        <el-option label="支部党员大会" value="2"></el-option>
-                        <el-option label="支部委员会" value="3"></el-option>
-                        <el-option label="党课" value="4"></el-option>
+                        <el-option v-if="meetingType == 'threeone'" label="党员小组会" value="1"></el-option>
+                        <el-option v-if="meetingType == 'threeone'" label="支部党员大会" value="2"></el-option>
+                        <el-option v-if="meetingType == 'threeone'" label="支部委员会" value="3"></el-option>
+                        <el-option v-if="meetingType == 'threeone'" label="党课" value="4"></el-option>
+                        <el-option v-if="meetingType == 'life'" label="民主生活会" value="5"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="主 题" prop="name">
@@ -94,6 +100,9 @@
 
     </div>
 </body>
+<script>
+    const meetingType = '<%=meetingType%>'
+</script>
 <script src="/components/xx-components.js"></script>
 <script src="index.js"></script>
 

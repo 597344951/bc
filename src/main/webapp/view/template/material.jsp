@@ -15,7 +15,7 @@
     <%@include file="/include/head_notbootstrap.jsp"%>
     <%--ueditor--%>
     <%@include file="/include/ueditor.jsp"%>
-<link href="${urls.getForLookupPath('/assets/module/template/template.css')}" rel="stylesheet">
+    <link href="${urls.getForLookupPath('/assets/module/template/template.css')}" rel="stylesheet">
 </head>
 
 <body>
@@ -53,8 +53,10 @@
                     <el-col :span="7">
                         <div class="hidden-if-mobile">
                             <div class="store-status">
-                                <el-progress :text-inside="true" :stroke-width="18" :percentage="storeUsedPercent" status="success"></el-progress>
-                                <span class="label-txt">{{storeInfo.used | byteToSize}}/{{storeInfo.total | byteToSize}}</span>
+                                <el-progress :text-inside="true" :stroke-width="18" :percentage="storeUsedPercent"
+                                    status="success"></el-progress>
+                                <span class="label-txt">{{storeInfo.used | byteToSize}}/{{storeInfo.total |
+                                    byteToSize}}</span>
                             </div>
                         </div>
                     </el-col>
@@ -62,9 +64,9 @@
             </div>
             <el-container>
                 <el-aside width="200px">
-                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id" :expand-on-click-node="false"
-                        @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu" draggable @node-drop="treeDrapDrop"
-                        :allow-drag="allowDrag">
+                    <el-tree ref="tree" :data="tpt_data" :props="props" :highlight-current="true" node-key="id"
+                        :expand-on-click-node="false" @node-click="tptTreeClick" class="menu-tree" @node-contextmenu="treeContextmenu"
+                        draggable @node-drop="treeDrapDrop" :allow-drag="allowDrag">
                         <span class="custom-tree-node" slot-scope="{ node, data }">
                             <span class="left-label-group">
                                 <i class="icon" v-if="data.data.icon" :class="data.data.icon"></i>
@@ -90,9 +92,9 @@
                             </el-col>
                             <el-col :span="14" style="text-align: right;" class="full-width-if-mobile">
                                 <!--分页-->
-                                <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current" :page-sizes="[10, 20, 30]" :page-size="tpager.size"
-                                    layout="total, sizes, prev, pager, next, jumper" :total="tpager.total" @size-change="handleSizeChange"
-                                    @current-change="handleCurrentChange">
+                                <el-pagination style="margin:auto;" class="pagebar" :current-page="tpager.current"
+                                    :page-sizes="[10, 20, 30]" :page-size="tpager.size" layout="total, sizes, prev, pager, next, jumper"
+                                    :total="tpager.total" @size-change="handleSizeChange" @current-change="handleCurrentChange">
                                 </el-pagination>
                             </el-col>
                         </el-row>
@@ -133,7 +135,8 @@
                                                 <el-button-group>
                                                     <el-button type="success" size="small" icon="el-icon-view" @click="viewTemplate(tp)"></el-button>
                                                     <shiro:hasPermission name="resource:material:update">
-                                                        <el-button type="primary" size="small" icon="el-icon-edit" @click="updateTemplate(tp)"></el-button>
+                                                        <el-button type="primary" size="small" icon="el-icon-edit"
+                                                            @click="updateTemplate(tp)"></el-button>
                                                     </shiro:hasPermission>
                                                     <shiro:hasPermission name="resource:material:delete">
                                                         <el-popover placement="top" width="160" v-model="tp.cfv">
@@ -142,7 +145,8 @@
                                                                 <el-button type="text" size="mini" @click="tp.cfv=false">取消</el-button>
                                                                 <el-button type="danger" size="mini" @click="tp.cfv=false;delTemplate(tp)">确定</el-button>
                                                             </div>
-                                                            <el-button type="danger" slot="reference" size="small" icon="el-icon-delete" @click="tp.cfv=true"></el-button>
+                                                            <el-button type="danger" slot="reference" size="small" icon="el-icon-delete"
+                                                                @click="tp.cfv=true"></el-button>
                                                         </el-popover>
                                                     </shiro:hasPermission>
                                                 </el-button-group>
@@ -172,7 +176,8 @@
                                             </el-row>
                                         </el-form-item>
                                         <el-form-item label="描述信息" prop="description">
-                                            <el-input type="textarea" :rows="3" v-model="tp.data.description" auto-complete="off"></el-input>
+                                            <el-input type="textarea" :rows="3" v-model="tp.data.description"
+                                                auto-complete="off"></el-input>
                                         </el-form-item>
                                         <el-form-item label="素材类型">
                                             <el-radio v-model="tp.data.type" :disabled="tp.data.typeDisable" label="image">图片</el-radio>
@@ -186,19 +191,23 @@
                                             <div class="editerContainer" id="templateText" type="textarea" style="height: 300px;"></div>
                                         </el-form-item>
                                         <el-form-item label="素材截图" v-show="tp.data.type == 'text'">
-                                            <el-upload class="avatar-uploader" :action="resource_server_url" :show-file-list="false" :on-success="handleAvatarSuccess"
+                                            <el-upload class="avatar-uploader" :action="resource_server_url"
+                                                :show-file-list="false" :on-success="handleAvatarSuccess"
                                                 :before-upload="beforeAvatarUpload" :on-error="handleError">
                                                 <div style="display:flex;">
-                                                    <img v-show="tp.data.coverUrl" :src="getResUrl(tp.data.coverUrl)" class="avatar">
+                                                    <img v-show="tp.data.coverUrl" :src="getResUrl(tp.data.coverUrl)"
+                                                        class="avatar">
                                                     <i class="el-icon-plus avatar-uploader-icon"></i>
                                                 </div>
                                             </el-upload>
                                         </el-form-item>
                                         <el-form-item label="上传素材" v-show="tp.data.type == 'image' || tp.data.type == 'audio' || tp.data.type == 'video'">
-                                            <el-upload :disabled="tp.data.typeDisable" class="avatar-uploader" :action="resource_server_url" :show-file-list="false"
-                                                :on-success="handleAvatarSuccess" :before-upload="beforeResourceUpload" :on-error="handleError">
+                                            <el-upload :disabled="tp.data.typeDisable" class="avatar-uploader" :action="resource_server_url"
+                                                :show-file-list="false" :on-success="handleAvatarSuccess"
+                                                :before-upload="beforeResourceUpload" :on-error="handleError">
                                                 <div style="display:flex;">
-                                                    <img v-show="tp.data.coverUrl" :src="tp.data.type == 'audio' ? tp.data.coverUrl:getResUrl(tp.data.coverUrl)" class="avatar">
+                                                    <img v-show="tp.data.coverUrl" :src="tp.data.type == 'audio' ? tp.data.coverUrl:getResUrl(tp.data.coverUrl)"
+                                                        class="avatar">
                                                     <i v-if="!tp.data.typeDisable" class="el-icon-plus avatar-uploader-icon"></i>
                                                 </div>
                                             </el-upload>
@@ -207,7 +216,8 @@
                                             <div class="editerContainer" v-show="tp.m3Visible" style="height: 400px;">
                                                 <div id="imagesContainer"></div>
                                             </div>
-                                            <img v-show="!tp.m3Visible" :src="getResUrl(tp.data.coverUrl)" class="avatar" @click="openM3">
+                                            <img v-show="!tp.m3Visible" :src="getResUrl(tp.data.coverUrl)" class="avatar"
+                                                @click="openM3">
                                         </el-form-item>
                                         <el-form-item label="上传素材" v-show="tp.data.type == 'pageshot'">
                                             <el-input placeholder="请输入网页地址(http://|https://)" v-model="tp.data.pageLink">
@@ -216,8 +226,8 @@
                                             <img v-show="tp.data.coverUrl" :src="getResUrl(tp.data.coverUrl)" class="avatar">
                                         </el-form-item>
                                         <el-form-item label="所属分类" prop="albumIds">
-                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="true" filterable
-                                                change-on-select></el-cascader>
+                                            <el-cascader v-model="tp.data.albumIds" :props="tpt_props" :options="tpt_data_normal"
+                                                :show-all-levels="true" filterable change-on-select></el-cascader>
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button @click="tp.visible = false">取 消</el-button>
@@ -244,6 +254,13 @@
                 </el-form-item>
                 <el-form-item label="排序序号" prop="orderNum">
                     <el-input type="text" v-model="tpt.data.orderNum"></el-input>
+                </el-form-item>
+                <el-form-item label="学习素材">
+                    <el-tooltip class="item" effect="dark" content="作为学习素材添加到学习中心" placement="bottom">
+                        <el-radio v-model="tpt.data.learnResource" :label="true">是</el-radio>
+                    </el-tooltip>
+
+                    <el-radio v-model="tpt.data.learnResource" :label="false">否</el-radio>
                 </el-form-item>
                 <el-form-item label="上一级目录" v-if="tpt.update != true">
                     <el-select v-model="tpt.data.parentLabel" placeholder="请选择">
@@ -272,11 +289,13 @@
                     <el-input type="textarea" :rows="3" v-model="importResource.data.description" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="所属分类" prop="albumIds">
-                    <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal" :show-all-levels="true"></el-cascader>
+                    <el-cascader v-model="importResource.data.albumIds" :props="tpt_props" :options="tpt_data_normal"
+                        :show-all-levels="true"></el-cascader>
                 </el-form-item>
                 <el-form-item label="选取文件">
-                    <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" :on-preview="handlePreview" :on-success="handleSuccess"
-                        :on-remove="handleRemove" :auto-upload="false" :multiple="true" :on-error="handleError">
+                    <el-upload class="upload-demo" ref="upload" :action="getUploadUrl('file')" :on-preview="handlePreview"
+                        :on-success="handleSuccess" :on-remove="handleRemove" :auto-upload="false" :multiple="true"
+                        :on-error="handleError">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="danger" @click="clearChose">清空文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>

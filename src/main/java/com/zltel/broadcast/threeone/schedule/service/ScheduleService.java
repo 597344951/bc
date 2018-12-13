@@ -14,10 +14,15 @@ public interface ScheduleService {
     public int deleteSchedule(int id);
     public Schedule getSchedule(int id);
     public List<Schedule> queryEnableSchedule(SysUser user);
-    public List<Schedule> queryCompletedSchedule(SysUser user, int pageNum, int pageSize);
+    public List<Schedule> queryThreeoneEnableSchedule(SysUser user);
+    public List<Schedule> queryLifeEnableSchedule(SysUser user);
+    public List<Schedule> queryThreeoneCompletedSchedule(SysUser user, int pageNum, int pageSize);
+    public List<Schedule> queryLifeCompletedSchedule(SysUser user, int pageNum, int pageSize);
     public Map<Integer, Object> countCompletedSchedule(SysUser user);
     public R importSchedules(MultipartFile file, SysUser user);
     public void addMembers(Schedule schedule, List<Map<String, Object>> members);
     public List<Map<String, Object>> queryScheduleMembers(Integer scheduleId);
     public List<Map<String, Object>> queryOrgMembers(Integer orgId);
+    public List<Map<String, Object>> queryThreeoneParticipantSchedule(String username, int pageNum, int pageSize);
+    public List<Map<String, Object>> queryLifeParticipantSchedule(String username, int pageNum, int pageSize);
 }

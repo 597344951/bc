@@ -31,4 +31,11 @@ public interface OrganizationJoinProcessService {
      * @return
      */
     public R queryOjp(OrganizationJoinProcess ojp);
+    
+    /**
+     * 查询
+     * @param orgId
+     * @return
+     */
+    public R queryOrgOjp(Map<String, Object> condition);
 }

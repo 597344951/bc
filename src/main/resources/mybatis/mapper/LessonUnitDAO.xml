@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.lesson.dao.LessonUnitDAO">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.lesson.bean.LessonUnit">
+		<id column="lesson_unit_id" jdbcType="INTEGER" property="lessonUnitId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
+		<result column="org_id" jdbcType="INTEGER" property="orgId" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+		<result column="test_threshold" jdbcType="INTEGER" property="testThreshold" />
+		<result column="credit_hours_percent" jdbcType="INTEGER" property="creditHoursPercent" />
+		<result column="learner_limit" jdbcType="INTEGER" property="learnerLimit" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.zltel.broadcast.lesson.bean.LessonUnit">
+		<result column="descript" jdbcType="LONGVARCHAR" property="descript" />
+	</resultMap>
+	<resultMap extends="ResultMapWithBLOBs" id="ResultMapWithRelated"
+		type="com.zltel.broadcast.lesson.bean.LessonUnit">
+		<association column="category_id" property="category"
+			select="com.zltel.broadcast.lesson.dao.LessonCategoryDAO.selectByPrimaryKey"></association>
+		<collection column="lesson_unit_id" property="testTypes"
+			select="com.zltel.broadcast.lesson.dao.LessonUnitTestDAO.selectListByLessonUnitId"></collection>
+		<collection column="lesson_unit_id" property="allowOrgIds"
+			select="com.zltel.broadcast.lesson.dao.LessonLearnerLimitDAO.selectListByLessonUnitId"></collection>
+		<collection column="lesson_unit_id" property="lessonList"
+			select="com.zltel.broadcast.lesson.dao.LessonSectionDAO.selectListByLessonUnitId"></collection>
+
+		<collection property="lessonRegistration"
+			column="{userId=user_id,lessonUnitId=lesson_unit_id}"
+			select="com.zltel.broadcast.lesson.dao.LessonUnitRegistrationMapper.query"></collection>
+
+		<collection column="{userId=user_id,lessonUnitId=lesson_unit_id}"
+			property="lessonProgress" select="com.zltel.broadcast.lesson.dao.LessonUnitProgressDAO.query"></collection>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		lesson_unit_id, `name`, category_id, org_id, user_id, add_time, test_threshold,
+		credit_hours_percent,
+		learner_limit
+	</sql>
+	<sql id="Blob_Column_List">
+		descript
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_unit
+		where lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from lesson_unit
+		where lesson_unit_id =
+		#{lessonUnitId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zltel.broadcast.lesson.bean.LessonUnit">
+		insert into lesson_unit (lesson_unit_id, `name`,
+		category_id,
+		org_id, user_id, add_time,
+		test_threshold, credit_hours_percent, learner_limit,
+		descript)
+		values (#{lessonUnitId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{categoryId,jdbcType=INTEGER},
+		#{orgId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{addTime,jdbcType=TIMESTAMP},
+		#{testThreshold,jdbcType=INTEGER},
+		#{creditHoursPercent,jdbcType=INTEGER},
+		#{learnerLimit,jdbcType=INTEGER},
+		#{descript,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.lesson.bean.LessonUnit">
+		insert into lesson_unit
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="lessonUnitId != null">
+				lesson_unit_id,
+			</if>
+			<if test="name != null">
+				`name`,
+			</if>
+			<if test="categoryId != null">
+				category_id,
+			</if>
+			<if test="orgId != null">
+				org_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="addTime != null">
+				add_time,
+			</if>
+			<if test="testThreshold != null">
+				test_threshold,
+			</if>
+			<if test="creditHoursPercent != null">
+				credit_hours_percent,
+			</if>
+			<if test="learnerLimit != null">
+				learner_limit,
+			</if>
+			<if test="descript != null">
+				descript,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="lessonUnitId != null">
+				#{lessonUnitId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryId != null">
+				#{categoryId,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null">
+				#{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="addTime != null">
+				#{addTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="testThreshold != null">
+				#{testThreshold,jdbcType=INTEGER},
+			</if>
+			<if test="creditHoursPercent != null">
+				#{creditHoursPercent,jdbcType=INTEGER},
+			</if>
+			<if test="learnerLimit != null">
+				#{learnerLimit,jdbcType=INTEGER},
+			</if>
+			<if test="descript != null">
+				#{descript,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonUnit">
+		update lesson_unit
+		<set>
+			<if test="name != null">
+				`name` = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryId != null">
+				category_id = #{categoryId,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null">
+				org_id = #{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="addTime != null">
+				add_time = #{addTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="testThreshold != null">
+				test_threshold = #{testThreshold,jdbcType=INTEGER},
+			</if>
+			<if test="creditHoursPercent != null">
+				credit_hours_percent = #{creditHoursPercent,jdbcType=INTEGER},
+			</if>
+			<if test="learnerLimit != null">
+				learner_limit = #{learnerLimit,jdbcType=INTEGER},
+			</if>
+			<if test="descript != null">
+				descript = #{descript,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.zltel.broadcast.lesson.bean.LessonUnit">
+		update lesson_unit
+		set `name` = #{name,jdbcType=VARCHAR},
+		category_id =
+		#{categoryId,jdbcType=INTEGER},
+		org_id = #{orgId,jdbcType=INTEGER},
+		user_id =
+		#{userId,jdbcType=INTEGER},
+		add_time = #{addTime,jdbcType=TIMESTAMP},
+		test_threshold =
+		#{testThreshold,jdbcType=INTEGER},
+		credit_hours_percent = #{creditHoursPercent,jdbcType=INTEGER},
+		learner_limit = #{learnerLimit,jdbcType=INTEGER},
+		descript = #{descript,jdbcType=LONGVARCHAR}
+		where
+		lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.lesson.bean.LessonUnit">
+		update lesson_unit
+		set `name` =
+		#{name,jdbcType=VARCHAR},
+		category_id = #{categoryId,jdbcType=INTEGER},
+		org_id =
+		#{orgId,jdbcType=INTEGER},
+		user_id = #{userId,jdbcType=INTEGER},
+		add_time =
+		#{addTime,jdbcType=TIMESTAMP},
+		test_threshold = #{testThreshold,jdbcType=INTEGER},
+		credit_hours_percent = #{creditHoursPercent,jdbcType=INTEGER},
+		learner_limit =
+		#{learnerLimit,jdbcType=INTEGER}
+		where lesson_unit_id = #{lessonUnitId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询 LessonUnit -->
+	<select id="query" parameterType="com.zltel.broadcast.lesson.bean.LessonUnit"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_unit
+		<where>
+			<include refid="LessonUnitWhereParams" />
+		</where>
+	</select>
+
+	<delete id="delete" parameterType="com.zltel.broadcast.lesson.bean.LessonUnit">
+		delete from lesson_unit
+		<where>
+			<include refid="LessonUnitWhereParams" />
+			or 1!=1
+		</where>
+	</delete>
+
+	<!-- 查询条件 LessonUnit -->
+	<sql id="LessonUnitWhereParams">
+		<if test="learnerLimit != null">
+			AND learner_limit=#{learnerLimit}
+		</if>
+		<if test="lessonUnitId != null">
+			AND lesson_unit_id=#{lessonUnitId}
+		</if>
+		<if test="addTime != null">
+			AND add_time=#{addTime}
+		</if>
+		<if test="testThreshold != null">
+			AND test_threshold=#{testThreshold}
+		</if>
+		<if test="creditHoursPercent != null">
+			AND credit_hours_percent=#{creditHoursPercent}
+		</if>
+		<if test="name != null">
+			AND name=#{name}
+		</if>
+		<if test="descript != null">
+			AND descript=#{descript}
+		</if>
+		<if test="userId != null">
+			AND user_id=#{userId}
+		</if>
+		<if test="categoryId != null">
+			AND category_id=#{categoryId}
+		</if>
+		<if test="orgId != null">
+			AND org_id=#{orgId}
+		</if>
+	</sql>
+
+	<!-- 查询 LessonUnit -->
+	<select id="queryRelatedData" parameterType="com.zltel.broadcast.lesson.bean.LessonUnit"
+		resultMap="ResultMapWithRelated">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from lesson_unit
+		<where>
+			<include refid="LessonUnitWhereParams" />
+			<if test="categoryChildrenIds != null">
+				AND category_id in
+				<foreach collection="categoryChildrenIds" item="id" index="index" open="(" close=")"
+					separator=",">
+					#{id}
+				</foreach>
+			</if>
+			<if test="keyword != null">
+				AND name like CONCAT('%',#{keyword},'%')
+			</if>
+			<!-- 按照 权限资格过滤 -->
+			<if test="learnOrgId != null">
+				AND(
+				learner_limit = 0
+				or lesson_unit_id in (
+				select lesson_unit_id from
+				lesson_learner_limit l where l.org_id = #{learnOrgId}
+				)
+				)
+			</if>
+		</where>
+	</select>
+</mapper>

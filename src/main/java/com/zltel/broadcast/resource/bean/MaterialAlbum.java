@@ -19,6 +19,8 @@ public class MaterialAlbum {
 
     private Boolean builtin;
     private String icon;
+    /**用作学习中心素材**/
+    private Boolean learnResource;
     
     /**关键词**/
     private String keyword;
@@ -157,6 +159,14 @@ public class MaterialAlbum {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Boolean getLearnResource() {
+        return learnResource;
+    }
+
+    public void setLearnResource(Boolean learnResource) {
+        this.learnResource = learnResource;
     }
 
 }

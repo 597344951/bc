@@ -10,8 +10,49 @@ public class FlowParty {
     private Integer flowTime;
 
     private String reason;
+    
+    private String flowAddressProvince;
 
-    public Integer getId() {
+    private String flowAddressCity;
+
+    private String flowAddressArea;
+
+    private String flowAddressDetail;
+
+
+	public String getFlowAddressProvince() {
+		return flowAddressProvince;
+	}
+
+	public void setFlowAddressProvince(String flowAddressProvince) {
+		this.flowAddressProvince = flowAddressProvince;
+	}
+
+	public String getFlowAddressCity() {
+		return flowAddressCity;
+	}
+
+	public void setFlowAddressCity(String flowAddressCity) {
+		this.flowAddressCity = flowAddressCity;
+	}
+
+	public String getFlowAddressArea() {
+		return flowAddressArea;
+	}
+
+	public void setFlowAddressArea(String flowAddressArea) {
+		this.flowAddressArea = flowAddressArea;
+	}
+
+	public String getFlowAddressDetail() {
+		return flowAddressDetail;
+	}
+
+	public void setFlowAddressDetail(String flowAddressDetail) {
+		this.flowAddressDetail = flowAddressDetail;
+	}
+
+	public Integer getId() {
         return id;
     }
 

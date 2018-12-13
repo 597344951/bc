@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,10 +36,12 @@ import com.zltel.broadcast.common.util.CacheUtil;
 import com.zltel.broadcast.common.util.PasswordHelper;
 import com.zltel.broadcast.um.bean.BaseUserInfo;
 import com.zltel.broadcast.um.bean.DeedsImg;
+import com.zltel.broadcast.um.bean.JoinPartyOrgUser;
 import com.zltel.broadcast.um.bean.PartyUserInfo;
 import com.zltel.broadcast.um.bean.SysRole;
 import com.zltel.broadcast.um.bean.SysUser;
 import com.zltel.broadcast.um.bean.SysUserRole;
+import com.zltel.broadcast.um.bean.TurnOutOrgUser;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
 import com.zltel.broadcast.um.dao.DeedsImgMapper;
 import com.zltel.broadcast.um.dao.DeedsTypeMapper;
@@ -49,6 +52,7 @@ import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
 import com.zltel.broadcast.um.dao.SysRoleMapper;
 import com.zltel.broadcast.um.dao.SysUserMapper;
 import com.zltel.broadcast.um.dao.SysUserRoleMapper;
+import com.zltel.broadcast.um.dao.TurnOutOrgUserMapper;
 import com.zltel.broadcast.um.service.OrganizationRelationService;
 import com.zltel.broadcast.um.service.PartyUserInfoService;
 import com.zltel.broadcast.um.util.DateUtil;
@@ -87,6 +91,8 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 	private SysUserRoleMapper sysUserRoleMapper;
 	@Resource
     private JoinPartyOrgUserMapper joinPartyOrgUserMapper;
+    @Resource
+    private TurnOutOrgUserMapper turnOutOrgUserMapper;
 	@Override
     public BaseDao<PartyUserInfo> getInstince() {
         return this.partyUserInfoMapper;
@@ -155,8 +161,19 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 						? null : (Date)partyUserInfo.get("orgJoinTime")));
 				partyUserInfo.put("typeName", partyUserInfo.get("type") == null || partyUserInfo.get("type") == "" ? 
 						null : (int)partyUserInfo.get("type") == 1 ? "正式党员" : "预备党员");
-				partyUserInfo.put("statusName", partyUserInfo.get("type") == null || partyUserInfo.get("type") == "" ? 
-						null : (int)partyUserInfo.get("status") == 1 ? "正常" : "停止党籍");
+				if (partyUserInfo.get("type") == null || partyUserInfo.get("type") == "") {
+					partyUserInfo.put("statusName", null);
+				} else {
+					if ((int)partyUserInfo.get("status") == -1) {
+						partyUserInfo.put("statusName", "流动党员");
+					} else if ((int)partyUserInfo.get("status") == 0) {
+						partyUserInfo.put("statusName", "停止党籍");
+					} else if ((int)partyUserInfo.get("status") == 1) {
+						partyUserInfo.put("statusName", "正常");
+					} else if ((int)partyUserInfo.get("status") == 2) {
+						partyUserInfo.put("statusName", "历史党员");
+					}
+				}
 				partyUserInfo.put("partyStaffName", partyUserInfo.get("partyStaff") == null || partyUserInfo.get("partyStaff") == "" ? 
 						null : (int)partyUserInfo.get("partyStaff") == 1 ? "是" : "否");
 				partyUserInfo.put("partyRepresentativeName", partyUserInfo.get("partyRepresentative") == null || partyUserInfo.get("partyRepresentative") == "" ?
@@ -228,14 +245,20 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
 				}
 				
 				//非党员申请入党记录
-				if ("0".equals(String.valueOf(partyUserInfo.get("type"))) || "0".equals(String.valueOf(partyUserInfo.get("isParty")))) {
-					Map<String, Object> joinCondition = new HashMap<>();
-					joinCondition.put("baseUserId", partyUserInfo.get("id"));
-					joinCondition.put("isHistory", partyUserInfo.get("0"));
-					List<Map<String, Object>> joinPartyUsers = joinPartyOrgUserMapper.queryJoinPartyOrgUsers(joinCondition);
-					if (joinPartyUsers != null && joinPartyUsers.size() > 0) {
-						partyUserInfo.put("joinPartyUserInfo", joinPartyUsers.get(0));
-					}
+				JoinPartyOrgUser jpou = new JoinPartyOrgUser();
+				jpou.setUserId(Integer.parseInt(String.valueOf(partyUserInfo.get("id"))));
+				jpou.setIsHistory(0);
+				List<Map<String, Object>> joinPartyUsers = joinPartyOrgUserMapper.queryJpouIsJoin(jpou);
+				if (joinPartyUsers != null && joinPartyUsers.size() > 0) {
+					partyUserInfo.put("joinPartyUserInfo", joinPartyUsers.get(0));
+				}
+				
+				TurnOutOrgUser toou = new TurnOutOrgUser();
+				toou.setUserId(Integer.parseInt(String.valueOf(partyUserInfo.get("id"))));
+				toou.setIsHistory(false);
+				List<Map<String, Object>> turnOutPartyUsers = turnOutOrgUserMapper.queryToouIsTurnOut(toou);
+				if (turnOutPartyUsers != null && turnOutPartyUsers.size() > 0) {
+					partyUserInfo.put("turnOutPartyUserInfo", turnOutPartyUsers.get(0));
 				}
 			}
 			return R.ok().setData(partyUserInfosPageInfo).setMsg("查询党员信息成功");
@@ -379,6 +402,10 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("appointmentTimeLength")));
     	baseUserInfo.setFirstLineSituation(StringUtil.isEmpty((String)partyUser.get("firstLineTypeName")) ? 
     			null : Integer.parseInt((String)partyUser.get("firstLineTypeName")));
+    	baseUserInfo.setIncome(StringUtil.isEmpty((String)partyUser.get("income")) ? 
+    			null : new BigDecimal((String)partyUser.get("income")));
+    	baseUserInfo.setPartyProportion(StringUtil.isEmpty((String)partyUser.get("partyProportion")) ? 
+    			null : new BigDecimal((String)partyUser.get("partyProportion")));
     	
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 
     			null : Integer.parseInt((String)partyUser.get("type")));
@@ -525,6 +552,10 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			null : Integer.parseInt((String)partyUser.get("appointmentTimeLength")));
     	baseUserInfo.setFirstLineSituation(StringUtil.isEmpty((String)partyUser.get("firstLineTypeName")) ? 
     			null : Integer.parseInt((String)partyUser.get("firstLineTypeName")));
+    	baseUserInfo.setIncome(StringUtil.isEmpty((String)partyUser.get("income")) ? 
+    			null : new BigDecimal((String)partyUser.get("income")));
+    	baseUserInfo.setPartyProportion(StringUtil.isEmpty((String)partyUser.get("partyProportion")) ? 
+    			null : new BigDecimal((String)partyUser.get("partyProportion")));
     	
     	partyUserInfo.setPartyUserId(baseUserInfo.getBaseUserId());
     	partyUserInfo.setType(StringUtil.isEmpty((String)partyUser.get("type")) ? 

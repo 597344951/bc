@@ -6,12 +6,17 @@
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="org_id" jdbcType="INTEGER" property="orgId" />
     <result column="flow_time" jdbcType="INTEGER" property="flowTime" />
+    <result column="flow_address_province" jdbcType="VARCHAR" property="flowAddressProvince" />
+    <result column="flow_address_city" jdbcType="VARCHAR" property="flowAddressCity" />
+    <result column="flow_address_area" jdbcType="VARCHAR" property="flowAddressArea" />
+    <result column="flow_address_detail" jdbcType="VARCHAR" property="flowAddressDetail" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zltel.broadcast.um.bean.FlowParty">
     <result column="reason" jdbcType="LONGVARCHAR" property="reason" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, org_id, flow_time
+    id, user_id, org_id, flow_time, flow_address_province, flow_address_city, 
+    flow_address_area, flow_address_detail
   </sql>
   <sql id="Blob_Column_List">
     reason
@@ -30,9 +35,11 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.FlowParty">
     insert into flow_party (id, user_id, org_id, 
-      flow_time, reason)
+      flow_time, reason, flow_address_province, 
+      flow_address_city, flow_address_area, flow_address_detail)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
-      #{flowTime,jdbcType=INTEGER}, #{reason,jdbcType=LONGVARCHAR})
+      #{flowTime,jdbcType=INTEGER}, #{reason,jdbcType=LONGVARCHAR}, #{flowAddressProvince,jdbcType=VARCHAR}, 
+      #{flowAddressCity,jdbcType=VARCHAR}, #{flowAddressArea,jdbcType=VARCHAR}, #{flowAddressDetail,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.FlowParty">
     insert into flow_party
@@ -52,6 +59,18 @@
       <if test="reason != null">
         reason,
       </if>
+      <if test="flowAddressProvince != null">
+        flow_address_province,
+      </if>
+      <if test="flowAddressCity != null">
+        flow_address_city,
+      </if>
+      <if test="flowAddressArea != null">
+        flow_address_area,
+      </if>
+      <if test="flowAddressDetail != null">
+        flow_address_detail,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -68,6 +87,18 @@
       </if>
       <if test="reason != null">
         #{reason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="flowAddressProvince != null">
+        #{flowAddressProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="flowAddressCity != null">
+        #{flowAddressCity,jdbcType=VARCHAR},
+      </if>
+      <if test="flowAddressArea != null">
+        #{flowAddressArea,jdbcType=VARCHAR},
+      </if>
+      <if test="flowAddressDetail != null">
+        #{flowAddressDetail,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -86,6 +117,18 @@
       <if test="reason != null">
         reason = #{reason,jdbcType=LONGVARCHAR},
       </if>
+      <if test="flowAddressProvince != null">
+        flow_address_province = #{flowAddressProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="flowAddressCity != null">
+        flow_address_city = #{flowAddressCity,jdbcType=VARCHAR},
+      </if>
+      <if test="flowAddressArea != null">
+        flow_address_area = #{flowAddressArea,jdbcType=VARCHAR},
+      </if>
+      <if test="flowAddressDetail != null">
+        flow_address_detail = #{flowAddressDetail,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -94,7 +137,11 @@
     set user_id = #{userId,jdbcType=INTEGER},
       org_id = #{orgId,jdbcType=INTEGER},
       flow_time = #{flowTime,jdbcType=INTEGER},
-      reason = #{reason,jdbcType=LONGVARCHAR}
+      reason = #{reason,jdbcType=LONGVARCHAR},
+      flow_address_province = #{flowAddressProvince,jdbcType=VARCHAR},
+      flow_address_city = #{flowAddressCity,jdbcType=VARCHAR},
+      flow_address_area = #{flowAddressArea,jdbcType=VARCHAR},
+      flow_address_detail = #{flowAddressDetail,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.FlowParty">
@@ -117,7 +164,11 @@
 	  _oi.org_info_name flowOrgInfoName,
 	  fp.reason reason,
 	  fp.flow_time flowTime,
-	  fp.id id
+	  fp.id id,
+	  fp.flow_address_province flowAddressProvince,
+      fp.flow_address_city flowAddressCity,
+      fp.flow_address_area flowAddressArea,
+      fp.flow_address_detail flowAddressDetail
 	from 
 	  flow_party fp 
 	  inner join base_user_info bui on fp.user_id = bui.base_user_id 

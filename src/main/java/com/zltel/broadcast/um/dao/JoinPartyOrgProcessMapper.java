@@ -24,4 +24,11 @@ public interface JoinPartyOrgProcessMapper extends BaseDao<JoinPartyOrgProcess> 
      * @return
      */
     public List<JoinPartyOrgProcess> queryJoinPartyOrgProcess(JoinPartyOrgProcess jpop);
+    
+    /**
+     * 查询加入党的步骤
+     * @param jpop
+     * @return
+     */
+    public List<JoinPartyOrgProcess> queryJoinPartyOrgProcessByProcessId(JoinPartyOrgProcess jpop);
 }

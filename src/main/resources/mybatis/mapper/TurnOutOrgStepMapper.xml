@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.um.dao.TurnOutOrgStepMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.TurnOutOrgStep">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="turn_out_id" jdbcType="INTEGER" property="turnOutId" />
+    <result column="process_id" jdbcType="INTEGER" property="processId" />
+    <result column="step_title" jdbcType="VARCHAR" property="stepTitle" />
+    <result column="step_describes" jdbcType="VARCHAR" property="stepDescribes" />
+    <result column="step_status" jdbcType="VARCHAR" property="stepStatus" />
+    <result column="step_status_reason" jdbcType="VARCHAR" property="stepStatusReason" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, turn_out_id, process_id, step_title, step_describes, step_status, step_status_reason, 
+    time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from turn_out_org_step
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from turn_out_org_step
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.um.bean.TurnOutOrgStep">
+    insert into turn_out_org_step (id, turn_out_id, process_id, 
+      step_title, step_describes, step_status, 
+      step_status_reason, time)
+    values (#{id,jdbcType=INTEGER}, #{turnOutId,jdbcType=INTEGER}, #{processId,jdbcType=INTEGER}, 
+      #{stepTitle,jdbcType=VARCHAR}, #{stepDescribes,jdbcType=VARCHAR}, #{stepStatus,jdbcType=VARCHAR}, 
+      #{stepStatusReason,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.TurnOutOrgStep" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into turn_out_org_step
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="turnOutId != null">
+        turn_out_id,
+      </if>
+      <if test="processId != null">
+        process_id,
+      </if>
+      <if test="stepTitle != null">
+        step_title,
+      </if>
+      <if test="stepDescribes != null">
+        step_describes,
+      </if>
+      <if test="stepStatus != null">
+        step_status,
+      </if>
+      <if test="stepStatusReason != null">
+        step_status_reason,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="turnOutId != null">
+        #{turnOutId,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null">
+        #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="stepTitle != null">
+        #{stepTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="stepDescribes != null">
+        #{stepDescribes,jdbcType=VARCHAR},
+      </if>
+      <if test="stepStatus != null">
+        #{stepStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="stepStatusReason != null">
+        #{stepStatusReason,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.um.bean.TurnOutOrgStep">
+    update turn_out_org_step
+    <set>
+      <if test="turnOutId != null">
+        turn_out_id = #{turnOutId,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null">
+        process_id = #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="stepTitle != null">
+        step_title = #{stepTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="stepDescribes != null">
+        step_describes = #{stepDescribes,jdbcType=VARCHAR},
+      </if>
+      <if test="stepStatus != null">
+        step_status = #{stepStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="stepStatusReason != null">
+        step_status_reason = #{stepStatusReason,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.TurnOutOrgStep">
+    update turn_out_org_step
+    set turn_out_id = #{turnOutId,jdbcType=INTEGER},
+      process_id = #{processId,jdbcType=INTEGER},
+      step_title = #{stepTitle,jdbcType=VARCHAR},
+      step_describes = #{stepDescribes,jdbcType=VARCHAR},
+      step_status = #{stepStatus,jdbcType=VARCHAR},
+      step_status_reason = #{stepStatusReason,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 查询用户转出的步骤信息 -->
+  <select id="queryUserTurnOutOrgSteps" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+	  toos.id id,
+	  toos.process_id processId,
+	  toos.step_status stepStatus,
+	  toop.file isFile,
+	  toos.step_status stepStatus,
+	  toos.step_status_reason stepStatusReason,
+	  toos.time stepTime,
+	  toop.describes describes
+	from
+	  turn_out_org_step toos 
+	  inner join turn_out_org_process toop on toos.process_id = toop.id 
+	  inner join turn_out_org_user toou on toou.id = toos.turn_out_id
+	where 
+	  1 = 1
+	  <if test="turnOutId != null and turnOutId != ''"> and 
+		  toos.turn_out_id = #{turnOutId}
+	  </if>
+	  <if test="processId != null and processId != ''"> and 
+		  toos.process_id = #{processId}
+	  </if>
+	  <if test="userId != null and userId != ''"> and 
+		  toou.user_id = #{userId}
+	  </if>
+	  <if test="isHistory != null and isHistory != ''"> and 
+		  toou.is_history = #{isHistory}
+	  </if>
+  </select>
+</mapper>

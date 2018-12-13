@@ -8,8 +8,18 @@ public class JoinPartyOrgProcess {
     private String nameEn;
 
     private String describes;
+    
+    private boolean file;
 
-    public Integer getId() {
+    public boolean isFile() {
+		return file;
+	}
+
+	public void setFile(boolean file) {
+		this.file = file;
+	}
+
+	public Integer getId() {
         return id;
     }
 

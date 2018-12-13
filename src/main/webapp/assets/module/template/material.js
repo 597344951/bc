@@ -569,7 +569,8 @@ let ins = new Vue({
       tpt.data = {
         parent: nodedata.albumId,
         parentLabel: nodedata.name,
-        orderNum: 0
+        orderNum: 0,
+        learnResource:false,
       };
     },
     // 修改模板类别

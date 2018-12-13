@@ -7,9 +7,10 @@
     <result column="org_rlt_duty_id" jdbcType="INTEGER" property="orgRltDutyId" />
     <result column="org_rlt_user_id" jdbcType="INTEGER" property="orgRltUserId" />
     <result column="org_rlt_join_time" jdbcType="TIMESTAMP" property="orgRltJoinTime" />
+    <result column="this_org_flow" jdbcType="BIT" property="thisOrgFlow" />
   </resultMap>
   <sql id="Base_Column_List">
-    org_rlt_id, org_rlt_info_id, org_rlt_duty_id, org_rlt_user_id, org_rlt_join_time
+    org_rlt_id, org_rlt_info_id, org_rlt_duty_id, org_rlt_user_id, org_rlt_join_time, this_org_flow
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,9 +24,9 @@
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.OrganizationRelation">
     insert into organization_relation (org_rlt_id, org_rlt_info_id, org_rlt_duty_id, 
-      org_rlt_user_id, org_rlt_join_time)
+      org_rlt_user_id, org_rlt_join_time, this_org_flow)
     values (#{orgRltId,jdbcType=INTEGER}, #{orgRltInfoId,jdbcType=INTEGER}, #{orgRltDutyId,jdbcType=INTEGER}, 
-      #{orgRltUserId,jdbcType=INTEGER},  #{orgRltJoinTime,jdbcType=TIMESTAMP})
+      #{orgRltUserId,jdbcType=INTEGER},  #{orgRltJoinTime,jdbcType=TIMESTAMP}, #{thisOrgFlow,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationRelation">
     insert into organization_relation
@@ -45,6 +46,9 @@
       <if test="orgRltJoinTime != null">
         org_rlt_join_time,
       </if>
+      <if test="thisOrgFlow != null">
+        this_org_flow,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="orgRltId != null">
@@ -61,6 +65,9 @@
       </if>
       <if test="orgRltJoinTime != null">
         #{orgRltJoinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thisOrgFlow != null">
+        #{thisOrgFlow,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -79,6 +86,9 @@
       <if test="orgRltJoinTime != null">
         org_rlt_join_time = #{orgRltJoinTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="thisOrgFlow != null">
+        this_org_flow = #{thisOrgFlow,jdbcType=BIT},
+      </if>
     </set>
     where org_rlt_id = #{orgRltId,jdbcType=INTEGER}
   </update>
@@ -87,13 +97,15 @@
     set org_rlt_info_id = #{orgRltInfoId,jdbcType=INTEGER},
       org_rlt_duty_id = #{orgRltDutyId,jdbcType=INTEGER},
       org_rlt_user_id = #{orgRltUserId,jdbcType=INTEGER},
-      org_rlt_join_time = #{orgRltJoinTime,jdbcType=TIMESTAMP}
+      org_rlt_join_time = #{orgRltJoinTime,jdbcType=TIMESTAMP},
+      this_org_flow = #{thisOrgFlow,jdbcType=BIT}
     where org_rlt_id = #{orgRltId,jdbcType=INTEGER}
   </update>
   
   <select id="queryOrgRelations" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		select
 		  _or.org_rlt_id orgRltId,
+		  _or.this_org_flow thisOrgFlow,
 		  oi.org_info_name infoName,
 		  oi.org_info_manager_region orgInfoManagerRegion,
 		  oi.org_info_active_region orgInfoActionRegion,
@@ -137,6 +149,7 @@
 	<select id="queryOrgRelationsNew" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		select
 		  _or.org_rlt_id orgRltId,
+		  _or.this_org_flow thisOrgFlow,
 		  oi.org_info_id orgInfoId,
 		  ot.org_type_id orgTypeId,
 		  od.org_duty_id orgDutyId,

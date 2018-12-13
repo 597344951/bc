@@ -33,6 +33,7 @@ import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
 import com.zltel.broadcast.um.dao.OrganizationInformationMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.service.OrganizationInformationService;
+import com.zltel.broadcast.um.service.OrganizationTurnOutProcessService;
 import com.zltel.broadcast.um.util.DateUtil;
 import com.zltel.broadcast.um.util.XMLUtil;
 
@@ -47,6 +48,8 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     private IntegralConstituteMapper integralConstituteMapper;
 	@Resource
     private IntegralChangeTypeMapper integralChangeTypeMapper;
+	@Resource
+    private OrganizationTurnOutProcessService organizationTurnOutProcessService;
 	@Override
     public BaseDao<OrganizationInformation> getInstince() {
         return this.organizationInformationMapper;
@@ -652,10 +655,11 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 				}
 			}
 			organizationInformation.setOrgInfoId(null);	//自增，不需要设置值
-			int count = this.insertSelective(organizationInformation);	//开始添加组织信息
+			int count = organizationInformationMapper.insertSelective(organizationInformation);	//开始添加组织信息
 			if (count == 1) {	//受影响的行数，判断是否修改成功
-				Integer insertedOrgId = organizationInformationMapper.queryInsertedOrgId();
-				insertOrgIntegralConstitutes(XMLUtil.getOrgIntegralConstitutes(), insertedOrgId);
+				insertOrgIntegralConstitutes(XMLUtil.getOrgIntegralConstitutes(), organizationInformation.getOrgInfoId());
+				//组织信息添加时添加默认的组织转出流程
+				organizationTurnOutProcessService.establishOrgInsertProcess(organizationInformation.getOrgInfoId());
 				return R.ok().setMsg("组织信息添加成功。");
 			} else {	//没有受影响行数表示添加失败
 				throw new Exception();

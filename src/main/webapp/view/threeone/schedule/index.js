@@ -1,6 +1,7 @@
 const app = new Vue({
   el: '#app',
   data: {
+    meetingType: meetingType,
     scheduleList: [],
     scheduleAddFormShow: false,
     memberSelectShow: false,
@@ -151,7 +152,7 @@ const app = new Vue({
     },
     loadEnableSchedule() {
       AJAX.get(
-        '/threeone/schedule/',
+        `/threeone/schedule/?meetingType=${this.meetingType}`,
         resp => {
           if (resp.status) {
             this.scheduleList = []

@@ -268,11 +268,8 @@ public class OrganizationRelationServiceImpl extends BaseDaoImpl<OrganizationRel
 				}
 				//在党员账号里更新加入组织id
 				BaseUserInfo bui = baseUserInfoMapper.selectByPrimaryKey(organizationRelation.getOrgRltUserId());
-				SysUser su = new SysUser();
-				su.setUsername(bui.getIdCard());
-				List<SysUser> sus = sysUserMapper.querySysUsers(su);
-				if (sus != null && sus.size() == 1) {
-					su = sus.get(0);
+				SysUser su = sysUserMapper.selectByUserName(bui.getIdCard());
+				if (su != null) {
 					su.setOrgId(organizationRelation.getOrgRltInfoId());
 					sysUserMapper.updateByPrimaryKeySelective(su);
 				} else {

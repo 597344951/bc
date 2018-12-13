@@ -188,6 +188,16 @@ const app = new Vue({
         onPreview(row) {
             window.open("/pw/preview/" + row.silhouette_id, "_blank")
         },
+        onShow(row){
+            var share = [{
+			
+				weburl: '/pw/preview/'+ row.silhouette_id,
+				playtime: 5 * 1000
+			} ];
+			
+			var url = '/view/publish/new.jsp?title=先进典型&startStep=2&url=' + encodeURIComponent(JSON.stringify(share));
+			window.location.href = url;
+        },
         onSubmit() {
             if (!this.submitPreCheck()) return;
             post("/pw/addxjdx", this.wrap, resp => {

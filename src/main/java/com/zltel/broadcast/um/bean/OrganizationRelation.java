@@ -12,6 +12,16 @@ public class OrganizationRelation {
     private Integer orgRltUserId;
     
     private Date orgRltJoinTime;
+    
+    private boolean thisOrgFlow;
+
+	public boolean isThisOrgFlow() {
+		return thisOrgFlow;
+	}
+
+	public void setThisOrgFlow(boolean thisOrgFlow) {
+		this.thisOrgFlow = thisOrgFlow;
+	}
 
 	public Date getOrgRltJoinTime() {
 		return orgRltJoinTime;

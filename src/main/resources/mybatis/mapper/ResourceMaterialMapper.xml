@@ -17,7 +17,7 @@
 		<result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
 		<result column="verify" jdbcType="TINYINT" property="verify" />
 		<result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
-		
+
 		<result column="width" jdbcType="INTEGER" property="width" />
 		<result column="height" jdbcType="INTEGER" property="height" />
 	</resultMap>
@@ -53,7 +53,8 @@
 	</delete>
 	<insert id="insert" parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial">
 		insert into resource_material (material_id, name, type,
-		description, url, cover_url, size, content_type, time_length, user_id, org_id, album_id, add_date,
+		description, url, cover_url, size,
+		content_type, time_length, user_id, org_id, album_id, add_date,
 		content,verify,verify_date
 		<if test="width != null">
 			,width
@@ -76,8 +77,8 @@
 		#{addDate,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR},
 		#{verify,jdbcType=TINYINT},
 		#{verifyDate,jdbcType=TIMESTAMP}
-		
-		
+
+
 		<if test="width != null">
 			,#{width,jdbcType=INTEGER}
 		</if>
@@ -95,7 +96,8 @@
 		user_id,
 		org_id,
 		album_id,
-		add_date, content,verify,verify_date,width,height
+		add_date,
+		content,verify,verify_date,width,height
 		)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
@@ -356,70 +358,74 @@
 		#{verify,jdbcType=TINYINT},
 		verify_date = #{verifyDate,jdbcType=TIMESTAMP},
 		width = #{width},
-		height = #{height}
+		height
+		= #{height}
 		where material_id =
 		#{materialId,jdbcType=INTEGER}
 	</update>
 
+	<sql id="ResourceMaterialWhereParams">
+		<if test="description != null">
+			AND description=#{description}
+		</if>
+		<if test="albumId != null">
+			AND album_id=#{albumId}
+		</if>
+		<if test="materialId != null">
+			AND material_id=#{materialId}
+		</if>
+		<if test="type != null">
+			AND type=#{type}
+		</if>
+		<if test="userId != null">
+			AND user_id=#{userId}
+		</if>
+		<if test="addDate != null">
+			AND add_date=#{addDate}
+		</if>
+		<if test="url != null">
+			AND url=#{url}
+		</if>
+		<if test="orgId != null">
+			AND (org_id=#{orgId} or org_id=0)
+		</if>
+		<if test="content != null">
+			AND content=#{content}
+		</if>
+		<if test="coverUrl != null">
+			AND cover_url=#{coverUrl}
+		</if>
+		<if test="timeLength != null">
+			AND time_length=#{timeLength}
+		</if>
+		<if test="size != null">
+			AND size=#{size}
+		</if>
+		<if test="name != null">
+			AND name=#{name}
+		</if>
+		<if test="keyword != null and keyword !=''">
+			AND name like concat('%',#{keyword},'%')
+		</if>
+		<if test="contentType != null">
+			AND content_type=#{contentType}
+		</if>
+		<if test="verify != null">
+			AND verify=#{verify,jdbcType=TINYINT}
+		</if>
+		<if test="noVerify != null">
+			AND isNull(verify)
+		</if>
+		<if test="width != null">
+			AND width = #{width}
+		</if>
+		<if test="height != null">
+			AND height = #{height}
+		</if>
+	</sql>
 	<sql id="ResourceMaterialWhere">
 		<where>
-			<if test="description != null">
-				AND description=#{description}
-			</if>
-			<if test="albumId != null">
-				AND album_id=#{albumId}
-			</if>
-			<if test="materialId != null">
-				AND material_id=#{materialId}
-			</if>
-			<if test="type != null">
-				AND type=#{type}
-			</if>
-			<if test="userId != null">
-				AND user_id=#{userId}
-			</if>
-			<if test="addDate != null">
-				AND add_date=#{addDate}
-			</if>
-			<if test="url != null">
-				AND url=#{url}
-			</if>
-			<if test="orgId != null">
-				AND (org_id=#{orgId} or org_id=0)
-			</if>
-			<if test="content != null">
-				AND content=#{content}
-			</if>
-			<if test="coverUrl != null">
-				AND cover_url=#{coverUrl}
-			</if>
-			<if test="timeLength != null">
-				AND time_length=#{timeLength}
-			</if>
-			<if test="size != null">
-				AND size=#{size}
-			</if>
-			<if test="name != null">
-				AND name=#{name}
-			</if>
-			<if test="keyword != null and keyword !=''">
-				AND name like concat('%',#{keyword},'%')
-			</if>
-			<if test="contentType != null">
-				AND content_type=#{contentType}
-			</if>
-			<if test="verify != null">
-				AND verify=#{verify,jdbcType=TINYINT}
-			</if>
-			<if test="noVerify != null">
-				AND isNull(verify)
-			</if>
-			<if test="width != null">
-				AND width = #{width} 
-			</if>
-			<if test="height != null">
-				AND height = #{height}
-			</if>
+			<include refid="ResourceMaterialWhereParams" />
 		</where>
 	</sql>
 
@@ -447,6 +453,22 @@
 		resource_material rm
 		where rm.org_id = #{orgid}
 		) t
+	</select>
+
+	<select id="queryLearnResource"
+		parameterType="com.zltel.broadcast.resource.bean.ResourceMaterial" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from resource_material m
+		<where>
+			<include refid="ResourceMaterialWhereParams"/>
+			AND m.album_id in (
+				select album_id from resource_material_album a where a.learn_resource = true
+			)
+		</where>
+		order by m.add_date desc
 	</select>
 
 </mapper>

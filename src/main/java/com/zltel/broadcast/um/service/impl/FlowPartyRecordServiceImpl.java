@@ -43,8 +43,17 @@ public class FlowPartyRecordServiceImpl extends BaseDaoImpl<FlowPartyRecord> imp
 					StringUtil.isNullOrEmpty(String.valueOf(map.get("contactTime"))) 
 					? null : (Date)map.get("contactTime")));
 			}
-			return R.ok().setData(flowPartyRecords);
 		} 
-    	return R.error().setMsg("没有查询到记录");
+		return R.ok().setData(flowPartyRecords);
+    }
+    
+    /**
+     * 查询流动记录
+     * @param condition
+     * @return
+     */
+    public R insertFlowPartyRecords(FlowPartyRecord fp) {
+    	flowPartyRecordMapper.insertSelective(fp);
+    	return R.ok().setMsg("添加成功");
     }
 }

@@ -1,6 +1,7 @@
 package com.zltel.broadcast.um.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.json.R;
@@ -20,6 +22,7 @@ import com.zltel.broadcast.um.bean.JoinPartyOrgUser;
 import com.zltel.broadcast.um.dao.JoinPartyOrgFileMapper;
 import com.zltel.broadcast.um.dao.JoinPartyOrgStepMapper;
 import com.zltel.broadcast.um.dao.JoinPartyOrgUserMapper;
+import com.zltel.broadcast.um.dao.OrganizationJoinProcessMapper;
 import com.zltel.broadcast.um.service.JoinPartyOrgUserService;
 import com.zltel.broadcast.um.util.DateUtil;
 
@@ -33,6 +36,8 @@ public class JoinPartyOrgUserServiceImpl extends BaseDaoImpl<JoinPartyOrgUser> i
     private JoinPartyOrgStepMapper joinPartyOrgStepMapper;
 	@Resource
     private JoinPartyOrgFileMapper joinPartyOrgFileMapper;
+	@Resource
+    private OrganizationJoinProcessMapper organizationJoinProcessMapper;
 	@Override
     public BaseDao<JoinPartyOrgUser> getInstince() {
         return this.joinPartyOrgUserMapper;
@@ -67,8 +72,64 @@ public class JoinPartyOrgUserServiceImpl extends BaseDaoImpl<JoinPartyOrgUser> i
      * @param conditions
      * @return
      */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
+	public R insertJoinPartyOrgStep(String submitDate) {
+		Map<String, Object> data = JSON.parseObject(submitDate);
+		List<Map<String, String>> uploadFileInfo = null;
+		if (data.get("uploadFiles") != null) {
+			uploadFileInfo = (List<Map<String, String>>) data.get("uploadFiles");
+		}
+		Integer processId = Integer.parseInt(String.valueOf(data.get("processId")));
+		Integer joinId = Integer.parseInt(String.valueOf(data.get("joinId")));
+		
+		//1、更新状态为wait
+		JoinPartyOrgUser jpou = new JoinPartyOrgUser();
+		jpou.setId(joinId);
+		jpou.setJoinStatus("wait");
+		joinPartyOrgUserMapper.updateByPrimaryKeySelective(jpou);
+		//2、增加当前步骤信息
+		JoinPartyOrgStep jpos = new JoinPartyOrgStep();
+		jpos.setJoinId(joinId);
+		jpos.setProcessId(processId);
+		jpos.setStepStatus("wait");
+		jpos.setTime(new Date());
+		joinPartyOrgStepMapper.insertSelective(jpos);	//插入的主键值会设置到jpos对象里
+		//3、增加上传文件信息
+		if (uploadFileInfo != null && uploadFileInfo.size() > 0) {
+			for (Map<String, String> map : uploadFileInfo) {
+				JoinPartyOrgFile jpof = new JoinPartyOrgFile();
+				jpof.setStepId(jpos.getId());
+				jpof.setFileTitle(map.get("fileName"));
+				jpof.setFileDescribes(map.get("fileName"));
+				jpof.setFilePath(map.get("fileUrl"));
+				jpof.setFileType(map.get("suffix"));
+				jpof.setTime(new Date());
+				joinPartyOrgFileMapper.insertSelective(jpof);
+			}
+		}
+		return R.ok().setMsg("操作成功");
+	}
+	
+	/**
+     * 删除此步骤
+     * @param jpos
+     * @return
+     */
+    public R deleteJoinPartyOrgSteps(JoinPartyOrgUser jpou) {
+    	joinPartyOrgUserMapper.updateByPrimaryKeySelective(jpou);
+    	return R.ok().setMsg("删除成功");
+    }
+	
+	/**
+     * 申请入党
+     * @param conditions
+     * @return
+     */
+	@Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+	@Deprecated
     public R insertJoinPartyOrgUsers(Map<String, Object> conditions) {
     	Integer joinId = null;
     	Integer stepNum = Integer.parseInt(String.valueOf(conditions.get("stepNum")));
@@ -131,5 +192,40 @@ public class JoinPartyOrgUserServiceImpl extends BaseDaoImpl<JoinPartyOrgUser> i
     	
     	
     	return R.ok().setMsg("成功" + stepNum + "," + userId);
+    }
+	
+	/**
+     * 申请入党-选择党组织
+     * @param conditions
+     * @return
+     */
+	@Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public R insertJpou(JoinPartyOrgUser jpou) {
+		jpou.setTime(new Date());
+		Map<String, Object> condition = new HashMap<>();
+		condition.put("orgId", jpou.getJoinOrgId());
+		condition.put("indexNum", 0);
+    	//一定能查寻到此条信息，不用判断
+		Map<String, Object> ojpMap = organizationJoinProcessMapper.queryOrgOjp(condition).get(0);
+    	jpou.setNowStep(Integer.parseInt(String.valueOf(ojpMap.get("processId"))));
+    	JoinPartyOrgStep newJpos = null;
+    	if (!(boolean) ojpMap.get("isFile")) {	//第一步不用上传，直接进入等待审核阶段
+    		jpou.setJoinStatus("wait");
+    		newJpos = new JoinPartyOrgStep();
+    	}
+    	
+    	int count = joinPartyOrgUserMapper.insertSelective(jpou);
+    	if (newJpos != null) {
+    		newJpos.setJoinId(jpou.getId());
+    		newJpos.setProcessId(jpou.getNowStep());
+			newJpos.setStepStatus("wait");
+			newJpos.setTime(new Date());
+			joinPartyOrgStepMapper.insertSelective(newJpos);
+    	}
+    	if (count == 1) {
+    		return R.ok().setMsg("选择成功");
+    	}
+    	return R.error().setMsg("选择失败");
     }
 }

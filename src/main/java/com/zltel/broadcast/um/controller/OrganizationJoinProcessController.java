@@ -59,4 +59,20 @@ public class OrganizationJoinProcessController {
 			return R.error().setMsg("查询失败");
 		}
 	}
+	
+	/**
+	 * 查询组织流程
+	 * @param condition 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgOjp", method=RequestMethod.POST)
+	@LogPoint("查询组织流程")
+	@ApiOperation(value = "查询组织流程")
+	public R queryOrgOjp(@RequestParam Map<String, Object> condition) {
+		try {
+			return organizationJoinProcessService.queryOrgOjp(condition);
+		} catch (Exception e) {
+			return R.error().setMsg("查询失败");
+		}
+	}
 }

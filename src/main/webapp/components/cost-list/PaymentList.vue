@@ -2,7 +2,9 @@
 import ms from "my_seal";
 //CompanySeal,PersonSeal
 import html2canvas from "html2canvas";
-import NumConvertUtil from '../utils/NumConvertUtil.js'
+import NumConvertUtil from "../utils/NumConvertUtil.js";
+
+//https://www.npmjs.com/package/my_seal
 
 //数据格式
 let dataExample = {
@@ -18,7 +20,6 @@ let dataExample = {
     type: "收款专用章"
   } //印章相关信息
 };
-
 
 export default {
   info: {
@@ -39,24 +40,36 @@ export default {
       visible: true
     };
   },
-  computed: {},
   mounted() {
-    var id = "#company";
-    var option = {
-      typeName: this.data.sealInfo.type,
-      companyName: this.data.sealInfo.name,
-      hasInnerLine: true
-    };
-    var seal = new ms.CompanySeal(id, option);
+    this.redraw();
   },
   computed: {
     amountCapital() {
       if (!this.data.amount) return "";
-      return NumConvertUtil.digitUppercase(this.data.amount)
+      return NumConvertUtil.digitUppercase(this.data.amount);
+    }
+  },
+  watch: {
+    data: {
+      handler: function(val, oldVal) {
+        this.redraw();
+      },
+      //深度监控
+      deep: true,
+      // 立即调用此回调
+      immediate: false
     }
   },
   methods: {
-    
+    redraw() {
+      var id = "#company";
+      var option = {
+        typeName: this.data.sealInfo.type,
+        companyName: this.data.sealInfo.name,
+        hasInnerLine: true
+      };
+      var seal = new ms.CompanySeal(id, option);
+    },
     formatDate(time) {
       let ay = [];
       ay.push(time.getFullYear());
@@ -68,7 +81,7 @@ export default {
       return ay.join("");
     },
     download() {
-      let name = this.data.payer+' '+this.data.title;
+      let name = this.data.payer + " " + this.data.title;
       console.debug("下载图片");
       let opts = {
         useCORS: true // 跨域图片
@@ -91,26 +104,40 @@ export default {
 };
 </script>
 <template>
-<div ref="paymentList">
-<div class="box" >
-		<span class="number">{{data.seriaNum}}</span>
-		<h1>{{data.title}}</h1>
-		<span class="line"></span>
-		<h2>{{formatDate(data.time)}}</h2>
-		<div class="contain">
-			<p>今收到<span class="name">{{data.payer}}</span></p>
-			<p>交来<span class="time">{{data.detail}}</span></p>
-			<p>人民币（大写）<span class="daxie">{{amountCapital}}</span> ￥ <span class="xiaoxie">{{data.amount}}</span></p>
-			<div class="footer">
-        <span class="danwei">收款单位（章）</span>
-        <canvas id="company"></canvas>
-        <span class="ren">收款人 <span class="get">{{data.payee}}</span></span></div>
-		</div>
-	</div>
-  <div id="control-button">
-      <el-button type="primary" icon="el-icon-download" size="small" @click="download" ></el-button>
+  <div ref="paymentList">
+    <div class="box">
+      <span class="number">{{data.seriaNum}}</span>
+      <h1>{{data.title}}</h1>
+      <span class="line"></span>
+      <h2>{{formatDate(data.time)}}</h2>
+      <div class="contain">
+        <p>
+          今收到
+          <span class="name">{{data.payer}}</span>
+        </p>
+        <p>
+          交来
+          <span class="time">{{data.detail}}</span>
+        </p>
+        <p>
+          人民币（大写）
+          <span class="daxie">{{amountCapital}}</span> ￥
+          <span class="xiaoxie">{{data.amount}}</span>
+        </p>
+        <div class="footer">
+          <span class="danwei">收款单位（章）</span>
+          <canvas id="company"></canvas>
+          <span class="ren">
+            收款人
+            <span class="get">{{data.payee}}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div id="control-button">
+      <el-button type="primary" icon="el-icon-download" size="small" @click="download"></el-button>
+    </div>
   </div>
-</div>
 </template>
 <style scoped>
 h1 {

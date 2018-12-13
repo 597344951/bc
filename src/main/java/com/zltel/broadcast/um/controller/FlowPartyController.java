@@ -42,4 +42,36 @@ public class FlowPartyController {
 			return R.error().setMsg("查询失败");
 		}
 	}
+	
+	/**
+	 * 添加流动党员-非本平台
+	 * @param condition 条件
+	 * @return
+	 */
+	@RequestMapping(value="/insertFlowPartyUserInfo", method=RequestMethod.POST)
+	@LogPoint("添加流动党员-非本平台")
+	@ApiOperation(value = "添加流动党员-非本平台")
+	public R insertFlowPartyUserInfo(@RequestParam Map<String, Object> flowPartyUser) {
+		try {
+			return flowPartyService.insertFlowPartyUserInfo(flowPartyUser);
+		} catch (Exception e) {
+			return R.error().setMsg("添加失败");
+		}
+	}
+	
+	/**
+	 * 添加流动党员-本平台党员
+	 * @param condition 条件
+	 * @return
+	 */
+	@RequestMapping(value="/insertFlowPartyUserInfoThisOrg", method=RequestMethod.POST)
+	@LogPoint("添加流动党员-本平台党员")
+	@ApiOperation(value = "添加流动党员-本平台党员")
+	public R insertFlowPartyUserInfoThisOrg(@RequestParam Map<String, Object> flowPartyUser) {
+		try {
+			return flowPartyService.insertFlowPartyUserInfoThisOrg(flowPartyUser);
+		} catch (Exception e) {
+			return R.error().setMsg("添加失败");
+		}
+	}
 }
