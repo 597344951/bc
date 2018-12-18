@@ -39,7 +39,7 @@
                         <el-option v-if="meetingType == 'threeone'" label="支部党员大会" value="2"></el-option>
                         <el-option v-if="meetingType == 'threeone'" label="支部委员会" value="3"></el-option>
                         <el-option v-if="meetingType == 'threeone'" label="党课" value="4"></el-option>
-                        <el-option v-if="meetingType == 'life'" label="民主生活会" value="5"></el-option>
+                        <el-option v-if="meetingType == 'life'" label="组织生活会" value="5"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="主 题" prop="name">

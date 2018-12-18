@@ -215,10 +215,17 @@
         case when bu.is_party = 1 then "党员" when bu.positive_user = 1 then "预备党员" else "群众" end as background,
         case when pu.join_date_formal is not null then pu.join_date_formal when pu.join_date_reserve is not null then
         pu.join_date_reserve else null end as joinDate
+        <if test="scheduleId != null">
+            ,tsp.schedule_id as scheduleId,
+            tsp.is_participate as isParticipate,
+            tsp.participated_date as participatedDate
+        </if>
         from base_user_info bu
         left join party_user_info pu on pu.party_user_id = bu.base_user_id
         left join organization_relation o on o.org_rlt_user_id = bu.base_user_id
-        left join threeone_schedule_participant tsp on tsp.user_id = bu.base_user_id
+        <if test="scheduleId != null">
+            left join threeone_schedule_participant tsp on tsp.user_id = bu.base_user_id
+        </if>
         <where>
             <if test="orgId != null">
                 AND o.org_rlt_info_id = #{orgId,jdbcType=INTEGER}

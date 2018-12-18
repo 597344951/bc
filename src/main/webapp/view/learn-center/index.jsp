@@ -86,7 +86,6 @@
                     <div class="detail">
                         <div class="screen">
                             <img src="view/learn-center/img/01.png" alt="">
-                            <a class="mask" href="learnCenter3.html"><span></span></a>
                         </div>
                         <div class="information">
                             <p class="title">{{currentLesson.name}}</p>

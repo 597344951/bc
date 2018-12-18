@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="LOGS" value="./logs" />
+
+	<!-- 控制台输出 -->
+	<appender name="Console"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%black(%d{ISO8601}) %highlight(%-5level) %yellow(%replace(%replace(%caller{1}){'Caller[^(]+',''}){'\r\n',''}) : %msg%n%throwable
+			</Pattern>
+		</layout>
+	</appender>
+
+	<appender name="RollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOGS}/broadcast-logger.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%d [%thread] %-5level %logger : %msg%n</Pattern>
+		</encoder>
+
+		<!-- 按天滚动归档旧日志 -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOGS}/archived/broadcast-logger-%d{yyyy-MM-dd}.%i.zip
+			</fileNamePattern>
+			<!-- 最大文件大小 -->
+			<maxFileSize>100MB</maxFileSize>
+			<!-- 保留时间 -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>2GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<!-- LOG everything at INFO level -->
+	<root level="ERROR">
+		<appender-ref ref="RollingFile" />
+		<appender-ref ref="Console" />
+	</root>
+
+</configuration>

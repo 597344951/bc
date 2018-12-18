@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ import com.zltel.broadcast.um.bean.TurnOutOrgUser;
 import com.zltel.broadcast.um.dao.BaseUserInfoMapper;
 import com.zltel.broadcast.um.dao.OrganizationRelationMapper;
 import com.zltel.broadcast.um.dao.OrganizationTurnOutProcessMapper;
+import com.zltel.broadcast.um.dao.PartyMembershipDuesManageMapper;
+import com.zltel.broadcast.um.dao.PartyUserInfoMapper;
 import com.zltel.broadcast.um.dao.SysUserMapper;
 import com.zltel.broadcast.um.dao.TurnOutOrgFileMapper;
 import com.zltel.broadcast.um.dao.TurnOutOrgProcessMapper;
@@ -51,6 +54,10 @@ public class TurnOutOrgUserServiceImpl extends BaseDaoImpl<TurnOutOrgUser> imple
     private OrganizationRelationMapper organizationRelationMapper;
 	@Resource
     private SysUserMapper sysUserMapper;
+	@Resource
+	private PartyUserInfoMapper partyUserInfoMapper;
+	@Resource
+    private PartyMembershipDuesManageMapper partyMembershipDuesManageMapper;
 	@Resource
     private BaseUserInfoMapper baseUserInfoMapper;
 	@Override
@@ -243,5 +250,75 @@ public class TurnOutOrgUserServiceImpl extends BaseDaoImpl<TurnOutOrgUser> imple
     		return R.ok().setData(toops);
     	}
     	return R.error().setMsg("为方便测试，你可能会看到此消息，正式使用不会出现");
+    }
+    
+    
+    /**
+     * 打印介绍信
+     * @param toop
+     * @return
+     * @throws Exception 
+     */
+    public R printIntroduce(Map<String, Object> condition) throws Exception {
+    	Map<String, Object> conditions = new HashMap<>();
+    	Map<String, Object> printInfo = new HashMap<>();
+    	conditions.put("toouId", condition.get("toId"));
+    	List<Map<String, Object>> turnOutOrgPartyUsers = turnOutOrgUserMapper.queryTurnOutOrgPartyUsers(conditions);
+    	
+    	if (turnOutOrgPartyUsers != null && turnOutOrgPartyUsers.size() == 1) {
+    		//查询转出信息
+    		Map<String, Object> turnOutOrgPartyUser = turnOutOrgPartyUsers.get(0);
+    		turnOutOrgPartyUser.put("applyTime", 
+				DateUtil.formatDate(DateUtil.YYYY_MM_DD_HH_MM_SS, turnOutOrgPartyUser.get("applyTime") == null ||
+				turnOutOrgPartyUser.get("applyTime") == "" ? null : DateUtil.toDate(DateUtil.YYYY_MM_DD_HH_MM_SS, 
+				turnOutOrgPartyUser.get("applyTime").toString())));
+    		turnOutOrgPartyUser.put("nowTime", DateUtil.formatDate(DateUtil.YYYY_MM_DD_HH_MM_SS, new Date()));
+    		printInfo.put("turnOutOrgPartyUser", turnOutOrgPartyUser);
+    		//查询党员信息
+    		conditions.clear();
+    		conditions.put("id", turnOutOrgPartyUser.get("baseUserId"));
+    		List<Map<String, Object>> partyUserInfos = partyUserInfoMapper.queryPartyUserInfos(conditions);	//开始查询，没有条件则查询所有组织关系
+    		if (partyUserInfos != null && partyUserInfos.size() == 1) {
+    			Map<String, Object> partyUserInfo = partyUserInfos.get(0);
+    			Date birthDay = DateUtil.toDate(DateUtil.YYYY_MM_DD, partyUserInfo.get("birthDate") == null || partyUserInfo.get("birthDate") == "" ?
+						null : partyUserInfo.get("birthDate").toString());
+				partyUserInfo.put("age", PartyUserInfoServiceImpl.getPartyUserAge(birthDay));
+    			printInfo.put("partyUserInfo", partyUserInfo);
+    			
+    			conditions.clear();
+	    		conditions.put("orgRltUserId", partyUserInfo.get("id"));
+	    		conditions.put("orgRltInfoId", partyUserInfo.get("orgInfoId"));
+				List<Map<String, Object>> organizationRelations = organizationRelationMapper.queryOrgRelationsNew(conditions);
+				if (organizationRelations != null && organizationRelations.size() == 1) {
+					Map<String, Object> organizationRelation = organizationRelations.get(0);
+					printInfo.put("organizationRelation", organizationRelation);
+					
+					conditions.clear();
+					conditions.put("userId", partyUserInfo.get("id"));
+		    		conditions.put("orgInfoId", partyUserInfo.get("orgInfoId"));
+					List<Map<String, Object>> partyMembershipDues = partyMembershipDuesManageMapper.queryPartyMembershipDues(conditions);
+					if (partyMembershipDues != null && partyMembershipDues.size() > 0) {
+						Map<String, Object> partyMembershipDue = partyMembershipDues.get(0);
+						Date payDate = StringUtil.isEmpty(String.valueOf(partyMembershipDue.get("shouldPayDateEnd"))) ? null : 
+							DateUtil.toDate(DateUtil.YYYY_MM_DD_HH_MM_SS, partyMembershipDue.get("shouldPayDateEnd").toString());
+						if (payDate != null) {
+							Calendar ca = Calendar.getInstance();
+							ca.setTime(payDate);
+							
+							partyMembershipDue.put("payDateYear", ca.get(Calendar.YEAR));
+							partyMembershipDue.put("payDateMonth", ca.get(Calendar.MONTH) + 1);
+						} 
+						printInfo.put("partyMembershipDue", partyMembershipDue);
+					}
+					return R.ok().setData(printInfo);
+				} else {
+					return R.error().setMsg("查询打印信息出错");
+				}
+    		} else {
+    			return R.error().setMsg("查询打印信息出错");
+    		}
+    	} else {
+    		return R.error().setMsg("查询打印信息出错");
+    	}
     }
 }

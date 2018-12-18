@@ -21,17 +21,12 @@
     <script>
         window.progress = ${currentProgressJson}
         window.lesson = ${currentLessonJson}
+        window.rmJson = ${rmJson != null ? rmJson : 'null'}
     </script>
 </head>
 
 <body>
-    <div id="app" v-cloak>
-        <c:if test="${currentLesson.sourceType == 1}">
-            <div v-if="infoOpen" class="alert-base alert-info alert-dismissible" role="alert" style="margin-bottom:0px;">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="infoOpen=false"><span aria-hidden="true">&times;</span></button>
-                <strong>警告!</strong> 当前播放地址为为外链， 无法自动加载播放进度，请手动定位。
-            </div>
-        </c:if>
+    <div id="app">
         <div class="top">
             <el-row>
                 <el-col :span="12">
@@ -86,8 +81,20 @@
         </div>
         <!--内部资源-->
         <div class="play">
-            <c:if test="${currentLesson.sourceType == 0}">
+            <c:if test="${currentLesson.sourceType == 1}">
+                <div role="shadow" class="shadow" v-if="shadowOpen">
+                    <!-- <strong>警告!</strong> 当前播放地址为为外链， 无法自动加载播放进度，请手动定位。
+                        <br/>
+                        <el-button type="primary" @click="otherResourceStart">确定</el-button> -->
+                    <div class="alert-base alert-warning">
+                        <strong>警告！</strong> 当前播放地址为为外链， 无法自动加载播放进度，请手动定位。
+                        <el-button type="primary" @click="otherResourceStart">确定</el-button>
+                    </div>
+                   
+                </div>
+            </c:if>
 
+            <c:if test="${currentLesson.sourceType == 0}">
                 <c:if test="${rm.type == 'video' || rm.type == 'audio'}">
                     <!--
                     <video id="player" src="/media-server/url?url=${rm.url}" poster="/media-server/url?url=${rm.coverUrl}"
@@ -95,7 +102,8 @@
                     </video>
                     -->
                     <!--封装的播放器-->
-                    <multi-video-player ref="player" @play-state-change="onPlayStateChange" :seeker="${currentProgress.playProgress}" :parts="[{src:'/media-server/url?url=${rm.url}',poster:'/media-server/url?url=${rm.coverUrl}'}]">
+                    <multi-video-player ref="player" @play-state-change="onPlayStateChange" :seeker="progress.playProgress"
+                        :parts="getDisplayParts()">
                     </multi-video-player>
                 </c:if>
                 <c:if test="${rm.type == 'image'}">

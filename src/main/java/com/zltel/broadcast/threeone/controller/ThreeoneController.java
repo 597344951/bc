@@ -48,14 +48,14 @@ public class ThreeoneController extends BaseController {
         return r;
     }
 
-    @GetMapping("/participant/{pageNum}/{pageSize}")
+    @GetMapping("/participated/{pageNum}/{pageSize}")
     @ResponseBody
-    public R participantSchedule(String meetingType, @PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize) {
+    public R participatedSchedule(String meetingType, @PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize) {
         R r = R.ok();
         if("life".equals(meetingType)) {
-            r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryLifeParticipantSchedule(getSysUser().getUsername(), pageNum, pageSize)));
+            r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryLifeParticipatedSchedule(getSysUser().getUsername(), pageNum, pageSize)));
         } else {
-            r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryThreeoneParticipantSchedule(getSysUser().getUsername(), pageNum, pageSize)));
+            r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryThreeoneParticipatedSchedule(getSysUser().getUsername(), pageNum, pageSize)));
         }
 
         return r;
@@ -89,5 +89,20 @@ public class ThreeoneController extends BaseController {
         R r = R.ok();
         r.setData(threeoneService.queryLearned(scheduleId, baseUserId));
         return r;
+    }
+
+    @GetMapping("/participant/{scheduleId}")
+    @ResponseBody
+    public R participant(@PathVariable("scheduleId") int scheduleId) {
+        R r = R.ok();
+        r.setData(scheduleService.queryScheduleMembers(scheduleId));
+        return r;
+    }
+
+    @PostMapping("/participant")
+    @ResponseBody
+    public R participantSign(@RequestBody List<Map<String, Object>> participant) {
+        scheduleService.scheduleSign(participant);
+        return R.ok();
     }
 }

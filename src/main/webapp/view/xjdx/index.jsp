@@ -184,6 +184,106 @@
                                         </el-row>
                             </div>
                             <div v-if="wrap.effect=='three'">
+                            
+                                <el-row type="flex" justify="center">
+                                        <el-col :span="12">
+                                            <el-form-item label="主题名称">
+                                                <el-input v-model="wrap.title" placeholder="请输入主题名称"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                                <el-form-item label="经历标题1">
+                                                    <el-input v-model="wrap.xx.x6" placeholder="请输入经历标题1 (2~10)"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>
+                                    
+                                    
+                                    <el-row type="flex" justify="center">
+                                        
+                                        <el-col :span="12">
+                                            <el-form-item label="经历标题2">
+                                                <el-input v-model="wrap.xx.x7" placeholder="请输入经历标题2 (2~10)"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                                <el-form-item label="经历标题3">
+                                                    <el-input v-model="wrap.xx.x8" placeholder="请输入经历标题3 (2~10)"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>
+                                    <el-row type="flex" justify="center">
+                                        
+                                        <el-col :span="12">
+                                            <el-form-item  label="经历标题4">
+                                                <el-input v-model="wrap.xx.x9" placeholder="请输入经历标题4 (2~10)"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                                <el-form-item label="经历内容1">
+                                                    <el-input v-model="wrap.xx.x10" placeholder="请输入经历内容1 (10~20)"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>
+                                    <el-row type="flex" justify="center">
+                                       
+                                        <el-col :span="12">
+                                            <el-form-item label="经历内容2">
+                                                <el-input v-model="wrap.xx.x11" placeholder="请输入经历内容2 (50~400)"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                                <el-form-item label="经历内容3">
+                                                    <el-input v-model="wrap.xx.x12" placeholder="请输入经历内容3 (50~100)"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>
+                                    <el-row type="flex" justify="center">
+                                        
+                                        <el-col :span="12">
+                                            <el-form-item label="经历内容4">
+                                                <el-input v-model="wrap.xx.x13" placeholder="请输入经历内容4 (50~100)"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                        </div>
+                            <div v-if="wrap.effect=='four'">
+                                <el-row type="flex" justify="center">
+                                        <el-col :span="12">
+                                            <el-form-item label="主题名称">
+                                                <el-input v-model="wrap.title" placeholder="请输入主题名称"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                                <el-form-item label="经历标题1">
+                                                    <el-input v-model="wrap.xx.x6" placeholder="请输入经历标题1 (2~20)"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>                                                                     
+                                    <el-row type="flex" justify="center">
+                                        
+                                        <el-col :span="12">
+                                            <el-form-item label="经历标题2">
+                                                <el-input v-model="wrap.xx.x7" placeholder="请输入经历标题2 (2~20)"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                      	 <el-col :span="12">
+                                                <el-form-item label="经历内容1">
+                                                    <el-input v-model="wrap.xx.x10" placeholder="请输入经历内容1 (50~200)"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>
+                                    <el-row type="flex" justify="center">                                  
+                                        <el-col :span="24">
+                                            <el-form-item label="经历内容2">
+                                                <el-input v-model="wrap.xx.x11" placeholder="请输入经历内容2 (50~300)"></el-input>
+                                            </el-form-item>
+                                        </el-col>                                       
+                                    </el-row>
+ 
+                        </div>
+                            <div v-if="wrap.effect=='five'">
+                            
                                 <el-row type="flex" justify="center">
                                         <el-col :span="12">
                                             <el-form-item label="主题名称">

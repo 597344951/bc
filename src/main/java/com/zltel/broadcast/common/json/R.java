@@ -13,9 +13,9 @@ public class R extends HashMap<String, Object> {
     /** 请求失败 **/
     public static final int CODE_FAIL = 500;
     /** 未登陆 **/
-    public static final int CODE_UNAUTH = 0;
+    public static final int CODE_UNAUTH = 401;
     /** 权限不足 **/
-    public static final int CODE_AUTH_FAIL = 2;
+    public static final int CODE_AUTH_FAIL = 403;
 
     public R() {
         put("status", true);

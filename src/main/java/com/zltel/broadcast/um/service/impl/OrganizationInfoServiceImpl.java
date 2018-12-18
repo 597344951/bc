@@ -78,6 +78,7 @@ public class OrganizationInfoServiceImpl extends BaseDaoImpl<OrganizationInfo> i
      * @param organizationInfo 条件
      * @return	查询得到的组织信息
      */
+	@SuppressWarnings("unused")
 	@Deprecated
     public R queryOrgInfosForInsertRelation(OrganizationInfo organizationInfo) throws Exception {
     	List<OrganizationType> orgTypes = organizationTypeMapper.queryOrgTypes(null);

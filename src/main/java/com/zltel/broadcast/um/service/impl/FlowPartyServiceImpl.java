@@ -1,6 +1,7 @@
 package com.zltel.broadcast.um.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -167,6 +168,8 @@ public class FlowPartyServiceImpl extends BaseDaoImpl<FlowParty> implements Flow
      * @param partyUser
      * @throws Exception
      */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
     public R insertFlowPartyUserInfoThisOrg(Map<String, Object> flowPartyUser) throws Exception {
     	Integer userId = Integer.parseInt(String.valueOf(flowPartyUser.get("userId")));
     	String flowAddressProvince = String.valueOf(flowPartyUser.get("flowAddressProvince"));
@@ -191,6 +194,30 @@ public class FlowPartyServiceImpl extends BaseDaoImpl<FlowParty> implements Flow
 		flowPartyMapper.insertSelective(fp);
     	
     	return R.ok().setMsg("添加成功");
+    }
+    
+    
+    /**
+     * 删除流动党员
+     * @param request
+     * @param partyUser
+     * @throws Exception
+     */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public R deleteFlowParty(Integer flowId) throws Exception {
+    	Map<String, Object> condition = new HashMap<>();
+    	condition.put("id", flowId);
+    	List<Map<String, Object>> flowPartys = flowPartyMapper.queryFlowPartys(condition);
+    	if (flowPartys != null && flowPartys.size() == 1) {
+    		Map<String, Object> flowParty = flowPartys.get(0);	//流动信息
+    		Integer userId = Integer.parseInt(String.valueOf(flowParty.get("userId")));	//用户id
+    		
+    		
+    		return R.ok().setMsg("删除成功");
+    	} else {
+    		return R.error().setMsg("删除出错");
+    	}
     }
 	
 	

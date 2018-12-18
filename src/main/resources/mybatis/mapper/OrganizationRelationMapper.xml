@@ -141,6 +141,9 @@
 	      <if test="orgRltDutyId != null and orgRltDutyId != ''"> and 
 	        _or.org_rlt_duty_id = #{orgRltDutyId}
 	      </if>
+	      <if test="orgRltUserId != null and orgRltUserId != ''"> and 
+	        _or.org_rlt_user_id = #{orgRltUserId}
+	      </if>
 	      <if test="buSex != null and buSex != ''"> and 
 	        bu.sex = #{buSex}
 	      </if>
@@ -169,7 +172,11 @@
   		  bui.mobile_phone mobilePhone,
   		  _or.org_rlt_join_time orgRltJoinTime,
   		  bui.id_card idCard,
-  		  oi.org_info_name orgInfoName
+  		  oi.org_info_name orgInfoName,
+  		  oi.org_info_committee_province orgInfoCommitteeProvince,
+  		  oi.org_info_committee_city orgInfoCommitteeCity,
+  		  oi.org_info_committee_area orgInfoCommitteeArea,
+  		  oi.org_info_committee_detail orgInfoCommitteeCetail
 		from
 		  organization_relation _or
 		  inner join organization_information oi on _or.org_rlt_info_id = oi.org_info_id 

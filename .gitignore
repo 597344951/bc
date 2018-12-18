@@ -31,3 +31,4 @@ broadcast.log.*
 
 ### webpack ###
 src/main/webapp/comp-webpack/node_modules/
+/logs/

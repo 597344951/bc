@@ -180,6 +180,9 @@
 	  <if test="userId != null and userId != ''"> and
        	fp.user_id = #{userId}
       </if>
+      <if test="id != null and id != ''"> and
+       	fp.id = #{id}
+      </if>
       <if test="name != null and name != ''"> and
        	bui.name = #{name}
       </if>

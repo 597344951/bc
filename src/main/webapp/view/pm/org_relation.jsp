@@ -450,63 +450,83 @@
                 },
                 openTurnOutOrgPartyStatusDialog(row) {
                     let obj = this;
-                    obj.turnOutOrgPartyUsers.turnOutStatus.userInfo = row;
-
-                    var url;
-                    var t;
-                    if (obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.orgInfoName != null && 
-                        obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.orgInfoName != '') {
-                        url = "/org/turn_out/queryOrgTurnOutProcess";
-                        t = {
-                            orgId: obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.turnOutOrgId
-                        }
-                    } else if(obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.otherOrgName != null && 
-                        obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.otherOrgName != '') {
-                        url = "/toou/user/queryToopOtherOrg";
-					    t = {}
-                    } else {
-                        obj.$message({
-                            type: 'error',
-                            message: '出现错误'
-                        }); 
-                        return;
+                    var url = "/toou/user/queryTurnOutOrgPartyUsers";
+                    var t = {
+                        pageNum: obj.turnOutOrgPartyUsers.query.page.pageNum,
+                        pageSize: obj.turnOutOrgPartyUsers.query.page.pageSize,
+                        isHistory: 0,
+                        idCard: row.idCard
                     }
                     $.post(url, t, function(data, status){
                         if (data.code == 200) {
-                            obj.turnOutOrgPartyUsers.turnOutStatus.process = data.data;
-                            //当前用户进行的流程
-                            let url = "/turn_out/step/queryUserTurnOutOrgSteps"
-                            let t = {
-                                userId: obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.baseUserId,
-                                isHistory: 0
-                            }
-                            $.post(url, t, function(_data, status){
-                                if (_data.code == 200) {
-                                    let userProcess = _data.data;
-                                    for (var i = 0; i < obj.turnOutOrgPartyUsers.turnOutStatus.process.length; i++) {	
-                                        //增加status属性，给步骤条设置状态
-                                        var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
-                                        //给已进行的步骤设置状态
-                                        if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
-                                            _process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
-                                        }
-                                        _process.id = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].id;
-                                        _process.name = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].name;
-                                        _process.orgId = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].orgId;
-                                        _process.processId = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].processId;
-                                        _process.indexNum = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].indexNum;
-                                        _process.isFile = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].isFile;
-                                        obj.turnOutOrgPartyUsers.turnOutStatus.process[i] = _process;
-                                        //设置步骤条步骤，根据当前进行的步骤取得进行到第几步
-                                        if (_process.processId == obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.nowStep) {
-                                            obj.turnOutOrgPartyUsers.turnOutStatus.stepNum = _process.indexNum;	//设置当前步骤，默认1
-                                            obj.turnOutOrgPartyUsers.turnOutStatus.stepNumNow = _process.indexNum;
-                                        }
+                            if (data.data != undefined && data.data != null && data.data.list.length == 1) {	
+                                obj.turnOutOrgPartyUsers.turnOutStatus.userInfo = data.data.list[0];
+
+                                var url;
+                                var t;
+                                if (obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.orgInfoName != null && 
+                                    obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.orgInfoName != '') {
+                                    url = "/org/turn_out/queryOrgTurnOutProcess";
+                                    t = {
+                                        orgId: obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.turnOutOrgId
                                     }
-                                    obj.turnOutStatusStepSet('z');
+                                } else if(obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.otherOrgName != null && 
+                                    obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.otherOrgName != '') {
+                                    url = "/toou/user/queryToopOtherOrg";
+                                    t = {}
+                                } else {
+                                    obj.$message({
+                                        type: 'error',
+                                        message: '出现错误'
+                                    }); 
+                                    return;
                                 }
-                            })
-                        } 
+                                $.post(url, t, function(data, status){
+                                    if (data.code == 200) {
+                                        obj.turnOutOrgPartyUsers.turnOutStatus.process = data.data;
+                                        //当前用户进行的流程
+                                        let url = "/turn_out/step/queryUserTurnOutOrgSteps"
+                                        let t = {
+                                            userId: obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.baseUserId,
+                                            isHistory: 0
+                                        }
+                                        $.post(url, t, function(_data, status){
+                                            if (_data.code == 200) {
+                                                let userProcess = _data.data;
+                                                for (var i = 0; i < obj.turnOutOrgPartyUsers.turnOutStatus.process.length; i++) {	
+                                                    //增加status属性，给步骤条设置状态
+                                                    var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
+                                                    //给已进行的步骤设置状态
+                                                    if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
+                                                        _process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
+                                                    }
+                                                    _process.id = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].id;
+                                                    _process.name = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].name;
+                                                    _process.orgId = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].orgId;
+                                                    _process.processId = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].processId;
+                                                    _process.indexNum = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].indexNum;
+                                                    _process.isFile = obj.turnOutOrgPartyUsers.turnOutStatus.process[i].isFile;
+                                                    obj.turnOutOrgPartyUsers.turnOutStatus.process[i] = _process;
+                                                    //设置步骤条步骤，根据当前进行的步骤取得进行到第几步
+                                                    if (_process.processId == obj.turnOutOrgPartyUsers.turnOutStatus.userInfo.nowStep) {
+                                                        obj.turnOutOrgPartyUsers.turnOutStatus.stepNum = _process.indexNum;	//设置当前步骤，默认1
+                                                        obj.turnOutOrgPartyUsers.turnOutStatus.stepNumNow = _process.indexNum;
+                                                    }
+                                                }
+                                                obj.turnOutStatusStepSet('z');
+                                            }
+                                        })
+                                    } 
+                                })
+                            } else {
+                                obj.$message({
+                                    type: 'info',
+                                    message: '查询失败'
+                                });  
+                                return;
+                            }
+                        }
+                        
                     })
                 },
                 queryTurnOutOrgPartyUsers() {

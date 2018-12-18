@@ -42,4 +42,12 @@ public interface FlowPartyService {
      * @throws Exception
      */
     public R insertFlowPartyUserInfoThisOrg(Map<String, Object> flowPartyUser) throws Exception;
+    
+    /**
+     * 删除流动党员
+     * @param request
+     * @param partyUser
+     * @throws Exception
+     */
+    public R deleteFlowParty(Integer flowId) throws Exception;
 }

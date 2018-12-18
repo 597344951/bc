@@ -187,5 +187,8 @@
 	  <if test="orgId != null and orgId != ''"> and 
 		  toou.turn_out_org_id = #{orgId}
 	  </if>
+	  <if test="toouId != null and toouId != ''"> and 
+		  toou.id = #{toouId}
+	  </if>
   </select>
 </mapper>

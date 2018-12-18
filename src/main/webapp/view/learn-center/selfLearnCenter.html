@@ -1,0 +1,201 @@
+
+<html>
+
+<head>
+    <base href="<%=basePath%>">
+    <meta charset="UTF-8">
+
+    <title>个人中心</title>
+    <link href="../../assets/module/learn-center/style.css" rel="stylesheet">
+	<style>
+	.section{
+		overflow: hidden;
+	}
+	.section>p{
+		height: 60px;
+	    line-height: 60px;
+	    padding-left: 15px;
+	    font-weight: bold;
+	    border-bottom: 1px dotted #ddd;
+	    font-size: 20px;
+	}
+	.section>p>a{
+		font-weight: normal;
+		float: right;
+		font-size: 16px;
+		padding-right: 20px;
+		color:#333;
+	}
+	.allCourse{
+		padding-left: 15px;
+		height: 50px;
+		line-height: 50px;
+		border-bottom: 1px dotted #ddd;
+		overflow: hidden;
+		padding-bottom: 8px;
+	}
+	.allCourse  a{
+		margin-right: 30px;
+		color:#333;
+		font-size: 16px;
+	}
+	.allCourse  a:hover,.allCourse .active{
+		color:#0eb8fd;
+		font-weight: bold;
+	}
+	.allCourse  .allitem{
+		font-weight: bold;
+		color:#333;
+	}
+	.contain{
+	    margin-left: 10px;
+        padding-top: 10px;
+        width:48%;
+        float: left;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 4px;
+        border:1px dotted #ddd;
+	    box-sizing: border-box;
+	}
+	.item{
+		width:45%;
+	  	max-width: 330px;
+	}
+	.search{
+		float: right;
+	}
+	.information{
+		padding-left: 15px;
+	    width: 54%;
+	}
+	.information>span{
+		font-weight: bold;
+		display: block;
+		position: relative;
+	}
+	.information>p{
+	    margin-top: 5px;
+		text-indent: 2em;
+	}
+	.rate{
+	    display: inline-block;
+	    text-align: center;
+	    line-height: 50px;
+	    width: 150px;
+	    height: 50px;
+	    font-size: 20px;
+	    color: #0eb8fd;
+	    border: 1px solid #0eb8fd;
+	    box-sizing: border-box;
+	    position: absolute;
+	    bottom: 12px;
+	    left: 20px;
+	}
+	.rate:hover{
+		background-color: #0eb8fd;
+		color: #fff;
+	}
+	.rate2{
+		left:180px
+	}
+	.teacher{
+		width: auto;
+	}
+	.noLearn{
+		border-color:#ddd;
+		color:#ccc;
+	}
+	.noLearn:hover{
+		cursor: no-drop;
+		border-color:#ddd;
+		color:#ccc;
+		background-color: #fff;
+	}
+	.schedule{
+		margin-top: 10px;
+		color:#999;
+	}
+	.schedule p{
+		margin-bottom: 5px;
+	}
+	</style>
+</head>
+<body>
+	<div class="section">
+		<p>个人学习中心 <a href="#">登录</a></p>
+		<div class="allCourse">
+			<a class="allitem" href="#">所有课程</a><a class="active" href="#">已参加</a><a href="#">已报名</a><a href="#">已完成</a><a href="#">已考试	</a>
+			<div class="search">
+                <input v-model="keyword" type="text" placeholder="">
+                <button @click="loadLessons">搜索</button>
+            </div> 
+		</div>
+		<div class="contain">
+			<a class="item" href="learnCenter2.html" target='_blank'>
+				<div class="cover">
+					<img src="img/01.png" alt="">
+					<p><span>已学时间：35分钟 </span> <span> 总时长：135分钟</span></p>
+				</div>
+				<p class="title">深入学习习近平新时代特色社会主义思想</p>
+				<div class="pandect">
+					<span class="student">211人最近学习</span> <span class="teacher">讲师：吴景明</span>
+				</div>
+			</a>
+			<div class="information">
+				<span>课程概要：</span>
+				<p>深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会</p>
+				<div class="schedule">
+					<p>学习进度：32%</p>
+					<p>考试成绩：（完成学习后参加考试）</p>
+				</div>
+				<a class="rate rate1" href='#'> 开始学习 </a>
+				<a class="rate rate2 noLearn" href='#' title="请先参加学习"> 参加考试 </a>
+			</div>
+		</div>
+		<div class="contain">
+			<a class="item" href="learnCenter2.html" target='_blank'>
+				<div class="cover">
+					<img src="img/01.png" alt="">
+					<p><span>已学时间：135分钟 </span> <span> 总时长：135分钟</span></p>
+				</div>
+				<p class="title">深入学习习近平新时代特色社会主义思想</p>
+				<div class="pandect">
+					<span class="student">211人最近学习</span> <span class="teacher">讲师：吴景明</span>
+				</div>
+			</a>
+			<div class="information">
+				<span>课程概要：</span>
+				<p>深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会</p>
+				<div class="schedule">
+					<p>学习进度：已完成</p>
+					<p>考试成绩：95</p>
+				</div>
+				<a class="rate rate1" href='#'> 再次学习 </a>
+				<a class="rate rate2 noLearn" href='#' title="请先参加学习"> 考试已完成 </a>
+			</div>
+		</div>
+		<div class="contain">
+			<a class="item" href="learnCenter2.html" target='_blank'>
+				<div class="cover">
+					<img src="img/01.png" alt="">
+					<p><span>已学时间：135分钟 </span> <span> 总时长：135分钟</span></p>
+				</div>
+				<p class="title">深入学习习近平新时代特色社会主义思想</p>
+				<div class="pandect">
+					<span class="student">211人最近学习</span> <span class="teacher">讲师：吴景明</span>
+				</div>
+			</a>
+			<div class="information">
+				<span>课程概要：</span>
+				<p>深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会主义思想深入学习习近平新时代特色社会</p>
+				<div class="schedule">
+					<p>学习进度：100%</p>
+					<p>考试成绩：（完成学习后参加考试）</p>
+				</div>
+				<a class="rate rate1" href='#'> 继续学习 </a>
+				<a class="rate rate2  " href='#' title="请先参加学习"> 参加考试 </a>
+			</div>
+		</div>
+	</div>
+</body>

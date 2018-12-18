@@ -29,6 +29,8 @@ public class LessonUnitProgress implements Serializable {
     private Integer playProgress;
 
     private static final long serialVersionUID = 1L;
+    
+    private Boolean endToSave;
 
     public Integer getPlayProgress() {
         return playProgress;
@@ -92,6 +94,14 @@ public class LessonUnitProgress implements Serializable {
 
     public void setCreditHours(Integer creditHours) {
         this.creditHours = creditHours;
+    }
+
+    public Boolean getEndToSave() {
+        return endToSave;
+    }
+
+    public void setEndToSave(Boolean endToSave) {
+        this.endToSave = endToSave;
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.template.bean.TemplateContent;
 import com.zltel.broadcast.template.service.TemplateContentService;
@@ -49,6 +50,11 @@ public class TemplateContentController extends BaseController {
         record.setTpTypeId(tp.getTpTypeId());
         record.setKeyword(keyword);
         Pager prb = new Pager(pageIndex, limit);
+        AdminRoleUtil.handleAdminRole(record, item -> item.setUid(null), item -> {
+            item.setUid(null);
+            item.setOrgid(null);
+        });
+        
         List<TemplateContent> result = this.templateContentService.queryByType(record,prb);
         return R.ok().setData(result).setPager(prb);
     }

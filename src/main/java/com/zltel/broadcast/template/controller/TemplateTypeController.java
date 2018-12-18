@@ -20,6 +20,7 @@ import com.zltel.broadcast.common.annotation.LogPoint;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.common.validator.group.GroupSave;
 import com.zltel.broadcast.common.validator.group.GroupUpdate;
@@ -43,19 +44,22 @@ public class TemplateTypeController extends BaseController {
         TemplateType tp = new TemplateType();
         tp.setOrgid(this.getSysUser().getOrgId());
         tp.setKeyword(keyword);
+        AdminRoleUtil.handleAdminRole(tp, item -> {}, item -> {
+            item.setOrgid(null);
+        });
         List<TemplateTypeTreeNode> result = this.templateTypeService.getTypeTree(tp);
         return R.ok().setData(result);
     }
 
     @ApiOperation(value = "新建分类信息", notes = "新建模板分类信息")
     @PostMapping(value = "/tptype")
-    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="新增模版分类",template="新增模版分类:${tpt.name}")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "新增模版分类", template = "新增模版分类:${tpt.name}")
     @RequiresPermissions("template:type:save")
     public R save(@RequestBody TemplateType tpt) {
-        ValidatorUtils.validateEntity(tpt,GroupSave.class);
+        ValidatorUtils.validateEntity(tpt, GroupSave.class);
         tpt.setBuiltin(false);
         tpt.setOrgid(this.getSysUser().getOrgId());
-        
+
         this.templateTypeService.insert(tpt);
         return R.ok();
     }
@@ -64,7 +68,7 @@ public class TemplateTypeController extends BaseController {
     @RequiresPermissions("template:type:update")
     @PutMapping(value = "/tptype")
     public R update(@RequestBody TemplateType tpt) {
-        ValidatorUtils.validateEntity(tpt,GroupUpdate.class);
+        ValidatorUtils.validateEntity(tpt, GroupUpdate.class);
         tpt.setBuiltin(null);
         tpt.setOrgid(null);
         this.templateTypeService.updateByPrimaryKeySelective(tpt);
@@ -81,7 +85,7 @@ public class TemplateTypeController extends BaseController {
 
     @ApiOperation(value = "删除分类信息")
     @DeleteMapping("/tptype/{tpTypeId}")
-    @LogPoint(type=LogPoint.TYPE_RESOURCE_MANAGE_LOG,value="删除模版分类",template="删除模版分类id:${tpTypeId}")
+    @LogPoint(type = LogPoint.TYPE_RESOURCE_MANAGE_LOG, value = "删除模版分类", template = "删除模版分类id:${tpTypeId}")
     @RequiresPermissions("template:type:delete")
     public R delete(@PathVariable("tpTypeId") Integer tpTypeId) {
         if (null == tpTypeId) throw new RRException("输入删除分类的id");

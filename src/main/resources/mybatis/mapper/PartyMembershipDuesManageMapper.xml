@@ -229,7 +229,7 @@
 		  pmdm.should_pay_date_end &lt;= #{shouldPayDateEnd}
 	  </if>
 	order by
-	  pmdm.should_pay_date_end desc
+	  pmdm.paid_date desc
   </select>
   
   <select id="queryOrgInfoOfPMDM" parameterType="java.util.HashMap" resultType="java.util.HashMap">

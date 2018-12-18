@@ -30,7 +30,7 @@ public interface JoinPartyOrgStepService {
      * @param jpos
      * @return
      */
-    public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos);
+    public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos, String orgRltDuty) throws Exception;
     
     /**
      * 查询申请入党人员的信息

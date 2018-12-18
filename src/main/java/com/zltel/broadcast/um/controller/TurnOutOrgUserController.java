@@ -3,7 +3,6 @@ package com.zltel.broadcast.um.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,7 +65,6 @@ public class TurnOutOrgUserController {
 	 * @return
 	 */
 	@RequestMapping(value="/insertTurnOutOrgPartyStep", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"party:user:insert"})
 	@ApiOperation(value = "增加步骤")
 	public R insertTurnOutOrgPartyStep(@RequestParam("submitDate") String submitDate) {
 		try {
@@ -103,6 +101,21 @@ public class TurnOutOrgUserController {
 	public R queryToopOtherOrg(@RequestParam Map<String, Object> conditions) {
 		try {
 			return turnOutOrgUserService.queryToopOtherOrg(conditions);
+		} catch (Exception e) {
+			return R.error().setMsg("操作失败");
+		}
+	}
+	
+	/**
+	 * 打印介绍信
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/printIntroduce", method=RequestMethod.POST)
+	@ApiOperation(value = "打印介绍信")
+	public R printIntroduce(@RequestParam Map<String, Object> conditions) {
+		try {
+			return turnOutOrgUserService.printIntroduce(conditions);
 		} catch (Exception e) {
 			return R.error().setMsg("操作失败");
 		}

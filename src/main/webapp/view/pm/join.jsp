@@ -169,10 +169,34 @@
 				placeholder="有什么想说的吗？（可不填）"
 				v-model="joinPartyOrgUser.update.setStepStatus.stepReason">
 			</el-input>
+			<!-- 当进入此步骤14-预备党员时，要让此党员加入申请的组织 -->
 			<el-button	
 				style="margin-bottom: 10px;"
 				size="small" type="primary" @click="joinPartyOrgUser.update.setStepStatus.stepStatus == 'error' ? 
-					refuseJoinPartyOrgStep() : adoptJoinPartyOrgStep()">下一步</el-button>
+					refuseJoinPartyOrgStep() : joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.processId == 14 ? 
+					openTurnOutOrgDutyDialog(joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinOrgId) : 
+					adoptJoinPartyOrgStep()">下一步</el-button>
+		</el-dialog>
+
+		<el-dialog @close="" title="确定角色" :visible.sync="join_confirm_org_duty.dialog">
+			<div>
+				<el-tree :default-expand-all="true" 
+					node-key="id" 
+					ref="joinOrgInfoTree"
+					show-checkbox 
+					:expand-on-click-node="false" 
+					:highlight-current="true" 
+					:data="join_confirm_org_duty.orgDutyTreesForOrgInfo" 
+					:props="joinOrgInfoOrgDutyTreesForOrgInfoProps" 
+					:check-strictly="true" >
+				</el-tree>
+			</div>
+			<div style="margin: 10px;">
+				<el-button 
+					@click="adoptJoinPartyOrgStep()" 
+					type="primary" size="small">确认
+				</el-button>
+			</div>
 		</el-dialog>
 	</div>
 </body>
@@ -223,6 +247,16 @@
 			},
 			zidonghuachengxu_videoVariable: {
 				joinUserInfo: null
+			},
+			join_confirm_org_duty: {
+				dialog: false,
+				orgDutyTreesForOrgInfo: null
+			},
+			joinOrgInfoOrgDutyTreesForOrgInfoProps: {
+				children: 'children',
+				label: function(_data, node){
+					return _data.data.orgDutyName;
+				}
 			}
 		},
 		created: function () {
@@ -232,6 +266,37 @@
 			this.queryJoinPartyOrgUser();
 		},
 		methods: {
+			openTurnOutOrgDutyDialog(orgId) {
+				let obj = this;
+
+				let url = "/org/duty/queryOrgDutyTreeForOrgInfo";
+				let t = {
+					orgDutyOrgInfoId: orgId
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						if (datas.data != undefined) {
+							obj.join_confirm_org_duty.orgDutyTreesForOrgInfo = datas.data;
+							obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(obj.join_confirm_org_duty.orgDutyTreesForOrgInfo);
+						} else {
+							obj.join_confirm_org_duty.orgDutyTreesForOrgInfo = [];
+						}
+					}
+					
+				})
+
+				obj.join_confirm_org_duty.dialog = true;
+			},
+			forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTrees){	/* 向树里添加id属性，方便设置node-key */
+				var obj = this;
+				if(menuTrees != null) {
+					for (var i = 0; i < menuTrees.length; i++) {
+						var menuTree = menuTrees[i];
+						menuTree.id = menuTree.data.orgDutyId;                            
+						obj.forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTree.children);
+					}
+				}
+			},
 			zidonghuachengxu_video() {	//为了录像
 				var obj = this;
 				setTimeout(() => {
@@ -308,6 +373,11 @@
 					processId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.nowStep,
 					isFile: obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.isFile
 				}
+				if(obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.processId == 14) {
+					t.orgRltDuty = obj.$refs.joinOrgInfoTree.getCheckedKeys(false)[0];
+				} else {
+					t.orgRltDuty = '';
+				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
 						obj.$message({
@@ -316,6 +386,7 @@
 						});
 						obj.joinPartyOrgUser.joinStatus.dialog = false;
 						obj.joinPartyOrgUser.update.joinPartyOrgStepReasonDialog = false;
+						obj.join_confirm_org_duty.dialog = false;
 						obj.queryJoinPartyOrgUser();
 					} 
 				})
@@ -341,6 +412,13 @@
 			},
 			adoptJoinPartyOrgStep() {	//入党此步骤通过
 				var obj = this;
+				if(obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.processId == 14) {
+					var checkedKeys = obj.$refs.joinOrgInfoTree.getCheckedKeys(false);
+					if (checkedKeys == null || checkedKeys.length != 1) {
+						toast('错误',"请为该预备党员选择在此组织担任的角色",'error');
+						return;
+					}
+				}
 				obj.$confirm(
 					'入党申请本步骤通过', 
 					'提示', 
@@ -350,7 +428,7 @@
 			          	type: 'warning'
 		        	}
 		        ).then(function(){
-	        		obj.changeJoinPartyOrgStepStatus();
+					obj.changeJoinPartyOrgStepStatus();
 		        }).catch(function(){
 		        	obj.$message({
 			            type: 'info',
@@ -400,48 +478,68 @@
 			},
 			openJoinPartyOrgStatusDialog(joinPartyOrgUserInfo) {	//申请入党状态弹窗
 				var obj = this;
-				obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo = joinPartyOrgUserInfo;
-
-				var url = "/org/process/queryOrgOjp";
+				var url = "/join/user/queryJoinPartyOrgUsers";
 				var t = {
-					orgId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinOrgId
+					pageNum: 1,
+					pageSize: 1,
+					isHistory: 0,
+					idCard: joinPartyOrgUserInfo.idCard
 				}
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
-						obj.joinPartyOrgUser.joinStatus.process = data.data;
-						//当前用户进行的流程
-						let url = "/join/step/queryUserJoinPartyOrgSteps"
-						let t = {
-							userId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.baseUserId,
-							isHistory: 0
-						}
-						$.post(url, t, function(_data, status){
-							if (_data.code == 200) {
-								let userProcess = _data.data;
-								for (var i = 0; i < obj.joinPartyOrgUser.joinStatus.process.length; i++) {	
-									//增加status属性，给步骤条设置状态
-									var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
-									//给已进行的步骤设置状态
-									if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
-										_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
-									}
-									_process.id = obj.joinPartyOrgUser.joinStatus.process[i].id;
-									_process.name = obj.joinPartyOrgUser.joinStatus.process[i].name;
-									_process.orgId = obj.joinPartyOrgUser.joinStatus.process[i].orgId;
-									_process.processId = obj.joinPartyOrgUser.joinStatus.process[i].processId;
-									_process.indexNum = obj.joinPartyOrgUser.joinStatus.process[i].indexNum;
-									_process.isFile = obj.joinPartyOrgUser.joinStatus.process[i].isFile;
-									obj.joinPartyOrgUser.joinStatus.process[i] = _process;
-									//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
-									if (_process.processId == obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.nowStep) {
-										obj.joinPartyOrgUser.joinStatus.stepNum = _process.indexNum;	//设置当前步骤，默认1
-										obj.joinPartyOrgUser.joinStatus.stepNumNow = _process.indexNum;
-									}
-								}
-								obj.joinStatusStepSet('z');
+						if (data.data != undefined && data.data != null && data.data.list.length == 1) {	
+							obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo = data.data.list[0];
+
+							var url = "/org/process/queryOrgOjp";
+							var t = {
+								orgId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinOrgId
 							}
-						})
-					} 
+							$.post(url, t, function(data, status){
+								if (data.code == 200) {
+									obj.joinPartyOrgUser.joinStatus.process = data.data;
+									//当前用户进行的流程
+									let url = "/join/step/queryUserJoinPartyOrgSteps"
+									let t = {
+										userId: obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.baseUserId,
+										isHistory: 0
+									}
+									$.post(url, t, function(_data, status){
+										if (_data.code == 200) {
+											let userProcess = _data.data;
+											for (var i = 0; i < obj.joinPartyOrgUser.joinStatus.process.length; i++) {	
+												//增加status属性，给步骤条设置状态
+												var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
+												//给已进行的步骤设置状态
+												if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
+													_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
+												}
+												_process.id = obj.joinPartyOrgUser.joinStatus.process[i].id;
+												_process.name = obj.joinPartyOrgUser.joinStatus.process[i].name;
+												_process.orgId = obj.joinPartyOrgUser.joinStatus.process[i].orgId;
+												_process.processId = obj.joinPartyOrgUser.joinStatus.process[i].processId;
+												_process.indexNum = obj.joinPartyOrgUser.joinStatus.process[i].indexNum;
+												_process.isFile = obj.joinPartyOrgUser.joinStatus.process[i].isFile;
+												obj.joinPartyOrgUser.joinStatus.process[i] = _process;
+												//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
+												if (_process.processId == obj.joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.nowStep) {
+													obj.joinPartyOrgUser.joinStatus.stepNum = _process.indexNum;	//设置当前步骤，默认1
+													obj.joinPartyOrgUser.joinStatus.stepNumNow = _process.indexNum;
+												}
+											}
+											obj.joinStatusStepSet('z');
+										}
+									})
+								} 
+							})
+						} else {
+							obj.$message({
+								type: 'info',
+								message: '查询失败'
+							});  
+							return;
+						}
+					}
+					
 				})
 			},
 			joinStatusStepSet(step) {	//设置步骤条

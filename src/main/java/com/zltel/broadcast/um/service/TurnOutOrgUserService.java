@@ -56,4 +56,11 @@ public interface TurnOutOrgUserService {
      * @return
      */
     public R queryToopOtherOrg(Map<String, Object> condition);
+    
+    /**
+     * 打印介绍信
+     * @param toop
+     * @return
+     */
+    public R printIntroduce(Map<String, Object> condition) throws Exception ;
 }

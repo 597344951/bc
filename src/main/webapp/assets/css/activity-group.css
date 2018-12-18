@@ -1,12 +1,13 @@
 .box{
     border:1px solid #eee;
-    border-radius: 8px;
+    border-radius: 4px;
     width: 30%;
     min-width:300px;
     height: 200px;
     float: left;
     margin:15px 5px ;
     background-color: white;
+    overflow: hidden;
     transition: transform 0.2s,box-shadow 0.3s;
 
 }

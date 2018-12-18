@@ -5,38 +5,30 @@ $.ajaxSetup({
     dataType: 'json',
     type: 'post',
     //默认complet 回调,如果不须换被调用此函数,需自行覆盖 ajax中的complete回调
-    complete: function (XMLHttpRequest, textStatus) {
-        var str = XMLHttpRequest.responseText;
-        if ('success' != textStatus) {
-            console.error(' ajax 请求结果格式化错误:', textStatus, str);
-            return;
-        }
-        if (XMLHttpRequest.status == 200) { // 正常
-            try {
-                var data = {};
+    complete: function (XMLHttpRequest) {
+        var str = XMLHttpRequest.responseText
+        let status = XMLHttpRequest.status
+        switch (status) {
+            case 200: // 正常请求
+                break
+            case 401: //未登录
+                console.log('登陆超时')
+                confirm('登陆超时,是否刷新页面?') && top.window.location.reload()
+                break
+            case 403: //授权失败
+                toast('系统错误', '你没有权限访问此路径', 'error')
+                break
+            default: //其他不正常情况
+                let msg = str
                 try {
-                    data = JSON.parse(str);
+                    let data = JSON.parse(str);
+                    if (data.msg) msg = data.msg
                 } catch (e) {
-                    console.error('序列化结果失败!',e);
-                    return;
+                    console.error('序列化结果失败!', e)
                 }
-                if (data.code == 0) { // 未登录
-                    console.log('登陆超时');
-                    if (confirm('用户登陆超时,是否刷新页面?')) {
-                        top.window.location.reload();
-                    }
-                } else if (data.code != 200) {
-                    toast('系统错误', data.msg, 'error');
-                    // console.error(data.msg);
-                }
-            } catch (e) {
-                console.error(e)
-            }
-        } else {
-            str = '服务器出错，请与管理员联系';
-            toast('系统错误', str, 'error');
+                toast('系统错误', msg, 'error')
+                break
         }
-
     }
 });
 

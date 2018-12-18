@@ -181,7 +181,7 @@
 						</div>
 						<div class="item">
 							<h3>${xx.x7}</h3>
-							<p>${xx.x11}</p>
+							<p >${xx.x11}</p>
 						</div>
 						<div class="item">
 							<h3>${xx.x8}</h3>

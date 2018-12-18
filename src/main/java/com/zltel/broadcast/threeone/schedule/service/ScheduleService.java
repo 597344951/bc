@@ -13,6 +13,7 @@ public interface ScheduleService {
     public int updateSchedule(Schedule schedule);
     public int deleteSchedule(int id);
     public Schedule getSchedule(int id);
+    public List<Schedule> queryEnableSchedule();
     public List<Schedule> queryEnableSchedule(SysUser user);
     public List<Schedule> queryThreeoneEnableSchedule(SysUser user);
     public List<Schedule> queryLifeEnableSchedule(SysUser user);
@@ -23,6 +24,8 @@ public interface ScheduleService {
     public void addMembers(Schedule schedule, List<Map<String, Object>> members);
     public List<Map<String, Object>> queryScheduleMembers(Integer scheduleId);
     public List<Map<String, Object>> queryOrgMembers(Integer orgId);
-    public List<Map<String, Object>> queryThreeoneParticipantSchedule(String username, int pageNum, int pageSize);
-    public List<Map<String, Object>> queryLifeParticipantSchedule(String username, int pageNum, int pageSize);
+    public List<Map<String, Object>> queryThreeoneParticipatedSchedule(String username, int pageNum, int pageSize);
+    public List<Map<String, Object>> queryLifeParticipatedSchedule(String username, int pageNum, int pageSize);
+
+    public void scheduleSign(List<Map<String, Object>> participantLinks);
 }

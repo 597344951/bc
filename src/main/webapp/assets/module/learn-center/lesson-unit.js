@@ -17,7 +17,7 @@ let ins = new Vue({
     routes: routes
   }),
   data: {
-    infoOpen:true,
+    shadowOpen: true,
     //当前播放进度
     progress: window.progress ? window.progress : {
       creditHours: 0,
@@ -25,13 +25,15 @@ let ins = new Vue({
       lessonId: window.lesson.lessonId,
       lessonUnitId: window.lesson.lessonUnitId,
     },
+    rmJson: window.rmJson,
     //当前课程
     lesson: window.lesson ? window.lesson : {
       creditHours: 0
     },
     timer: null,
-    timerLeaft: 60,
-    tick: 60,
+    timerLeaft: 15,
+    tick: 15,
+    timecount: 0,
     parts: [{
         src: 'http://192.168.1.8:3000/videos/b0c/d0c/b0cd0c944296e7d417336cbdfb668f71.mp4',
         poster: 'http://192.168.1.8:3000/images/1e3/4e5/1e34e5c053719c0f857916e8e9800548.jpg'
@@ -50,12 +52,6 @@ let ins = new Vue({
     playEndTime: null, //播放结束时间
   },
   mounted() {
-    if (this.lesson.sourceType == 1) {
-      //外链
-      this.tick = 80
-      this.timerLeaft = 60
-      this.startTimer()
-    }
   },
   methods: {
     startTimer() {
@@ -75,17 +71,37 @@ let ins = new Vue({
       }
     },
     saveProgress() {
-      this.progress.creditHours ++
+      this.timecount += this.timerLeaft
+      if (this.timecount >= 60) {
+        if(this.lesson.creditHours > this.progress.creditHours) this.progress.creditHours++
+        this.timecount = 0
+      }
+
       console.debug('保存进度信息')
       let url = '/lesson/progress/progress'
       let data = JSON.parse(JSON.stringify(this.progress))
-      if (this.lesson.sourceType == 0){
+      data.endToSave = false
+      if (this.lesson.sourceType == 0) {
         data.playProgress = Math.floor(this.$refs.player.getProcess())
       }
-      
+
       data.creditHours = 1
       ajax_json_promise(url, 'post', data).then(result => {
-        this.$message('保存成功')
+        //this.$message('保存成功')
+      })
+    },
+    saveEndProgress() {
+      console.debug('保存进度')
+      let url = '/lesson/progress/progress'
+      let data = JSON.parse(JSON.stringify(this.progress))
+      data.endToSave = true
+      if (this.lesson.sourceType == 0) {
+        data.playProgress = Math.floor(this.$refs.player.getProcess())
+      }
+
+      data.creditHours = 0
+      ajax_json_promise(url, 'post', data).then(result => {
+        //this.$message('保存成功')
       })
     },
     //play , pause , ended
@@ -95,11 +111,28 @@ let ins = new Vue({
       } else {
         this.clearTimer()
       }
+      if (statusText == 'ended') {
+        this.saveEndProgress()
+      }
       console.debug('onPlayStateChange: ', arguments)
     },
+    getDisplayParts() {
+      let rm = this.rmJson
+      return [{
+        src: `/media-server/url?url=${rm.url}`,
+        poster: `/media-server/url?url=${rm.coverUrl}`
+      }]
+    },
+    otherResourceStart(){
+      this.shadowOpen = false
+      this.tick = 60
+      this.timerLeaft = 60
+      this.startTimer()
+    }
   },
   destroyed() {
     this.clearTimer()
-  }
+  },
+
 });
 window.appInstince = ins;

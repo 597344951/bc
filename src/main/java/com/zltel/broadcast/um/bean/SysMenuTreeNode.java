@@ -10,7 +10,13 @@ import org.slf4j.LoggerFactory;
 /** 包含节点信息的菜单树 **/
 public class SysMenuTreeNode extends SysMenu {
     
-    private static final Logger log = LoggerFactory.getLogger(SysMenuTreeNode.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+	private static final Logger log = LoggerFactory.getLogger(SysMenuTreeNode.class);
 
 
     private List<SysMenuTreeNode> children;

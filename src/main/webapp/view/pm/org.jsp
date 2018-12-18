@@ -453,7 +453,7 @@
 								<shiro:hasPermission name="party:user:update">  
 									<el-button 
 										@click="partyOrg_manager_openInsertOrgDutyDialog(scope.row)" 
-										type="text" size="small">添加职责
+										type="text" size="small">添加角色
 									</el-button>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="party:user:update">  
@@ -681,23 +681,23 @@
 		</el-dialog>
 
 
-		<el-dialog @close="partyOrg_manager_resetinsertOrgInfoDutyForm()" class="common" @close="" title="增加职责" :visible.sync="partyOrg_manager_insertOrgDutyDialog" width="70%">
+		<el-dialog @close="partyOrg_manager_resetinsertOrgInfoDutyForm()" class="common" @close="" title="增加角色" :visible.sync="partyOrg_manager_insertOrgDutyDialog" width="70%">
 			<el-form label-width="120px" size="small" :model="partyOrg_manager_insertOrgInfoDutyForm" status-icon :rules="partyOrg_manager_insertOrgInfoDutyRules" 
 				ref="partyOrg_manager_insertOrgInfoDutyForm" label-width="100px">
 				<el-row :gutter="20">
 					<el-col :span="12">
-						<el-form-item label="职责名" prop="orgDutyName">
-						    <el-input clearable v-model="partyOrg_manager_insertOrgInfoDutyForm.orgDutyName" placeholder="职责名（经理、书记...）"></el-input>
+						<el-form-item label="角色名" prop="orgDutyName">
+						    <el-input clearable v-model="partyOrg_manager_insertOrgInfoDutyForm.orgDutyName" placeholder="职责名（经理、书记、普通党员...）"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="24">
-						<el-form-item label="职责描述" prop="orgDutyDescribe">
+						<el-form-item label="角色描述" prop="orgDutyDescribe">
 							<el-input clearable
 							  	type="textarea"
 							 	:autosize="{ minRows: 2}"
-							 	placeholder="请输入对此职责描述的内容"
+							 	placeholder="请输入对此角色描述的内容"
 								v-model="partyOrg_manager_insertOrgInfoDutyForm.orgDutyDescribe">
 							</el-input>
 						</el-form-item>
@@ -705,7 +705,7 @@
 				</el-row>
 				<el-row :gutter="20">
 					<el-col :span="24">
-						<el-form-item label="选择上级职责" prop="orgDutyParentId">
+						<el-form-item label="选择上级角色" prop="orgDutyParentId">
 						    <el-tree :expand-on-click-node="false" 
 								:highlight-current="true" 
 								node-key="orgDutyId"
@@ -738,7 +738,7 @@
 				</el-row>
 
 				<el-form-item>
-				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfoDuty">添加职责</el-button>
+				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfoDuty">添加角色</el-button>
 				    <el-button @click="partyOrg_manager_resetinsertOrgInfoDutyForm">重置</el-button>
 				</el-form-item>
 			</el-form>
@@ -963,7 +963,7 @@
 			</div>
 		</el-dialog>
 
-		<el-dialog @close="" title="指定职责" :visible.sync="turnOutDuty.dialog">
+		<el-dialog @close="" title="指定角色" :visible.sync="turnOutDuty.dialog">
 			<div>
 				<el-tree :default-expand-all="true" 
 					node-key="id" 
@@ -2616,5 +2616,9 @@
 			}
 		}
 	});
+
+	window.onFocus = function () {
+		window.location.reload();
+	}
 </script>
 </html>

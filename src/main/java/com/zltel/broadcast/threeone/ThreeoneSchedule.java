@@ -31,7 +31,7 @@ public class ThreeoneSchedule {
      */
     @Scheduled(cron = "0 0/30 * * * ?")
     public void scheduleReport() {
-        List<Schedule> schedules = scheduleService.queryEnableSchedule(null);
+        List<Schedule> schedules = scheduleService.queryEnableSchedule();
         schedules.stream().forEach(schedule -> {
             if (Schedule.STATE_READY == schedule.getState() && System.currentTimeMillis() + 24 * 60 * 60 * 1000 >= schedule.getStartTime().getTime()) {
                 //距开始时间小于24小时, 开始通知, 添加通知消息, 发布通知投屏

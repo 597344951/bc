@@ -27,6 +27,7 @@ import com.zltel.broadcast.common.pager.PagerHelper;
 import com.zltel.broadcast.lesson.bean.LessonSection;
 import com.zltel.broadcast.lesson.bean.LessonUnit;
 import com.zltel.broadcast.lesson.bean.LessonUnitProgress;
+import com.zltel.broadcast.lesson.service.LessonUnitProgressService;
 import com.zltel.broadcast.lesson.service.LessonUnitService;
 import com.zltel.broadcast.resource.bean.ResourceMaterial;
 import com.zltel.broadcast.resource.service.ResourceMaterialService;
@@ -43,6 +44,9 @@ public class LessonUnitController extends BaseController {
     @Resource
     private ResourceMaterialService resourceService;
 
+    @Resource
+    private LessonUnitProgressService progressService;
+    
     @ApiOperation("搜索")
     @PostMapping("/unit/search/{pageNum}-{pageSize}")
     public R search(@PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize,
@@ -149,8 +153,10 @@ public class LessonUnitController extends BaseController {
             ResourceMaterial rm =
                     this.resourceService.selectByPrimaryKey(Integer.valueOf(currentLesson.getSourceData()));
             this.request.setAttribute("rm", rm);
+            this.request.setAttribute("rmJson", JSON.toJSONString(rm));
         }
-
+        
+        currentProgress = this.progressService.getLessonUnitProgress(currentProgress);
 
         this.request.setAttribute("lessonUnit", lessonUnit);
         this.request.setAttribute("progress", progress);

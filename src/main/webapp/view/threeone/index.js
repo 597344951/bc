@@ -2,6 +2,13 @@ const app = new Vue({
   el: '#app',
   data: {
     activeTab: 'person',
+    type: {
+      '1': '党员小组会',
+      '2': '支部党员大会',
+      '3': '支部委员会',
+      '4': '党课',
+      '5': '组织生活会',
+    },
     label: {
       person: '三会一课参加记录',
       all: '三会一课会议记录'
@@ -11,7 +18,7 @@ const app = new Vue({
       pageSize: 20,
       total: 0
     },
-    participant: {
+    participated: {
       list: [],
       pageSize: 20,
       total: 0
@@ -39,6 +46,10 @@ const app = new Vue({
         learned: '',
         annex: []
       }
+    },
+    participant: {
+      show: false,
+      list: []
     }
   },
   mounted() {
@@ -46,14 +57,14 @@ const app = new Vue({
       this.label.person = '组织生活会参加记录'
       this.label.all = '组织生活会会议记录'
     }
-    this.loadParticipantSchedule(1, this.participant.pageSize)
+    this.loadParticipatedSchedule(1, this.participated.pageSize)
   },
   methods: {
     onCurrentChange(num) {
       this.loadSchedule(num, this.schedule.pageSize)
     },
-    onCurrentChangeParticipant(num) {
-      this.loadParticipantSchedule(num, this.participant.pageSize)
+    onCurrentChangeParticipated(num) {
+      this.loadParticipatedSchedule(num, this.participated.pageSize)
     },
     loadSchedule(pageNum, pageSize) {
       AJAX.get(
@@ -68,12 +79,17 @@ const app = new Vue({
         }
       )
     },
-    loadParticipantSchedule(pageNum, pageSize) {
+    loadParticipatedSchedule(pageNum, pageSize) {
       AJAX.get(
-        `/threeone/participant/${pageNum}/${pageSize}?meetingType=${meetingType}`,
+        `/threeone/participated/${pageNum}/${pageSize}?meetingType=${meetingType}`,
         resp => {
           if (resp.status) {
-            this.participant = resp.data
+            this.participated = resp.data
+            this.participated.list.forEach(item => {
+              item.typeName = this.type[item.type]
+              item.startTimeString = `${new Date(item.startTime).toLocaleDateString()} ${new Date(item.startTime).toLocaleTimeString()}`
+              item.endTimeString = `${new Date(item.endTime).toLocaleDateString()} ${new Date(item.endTime).toLocaleTimeString()}`
+            })
           }
         },
         err => {
@@ -82,8 +98,8 @@ const app = new Vue({
       )
     },
     onTabClick(tab, e) {
-      if ('person' == tab.name && this.participant.list.length <= 0) {
-        this.loadParticipantSchedule(1, this.participant.pageSize)
+      if ('person' == tab.name && this.participated.list.length <= 0) {
+        this.loadParticipatedSchedule(1, this.participated.pageSize)
       }
       if ('all' == tab.name && this.schedule.list.length <= 0) {
         this.loadSchedule(1, this.schedule.pageSize)
@@ -234,6 +250,51 @@ const app = new Vue({
     },
     onAnnexView(annex) {
       window.open(`${mediaServe}${annex.url}`, '_blank')
+    },
+    loadScheduleParticipant(row) {
+      AJAX.get(
+        `/threeone/participant/${row.id}`,
+        resp => {
+          if (resp.status) {
+            this.participant.list = []
+            this.participant.show = true
+            resp.data.forEach(item => {
+              item.isParticipate = '' + item.isParticipate
+              this.participant.list.push(item)
+            })
+          } else {
+            this.$message.error(resp.msg)
+          }
+        },
+        err => {
+          this.$message.error('系统错误， 请联系管理员')
+        }
+      )
+    },
+    signAllScheduleParticipant() {
+      this.participant.list.forEach(item => {
+        item.isParticipate = '1'
+      })
+    },
+    conmmitScheduleParticipantSign() {
+      AJAX.postJson(
+        '/threeone/participant',
+        this.participant.list,
+        resp => {
+          if (resp.status) {
+            this.$message({
+              message: '提交成功...',
+              type: 'success'
+            })
+            this.participant.show = false
+          } else {
+            this.$message.error('签到信息更新失败：' + resp.msg)
+          }
+        },
+        err => {
+          this.$message.error('系统错误， 请联系管理员')
+        }
+      )
     }
   }
 })

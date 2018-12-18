@@ -19,13 +19,13 @@ prefix="shiro" uri="http://shiro.apache.org/tags"%>
           <el-header>
             <el-card class="header">
               <p>{{label.person}}</p>
-              <el-pagination background layout="prev, pager, next" @current-change="onCurrentChangeParticipant"
-                :page-size="participant.pageSize" :total="participant.total">
+              <el-pagination background layout="prev, pager, next" @current-change="onCurrentChangeParticipated"
+                :page-size="participated.pageSize" :total="participated.total">
               </el-pagination>
             </el-card>
           </el-header>
           <el-main>
-            <el-table :data="participant.list" stripe height="80%">
+            <el-table :data="participated.list" stripe height="80%">
               <el-table-column prop="typeName" label="类型" width="180"></el-table-column>
               <el-table-column prop="name" label="主题" width="180"></el-table-column>
               <el-table-column prop="description" label="描述"></el-table-column>
@@ -36,10 +36,10 @@ prefix="shiro" uri="http://shiro.apache.org/tags"%>
               </el-table-column>
               <el-table-column prop="operate" label="操作" width="180">
                 <template slot-scope="scope">
-                  会议心得（
+                  <span style="font-size: 12px; color: mediumslateblue;">会议心得（
                   <el-button type="text" size="small" @click="onLearnedView(scope.row)">查看</el-button>
                   <el-button type="text" size="small" @click="learned.belongs = scope.row; learned.show = true">提交</el-button>
-                  ）
+                  ）</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -69,10 +69,11 @@ prefix="shiro" uri="http://shiro.apache.org/tags"%>
                 </el-table-column>
                 <el-table-column prop="operate" label="操作" width="200">
                   <template slot-scope="scope">
-                    会议纪要（
+                    <span style="font-size: 12px; color: mediumslateblue;">会议纪要（
                     <el-button type="text" size="small" @click="onSummaryView(scope.row)">查看</el-button>
                     <el-button type="text" size="small" @click="summary.belongs = scope.row; summary.show = true">提交</el-button>
-                    ）
+                    ）</span>
+                    <el-button type="text" size="small" @click="loadScheduleParticipant(scope.row)">签到管理</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -132,7 +133,7 @@ prefix="shiro" uri="http://shiro.apache.org/tags"%>
         <el-button type="primary" @click="summary.current.show = false">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- 查看会议纪要 -->
+    <!-- 查看会议心得 -->
     <el-dialog title="会议心得查看" :visible.sync="learned.current.show">
       <el-card class="summary" v-for="learned in learned.current.data" :key="learned.id">
         <div slot="header" class="clearfix">
@@ -144,6 +145,26 @@ prefix="shiro" uri="http://shiro.apache.org/tags"%>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="learned.current.show = false">确 定</el-button>
       </span>
+    </el-dialog>
+
+    <!-- 签到管理 -->
+    <el-dialog title="参加人员签到管理" :visible.sync="participant.show">
+      <el-table :data="participant.list" size="mini" style="width: 100%">
+        <el-table-column prop="name" label="姓名"></el-table-column>
+        <el-table-column prop="isParticipate" label="是否参加">
+          <template slot-scope="scope">
+            <el-select size="mini" v-model="scope.row.isParticipate">
+              <el-option label="未参加" value="0"></el-option>
+              <el-option label="参加" value="1"></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="success" size="mini" @click="signAllScheduleParticipant">一键签到</el-button>
+        <el-button size="mini" @click="participant = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="conmmitScheduleParticipantSign">确 定</el-button>
+      </div>
     </el-dialog>
 
   </div>

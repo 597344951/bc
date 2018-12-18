@@ -369,7 +369,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 											{{scope.row.orgInfoName}}
 										</span>
 									</span>
-									<span style="margin: 10px;">
+									<span v-if="scope.row.orgJoinTime != null && scope.row.orgJoinTime != ''" style="margin: 10px;">
 										加入组织时间：
 										{{scope.row.orgJoinTime}}
 									</span>
@@ -1017,52 +1017,98 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						<el-table-column label="邮箱" prop="email"></el-table-column>
 						<el-table-column label="籍贯" prop="nativePlace"></el-table-column>
 						<el-table-column label="生日" prop="birthDate"></el-table-column>
-						<el-table-column fixed="right" label="操作" width=320>
+						<el-table-column fixed="right" label="操作" width=340>
 							<template slot-scope="scope">
 								<shiro:hasPermission name="party:user:delete">  
-									<el-button @click="partyUser_manager_deletePartyUserInfo(scope.row)" type="text" size="small">删除</el-button>
+									<!-- 管理员权限 -->
+									<el-button v-if="signInAccountType == 'plant_admin' || 
+										signInAccountType == 'org_admin'" 
+										@click="partyUser_manager_deletePartyUserInfo(scope.row)" 
+										type="text" size="small">删除
+									</el-button>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="party:user:update">  
-									<el-button @click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
+									<!-- 管理员权限 -->
+									<el-button v-if="signInAccountType == 'plant_admin' || 
+										signInAccountType == 'org_admin'" 
+										@click="partyUser_manager_openUpdatePartyUserDialog(scope.row)" 
+										type="text" size="small">修改信息
+									</el-button>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="org:relation:insert">  
-									<el-button v-if="scope.row.isParty == 1" @click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" type="text" size="small">
-										{{scope.row.orgInfoId == null || scope.row.orgInfoId == '' ? '加入组织' : '变更组织'}}
+									<!-- 管理员权限 -->
+									<el-button v-if="(signInAccountType == 'plant_admin' || 
+										signInAccountType == 'org_admin') && (scope.row.orgInfoId == null || scope.row.orgInfoId == '') && 
+										scope.row.isParty == 1" 
+										@click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" 
+										type="text" size="small">
+										分配党组织
+									</el-button>
+									<el-button v-if="(signInAccountType == 'plant_admin' || 
+										signInAccountType == 'org_admin') && (scope.row.orgInfoId != null && scope.row.orgInfoId != '') && 
+										scope.row.isParty == 1" 
+										@click="partyUser_manager_openJoinOrgInfoDialog(scope.row)" 
+										type="text" size="small">
+										变更党组织
 									</el-button>
 								</shiro:hasPermission>
 								<template>
-									<el-button 
-										v-if="scope.row.joinPartyUserInfo == null && scope.row.isParty != 1"
-										@click="open_join_org_info_dialog(scope.row)" 
-										type="text" size="small">申请入党
-									</el-button>
-									<el-button 
-										style="color: red;"
-										v-if="scope.row.joinPartyUserInfo != null && scope.row.type != 1"
-										@click="openApplyJoinPartyOrgDialog(scope.row)" 
-										type="text" size="small">申请状态
-									</el-button>
+									<!-- 用户权限，没有组织信息 -->
+									<shiro:hasPermission name="join:party:inser">  
+										<el-button 
+											v-if="(scope.row.orgInfoId == null || scope.row.orgInfoId == '') && 
+											signInAccountType == 'party_role' && scope.row.joinPartyUserInfo == null && 
+											scope.row.isParty == 0"
+											@click="open_join_org_info_dialog(scope.row)" 
+											type="text" size="small">申请入党
+										</el-button>
+									</shiro:hasPermission>
+									<!-- 用户权限 -->
+									<shiro:hasPermission name="join:party:update">  
+										<el-button 
+											style="color: red;"
+											v-if="scope.row.joinPartyUserInfo != null && signInAccountType == 'party_role'"
+											@click="openApplyJoinPartyOrgDialog(scope.row)" 
+											type="text" size="small">申请状态
+										</el-button>
+									</shiro:hasPermission>
 								</template>
-								<template v-if="scope.row.isParty == 1 && scope.row.type == 1">
-									<el-button 
-										v-if="scope.row.turnOutPartyUserInfo == null && 
-											scope.row.statusName != '流动党员'"
-										@click="open_turn_out_select_org_dialog(scope.row)" 
-										type="text" size="small">组织关系转出
-									</el-button>
-									<el-button 
-										style="color: red;"
-										v-if="scope.row.turnOutPartyUserInfo != null"
-										@click="open_turn_out_org_dialog(scope.row)" 
-										type="text" size="small">转出状态
-									</el-button>
+								<!-- 正式党员 -->
+								<template v-if="scope.row.type == 1 && signInAccountType == 'party_role'">
+									<!-- 用户权限 -->
+									<shiro:hasPermission name="org:turn:out:insert">  
+										<el-button 
+											v-if="(scope.row.orgInfoId != null && scope.row.orgInfoId != '') 
+												&& scope.row.turnOutPartyUserInfo == null && 
+												scope.row.statusName == '正常'"
+											@click="open_turn_out_select_org_dialog(scope.row)" 
+											type="text" size="small">组织关系转出申请
+										</el-button>
+									</shiro:hasPermission>
+									<!-- 用户权限 -->
+									<shiro:hasPermission name="org:turn:out:update">  
+										<el-button 
+											style="color: red;"
+											v-if="(scope.row.orgInfoId != null && scope.row.orgInfoId != '') && 
+											scope.row.turnOutPartyUserInfo != null && 
+											scope.row.statusName == '正常'"
+											@click="open_turn_out_org_dialog(scope.row)" 
+											type="text" size="small">转移状态
+										</el-button>
+									</shiro:hasPermission>
 								</template>
-								<el-button 
-									v-if="scope.row.isParty == 1 && scope.row.statusName != '流动党员'
-										&& scope.row.turnOutPartyUserInfo == null"
-									@click="open_inser_flow_party_dialog(scope.row)" 
-									type="text" size="small">流动
-								</el-button>
+								<!-- 管理员权限 -->
+								<shiro:hasPermission name="flow:party:insert">  
+									<el-button 
+										v-if="scope.row.statusName == '正常'
+											&& scope.row.turnOutPartyUserInfo == null 
+											&& scope.row.joinPartyUserInfo == null 
+											&& (signInAccountType == 'plant_admin' || 
+											signInAccountType == 'org_admin')"
+										@click="open_inser_flow_party_dialog(scope.row)" 
+										type="text" size="small">流动
+									</el-button>
+								</shiro:hasPermission>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -2618,15 +2664,20 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						size="small" type="primary" @click="open_turn_out_supplement_dialog">补充材料
 					</el-button>
 
-
-					<el-button v-if="turn_out_org.stepNum == 0 && 
-						turn_out_org.stepInfo.stepStatus == 'success'" 
-						type="primary" size="small" @click="">打印党支部介绍信
-					</el-button>
-					<el-button v-if="turn_out_org.stepNum == 1 && 
-						turn_out_org.stepInfo.stepStatus == 'success'" 
-						type="primary" size="small" @click="">打印上级党组织介绍信
-					</el-button>
+					<a :href="'/view/pm/introduce.jsp?toId=' + turn_out_org.userInfo.turnOutPartyUserInfo.id + '&isParent=false'" 
+						target="_blank">
+						<el-button v-if="turn_out_org.stepNum == 0 && 
+							turn_out_org.stepInfo.stepStatus == 'success'" 
+							type="primary" size="small" @click="">打印党支部介绍信
+						</el-button>
+					</a>
+					<a :href="'/view/pm/introduce.jsp?toId=' + turn_out_org.userInfo.turnOutPartyUserInfo.id + '&isParent=true'" 
+						target="_blank">
+						<el-button v-if="turn_out_org.stepNum == 1 && 
+							turn_out_org.stepInfo.stepStatus == 'success'" 
+							type="primary" size="small" @click="">打印上级党组织介绍信
+						</el-button>
+					</a>
 				</el-row>
 			</div>
 		</el-dialog>
@@ -3196,7 +3247,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				},	//当前用户信息
 				joinPartyOrgLoading: false,	//个性提示上传中
 				joinPartyOrgStepInfo: {
-					stepStatus: null	//步骤需要这个变量，现初始化
+					stepStatus: null,	//步骤需要这个变量，现初始化
+					stepTime: null
 				},	//当前步骤信息
 				flag: {	//控制显示提交控件来控制提交哪些材料
 					flagFile: false
@@ -3293,7 +3345,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			this.partyUser_manager_queryWorkNatureTypes();	/*初始化工作性质下拉框*/
 			this.partyUser_manager_queryJoinPartyBranchTypes();	/*初始化加入党支部方式下拉框*/
 			this.partyUser_manager_queryFirstLineTypes();	/*初始化一线情况下拉框*/
-			this.getSignInAccountType();
+			this.getSignInAccountType();	//得到登录用户类型
 		},
 		methods: {
 			inser_flow_party_submit() {
@@ -3686,32 +3738,51 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			open_turn_out_org_dialog(row) {	//组织关系转出弹窗
 				let obj = this;
-				obj.turn_out_org.userInfo = row;	//保存user信息
-				//查询此人要加入组织的加入流程
-				var url;
-				var t;
-				if (obj.turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName != null && 
-					obj.turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName != '') {
-					url = "/org/turn_out/queryOrgTurnOutProcess";
-					t = {
-						orgId: obj.turn_out_org.userInfo.turnOutPartyUserInfo.turnOutOrgId
-					}
-				} else if(obj.turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName != null && 
-					obj.turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName != '') {
-					url = "/toou/user/queryToopOtherOrg";
-					t = {}
-				} else {
-					obj.$message({
-			            type: 'error',
-			            message: '出现错误'
-			        }); 
-					return;
+				var url = "/party/user/queryPartyUserInfos";
+				var t = {
+					pageNum: 1,
+					pageSize: 1,
+					idCard: row.idCard
 				}
-				
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
-						obj.some_matter(data);
-					}
+						if (data.data != undefined && data.data != null && data.data.list.length == 1) {	
+							obj.turn_out_org.userInfo = data.data.list[0];	//保存user信息
+							//查询此人要加入组织的加入流程
+							var url;
+							var t;
+							if (obj.turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName != null && 
+								obj.turn_out_org.userInfo.turnOutPartyUserInfo.orgInfoName != '') {
+								url = "/org/turn_out/queryOrgTurnOutProcess";
+								t = {
+									orgId: obj.turn_out_org.userInfo.turnOutPartyUserInfo.turnOutOrgId
+								}
+							} else if(obj.turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName != null && 
+								obj.turn_out_org.userInfo.turnOutPartyUserInfo.otherOrgName != '') {
+								url = "/toou/user/queryToopOtherOrg";
+								t = {}
+							} else {
+								obj.$message({
+									type: 'error',
+									message: '出现错误'
+								}); 
+								return;
+							}
+							
+							$.post(url, t, function(data, status){
+								if (data.code == 200) {
+									obj.some_matter(data);
+								}
+							})
+						} else {
+							obj.$message({
+								type: 'info',
+								message: '查询失败'
+							});  
+							return;
+						}
+					} 
+
 				})
 			},
 			some_matter(data) {
@@ -4164,7 +4235,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				obj.joinPartyOrg.joinPartyOrgStepNum = 1;
 				obj.joinPartyOrg.joinPartyOrgStepNumNow = 0;
 				obj.joinPartyOrg.joinPartyOrgStepInfo = {
-					stepStatus: null
+					stepStatus: null,
+					stepTime: null
 				};
 				obj.joinPartyOrg.userInfo = {
 					joinPartyUserInfo: {
@@ -4187,7 +4259,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					obj.joinPartyOrg.joinPartyOrgStepNum--;
 				}
 
-				obj.joinPartyOrg.joinPartyOrgStepInfo = null;
+				obj.joinPartyOrg.joinPartyOrgStepInfo = {
+					stepStatus: null,
+					stepTime: null
+				};
 				
 				//查询出此步骤的信息
 				let url = "/org/process/queryOrgOjp";
@@ -4223,50 +4298,69 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			openApplyJoinPartyOrgDialog(userInfo) {	//打开入党弹窗
 				var obj = this;
-				obj.joinPartyOrg.userInfo = userInfo;	//保存user信息
-				//查询此人要加入组织的加入流程
-				var url = "/org/process/queryOrgOjp";
+				var url = "/party/user/queryPartyUserInfos";
 				var t = {
-					orgId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinOrgId
+					pageNum: 1,
+					pageSize: 1,
+					idCard: userInfo.idCard
 				}
-
 				$.post(url, t, function(data, status){
 					if (data.code == 200) {
-						obj.joinPartyOrg.joinPartyOrgProcess = data.data;
-						//当前用户进行的流程
-						let url = "/join/step/queryUserJoinPartyOrgSteps"
-						let t = {
-							userId: obj.joinPartyOrg.userInfo.id,
-							isHistory: 0
-						}
-						$.post(url, t, function(_data, status){
-							if (_data.code == 200) {
-								let userProcess = _data.data;
-								for (var i = 0; i < obj.joinPartyOrg.joinPartyOrgProcess.length; i++) {	
-									//增加status属性，给步骤条设置状态
-									var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
-									//给已进行的步骤设置状态
-									if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
-										//为wait的步骤为了显示效果将状态手动修改为process，不用提交到数据库
-										_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
-									}
-									_process.id = obj.joinPartyOrg.joinPartyOrgProcess[i].id;
-									_process.name = obj.joinPartyOrg.joinPartyOrgProcess[i].name;
-									_process.orgId = obj.joinPartyOrg.joinPartyOrgProcess[i].orgId;
-									_process.processId = obj.joinPartyOrg.joinPartyOrgProcess[i].processId;
-									_process.indexNum = obj.joinPartyOrg.joinPartyOrgProcess[i].indexNum;
-									_process.isFile = obj.joinPartyOrg.joinPartyOrgProcess[i].isFile;
-									obj.joinPartyOrg.joinPartyOrgProcess[i] = _process;
-									//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
-									if (_process.processId == obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep) {
-										obj.joinPartyOrg.joinPartyOrgStepNum = _process.indexNum;
-										obj.joinPartyOrg.joinPartyOrgStepNumNow = _process.indexNum;
-									}
-								}
-								obj.joinPartyOrgStepSet('z');
+						if (data.data != undefined && data.data != null && data.data.list.length == 1) {	
+							obj.joinPartyOrg.userInfo = data.data.list[0];	//保存user信息
+							//查询此人要加入组织的加入流程
+							var url = "/org/process/queryOrgOjp";
+							var t = {
+								orgId: obj.joinPartyOrg.userInfo.joinPartyUserInfo.joinOrgId
 							}
-						})
+
+							$.post(url, t, function(data, status){
+								if (data.code == 200) {
+									obj.joinPartyOrg.joinPartyOrgProcess = data.data;
+									//当前用户进行的流程
+									let url = "/join/step/queryUserJoinPartyOrgSteps"
+									let t = {
+										userId: obj.joinPartyOrg.userInfo.id,
+										isHistory: 0
+									}
+									$.post(url, t, function(_data, status){
+										if (_data.code == 200) {
+											let userProcess = _data.data;
+											for (var i = 0; i < obj.joinPartyOrg.joinPartyOrgProcess.length; i++) {	
+												//增加status属性，给步骤条设置状态
+												var _process = {id: null, name: null, orgId: null, processId: null, indexNum: null, isFile: 0, status: 'wait'};
+												//给已进行的步骤设置状态
+												if (userProcess != null && userProcess != undefined && userProcess[i] != null) {
+													//为wait的步骤为了显示效果将状态手动修改为process，不用提交到数据库
+													_process.status = userProcess[i].stepStatus == 'wait' ? 'process' : userProcess[i].stepStatus;
+												}
+												_process.id = obj.joinPartyOrg.joinPartyOrgProcess[i].id;
+												_process.name = obj.joinPartyOrg.joinPartyOrgProcess[i].name;
+												_process.orgId = obj.joinPartyOrg.joinPartyOrgProcess[i].orgId;
+												_process.processId = obj.joinPartyOrg.joinPartyOrgProcess[i].processId;
+												_process.indexNum = obj.joinPartyOrg.joinPartyOrgProcess[i].indexNum;
+												_process.isFile = obj.joinPartyOrg.joinPartyOrgProcess[i].isFile;
+												obj.joinPartyOrg.joinPartyOrgProcess[i] = _process;
+												//设置步骤条步骤，根据当前进行的步骤取得进行到第几步
+												if (_process.processId == obj.joinPartyOrg.userInfo.joinPartyUserInfo.nowStep) {
+													obj.joinPartyOrg.joinPartyOrgStepNum = _process.indexNum;
+													obj.joinPartyOrg.joinPartyOrgStepNumNow = _process.indexNum;
+												}
+											}
+											obj.joinPartyOrgStepSet('z');
+										}
+									})
+								} 
+							})
+						} else {
+							obj.$message({
+								type: 'info',
+								message: '查询失败'
+							});  
+							return;
+						}
 					} 
+
 				})
 			},
 

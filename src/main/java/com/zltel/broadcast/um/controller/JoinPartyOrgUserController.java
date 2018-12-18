@@ -2,7 +2,6 @@ package com.zltel.broadcast.um.controller;
 
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,7 +48,6 @@ public class JoinPartyOrgUserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="/insertJoinPartyOrgStep", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"party:user:insert"})
 	@ApiOperation(value = "申请入党")
 	public R insertJoinPartyOrgStep(@RequestParam("submitDate") String submitDate) {
 		try {
@@ -65,7 +63,6 @@ public class JoinPartyOrgUserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="/insertJoinPartyOrgUsers", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"party:user:insert"})
 	@ApiOperation(value = "申请入党")
 	public R insertJoinPartyOrgUsers(@RequestParam Map<String, Object> conditions) {
 		try {
@@ -81,7 +78,6 @@ public class JoinPartyOrgUserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="/insertJpou", method=RequestMethod.POST)
-	@RequiresPermissions(value = {"party:user:insert"})
 	@ApiOperation(value = "申请入党-选择组织")
 	public R insertJpou(JoinPartyOrgUser jpou) {
 		try {

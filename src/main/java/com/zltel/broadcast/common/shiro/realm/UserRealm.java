@@ -52,14 +52,15 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SysUser user = (SysUser) principals.getPrimaryPrincipal();
-        logout.info("查找{}权限",user.getUsername());
+        logout.info("查找{}权限", user.getUsername());
         Integer userId = user.getUserId();
-        //查询用户具有的角色
+        // 查询用户具有的角色
         Set<String> roles = new HashSet<>(this.sysUserService.queryAllRoles(userId));
-        
+
         List<String> permsList = null;
         // 系统管理员 | 平台管理员 ，拥有最高权限,
         if (userId == Constant.SUPER_ADMIN || AdminRoleUtil.isPlantAdmin(roles)) {
+            logout.info("平台管理员: {} 登录,加载平台所有权限", user.getUsername());
             List<SysMenu> menuList = sysMenuService.queryForList(null);
             permsList = menuList.stream().map(SysMenu::getPerms).collect(Collectors.toList());
         } else {
@@ -71,7 +72,7 @@ public class UserRealm extends AuthorizingRealm {
                         .collect(Collectors.toSet());
 
 
-        
+
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         authorizationInfo.setRoles(roles);
         authorizationInfo.setStringPermissions(permsSet);

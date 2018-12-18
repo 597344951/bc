@@ -19,6 +19,15 @@
     #edui1,#edui1_iframeholder{
         width:100%!important;
     }
+    .el-dialog{
+        width: 80%!important;
+    }
+    .el-button+.el-button {
+        margin-left: 0px;
+    }
+    .el-button--small, .el-button--small.is-round {
+        padding: 9px 6px;
+    }
     </style>
 </head>
 <body  >

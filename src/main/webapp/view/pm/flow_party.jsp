@@ -90,8 +90,8 @@
                             </span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="flowOrgInfoName" label="流动组织"></el-table-column>
-                    <el-table-column prop="flowTime" label="流动时间"></el-table-column>
+                    <!-- <el-table-column prop="flowOrgInfoName" label="流动组织"></el-table-column>
+                    <el-table-column prop="flowTime" label="流动时间"></el-table-column> -->
                     <el-table-column label="更多">
                         <template slot-scope="scope">
                             <el-popover
@@ -214,7 +214,7 @@
                             </div>
                             <div>
                                 <el-form-item label="详细地址" prop="flowAddressDetail">
-                                    <el-input clearable v-model="insert_flow_party.insert_flow_party_form.flowAddressDetail" placeholder="11位手机号码"></el-input>
+                                    <el-input clearable v-model="insert_flow_party.insert_flow_party_form.flowAddressDetail" placeholder="请输入详细地址"></el-input>
                                 </el-form-item>
                             </div>
                             <div>
