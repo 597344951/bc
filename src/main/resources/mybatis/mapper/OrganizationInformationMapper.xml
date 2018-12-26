@@ -253,6 +253,9 @@
         <if test="orgInfoParentId != null"> and
         	org_info_parent_id = #{orgInfoParentId}
         </if>
+        <if test="noOrgInfoParentId != null"> and
+        	org_info_parent_id != #{noOrgInfoParentId}
+        </if>
   </select>
   
   <select id="queryOrgInfosForMap" parameterType="java.util.HashMap" resultType="java.util.HashMap">
@@ -260,6 +263,9 @@
 	  ot.org_type_id orgTypeid,
 	  ot.org_type_name orgTypeName,
 	  ot.org_type_describe orgTypeDescribe,
+	  ot.is_party_org isPartyOrg,
+	  ot.org_is_branch orgIsBranch,
+	  ot.org_set_join orgSetJoin,
 	  oi.org_info_id orgInfoId,
 	  oi.org_info_name orgInfoName,
 	  oi.org_info_committee_province orgInfoCommitteeProvince,
@@ -280,6 +286,12 @@
 	  inner join organization_type ot on oi.org_info_type_id = ot.org_type_id 
     where
     	1 = 1
+    	<if test="isPartyOrg != null and isPartyOrg != ''"> and
+        	ot.is_party_org = #{isPartyOrg}
+        </if>
+        <if test="orgSetJoin != null and orgSetJoin != ''"> and
+        	ot.org_set_join = #{orgSetJoin}
+        </if>
     	<if test="orgInfoTypeId != null and orgInfoTypeId != ''"> and
         	oi.org_info_type_id = #{orgInfoTypeId}
         </if>

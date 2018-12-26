@@ -68,13 +68,15 @@
                                 </el-upload> -->
                             </el-form-item>
                             <el-form-item label="展示图片">
-                                <div v-if="effects.current && effects.current.tool == 'M2'">
+                                <div v-show="effects.current && effects.current.tool == 'M2'">
                                     <div class="image-box" v-for="(photo, index) in wrap.photos" :key="index">
                                         <img :src="photo.thumbnail">
                                     </div>
-                                    <div id="m2"></div>
+                                    <div style="width: 800px; height: 600px">
+                                        <div id="m2"></div>
+                                    </div>
                                 </div>
-                                <div v-else>
+                                <div v-show="effects.current && !effects.current.tool">
                                     <p>选择需要展示的图片(允许图片数量：{{wrap.minimum}} - {{wrap.maximum}})</p>
                                     <div class="image-box" v-for="(photo, index) in wrap.photos" v-dragging="{ list: wrap.photos, item: photo, group: 'photos' }"
                                         :key="index">

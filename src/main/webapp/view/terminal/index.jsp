@@ -18,7 +18,7 @@
             </el-header>
             <el-container>
                 <el-aside width="300px">
-                    <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" @click="groupItem.show = true">添加根分组项</el-button>
+                    <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" @click="groupItem.show = true; groupItem.isRoot = true">添加根分组项</el-button>
                     <el-tree :data="group" draggable node-key="id" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick">
                         <span class="tree-node" slot-scope="{ node, data }">
                             <span>{{ node.label }}</span>
@@ -38,6 +38,11 @@
                             <template slot-scope="scope">
                                 {{scope.row.online == 1 ? '在线' : '离线'}}
                             </template>
+                        </el-table-column>
+                        <el-table-column label="所属组织">
+                                <template slot-scope="scope">
+                                    {{getOrgInfo(scope.row)}}
+                                </template>
                         </el-table-column>
                         <el-table-column prop="type" label="类型">
                             <template slot-scope="scope">

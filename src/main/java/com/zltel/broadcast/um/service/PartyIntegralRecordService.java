@@ -2,6 +2,10 @@ package com.zltel.broadcast.um.service;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.um.bean.PartyIntegralRecord;
 
@@ -78,4 +82,18 @@ public interface PartyIntegralRecordService {
      * @return
      */
     public boolean automaticIntegralRecord(PartyIntegralRecord pir, IcType icType, IcChangeType icChangeType);
+    
+    /**
+	 * 下载积分明细导入excel格式示例
+	 * @param baseUser 条件
+	 * @return
+	 */
+    public void exportIntegralExcelExample(HttpServletResponse response);
+    
+    /**
+	 * 批量导入积分明细记录
+	 * @param file 文件
+	 * @return
+	 */
+    public R importIntegralExcel(HttpServletResponse response, MultipartFile file) throws Exception;
 }

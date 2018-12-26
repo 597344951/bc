@@ -126,6 +126,12 @@
       <if test="indexNum != null and indexNum != ''"> and
        	ojp.index_num = #{indexNum}
       </if>
+      <if test="indexNumXD != null and indexNumXD != ''"> and
+       	ojp.index_num &lt;= #{indexNumXD}
+      </if>
+      <if test="joinProcessName != null and joinProcessName != ''"> and
+       	jpop.name = #{joinProcessName}
+      </if>
     order by ojp.index_num asc
   </select>
 </mapper>

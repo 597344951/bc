@@ -22,9 +22,9 @@ public interface TerminalBasicInfoService {
 
     public R queryMapInfo();
 
-    public R echarts(String string) throws Exception;
+    public R echarts(String string);
 
-    public Map<String, Integer> countOnlineTerminal();
+    public Map<String, Integer> countOnlineTerminal(TerminalBasicInfo record);
 
     /**
      * 同步终端信息

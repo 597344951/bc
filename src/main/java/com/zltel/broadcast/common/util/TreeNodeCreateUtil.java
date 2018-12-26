@@ -29,8 +29,7 @@ public class TreeNodeCreateUtil {
      * @param list 数据
      * @param primaryKey 获取主id
      * @param parentKey 获取上一级id, 上一级id为0 或者 null 则判断是顶级目录
-     * @return
-     * {@link TreeNodeCreateUtilTest#testGetAllChildrenList()}
+     * @return {@link TreeNodeCreateUtilTest#testGetAllChildrenList()}
      */
     public static <T, R> List<T> getAllChildrenList(T target, List<T> list, Function<T, R> primaryKey,
             Function<T, R> parentKey) {
@@ -63,7 +62,7 @@ public class TreeNodeCreateUtil {
         // 生成第一层
         list.stream().filter(t -> {
             R v = parentKey.apply(t);
-            return v == null || "0".equals(v.toString());
+            return isTopNode(v);
         }).forEach(result::add);
 
         // 遍历剩余节点
@@ -86,7 +85,7 @@ public class TreeNodeCreateUtil {
         // 生成第一层
         list.stream().filter(t -> {
             R v = parentKey.apply(t);
-            return v == null || "0".equals(v.toString());
+            return isTopNode(v);
         }).forEach(td -> {
             TreeNode<T> tn = new TreeNode<>();
             tn.setData(td);
@@ -94,6 +93,16 @@ public class TreeNodeCreateUtil {
         });
         result.forEach(tn -> handleNextNode2(tn, list, primaryKey, parentKey));
         return result;
+    }
+
+    /**
+     * 是否是顶级节点的数据
+     * 
+     * @param v
+     * @return
+     */
+    private static <R> boolean isTopNode(R v) {
+        return v == null || "0".equals(v.toString()) || "-1".equals(v.toString());
     }
 
     private static <T, R> void handleNextNode2(TreeNode<T> node, List<T> datas, Function<T, R> primaryKey,

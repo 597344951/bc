@@ -2,6 +2,7 @@ package com.zltel.broadcast.lesson.service;
 
 import java.util.List;
 
+import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.lesson.bean.LessonUnit;
 
 public interface LessonUnitService {
@@ -23,5 +24,5 @@ public interface LessonUnitService {
      * @return
      * @junit {@link LessonUnitServiceTest#testQueryRelatedData()}
      */
-    List<LessonUnit> queryCategoryRelatedData(LessonUnit record);
+    List<LessonUnit> queryCategoryRelatedData(LessonUnit record,Pager pager);
 }

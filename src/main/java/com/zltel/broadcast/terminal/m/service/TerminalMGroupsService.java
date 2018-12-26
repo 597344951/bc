@@ -10,7 +10,7 @@ public interface TerminalMGroupsService {
     public void addGroup(TerminalMGroups terminalMGroups);
     public void removeGroups(List<Integer> ids);
     public void updateGroup(TerminalMGroups terminalMGroups);
-    public List<TerminalMGroups> groups();
+    public List<TerminalMGroups> groups(Integer orgId);
 
     public void addTerminals(TerminalMGroups group, List<Map<String, Object>> terminals);
 

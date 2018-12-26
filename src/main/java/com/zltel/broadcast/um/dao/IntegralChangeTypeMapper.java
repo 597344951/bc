@@ -31,4 +31,11 @@ public interface IntegralChangeTypeMapper extends BaseDao<IntegralChangeType> {
      * @return
      */
     public List<IntegralChangeType> queryICT(IntegralChangeType ict);
+    
+    /**
+     * 删除积分项
+     * @param conditions
+     * @return
+     */
+    public int deleteChangeIntegralIsNull(IntegralChangeType ict);
 }

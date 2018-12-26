@@ -1067,7 +1067,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 									<shiro:hasPermission name="join:party:update">  
 										<el-button 
 											style="color: red;"
-											v-if="scope.row.joinPartyUserInfo != null && signInAccountType == 'party_role'"
+											v-if="scope.row.joinPartyUserInfo != null && 
+											signInAccountType == 'party_role'"
 											@click="openApplyJoinPartyOrgDialog(scope.row)" 
 											type="text" size="small">申请状态
 										</el-button>
@@ -1158,12 +1159,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			</div>
 		</el-dialog>
 
-		<el-dialog @close="reset_join_org_info" title="选择组织" :visible.sync="join_org_info_dialog" width="240px">
+		<el-dialog @close="reset_join_org_info" title="选择加入的党委" :visible.sync="join_org_info_dialog" width="280px">
 			<div style="margin: 10px;">
 				<div>
 					<el-select size="small" clearable 
 						@change="check_org_hava_join_process"
-						v-model="join_org_info.orgId" placeholder="请选择党组织">
+						v-model="join_org_info.orgId" placeholder="请选择党委">
 						<el-option
 							v-for="item in join_org_info.orgInfosSelect"
 							:key="item.orgInfoId"
@@ -1176,7 +1177,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				</div>
 				<div style="margin-top: 10px;">
 					<el-select size="small" clearable 
-						v-model="join_org_info.joinType" placeholder="请选择加入党组织方式">
+						v-model="join_org_info.joinType" placeholder="请选择加入方式">
 						<el-option
 							v-for="item in join_org_info.joinOrgTypeSelects"
 							:key="item.jpbtId"
@@ -1230,7 +1231,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							提交时间：{{joinPartyOrg.joinPartyOrgStepInfo.stepTime}}
 						</p>
 						<p>
-							希望加入的组织：{{joinPartyOrg.userInfo.joinPartyUserInfo.orgInfoName}}
+							希望加入的党委：{{joinPartyOrg.userInfo.joinPartyUserInfo.orgInfoName}}
 						</p>
 						<p>
 							加入方式：{{joinPartyOrg.userInfo.joinPartyUserInfo.joinType}}
@@ -3663,6 +3664,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				$.post(url, t, function(data, status){
 					if (data.code != 200) {
 						obj.turn_out_select_org.submit.orgId = null;
+						toast("提示", data.msg, "error");
 					} 
 				})
 			},
@@ -3959,6 +3961,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				$.post(url, t, function(data, status){
 					if (data.code != 200) {
 						obj.join_org_info.orgId = null;
+						toast("提示", data.msg, "error");
 					} 
 				})
 			},
@@ -3971,15 +3974,20 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			open_join_org_info_dialog(row) {	//加入组织时选择组织弹窗
 				let obj = this;
 				obj.join_org_info.userId = row.id;
-				let url = "/org/ifmt/queryOrgInfosSelect";
-				let t = {}
-				$.post(url, t, function(data, status){	//选择加入的党组织
+				let url = "/org/ifmt/queryOrgInfosSelects";
+				let t = {
+					isPartyOrg: 1,
+					orgSetJoin: 1
+				}
+				$.post(url, t, function(data, status){	//选择加入的党委
 					if (data.code == 200) {
 						obj.join_org_info.orgInfosSelect = data.data;
 					} 
 				})
 				url = "/jpbt/queryJoinPartyBranchTypes";
-				t = {}
+				t = {
+					joinType: '新入党'
+				}
 				$.post(url, t, function(data, status){	//如何加入
 					if (data.code == 200) {
 						obj.join_org_info.joinOrgTypeSelects = data.data;

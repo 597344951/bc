@@ -54,6 +54,8 @@ public class ScheduleController extends BaseController {
         R r = R.ok();
         if("life".equals(meetingType)) {
             r.setData(scheduleService.queryLifeEnableSchedule(getSysUser()));
+        } else if("democratic-appraisal".equals(meetingType)) {
+            r.setData(scheduleService.queryDemocraticAppraisalEnableSchedule(getSysUser()));
         } else {
             r.setData(scheduleService.queryThreeoneEnableSchedule(getSysUser()));
         }
@@ -74,9 +76,8 @@ public class ScheduleController extends BaseController {
             R r = R.ok();
             OrganizationInformation organizationInformation = new OrganizationInformation();
             organizationInformation.setOrgInfoId(getSysUser().getOrgId());
-            R ret = organizationInformationService.queryOrgInfosSelect(organizationInformation);
-            if (ret.get("data") != null) {
-                List<OrganizationInformation> orgInfoSelects = (List<OrganizationInformation>) ret.get("data");
+            List<OrganizationInformation> orgInfoSelects = organizationInformationService.queryOrgInfosSelect(organizationInformation);
+            if (!orgInfoSelects.isEmpty()) {
                 r.put("org", orgInfoSelects.get(0).getOrgInfoName());
             } else {
                 r.put("org", "未知组织");

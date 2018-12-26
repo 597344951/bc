@@ -140,4 +140,10 @@
         ict.operation = #{operation}
       </if>
   </select>
+  
+  <!-- 设置积分时，如果加/扣分为空，则删除加/扣分项 -->
+  <delete id="deleteChangeIntegralIsNull" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
+    delete from integral_change_type
+    where ic_id = #{icId,jdbcType=INTEGER} and type = #{type,jdbcType=INTEGER}
+  </delete>
 </mapper>

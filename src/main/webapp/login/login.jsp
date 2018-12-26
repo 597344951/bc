@@ -1,129 +1,57 @@
+<%@page import="java.util.Random"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%
     String path = request.getContextPath();
     String basePath =
             request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
+    Random r = new Random(System.nanoTime());
+    int n = r.nextInt(7);
+    request.setAttribute("rn", n);
+            
 %>
 <html>
+
 <head>
-<base href="<%=basePath%>">
-<title>${sysInfo.appname}</title>
-<%@include file="/include/head.jsp"%>
-<style>
-	html,body{
-		height: 100%;
-		width: 100%;
-	}
-	body{
-		background-image: url(assets/img/bg2.png);
-		overflow: hidden;
-		-webkit-background-size: 100% 100%;
-		background-size: 100% 100%;
-		background-color: #337ab7;
-	}
-	*{
-		margin: 0;
-		padding: 0;
-	}
-	h1{
-		width: 100%;
-		color:#fff;
-		text-align: center;
-		font-size: 56px;
-		text-shadow: 3px 5px 0px #458dff;
-	}
-	.ipt{
-		border-radius: 6px;
-		border:1px solid #ddd;
-		width: 384px;
-		height: 40px;
-		outline: none;
-		margin-top: 20px;
-		padding-left: 10px;
-		box-shadow: inset 5px 5px 8px #ced1d4;
-	}
-	.icon1{
-		background-image: url(assets/img/icon1.png);
-		background-repeat: no-repeat;
-		display: inline-block;
-		width: 56px;
-		height: 50px;
-		vertical-align: bottom;
-	}
-	.icon2{
-		background-image: url(assets/img/icon2.png);
-		background-repeat: no-repeat;
-		background-position: 6px 0px;
-		display: inline-block;
-		width: 56px;
-		height: 50px;
-		vertical-align: bottom;
-	}
-	.main{
-		height: 250px;
-		width: 600px;
-		position: fixed;
-		top: 40%;
-		left: 50%;
-		margin-top: -150px;
-		margin-left: -300px;
-		text-align: center;
-		position: relative;
-	}
-	.btn{
-		text-decoration: none;
-		width: 205px;
-		height: 50px;
-		display: block;
-		line-height: 44px; 
-		border-radius: 8px;
-		font-weight: bold;
-		font-size: 20px;
-		color: #fff;
-		text-align: center;
-		background-color: #458aff;
-		letter-spacing:15px;
-		margin: 50px auto;
-		background: url(assets/img/btn.png) no-repeat;
-	}
-	.btn:active{
-		padding-right: 1px;
-		padding-top: 1px;
-	}
-	.name{
-		margin: 30px 0;
-	}
-	.error {
-	color: red;
-	position: absolute;
-	bottom:-40px;
-	left: 33%;;
-}
-	</style>
+	<base href="<%=basePath%>">
+	<title>${sysInfo.appname}</title>
+	<link href="${urls.getForLookupPath('/login/index.css')}" rel="stylesheet">
+
 </head>
-<body>
-<div class="main">
-	<div class="error"><h3>${error}</h3></div>
-	<h1>${sysInfo.appname}</h1>
+
+<body class="login-theme-${rn}">
+	<div class="bg1"></div>
+	<div class="gyl">
+		${sysInfo.appname}
+		<div class="gy2">打造国内最具规模的、最专业的智能服务平台 </div>
+	</div>
 	<form action="login" method="post">
-		<div class="name">
-			<i class="icon1"></i>
-			<input name="un" value="develop" class="ipt" placeholder="请输入账户名" type="text">
+	<div class="bg">
+		<div class="wel">用户登录</div>
+		
+		<div class="user">
+			<div id="yonghu">用户名</div>
+			<input name="un" placeholder="请输入账户名" type="text" autocomplete="on" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;"
+			 >
 		</div>
-		<div class="kayword">
-			<i class="icon2"></i>
-			<input type="password" name="ps" value="develop" class="ipt" placeholder="请输入密码" type="text">
+		<div class="password">
+			<div id="yonghu">密&nbsp;&nbsp;&nbsp;码</div>
+			<input type="password" name="ps" placeholder="请输入密码" autocomplete="off" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;"
+			 >
 		</div>
-		<button type="submit" value="登录" class="btn"></button>
-	</form>
-</div>
+		<div class="error-msg">
+			<div class="error">
+				${error}
+			</div>
+		</div>
+		<input class="btn"  type="submit" name="登录" value="登录">
+	</div>
+</form>
 
 </body>
+
 </html>
 <script>
-$(function(){
-	if(!checkLocationSame()){
-		top.location.href = window.location.href;
-	}
-});
+	console.log(top.location.href)
+	console.log(window.location.href)
+	if(top.location.href !== window.location.href) top.location.href = window.location.href
 </script>

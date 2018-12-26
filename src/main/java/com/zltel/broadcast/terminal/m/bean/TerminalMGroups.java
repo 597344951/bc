@@ -18,6 +18,8 @@ public class TerminalMGroups {
     private Date updateDate;
 
     private List<TerminalMGroups> children;
+    
+    private Integer orgId;
 
     public TerminalMGroups() {
     }
@@ -88,4 +90,13 @@ public class TerminalMGroups {
         if (this.children == null) this.children = new ArrayList<>();
         this.children.add(terminalMGroups);
     }
+
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+    
 }

@@ -8,6 +8,9 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.lesson.bean.LessonCategory;
 import com.zltel.broadcast.lesson.bean.LessonSection;
@@ -54,7 +57,7 @@ public class LessonUnitServiceImpl implements LessonUnitService {
     }
 
     @Override
-    public List<LessonUnit> queryCategoryRelatedData(LessonUnit record) {
+    public List<LessonUnit> queryCategoryRelatedData(LessonUnit record,Pager pager) {
         Integer categoryId = record.getCategoryId();
         record.setCategoryId(null);
         if (categoryId != null) {
@@ -67,12 +70,14 @@ public class LessonUnitServiceImpl implements LessonUnitService {
             List<Integer> categoryIds = cl.stream().map(LessonCategory::getCategoryId).collect(Collectors.toList());
             record.setCategoryChildrenIds(categoryIds);
         }
+        Page<LessonUnit> page = PageHelper.startPage(pager.getPageIndex(), pager.getLimit());
         List<LessonUnit> list = this.lessonUnitDao.queryRelatedData(record);
         list.forEach(lu -> {
             List<LessonSection> tree = TreeNodeCreateUtil.toTree(lu.getLessonList(), LessonSection::getLessonId,
                     LessonSection::getParent, LessonSection::setChildren);
             lu.setLessonTree(tree);
         });
+        pager.setTotal(page.getTotal());
         return list;
     }
 

@@ -24,20 +24,26 @@
 	.center {
 		margin-bottom: 20px;
 	}
-	.common .el-input__inner {
-		width: 160px;
+	.el-select.el-select--small {
+		width: 220px;
+	}
+	.el-input.el-input--small {
+		width: 220px;
+	}
+	.el-textarea.el-input--small {
+		width: 220px;
+	}
+	.el-tree.el-tree--highlight-current {
+		width: 220px;
 	}
 	.el-date-editor {
-		width: 160px;
+		width: 220px;
 	}
 	.el-row {
 		margin-bottom: 10px;
 	}
 	#partyUser_manager_agesdididi {
 		text-align: center;
-	}
-	.detailAddressInput .el-input__inner {
-		width: 280px;
 	}
 	a:link,a:visited{
 		text-decoration:none;  /*超链接无下划线*/
@@ -201,7 +207,7 @@
 						<el-popover class="margin-left-10"
 							placement="bottom" 
 							v-if="signInAccountType != 'party_role'"
-						  	width="200" 
+						  	width="220" 
 						  	trigger="hover" >
 						  	<el-button size="small" type="primary" slot="reference">
 						  		<i class="el-icon-search"></i>
@@ -445,16 +451,12 @@
 						<el-table-column label="操作" width=420>
 							<template slot-scope="scope">
 								<shiro:hasPermission name="party:user:delete">  
-									<el-button @click="partyOrg_manager_deleteOrgInfo(scope.row)" type="text" size="small">删除</el-button>
+									<el-button @click="partyOrg_manager_deleteOrgInfo(scope.row)" 
+										type="text" size="small">删除</el-button>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="party:user:update">  
-									<el-button @click="partyOrg_manager_openUpdateOrgInfoDialog(scope.row)" type="text" size="small">修改信息</el-button>
-								</shiro:hasPermission>
-								<shiro:hasPermission name="party:user:update">  
-									<el-button 
-										@click="partyOrg_manager_openInsertOrgDutyDialog(scope.row)" 
-										type="text" size="small">添加角色
-									</el-button>
+									<el-button @click="partyOrg_manager_openUpdateOrgInfoDialog(scope.row)" 
+										type="text" size="small">修改信息</el-button>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="party:user:update">  
 									<el-button 
@@ -463,12 +465,19 @@
 									</el-button>
 								</shiro:hasPermission>
 								<el-button 
-									@click="open_update_join_process_dialog(scope.row)" 
-									type="text" size="small">调整入党流程
-								</el-button>
-								<el-button 
 									@click="open_into_org_user_dialog(scope.row)" 
 									type="text" size="small">转入用户
+								</el-button>
+								<shiro:hasPermission name="party:user:update">  
+									<el-button 
+										@click="partyOrg_manager_openInsertOrgDutyDialog(scope.row)" 
+										type="text" size="small">添加角色
+									</el-button>
+								</shiro:hasPermission>
+								<el-button 
+									v-if="scope.row.isPartyOrg && scope.row.orgSetJoin"
+									@click="open_update_join_process_dialog(scope.row)" 
+									type="text" size="small">调整入党流程
 								</el-button>
 							</template>
 						</el-table-column>
@@ -503,10 +512,6 @@
 				<el-button type="primary" @click="insert_org_join_process" size="small">变更流程</el-button>
 			</div>
 		</el-dialog>
-
-
-
-
 
 		<el-dialog @close="" title="添加组织积分结构" :visible.sync="partyOrg_manager_addOrgIntegralConstituteDialog" width="70%">
 			<el-form label-width="120px" size="small" :model="partyOrg_manager_addOrgIntegralConstituteForm" status-icon 
@@ -579,7 +584,6 @@
 			</el-form>
 		</el-dialog>
 
-
 		<el-dialog @close="partyOrg_manager_resetOrgInfosRelationDialog" title="组织成员分析" :visible.sync="partyOrg_manager_showOrgInfosRelationDialog" width="70%">
 			<div class="orgInfosRelationClass" id="joinOrgProportionOfMenAndWomenChart"></div>
 			<div class="orgInfosRelationClass" id="totalOrgProportionOfMenAndWomenChart"></div>
@@ -614,7 +618,6 @@
 				</el-footer>
 			</el-container>
 		</el-dialog>
-
 
 		<el-dialog @close="" title="组织下成员信息" :visible.sync="partyOrg_manager_showThisOrgPeoplesDialog" width="82%">
 			<el-container>
@@ -680,7 +683,6 @@
 			</el-row>
 		</el-dialog>
 
-
 		<el-dialog @close="partyOrg_manager_resetinsertOrgInfoDutyForm()" class="common" @close="" title="增加角色" :visible.sync="partyOrg_manager_insertOrgDutyDialog" width="70%">
 			<el-form label-width="120px" size="small" :model="partyOrg_manager_insertOrgInfoDutyForm" status-icon :rules="partyOrg_manager_insertOrgInfoDutyRules" 
 				ref="partyOrg_manager_insertOrgInfoDutyForm" label-width="100px">
@@ -743,7 +745,6 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
-
 
 		<el-dialog class="common" @close="" title="修改组织信息" :visible.sync="partyOrg_manager_updateOrgInfoDialog" width="70%">
 			<el-form label-width="120px" size="small" :model="partyOrg_manager_updateOrgInfoForm" status-icon :rules="partyOrg_manager_updateOrgInfoRules" 
@@ -828,95 +829,83 @@
 			</el-form>
 		</el-dialog>
 
-		<el-dialog class="common" @close="" title="添加组织信息" :visible.sync="partyOrg_manager_insertOrgInfoDialog" width="70%">
-			<el-form label-width="120px" size="small" :model="partyOrg_manager_insertOrgInfoForm" status-icon :rules="partyOrg_manager_insertOrgInfoRules" 
+		<el-dialog @close="partyOrg_manager_resetinsertOrgInfoForm" class="common" @close="" title="添加组织信息" :visible.sync="partyOrg_manager_insertOrgInfoDialog" width="400px">
+			<el-form label-width="140px" size="small" :model="partyOrg_manager_insertOrgInfoForm" status-icon :rules="partyOrg_manager_insertOrgInfoRules" 
 				ref="partyOrg_manager_insertOrgInfoForm" label-width="100px">
-				<el-row :gutter="20">
-					<el-col :span="8">
-						<el-form-item label="组织类型" prop="orgInfoTypeId">
-						    <el-select clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoTypeId" placeholder="请选择">
-							    <el-option
-							      v-for="item in partyOrg_manager_orgInfoTypes"
-							      :key="item.value"
-							      :label="item.orgTypeName"
-							      :value="item.orgTypeId">
-							    </el-option>
-						  	</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="16">
-						<el-form-item label="组织性质" prop="orgInfoNatureId">
-						    <el-select clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoNatureId" placeholder="请选择">
-							    <el-option
-							      v-for="item in partyOrg_manager_orgInfoNatures"
-							      :key="item.value"
-							      :label="item.orgNatureName"
-							      :value="item.orgNatureId">
-							    </el-option>
-						  	</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row :gutter="20">
-					<el-col :span="12">
-						<el-form-item label="组织名" prop="orgInfoName">
-						    <el-input clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoName" placeholder="组织名"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row :gutter="20">
-					<el-col :span="8">
-						<el-form-item label="组织办公地址" prop="orgInfoCommittee_pca">
-						    <el-cascader clearable clearable :props="partyOrg_manager_address_prop"
-								v-model="partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca"
-								separator="/"
-								placeholder="可搜索地点" :options="partyOrg_manager_address_pca" 
-								filterable >
-							</el-cascader>
-						</el-form-item>
-					</el-col>
-					<el-col :span="16">
-						<el-form-item class="detailAddressInput" label="详细地址" prop="orgInfoCommitteeDetail">
-						    <el-input clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoCommitteeDetail" placeholder="详细地址"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row :gutter="20">
-					<el-col :span="24">
-						<el-form-item label="组织管理范围描述：" prop="orgInfoManageDetail">
-							<el-input clearable
-							  	type="textarea"
-							 	:autosize="{ minRows: 2}"
-							 	placeholder="请输入内容"
-								v-model="partyOrg_manager_insertOrgInfoForm.orgInfoManageDetail">
-							</el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row :gutter="20">
-					<el-col :span="24">
-						<el-form-item label="组织简介/介绍：" prop="orgInfoDescribe">
-							<el-input clearable
-							  	type="textarea"
-							 	:autosize="{ minRows: 2}"
-							 	placeholder="请输入内容"
-								v-model="partyOrg_manager_insertOrgInfoForm.orgInfoDescribe">
-							</el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row :gutter="20">
-					<el-col :span="24">
-						<el-form-item label="组织层级关系" prop="orgInfoParentId">
-						    <el-tree :expand-on-click-node="false" 
-						    	:highlight-current="true" 
-						    	:data="partyOrg_manager_orgInfoTreeOfInsert" 
-						    	:props="partyOrg_manager_orgInfoTreeOfInsertProps" 
-						    	@node-click="partyOrg_manager_setOrgInfoParentId">
-						  	</el-tree>
-						</el-form-item>
-					</el-col>
-				</el-row>
+				<div>
+					<el-form-item label="组织类型" prop="orgInfoTypeId">
+						<el-select clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoTypeId" placeholder="请选择">
+							<el-option
+								v-for="item in partyOrg_manager_orgInfoTypes"
+								:key="item.value"
+								:label="item.orgTypeName"
+								:value="item.orgTypeId">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</div>
+				<div>
+					<el-form-item label="组织性质" prop="orgInfoNatureId">
+						<el-select clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoNatureId" placeholder="请选择">
+							<el-option
+							  v-for="item in partyOrg_manager_orgInfoNatures"
+							  :key="item.value"
+							  :label="item.orgNatureName"
+							  :value="item.orgNatureId">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</div>
+				<div>
+					<el-form-item label="组织名" prop="orgInfoName">
+						<el-input clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoName" placeholder="组织名"></el-input>
+					</el-form-item>
+				</div>
+				<div>
+					<el-form-item label="组织地址" prop="orgInfoCommittee_pca">
+						<el-cascader clearable clearable :props="partyOrg_manager_address_prop"
+							v-model="partyOrg_manager_insertOrgInfoForm.orgInfoCommittee_pca"
+							separator="/"
+							placeholder="可搜索地点" :options="partyOrg_manager_address_pca" 
+							filterable >
+						</el-cascader>
+					</el-form-item>
+				</div>
+				<div>
+					<el-form-item class="detailAddressInput" label="详细地址" prop="orgInfoCommitteeDetail">
+						<el-input clearable v-model="partyOrg_manager_insertOrgInfoForm.orgInfoCommitteeDetail" placeholder="详细地址"></el-input>
+					</el-form-item>
+				</div>
+				<div>
+					<el-form-item label="组织管辖描述" prop="orgInfoManageDetail">
+						<el-input clearable
+							  type="textarea"
+							 :autosize="{ minRows: 1}"
+							 placeholder="请输入内容"
+							v-model="partyOrg_manager_insertOrgInfoForm.orgInfoManageDetail">
+						</el-input>
+					</el-form-item>
+				</div>		
+				<div>
+					<el-form-item label="组织简介" prop="orgInfoDescribe">
+						<el-input clearable
+							  type="textarea"
+							 :autosize="{ minRows: 1}"
+							 placeholder="请输入内容"
+							v-model="partyOrg_manager_insertOrgInfoForm.orgInfoDescribe">
+						</el-input>
+					</el-form-item>
+				</div>
+				<div>
+					<el-form-item label="组织关系" prop="orgInfoParentId">
+						<el-tree :expand-on-click-node="false" 
+							:highlight-current="true" 
+							:data="partyOrg_manager_orgInfoTreeOfInsert" 
+							:props="partyOrg_manager_orgInfoTreeOfInsertProps" 
+							@node-click="partyOrg_manager_setOrgInfoParentId">
+						</el-tree>
+					</el-form-item>
+				</div>
 				<el-form-item>
 				    <el-button type="primary" @click="partyOrg_manager_insertOrgInfo">添加组织</el-button>
 				    <el-button @click="partyOrg_manager_resetinsertOrgInfoForm">重置</el-button>
@@ -1332,6 +1321,8 @@
 					if (data.code == 200) {
 						toast('提示', "变更成功",'success');
 						obj.reset_join_party();
+					} else if (data.code == 500) {
+						toast('提示', data.msg,'error');
 					}
 				})
 			},
@@ -1784,38 +1775,25 @@
         	},
         	partyOrg_manager_openInsertOrgInfoDialog() {	/*打开添加组织信息弹窗*/
         		var obj = this;
-
-        		obj.partyOrg_manager_insertOrgInfoDialog = true;
-
-        		var obj = this;
 				var url = "/org/ifmt/queryOrgInfosToTree";
 				var t = {
 				}
 				$.post(url, t, function(datas, status){
 					if (datas.code == 200) {
-						obj.partyOrg_manager_orgInfoTreeOfInsert = [
-							data = {
-								data: {		/* 给根目录设置一个顶级节点，用于查询全部数据 */
-									orgInfoId: -1,
-									orgInfoName: "顶层组织 （不选默认顶级组织）"
-								},
-								children: datas.data
-							}
-						];
+						obj.partyOrg_manager_getOrgInfoTypes();
+						obj.partyOrg_manager_orgInfoTreeOfInsert = datas.data;
+						obj.partyOrg_manager_insertOrgInfoDialog = true;
 					}
-					
 				})
         	},
-        	partyOrg_manager_getOrgInfoTypes() {	/*组织类型*/
-        		var obj = this;
-        		url = "/org/type/queryOrgTypesNotPage";
-				var t = {
-				}
+			partyOrg_manager_getOrgInfoTypes() {	/*组织类型*/
+				var obj = this;
+				url = "/org/type/queryOrgTypesNotPage";
+				var t = {}
 				$.post(url, t, function(datas, status){
 					if (datas.code == 200) {
 						obj.partyOrg_manager_orgInfoTypes = datas.data;
 					}
-					
 				})
         	},
         	partyOrg_manager_getOrgInfoNatures() {	/*组织性质*/
@@ -1839,7 +1817,8 @@
 				obj.partyOrg_manager_addOrgIntegralConstituteForm.parentIcId = data.data.icId;
         	},
         	partyOrg_manager_resetinsertOrgInfoForm() {	/*重置新增组织表单*/
-        		var obj = this;
+				var obj = this;
+				obj.partyOrg_manager_orgInfoTreeOfInsert = [];
         		obj.$refs.partyOrg_manager_insertOrgInfoForm.resetFields();
         	},
         	partyOrg_manager_resetAddOrgIntegralConstituteForm() {
@@ -1858,9 +1837,9 @@
 							if (data.code == 200) {
 								if (data.data != null && data.data.length > 0 && obj.partyOrg_manager_insertOrgInfoForm.orgInfoParentId == -1) {
 									obj.$notify({
-										title: '不允许创建更多的组织',
-										message: '只能存在一个最顶级组织',
-										type: 'error'
+										title: '提示',
+										message: '请选择所在党委或党总支',
+										type: 'info'
 									});
 									return;
 								} else {
@@ -1952,8 +1931,9 @@
 							toast('删除成功',data.msg,'success');
 							obj.partyOrg_manager_queryOrgInfosForMap();
     						obj.partyOrg_manager_queryOrgInfosCommitteeProvince();	/*重新查询地址-省*/
+						} else {
+							toast('删除失败',data.msg,'error');
 						}
-						
 					})
 		        }).catch(function(){
 		        	obj.$message({
@@ -2515,7 +2495,7 @@
 							nowLevel: i + 1
 						}
 						$.post(url, t, function(data, status){
-							if (data.data != undefined && data.data != null) {	
+							if (data.data != undefined && data.data != null && data.data.length > 0) {	
 								if (data.code == 200) {
 									obj.partyOrg_manager_orgInfoTreesForZMD = data.data[0];
 

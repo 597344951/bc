@@ -267,13 +267,15 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      */
     public R queryOrgIntegralInfo_IcType(Map<String, Object> conditions) {
         List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
-        Map<String, Map<String, Object>> icsMap = new HashMap<>();
+        Map<String, String> icsMap = new HashMap<>();
         List<Map<String, Object>> result = new ArrayList<>();
         if (ics != null && ics.size() > 0) {
             for (Map<String, Object> ic : ics) {
-                icsMap.put(String.valueOf(ic.get("parentIcId")), ic);
+            	//把当过爸爸节点标注出来
+                icsMap.put(String.valueOf(ic.get("parentIcId")), "这是当过爸爸节点的id");
             }
             for (Map<String, Object> ic : ics) {
+            	//没有找到爸爸就是儿子
                 if (icsMap.get(String.valueOf(ic.get("icId"))) == null) {
                     result.add(ic);
                 }
@@ -300,7 +302,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
                 if (ic.get("integral") == null) throw new IntegralErrorException(); // 某一节点如果没有设置积分值，抛异常
 
                 List<Map<String, Object>> icChildrens = integralConstituteMapper.queryOrgIntegralConstitute(condition);
-                if (icChildrens == null || icChildrens.size() == 0) {
+                //非内置积分可以不用设置加/扣分
+                if ((icChildrens == null || icChildrens.size() == 0) && "1".equals(String.valueOf(ic.get("isInnerIntegral")))) {
                     // 当为最低级时，查看当前积分节点是否有对应的加分减分方法
                     IntegralChangeType ict = new IntegralChangeType();
                     ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
@@ -388,6 +391,11 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
             } else {
                 integralChangeTypeMapper.insertSelective(add_ict);
             }
+        } else {
+        	IntegralChangeType add_ict = new IntegralChangeType();
+            add_ict.setIcId(ic.getIcId());
+            add_ict.setType("加分");
+            integralChangeTypeMapper.deleteChangeIntegralIsNull(add_ict);
         }
 
         if (conditions.get("reduce_integral") != null && conditions.get("reduce_integral") != "") {
@@ -405,6 +413,11 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
             } else {
                 integralChangeTypeMapper.insertSelective(reduce_ict);
             }
+        } else {
+        	IntegralChangeType add_ict = new IntegralChangeType();
+            add_ict.setIcId(ic.getIcId());
+            add_ict.setType("扣分");
+            integralChangeTypeMapper.deleteChangeIntegralIsNull(add_ict);
         }
         return R.ok().setMsg("修改成功");
     }

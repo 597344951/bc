@@ -1,7 +1,6 @@
 package com.zltel.broadcast.terminal.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.zltel.broadcast.terminal.bean.OnlineCountBean;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
@@ -40,5 +39,9 @@ public interface TerminalBasicInfoMapper {
 
     List<TerminalEcharts> tCountEcharts();
 
-    List<OnlineCountBean> countOnlineTerminal();
+    List<OnlineCountBean> countOnlineTerminal(TerminalBasicInfo record);
+    
+    List<TerminalBasicInfo> queryUnConfigTerminal(TerminalBasicInfo record);
+
+    int orgConfig(TerminalBasicInfo record);
 }

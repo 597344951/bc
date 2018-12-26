@@ -204,7 +204,16 @@
 				<p class="number">第 <span> {{printInfo.turnOutOrgPartyUser.id}} </span> 号</p>
 				<div class="menu">
 					<p class="name">{{printInfo.turnOutOrgPartyUser.orgInfoName == null || printInfo.turnOutOrgPartyUser.orgInfoName == '' ? printInfo.turnOutOrgPartyUser.otherOrgName : printInfo.turnOutOrgPartyUser.orgInfoName}}</p><span>:</span>
-					<p class="resume"><span class="nbsp"></span><span class="kongge">{{printInfo.partyUserInfo.name}}</span>同志（{{printInfo.partyUserInfo.sex}}），<span class="age">{{printInfo.partyUserInfo.age}}</span>岁，<span class="nation">{{printInfo.partyUserInfo.nation}}</span>，系中共（{{printInfo.partyUserInfo.type == 1 ? '正式' : '预备'}}）党员，身份证号码<span class="card">{{printInfo.partyUserInfo.idCard}}</span>,由<span class="kongge-1">{{printInfo.organizationRelation.orgInfoName}}</span>去<span class="kongge-1">{{printInfo.turnOutOrgPartyUser.orgInfoName == null || printInfo.turnOutOrgPartyUser.orgInfoName == '' ? printInfo.turnOutOrgPartyUser.otherOrgName : printInfo.turnOutOrgPartyUser.orgInfoName}}</span>，请转接组织关系。该同志党费已交到<span class="year">{{printInfo.partyMembershipDue.payDateYear}}</span>年<span class="month">{{printInfo.partyMembershipDue.payDateMonth}}</span>月。</p>
+					<p class="resume"><span class="nbsp"></span><span class="kongge">{{printInfo.partyUserInfo.name}}</span>同志（{{printInfo.partyUserInfo.sex}}），<span class="age">{{printInfo.partyUserInfo.age}}</span>岁，<span class="nation">{{printInfo.partyUserInfo.nation}}</span>，系中共（{{printInfo.partyUserInfo.type == 1 ? '正式' : '预备'}}）党员，身份证号码<span class="card">{{printInfo.partyUserInfo.idCard}}</span>,由<span class="kongge-1">{{printInfo.organizationRelation.orgInfoName}}</span>去<span class="kongge-1">{{printInfo.turnOutOrgPartyUser.orgInfoName == null || printInfo.turnOutOrgPartyUser.orgInfoName == '' ? printInfo.turnOutOrgPartyUser.otherOrgName : printInfo.turnOutOrgPartyUser.orgInfoName}}</span>，请转接组织关系。
+						<template v-if="printInfo.partyMembershipDue != null">
+							该同志党费已交到
+							<span class="year">{{printInfo.partyMembershipDue.payDateYear}}</span>年
+							<span class="month">{{printInfo.partyMembershipDue.payDateMonth}}</span>月。
+						</template>
+						<template v-if="printInfo.partyMembershipDue == null">
+							该同志党费缴纳情况不详，请和该同志仔细核对
+						</template>
+					</p>
 				</div>
 				<p class="validity">（有效期  30 天）</p>
 				<p class="yinzhang">（盖章）
@@ -253,12 +262,12 @@
 		el: '#app',
 		data: {
 			yzConditionFir: {
-				companyName: '测试组织超长名字了解一下',
+				companyName: '123',
 				typeName: "党员转出",
 				radius: 90
 			},
 			yzConditionSec: {
-				companyName: '南无阿弥托福',
+				companyName: '123',
 				typeName: "党员转入",
 				radius: 90
 			},
@@ -275,7 +284,7 @@
 
 				},
 				partyMembershipDue: {
-
+					payDateYear: null
 				}
 			}
 		},

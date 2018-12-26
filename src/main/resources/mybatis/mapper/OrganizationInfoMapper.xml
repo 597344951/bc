@@ -130,7 +130,10 @@
 			oi.org_info_type_id,
 			ot.org_type_id,
 			ot.org_type_name,
-			ot.org_type_describe
+			ot.org_type_describe,
+			ot.is_party_org isPartyOrg,
+			ot.org_is_branch orgIsBranch,
+			ot.org_set_join orgSetJoin
 		from 
 			organization_info oi inner join organization_type ot
 		where

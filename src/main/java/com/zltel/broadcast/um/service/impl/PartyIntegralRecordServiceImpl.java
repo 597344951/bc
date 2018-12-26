@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -29,6 +32,7 @@ import com.zltel.broadcast.um.dao.SysUserMapper;
 import com.zltel.broadcast.um.service.IntegralConstituteService;
 import com.zltel.broadcast.um.service.PartyIntegralRecordService;
 import com.zltel.broadcast.um.util.DateUtil;
+import com.zltel.broadcast.um.util.IntegralExcel;
 import com.zltel.broadcast.um.util.RegexUtil;
 
 @Service
@@ -45,6 +49,8 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     private SysUserMapper sysUserMapper;
 	@Resource
     private PartyUserInfoMapper partyUserInfoMapper;
+	@Resource
+	private IntegralExcel integralExcel;
 	@Override
     public BaseDao<PartyIntegralRecord> getInstince() {
         return this.partyIntegralRecordMapper;
@@ -174,5 +180,27 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     	} else {
     		return false;
     	}
+    }
+    
+    /**
+	 * 下载积分明细导入excel格式示例
+	 * @param baseUser 条件
+	 * @return
+	 */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public void exportIntegralExcelExample(HttpServletResponse response) {
+    	integralExcel.exportIntegralExcelExample(response);
+    }
+    
+    /**
+	 * 批量导入积分明细记录
+	 * @param file 文件
+	 * @return
+	 */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public R importIntegralExcel(HttpServletResponse response, MultipartFile file)  throws Exception {
+    	return integralExcel.importIntegralExcel(response, file);
     }
 }

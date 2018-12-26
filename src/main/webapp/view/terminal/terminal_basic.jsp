@@ -305,6 +305,11 @@
 								</template>
 							</el-table-column>
 							<el-table-column prop="name" label="终端名称"></el-table-column>
+							<el-table-column label="所属组织">
+								<template slot-scope="scope">
+									{{scope.row.orgInfo ? scope.row.orgInfo.orgInfoName:'未配置'}}
+								</template>
+							</el-table-column>
 							<el-table-column prop="loc" label="所属地区"></el-table-column>
 							<el-table-column prop="tel" label="联系电话"></el-table-column>
 							<el-table-column prop="addr" label="终端地址"></el-table-column>

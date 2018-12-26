@@ -7,20 +7,20 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.zltel.broadcast.incision.sola.utils.HttpUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.zltel.broadcast.common.configuration.SystemInfoConfig;
-import com.zltel.broadcast.common.controller.BaseController;
-
-import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.alibaba.fastjson.JSON;
+import com.zltel.broadcast.common.configuration.SystemInfoConfig;
+import com.zltel.broadcast.common.controller.BaseController;
+import com.zltel.broadcast.incision.sola.utils.HttpUtil;
+
+import io.swagger.annotations.ApiOperation;
 
 /** 媒体服务器上资源地址映射 **/
 @Controller
@@ -39,12 +39,12 @@ public class MediaResourceUrlController extends BaseController {
             sb.append(url);
         }
         String tu = sb.toString();
-        logout.debug("重定资源地址:{}", tu);
+        logout.trace("重定资源地址:{}", tu);
         response.sendRedirect(tu);
     }
     @ApiOperation(value = "根据在资源服务器上的相对地址,跳转到实际地址进行上传")
     @PostMapping("/upload")
-    public Map upload(@RequestParam("file") MultipartFile file) {
+    public Map<String, Object> upload(@RequestParam("file") MultipartFile file) {
         Map<String, Object> m;
         try {
             HttpUtil.Result result = HttpUtil.postFile(sysInfoConfig.getMediaserve() + "/upload", "file", file.getInputStream(), file.getOriginalFilename());
@@ -70,7 +70,7 @@ public class MediaResourceUrlController extends BaseController {
         sb.append(sysInfoConfig.getPosterServe());
         sb.append("/view/").append(templateId);
         String tu = sb.toString();
-        logout.debug("重定资源地址:{}", tu);
+        logout.trace("重定资源地址:{}", tu);
         response.sendRedirect(tu);
     }
     @ApiOperation("海报编辑跳转")
@@ -80,7 +80,7 @@ public class MediaResourceUrlController extends BaseController {
         sb.append(sysInfoConfig.getPosterServe());
         sb.append("/edit/").append(templateId);
         String tu = sb.toString();
-        logout.debug("重定资源地址:{}", tu);
+        logout.trace("重定资源地址:{}", tu);
         response.sendRedirect(tu);
     }
     @ApiOperation("从模板创建新海报跳转")
@@ -90,7 +90,7 @@ public class MediaResourceUrlController extends BaseController {
         sb.append(sysInfoConfig.getPosterServe());
         sb.append("/from/").append(templateId);
         String tu = sb.toString();
-        logout.debug("重定资源地址:{}", tu);
+        logout.trace("重定资源地址:{}", tu);
         response.sendRedirect(tu);
     }
     @ApiOperation("跳转新创建海报")
@@ -99,7 +99,7 @@ public class MediaResourceUrlController extends BaseController {
         StringBuilder sb = new StringBuilder();
         sb.append(sysInfoConfig.getPosterServe());
         String tu = sb.toString();
-        logout.debug("重定资源地址:{}", tu);
+        logout.trace("重定资源地址:{}", tu);
         response.sendRedirect(tu);
     }
 }

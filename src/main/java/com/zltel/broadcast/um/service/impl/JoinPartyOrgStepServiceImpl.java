@@ -111,7 +111,7 @@ public class JoinPartyOrgStepServiceImpl extends BaseDaoImpl<JoinPartyOrgStep> i
      */
 	@Override
 	@Transactional(rollbackFor=java.lang.Exception.class)
-    public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos, String orgRltDuty) throws Exception {
+    public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos, String orgRltDuty, String orgId) throws Exception {
 		//当预备党员，积极份子等同意时，要更新用户信息
     	joinPartyOrgStepMapper.updateByPrimaryKeySelective(jpos);	//更新步骤信息
     	
@@ -119,6 +119,7 @@ public class JoinPartyOrgStepServiceImpl extends BaseDaoImpl<JoinPartyOrgStep> i
     	JoinPartyOrgUser jpou = joinPartyOrgUserMapper.selectByPrimaryKey(jpos.getJoinId());
     	if ("error".equals(jpos.getStepStatus())) {
     		jpou.setJoinStatus(jpos.getStepStatus());
+    		jpou.setIsHistory(1);
     		BaseUserInfo bui = new BaseUserInfo();
 			bui.setBaseUserId(jpou.getUserId());
 			bui.setPositiveUser(0);	//取消积极分子
@@ -201,7 +202,7 @@ public class JoinPartyOrgStepServiceImpl extends BaseDaoImpl<JoinPartyOrgStep> i
     				organizationRelationMapper.deleteOrgRelationByUserId(bui.getBaseUserId());
     				_or.setOrgRltJoinTime(new Date());
     				_or.setOrgRltDutyId(Integer.parseInt(String.valueOf(orgRltDuty)));
-    				_or.setOrgRltInfoId(jpou.getJoinOrgId());
+    				_or.setOrgRltInfoId(Integer.parseInt(String.valueOf(orgId)));
     				_or.setOrgRltUserId(jpou.getUserId());
     				_or.setThisOrgFlow(true);
     				organizationRelationMapper.insertSelective(_or);	//开始添加组织关系
@@ -217,7 +218,7 @@ public class JoinPartyOrgStepServiceImpl extends BaseDaoImpl<JoinPartyOrgStep> i
     		    	}
     		    	SysUser _su = new SysUser();
     		    	_su.setUserId(su.getUserId());
-    		    	_su.setOrgId(jpou.getJoinOrgId());
+    		    	_su.setOrgId(Integer.parseInt(String.valueOf(orgId)));
     				sysUserMapper.updateByPrimaryKeySelective(_su);
 					break;
 				case 16:	//确认入党

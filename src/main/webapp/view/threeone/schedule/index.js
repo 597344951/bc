@@ -121,9 +121,9 @@ const app = new Vue({
     },
     onChoose(schedule) {
       let share = [{weburl: '/threeone/schedule/notice/' + schedule.event.id, playtime: 60}]
-      let url = '/view/publish/new.jsp?title=三会一课通知&startStep=2&url=' + encodeURIComponent(JSON.stringify(share))
+      let url = '/view/publish/new.jsp?title=会议通知&startStep=2&url=' + encodeURIComponent(JSON.stringify(share))
       if (parent.addTab) {
-        parent.addTab({ menuId: -6, name: '三会一课通知', url: url })
+        parent.addTab({ menuId: -6, name: '会议通知', url: url })
       } else {
         window.location.href = url
       }

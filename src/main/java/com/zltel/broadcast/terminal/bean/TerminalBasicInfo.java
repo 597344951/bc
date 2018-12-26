@@ -1,6 +1,7 @@
 package com.zltel.broadcast.terminal.bean;
 
 import java.util.Date;
+import java.util.List;
 
 public class TerminalBasicInfo {
     private Integer oid;
@@ -38,19 +39,26 @@ public class TerminalBasicInfo {
     private String tel;
 
     private String addr;
-    
+
     private String gis;
-    
+
     private String warranty;
-    
+
     private String loc;
-    
-    /**屏幕截图**/
+
+    /** 屏幕截图 **/
     private String coverImage;
-    /**最后同步时间**/
+    /** 最后同步时间 **/
     private Date lastSynTime;
-    
-    
+    /** 所属组织id **/
+    private Integer orgId;
+
+    private Date orgConfigTime;
+    /** 多个组织id **/
+    private List<Integer> orgIds;
+    /**关联的组织信息**/
+    private com.zltel.broadcast.um.bean.OrganizationInformation orgInfo;
+
     public String getLoc() {
         return loc;
     }
@@ -234,5 +242,37 @@ public class TerminalBasicInfo {
     public void setLastSynTime(Date lastSynTime) {
         this.lastSynTime = lastSynTime;
     }
-    
+
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
+    public Date getOrgConfigTime() {
+        return orgConfigTime;
+    }
+
+    public void setOrgConfigTime(Date orgConfigTime) {
+        this.orgConfigTime = orgConfigTime;
+    }
+
+    public List<Integer> getOrgIds() {
+        return orgIds;
+    }
+
+    public void setOrgIds(List<Integer> orgIds) {
+        this.orgIds = orgIds;
+    }
+
+    public com.zltel.broadcast.um.bean.OrganizationInformation getOrgInfo() {
+        return orgInfo;
+    }
+
+    public void setOrgInfo(com.zltel.broadcast.um.bean.OrganizationInformation orgInfo) {
+        this.orgInfo = orgInfo;
+    }
+
 }

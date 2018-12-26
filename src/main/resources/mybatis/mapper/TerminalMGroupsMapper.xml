@@ -1,147 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zltel.broadcast.terminal.m.dao.TerminalMGroupsMapper">
-    <resultMap id="BaseResultMap" type="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="label" jdbcType="VARCHAR" property="label"/>
-        <result column="description" jdbcType="VARCHAR" property="description"/>
-        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
-        <result column="add_date" jdbcType="TIMESTAMP" property="addDate"/>
-        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
-    </resultMap>
-    <sql id="Base_Column_List">
-        id, label, description, parent_id, add_date, update_date
-    </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from terminal_m_group
-        where id = #{id,jdbcType=INTEGER}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-        delete from terminal_m_group
-        where id = #{id,jdbcType=INTEGER}
-    </delete>
-    <delete id="deleteByPrimaryKeys" parameterType="java.util.List">
-        delete from terminal_m_group
-        where id in
-        <foreach collection="ids" separator="," open="(" close=")" item="id">
-            #{id}
-        </foreach>
-    </delete>
-    <insert id="insert" parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
-        insert into terminal_m_group (id, label, description,
-        parent_id, add_date, update_date
-        )
-        values (#{id,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-        #{parentId,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
-        )
-    </insert>
-    <insert id="insertSelective" parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups"
-            useGeneratedKeys="true" keyProperty="id">
-        insert into terminal_m_group
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="label != null">
-                label,
-            </if>
-            <if test="description != null">
-                description,
-            </if>
-            <if test="parentId != null">
-                parent_id,
-            </if>
-            <if test="addDate != null">
-                add_date,
-            </if>
-            <if test="updateDate != null">
-                update_date,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
-            <if test="label != null">
-                #{label,jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="parentId != null">
-                #{parentId,jdbcType=INTEGER},
-            </if>
-            <if test="addDate != null">
-                #{addDate,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateDate != null">
-                #{updateDate,jdbcType=TIMESTAMP},
-            </if>
-        </trim>
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
-        update terminal_m_group
-        <set>
-            <if test="label != null">
-                label = #{label,jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                description = #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="parentId != null">
-                parent_id = #{parentId,jdbcType=INTEGER},
-            </if>
-            <if test="addDate != null">
-                add_date = #{addDate,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateDate != null">
-                update_date = #{updateDate,jdbcType=TIMESTAMP},
-            </if>
-        </set>
-        where id = #{id,jdbcType=INTEGER}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
-        update terminal_m_group
-        set label = #{label,jdbcType=VARCHAR},
-        description = #{description,jdbcType=VARCHAR},
-        parent_id = #{parentId,jdbcType=INTEGER},
-        add_date = #{addDate,jdbcType=TIMESTAMP},
-        update_date = #{updateDate,jdbcType=TIMESTAMP}
-        where id = #{id,jdbcType=INTEGER}
-    </update>
-    <select id="selectAll" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from terminal_m_group
-        order by parent_id
-    </select>
-    <insert id="insertTerminalLink" parameterType="java.util.Map">
-        insert into terminal_m_group_terminals (group_id, terminal_id, add_date, update_date)
-        values (#{groupId}, #{terminalId}, #{addDate}, #{updateDate})
-    </insert>
-    <delete id="deleteTerminalLink" parameterType="java.lang.Integer">
-        delete from terminal_m_group_terminals
-        where group_id = #{groupId} and terminal_id = #{terminalId}
-    </delete>
-    <delete id="deleteTerminalLinkByGroup" parameterType="java.lang.Integer">
-        delete from terminal_m_group_terminals
-        where group_id = #{groupId}
-    </delete>
-    <delete id="deleteTerminalLinkByGroups" parameterType="java.util.List">
-        delete from terminal_m_group_terminals
-        where group_id in
-        <foreach collection="groupIds" separator="," open="(" close=")" item="groupId">
-            #{groupId}
-        </foreach>
-    </delete>
-    <select id="selectTerminalByGroup" parameterType="java.util.List" resultType="java.util.Map">
-        SELECT t.*, R.group_id as groupId FROM terminal_basic_info T
-        inner join terminal_m_group_terminals R on R.terminal_id = T.oid
-        where R.group_id in
-        <foreach collection="groupIds" item="id" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
-    </select>
+<mapper
+	namespace="com.zltel.broadcast.terminal.m.dao.TerminalMGroupsMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="label" jdbcType="VARCHAR" property="label" />
+		<result column="description" jdbcType="VARCHAR"
+			property="description" />
+		<result column="parent_id" jdbcType="INTEGER"
+			property="parentId" />
+		<result column="add_date" jdbcType="TIMESTAMP"
+			property="addDate" />
+		<result column="update_date" jdbcType="TIMESTAMP"
+			property="updateDate" />
+		<result column="org_id" jdbcType="INTEGER" property="orgId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, label, description, parent_id, add_date, update_date,org_id
+	</sql>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from terminal_m_group
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from terminal_m_group
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByPrimaryKeys" parameterType="java.util.List">
+		delete from terminal_m_group
+		where id in
+		<foreach collection="ids" separator="," open="(" close=")"
+			item="id">
+			#{id}
+		</foreach>
+	</delete>
+	<insert id="insert"
+		parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
+		insert into terminal_m_group (id, label, description,
+		parent_id, add_date, update_date,org_id
+		)
+		values (#{id,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP},
+		#{orgId,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into terminal_m_group
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="label != null">
+				label,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="addDate != null">
+				add_date,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="orgId != null">
+				org_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="label != null">
+				#{label,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null">
+				#{addDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orgId != null">
+				#{orgId,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
+		update terminal_m_group
+		<set>
+			<if test="label != null">
+				label = #{label,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null">
+				add_date = #{addDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orgId != null">
+				org_id = #{orgId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.zltel.broadcast.terminal.m.bean.TerminalMGroups">
+		update terminal_m_group
+		set label = #{label,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		parent_id = #{parentId,jdbcType=INTEGER},
+		add_date = #{addDate,jdbcType=TIMESTAMP},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		org_id = #{orgId,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from terminal_m_group
+		<where>
+			<if test="value != null">
+				and org_id = #{value}
+			</if>
+		</where>
+		order by parent_id
+	</select>
+	<insert id="insertTerminalLink" parameterType="java.util.Map">
+		insert into terminal_m_group_terminals (group_id, terminal_id, add_date,
+		update_date)
+		values (#{groupId}, #{terminalId}, #{addDate}, #{updateDate})
+	</insert>
+	<delete id="deleteTerminalLink"
+		parameterType="java.lang.Integer">
+		delete from terminal_m_group_terminals
+		where group_id = #{groupId} and terminal_id = #{terminalId}
+	</delete>
+	<delete id="deleteTerminalLinkByGroup"
+		parameterType="java.lang.Integer">
+		delete from terminal_m_group_terminals
+		where group_id = #{groupId}
+	</delete>
+	<delete id="deleteTerminalLinkByGroups"
+		parameterType="java.util.List">
+		delete from terminal_m_group_terminals
+		where group_id in
+		<foreach collection="groupIds" separator="," open="("
+			close=")" item="groupId">
+			#{groupId}
+		</foreach>
+	</delete>
+	<select id="selectTerminalByGroup"
+		parameterType="java.util.List" resultType="java.util.Map">
+		SELECT t.*, R.group_id as groupId FROM terminal_basic_info T
+		inner join terminal_m_group_terminals R on R.terminal_id = T.oid
+		where R.group_id in
+		<foreach collection="groupIds" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</select>
 </mapper>

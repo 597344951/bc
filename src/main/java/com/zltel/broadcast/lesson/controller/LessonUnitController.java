@@ -1,6 +1,7 @@
 package com.zltel.broadcast.lesson.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
-import com.zltel.broadcast.common.pager.PagerHelper;
 import com.zltel.broadcast.lesson.bean.LessonSection;
 import com.zltel.broadcast.lesson.bean.LessonUnit;
 import com.zltel.broadcast.lesson.bean.LessonUnitProgress;
@@ -46,16 +44,15 @@ public class LessonUnitController extends BaseController {
 
     @Resource
     private LessonUnitProgressService progressService;
-    
+
     @ApiOperation("搜索")
     @PostMapping("/unit/search/{pageNum}-{pageSize}")
     public R search(@PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize,
             @RequestBody LessonUnit record) {
         SysUser user = getSysUser();
         record.setLearnOrgId(user.getOrgId());
-        Page<LessonUnit> page = PageHelper.startPage(pageNum, pageSize);
-        List<LessonUnit> lessons = this.unitService.queryCategoryRelatedData(record);
-        Pager pager = PagerHelper.toPager(page);
+        Pager pager = new Pager(pageNum, pageSize);
+        List<LessonUnit> lessons = this.unitService.queryCategoryRelatedData(record, pager);
         return R.ok().setData(lessons).setPager(pager);
     }
 
@@ -107,7 +104,7 @@ public class LessonUnitController extends BaseController {
             throws ServletException, IOException {
         LessonUnit record = new LessonUnit();
         record.setLessonUnitId(lessonUnitId);
-        List<LessonUnit> list = this.unitService.queryCategoryRelatedData(record);
+        List<LessonUnit> list = this.unitService.queryCategoryRelatedData(record, Pager.ONE_RECORD);
         if (list.isEmpty()) {
             throw RRException.makeThrow("课程不存在");
         }
@@ -126,9 +123,11 @@ public class LessonUnitController extends BaseController {
                 lessonId = currentProgress.getLessonId();
             } else {
                 // 从 课程列表中获取第一个 课程
-                Optional<LessonSection> opt =
-                        lessonUnit.getLessonTree().stream().flatMap(lu -> lu.getChildren().parallelStream())
-                                .filter(lu -> lu.getSourceType() != 2).findFirst();
+                Optional<LessonSection> opt = lessonUnit.getLessonTree().stream()
+                        .flatMap(lu -> lu.getChildren() != null
+                                ? lu.getChildren().parallelStream()
+                                : Arrays.asList(lu).parallelStream())
+                        .filter(lu -> lu.getSourceType() != 2).findFirst();
                 if (opt.isPresent()) {
                     currentLesson = opt.get();
                     currentProgress = new LessonUnitProgress();
@@ -155,7 +154,7 @@ public class LessonUnitController extends BaseController {
             this.request.setAttribute("rm", rm);
             this.request.setAttribute("rmJson", JSON.toJSONString(rm));
         }
-        
+
         currentProgress = this.progressService.getLessonUnitProgress(currentProgress);
 
         this.request.setAttribute("lessonUnit", lessonUnit);

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,9 @@ import com.github.pagehelper.PageInfo;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
-import com.zltel.broadcast.terminal.bean.MapInfo;
 import com.zltel.broadcast.incision.sola.bean.Screen;
 import com.zltel.broadcast.incision.sola.service.SolaProgramService;
+import com.zltel.broadcast.terminal.bean.MapInfo;
 import com.zltel.broadcast.terminal.bean.OnlineCountBean;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
 import com.zltel.broadcast.terminal.bean.TerminalEcharts;
@@ -149,9 +150,9 @@ public class TerminalBasicInfoServiceImpl implements TerminalBasicInfoService {
     }
 
     @Override
-    public Map<String, Integer> countOnlineTerminal() {
+    public Map<String, Integer> countOnlineTerminal(TerminalBasicInfo record) {
         Map<String, Integer> ret = new HashMap<>();
-        List<OnlineCountBean> list = this.tbm.countOnlineTerminal();
+        List<OnlineCountBean> list = this.tbm.countOnlineTerminal(record);
         list.forEach(m -> ret.put(m.getType(), m.getCount()));
         return ret;
     }

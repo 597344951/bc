@@ -280,17 +280,17 @@
 					#{id}
 				</foreach>
 			</if>
-			<if test="keyword != null">
+			<if test="keyword != null and keyword != '' ">
 				AND name like CONCAT('%',#{keyword},'%')
 			</if>
 			<!-- 按照 权限资格过滤 -->
 			<if test="learnOrgId != null">
-				AND(
+				AND (
 				learner_limit = 0
 				or lesson_unit_id in (
-				select lesson_unit_id from
-				lesson_learner_limit l where l.org_id = #{learnOrgId}
-				)
+						select lesson_unit_id from
+						lesson_learner_limit l where l.org_id = #{learnOrgId}
+					)
 				)
 			</if>
 		</where>

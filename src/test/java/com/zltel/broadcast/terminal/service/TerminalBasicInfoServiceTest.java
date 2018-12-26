@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.zltel.BroadcastApplicationTests;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
+
 @Ignore
 @Generated(value = "org.junit-tools-1.0.6")
 public class TerminalBasicInfoServiceTest extends BroadcastApplicationTests {
@@ -22,7 +23,7 @@ public class TerminalBasicInfoServiceTest extends BroadcastApplicationTests {
 
     @Test
     public void testCountOnlineTerminal() throws Exception {
-        Map<String, Integer> result = this.servie.countOnlineTerminal();
+        Map<String, Integer> result = this.servie.countOnlineTerminal(null);
         logout.info(JSON.toJSONString(result));
     }
 

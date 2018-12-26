@@ -182,20 +182,16 @@
 	  bui.base_user_id userId,
 	  bui.name name,
 	  pir.change_describes changeDescribes,
-	  ict.type changeType,
-	  ict.name changeName,
-	  ict.describes changeTypeDescribes,
-	  ict.operation changeOperation,
 	  pir.change_time changeTime,
 	  pir.change_score changeScore,
 	  pir.is_merge isMerge,
-	  ic.type type
+	  ic.type type,
+	  pir.change_integral_type changeIntegralType
 	from
 	  party_integral_record pir 
 	  inner join organization_information oi on pir.org_id = oi.org_info_id 
 	  inner join party_user_info pui on pui.party_user_id = pir.party_id 
-	  inner join base_user_info bui on pui.party_user_id = bui.base_user_id
-	  inner join integral_change_type ict on pir.change_integral_type = ict.ict_id 
+	  inner join base_user_info bui on pui.party_user_id = bui.base_user_id 
 	  inner join integral_constitute ic on ic.ic_id = pir.change_type_id
 	where
 	  1 = 1

@@ -17,11 +17,14 @@ public interface BaseUserInfoMapper extends BaseDao<BaseUserInfo> {
     int updateByPrimaryKeySelective(BaseUserInfo record);
 
     int updateByPrimaryKey(BaseUserInfo record);
-    
+
     /**
      * 查询基础用户信息
+     * 
      * @param baseUserInfo
      * @return
      */
     public List<BaseUserInfo> queryBaseUserInfos(BaseUserInfo baseUserInfo);
+
+    BaseUserInfo selectByIdCard(String idCard);
 }

@@ -1,6 +1,10 @@
 package com.zltel.broadcast.terminal.controller;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +15,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.controller.BaseController;
 import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
+import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.common.validator.ValidatorUtils;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
 import com.zltel.broadcast.terminal.service.TerminalBasicInfoService;
+import com.zltel.broadcast.um.bean.OrganizationInfo;
+import com.zltel.broadcast.um.bean.OrganizationInformation;
+import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.service.OrganizationInformationService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -28,14 +37,33 @@ import io.swagger.annotations.ApiOperation;
 public class TerminalBasicInfoController extends BaseController {
     @Autowired
     private TerminalBasicInfoService tbs;
+    
+    @Resource
+    private OrganizationInformationService orgService;
 
-    @RequestMapping(value = "/queryInfo/{pageNum}-{pageSize}", method = RequestMethod.POST)
+    @PostMapping(value = "/queryInfo/{pageNum}-{pageSize}")
     @RequiresPermissions(value = {"terminal:basic:query"})
     @ApiOperation(value = "查询终端基础信息")
     public R queryBaiscInfo(@RequestBody TerminalBasicInfo tbi, @PathVariable("pageNum") int pageNum,
             @PathVariable("pageSize") int pageSize) {
+        tbi.setOrgId(null);
+        // 增加只查询自身组织的设备
+        SysUser user = this.getSysUser();
+        if(AdminRoleUtil.isPlantAdmin()) {
+            
+            //平台管理员查询所有
+        }else {
+            // 查询自身组织所具有的 终端
+            List<OrganizationInformation> orgs = orgService.queryOrgInfosSelect(null);
+            OrganizationInformation target = new OrganizationInformation();
+            target.setOrgInfoId(user.getOrgId());
+            List<OrganizationInformation> chi = TreeNodeCreateUtil.getAllChildrenList(target, orgs, OrganizationInformation::getOrgInfoId, OrganizationInformation::getOrgInfoParentId);
+            if(chi.isEmpty())chi.add(target);
+            List<Integer> orgIds = chi.stream().map(OrganizationInformation::getOrgInfoId).collect(Collectors.toList());
+            tbi.setOrgIds(orgIds);
+        }
         R r = tbs.queryBasicInfo(tbi, pageNum, pageSize);
-        Map<String, Integer> count = this.tbs.countOnlineTerminal();
+        Map<String, Integer> count = this.tbs.countOnlineTerminal(tbi);
         r.put("online", count);
         return r;
     }

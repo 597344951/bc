@@ -117,6 +117,6 @@ public class OrganizationJoinProcessServiceImpl extends BaseDaoImpl<Organization
     	if (ojps != null && ojps.size() > 0) {
     		return R.ok().setData(ojps);
     	}
-    	return R.error().setMsg("该组织还没有指定入党流程");
+    	return R.error().setMsg("该党委还没有指定入党流程");
     }
 }

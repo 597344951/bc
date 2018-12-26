@@ -98,7 +98,7 @@
 							提交时间：{{joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepTime}}
 						</p>
 						<p>
-							希望加入的组织：{{joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.orgInfoName}}
+							希望加入的党委：{{joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.orgInfoName}}
 						</p>
 						<p>
 							加入方式：{{joinPartyOrgUser.joinStatus.joinPartyOrgUserInfo.joinPartyType}}
@@ -178,8 +178,22 @@
 					adoptJoinPartyOrgStep()">下一步</el-button>
 		</el-dialog>
 
-		<el-dialog @close="" title="确定角色" :visible.sync="join_confirm_org_duty.dialog">
+		<el-dialog @close="" title="为预备党员分配组织" :visible.sync="join_confirm_org_duty.dialog" width="240px">
 			<div>
+				<el-select size="small" clearable 
+					@change="joinOrgSelectDuty"
+					v-model="join_confirm_org_duty.orgId" placeholder="请选择党支部">
+					<el-option
+						v-for="item in join_confirm_org_duty.orgInfosSelect"
+						:key="item.orgInfoId"
+						:label="item.orgInfoName"
+						:value="item.orgInfoId">
+						<span style="float: left; margin-right: 15px;">{{item.orgInfoName}}</span>
+						<span style="float: right;">{{item.orgInfoId}}</span>
+					</el-option>
+				</el-select>
+			</div>
+			<div style="margin: 10px;">
 				<el-tree :default-expand-all="true" 
 					node-key="id" 
 					ref="joinOrgInfoTree"
@@ -250,6 +264,8 @@
 			},
 			join_confirm_org_duty: {
 				dialog: false,
+				orgId: null,
+				orgInfosSelect: [],
 				orgDutyTreesForOrgInfo: null
 			},
 			joinOrgInfoOrgDutyTreesForOrgInfoProps: {
@@ -268,10 +284,27 @@
 		methods: {
 			openTurnOutOrgDutyDialog(orgId) {
 				let obj = this;
-
+				let url = "/org/ifmt/joinOrgQueryOrgInfosSelect";
+				let t = {
+					orgInfoParentId: orgId	//列出除党委外的其他党组织
+				}
+				$.post(url, t, function(data, status){	//选择加入的党委
+					if (data.code == 200) {
+						obj.join_confirm_org_duty.orgInfosSelect = data.data;
+						obj.join_confirm_org_duty.dialog = true;
+					} else {
+						obj.join_confirm_org_duty.orgInfosSelect = [];
+					}
+				})
+			},
+			joinOrgSelectDuty() {
+				let obj = this;
+				if (obj.join_confirm_org_duty.orgId == null || obj.join_confirm_org_duty.orgId == '') {
+					return;
+				}
 				let url = "/org/duty/queryOrgDutyTreeForOrgInfo";
 				let t = {
-					orgDutyOrgInfoId: orgId
+					orgDutyOrgInfoId: obj.join_confirm_org_duty.orgId
 				}
 				$.post(url, t, function(datas, status){
 					if (datas.code == 200) {
@@ -284,8 +317,6 @@
 					}
 					
 				})
-
-				obj.join_confirm_org_duty.dialog = true;
 			},
 			forPartyUser_manager_queryOrgDutyForOrgInfoClickTreeToAddId(menuTrees){	/* 向树里添加id属性，方便设置node-key */
 				var obj = this;
@@ -374,8 +405,10 @@
 					isFile: obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.isFile
 				}
 				if(obj.joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.processId == 14) {
+					t.orgId = obj.join_confirm_org_duty.orgId;
 					t.orgRltDuty = obj.$refs.joinOrgInfoTree.getCheckedKeys(false)[0];
 				} else {
+					t.orgId = '';
 					t.orgRltDuty = '';
 				}
 				$.post(url, t, function(data, status){

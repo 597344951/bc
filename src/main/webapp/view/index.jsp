@@ -192,7 +192,7 @@ $(function(){
 var sysInfo = {
     sysName: '${sysInfo.appname}',
     userId:'<shiro:principal property="userId"/>',
-    sysUserName: '<shiro:principal property="username"/>',
+    sysUserName: '<shiro:principal property="trueName"/>',
     title_theme: ('#'+('<shiro:principal property="theme"/>' || '20a0ff')),
     adminRole: `${admin_role}`
 }

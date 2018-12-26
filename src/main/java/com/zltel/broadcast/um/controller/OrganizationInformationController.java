@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -39,7 +40,49 @@ public class OrganizationInformationController extends BaseController {
 	@ApiOperation(value = "查询到组织信息")
 	public R queryOrgInfosSelect(OrganizationInformation organizationInformation) {
 		try {
-			return organizationInformationService.queryOrgInfosSelect(organizationInformation);
+			List<OrganizationInformation> orgInfoSelects = organizationInformationService.queryOrgInfosSelect(organizationInformation);
+			if(orgInfoSelects != null && orgInfoSelects.size() > 0) {
+				return R.ok().setData(orgInfoSelects);
+			} else {
+				return R.ok().setMsg("没有查询到组织信息");
+			}
+		} catch (Exception e) {
+			logout.error(e.getMessage());
+			return R.error().setMsg("查询到组织信息失败");
+		}
+	}
+	
+	/**
+	 * 查询到组织信息（关联组织类型表的查询）
+	 * @param organizationInformation 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryOrgInfosSelects", method=RequestMethod.POST)
+	@ApiOperation(value = "查询到组织信息")
+	public R queryOrgInfosSelects(@RequestParam Map<String, Object> condition) {
+		try {
+			List<Map<String, Object>> orgInfoSelects = organizationInformationService.queryOrgInfosSelects(condition);
+			if(orgInfoSelects != null && orgInfoSelects.size() > 0) {
+				return R.ok().setData(orgInfoSelects);
+			} else {
+				return R.ok().setMsg("没有查询到组织信息");
+			}
+		} catch (Exception e) {
+			logout.error(e.getMessage());
+			return R.error().setMsg("查询到组织信息失败");
+		}
+	}
+	
+	/**
+	 * 入党时加入党组织组织信息
+	 * @param organizationInformation 条件
+	 * @return
+	 */
+	@RequestMapping(value="/joinOrgQueryOrgInfosSelect", method=RequestMethod.POST)
+	@ApiOperation(value = "查询到组织信息")
+	public R joinOrgQueryOrgInfosSelect(@RequestParam Map<String, Object> orgInfoConditions) {
+		try {
+			return organizationInformationService.joinOrgQueryOrgInfosSelect(orgInfoConditions);
 		} catch (Exception e) {
 			logout.error(e.getMessage());
 			return R.error().setMsg("查询到组织信息失败");

@@ -220,7 +220,7 @@ const app = new Vue({
       })
     },
     initM2(container) {
-      xiuxiu.setLaunchVars('quality', 100)
+      //xiuxiu.setLaunchVars('quality', 100)
       xiuxiu.embedSWF(container, 2, '100%', '100%')
       xiuxiu.setUploadURL(`${imageHost}/image`)
       xiuxiu.setUploadType(2)

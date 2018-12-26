@@ -254,6 +254,21 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public List<Schedule> queryDemocraticAppraisalEnableSchedule(SysUser user) {
+        Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
+        Integer orgId = user == null ? null : user.getOrgId();
+        if(AdminRoleUtil.isPlantAdmin()) {
+            orgId = null;
+        } else if(orgId == null) {
+            return new ArrayList<Schedule>();
+        }
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(6);
+        }};
+        return scheduleMapper.selectByTime(orgId, timeStartFrom, null, null, null, types, null, 1, Integer.MAX_VALUE);
+    }
+
+    @Override
     public List<Schedule> queryLifeCompletedSchedule(SysUser user, int pageNum, int pageSize) {
         Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
         Integer orgId = user == null ? null : user.getOrgId();
@@ -269,9 +284,32 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public List<Schedule> queryDemocraticAppraisalCompletedSchedule(SysUser user, int pageNum, int pageSize) {
+        Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
+        Integer orgId = user == null ? null : user.getOrgId();
+        if(AdminRoleUtil.isPlantAdmin()) {
+            orgId = null;
+        } else if(orgId == null) {
+            return new ArrayList<Schedule>();
+        }
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(6);
+        }};
+        return scheduleMapper.selectByTime(orgId, null, null, null, timeEndTo, types, "desc", pageNum, pageSize);
+    }
+
+    @Override
     public List<Map<String, Object>> queryLifeParticipatedSchedule(String username, int pageNum, int pageSize) {
         List<Integer> types = new ArrayList<Integer>() {{
             add(5);
+        }};
+        return scheduleMapper.selectByUsername(username, types, pageNum, pageSize);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryDemocraticAppraisalParticipatedSchedule(String username, int pageNum, int pageSize) {
+        List<Integer> types = new ArrayList<Integer>() {{
+            add(6);
         }};
         return scheduleMapper.selectByUsername(username, types, pageNum, pageSize);
     }

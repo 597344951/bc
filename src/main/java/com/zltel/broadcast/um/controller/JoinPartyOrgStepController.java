@@ -64,9 +64,9 @@ public class JoinPartyOrgStepController extends BaseController {
      */
 	@RequestMapping(value="/updateJoinPartyOrgSteps", method=RequestMethod.POST)
 	@ApiOperation(value = "变更此步骤的信息")
-	public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos, @RequestParam("orgRltDuty") String orgRltDuty) {
+	public R updateJoinPartyOrgSteps(JoinPartyOrgStep jpos, @RequestParam("orgRltDuty") String orgRltDuty, @RequestParam("orgId") String orgId) {
 		try {
-			return joinPartyOrgStepService.updateJoinPartyOrgSteps(jpos, orgRltDuty);
+			return joinPartyOrgStepService.updateJoinPartyOrgSteps(jpos, orgRltDuty, orgId);
 		} catch (Exception e) {
 			return R.error().setMsg("变更此步骤的信息失败");
 		}

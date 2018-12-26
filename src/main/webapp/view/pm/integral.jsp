@@ -64,6 +64,26 @@
 						  	</div>
 						</el-popover>
 					</shiro:hasPermission>
+					<el-popover class="margin-left-10"
+						placement="bottom" 
+						width="400" 
+						trigger="click" >
+						<el-button size="small" type="primary" slot="reference">
+							<i class="el-icon-upload"></i>
+							导入积分
+						</el-button>
+						<div>
+							<el-button type="text" @click="exportIntegralExcelExample">下载Excel模板</el-button>，按照模板填写
+							<el-upload
+								action="" 
+								:http-request="importIntegralExcel"
+								:multiple="true" 
+								:before-upload="validateIntegralExcel" >
+								<el-button type="text">点击上传excel文件</el-button>
+							</el-upload>
+							<el-button type="text" @click="openImportIntegralExcelErrorMsgDialog">显示导入错误信息</el-button>
+						</div>
+					</el-popover>
 					<shiro:hasPermission name="org:ic:query">
 						<el-popover
 							v-if="signInAccountType != 'party_role'"
@@ -213,24 +233,30 @@
 						style="width: 100%">
 						<el-table-column label="组织" prop="orgInfoName"></el-table-column>
 						<el-table-column label="姓名" prop="name"></el-table-column>
-						<el-table-column label="积分变更类型" prop="changeType"></el-table-column>
 						<el-table-column label="积分变更项" prop="type"></el-table-column>
-						<el-table-column label="积分变更说明" prop="changeDescribes"></el-table-column>
-						<el-table-column label="积分变更时间" prop="changeTime" width=200></el-table-column>
 						<el-table-column label="积分变更操作">
 							<template slot-scope="scope">
-								<span 
-									:style="getChangeOperation(scope.row.changeOperation)">
-									{{scope.row.changeOperation == 1 ? "加分" : "扣分"}}
+								<span :style="getChangeOperation(scope.row.changeIntegralType)">
+									{{scope.row.changeIntegralType == 1 ? "加分" : "扣分"}}
 								</span>
 							</template>
 						</el-table-column>
-						<el-table-column label="积分变更" prop="changeScore"></el-table-column>
-						<el-table-column label="是否计入总积分">
+						<el-table-column label="积分变更">
 							<template slot-scope="scope">
-								<span>{{scope.row.isMerge == 1 ? "是" : "否"}}</span>
+								<span :style="getChangeOperation(scope.row.changeIntegralType)">
+									{{scope.row.changeScore}}
+								</span>
 							</template>
 						</el-table-column>
+						<el-table-column label="积分变更说明">
+							<template slot-scope="scope">
+								<span>
+									{{scope.row.changeDescribes == null || scope.row.changeDescribes == '' ? 
+									"无" : scope.row.changeDescribes}}
+								</span>
+							</template>
+						</el-table-column>
+						<el-table-column label="积分变更时间" prop="changeTime" width=200></el-table-column>
 					</el-table>
 				</div>
 			</el-main>
@@ -245,7 +271,7 @@
 					<div>
 						<el-form-item label="积分项类型" prop="icId">
 							<el-select size="small" clearable 
-									@change="ic_manage_queryICTForOperation"
+									@change=""
 									style="width: 180px;"
 									v-model="changePartyUserIntegralScoreForm.icId" filterable placeholder="请选择变更类型">
 								<el-option
@@ -262,11 +288,8 @@
 							<el-select size="small" clearable 
 									style="width: 180px;"
 									v-model="changePartyUserIntegralScoreForm.ictId" filterable placeholder="请选择变更分类">
-								<el-option
-									v-for="item in selectBox.ict"
-								    :key="item.ictId"
-								    :label="item.type"
-								    :value="item.ictId">
+								<el-option label="加分" value="1"></el-option>
+								<el-option label="扣分" value="0"></el-option>
 								</el-option>
 							</el-select>
 						</el-form-item>
@@ -281,14 +304,6 @@
 								size="small" 
 								v-model="changePartyUserIntegralScoreForm.changeScore" 
 								placeholder="例：-3、0、5"></el-input>
-						</el-form-item>
-					</div>
-					<div>
-						<el-form-item label="计入总分" prop="isMerge">
-							<el-select style="width: 180px;" v-model="changePartyUserIntegralScoreForm.isMerge" size="small">
-								<el-option label="否" :value="0"></el-option>
-								<el-option label="是" :value="1"></el-option>
-							</el-select>
 						</el-form-item>
 					</div>
 				</div>
@@ -316,8 +331,8 @@
 			<div style="width: 100%; margin: 0 10px;">
 				<div style="font-size: 14px; color: red; font-weight: bold; ">
 					<p>如果要使用积分系统，请初始化积分项中没有设置的的项，未设置的项标记在积分名称的后面</p>
-					<p>1、如果出现“分值未设置”，请设置该项的分值</p>
-					<p>2、如果出现“加分未设置”、“减分未设置”，请设置党员该项积分加/减分时的分值变更信息</p>
+					<p>1、带“*”符号的项为系统内置积分项，用于自动计算积分明细，被标注的项要根据提示设置，其余只用设置分值</p>
+					<p>2、此处加/扣分用于系统积分自动计算，导入积分/手动设置党员积分不受影响，可自由填写加/扣分值</p>
 				</div>
 				<div style="margin: 10px 0;">
 					<el-container>
@@ -329,7 +344,13 @@
 						    	:default-expand-all="true" 
 						    	:data="ic_manager_orgInfoTreeOfIntegralConstitute" 
 						    	:props="ic_manager_orgInfoTreeOfIntegralConstituteProps" 
-						    	@node-click="ic_manage_getIntegralInfo">
+								@node-click="ic_manage_getIntegralInfo">
+								<span class="custom-tree-node" slot-scope="{ node, data }">
+									<span>
+										<span v-if="data.data.isInnerIntegral == '1'" style="color: red; font-weight: bold;">*</span>
+										{{ node.label }}
+									</span>
+								</span>
 						  	</el-tree>
 					  	</el-aside>
 					  	<el-main>
@@ -402,7 +423,7 @@
 														style="width: 230px;" 
 														size="mini" 
 														v-model="updateIntegralInfoForm.add_integral" 
-														placeholder="分数必须要大于0"></el-input>
+														placeholder="分数必须要大于或等于0"></el-input>
 												</el-form-item>
 											</div>
 										</div>
@@ -443,7 +464,7 @@
 														style="width: 230px;" 
 														size="mini" 
 														v-model="updateIntegralInfoForm.reduce_integral" 
-														placeholder="分数必须要小于0"></el-input>
+														placeholder="分数必须要小于或等于0"></el-input>
 												</el-form-item>
 											</div>
 										</div>
@@ -470,6 +491,22 @@
 					  	</el-main>
 					</el-container>
 				</div>
+			</div>
+		</el-dialog>
+	
+		<el-dialog title="导入积分明细错误信息" :visible.sync="importIntegralExcelErrorMsgDialog" width="50%">
+			<span style="margin: 0 15px">
+				可以在
+				<span style="color: blue"> 导入积分->显示导入错误信息 </span>
+				再次打开
+			</span>
+			<div style="margin: 0 15px">
+				<el-input 
+				  	type="textarea"
+				 	:autosize="{ minRows: 10, maxRows: 15}"
+				 	placeholder="导入积分明细失败时，对表格校验的错误信息将显示在这里"
+					v-model="importIntegralExcelErrorMsg">
+				</el-input>
 			</div>
 		</el-dialog>
 	</div>
@@ -531,11 +568,9 @@
 					}
 				],
 				add_integral: [
-					{ required: true, message: '请输入建议加分值', trigger: 'blur' },
 					{ pattern: /^\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
 				],
 				reduce_integral: [
-					{ required: true, message: '请输入建议扣分值', trigger: 'blur' },
 					{ pattern: /^-\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
 				]
 			},
@@ -576,7 +611,6 @@
 				icId: null,	/*用于判断类型选择框是否有值，不提交*/
 				ictId: null,
 				changeScore: null,
-				isMerge: null,
 				changeDescribes: null
 			},
 			selectBox: {
@@ -585,15 +619,27 @@
 				orgInfo_Ic: []
 			},
 			changePartyUserIntegralScoreFormRules: {
+				icId: [
+					{ required: true, message: '请选择积分变更类型', trigger: 'blur' }
+				],
 				ictId: [
 					{ required: true, message: '请选择分数变更类型', trigger: 'blur' }
 				],
 				changeScore: [
 					{ required: true, message: '请输入变更分值', trigger: 'blur' },
-					{ pattern: /^(-|)?\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
-				],
-				isMerge: [
-					{ required: true, message: '请选择是否计入总分', trigger: 'blur' }
+					{ pattern: /^(-|)?\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'},
+					{ 
+		        		validator: function(rule, value, callback){
+	        				if (appInstince.changePartyUserIntegralScoreForm.ictId == 1 && appInstince.changePartyUserIntegralScoreForm.changeScore < 0) {
+								callback(new Error('加分分值应大于0'));
+							} else if (appInstince.changePartyUserIntegralScoreForm.ictId == 0 && appInstince.changePartyUserIntegralScoreForm.changeScore > 0) {
+								callback(new Error('扣分分值应小于0!'));
+							} else {
+								callback();
+							}
+		        		},
+		        		trigger: 'blur'
+		        	}
 				]
 			},
 			orgIntegralInfo: {
@@ -604,11 +650,13 @@
 				children: 'children',
 	            label: function(_data, node){
 	            	return _data.data.type + "==>" + (_data.data.integral == undefined ? "分值未设置" : _data.data.integral + "分") + 
-	            		(_data.data.isChildrens ? "" : (_data.data.isReduceIntegral ? "" : " / 扣分未设置")) + 
-	            		(_data.data.isChildrens ? "" : (_data.data.isAddIntegral ? "" : " / 加分未设置"));
+	            		(_data.data.isInnerIntegral == 1 ? (_data.data.isChildrens ? "" : (_data.data.isReduceIntegral ? "" : " / 扣分未设置")) : "") + 
+	            		(_data.data.isInnerIntegral == 1 ? (_data.data.isChildrens ? "" : (_data.data.isAddIntegral ? "" : " / 加分未设置")) : "");
 	            }
 			},
-			signInAccountType: null
+			signInAccountType: null,
+			importIntegralExcelErrorMsgDialog: false,
+			importIntegralExcelErrorMsg: null
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -938,7 +986,6 @@
 							changeDescribes: obj.changePartyUserIntegralScoreForm.changeDescribes,
 							changeIntegralType: obj.changePartyUserIntegralScoreForm.ictId,
 							changeScore: obj.changePartyUserIntegralScoreForm.changeScore,
-							isMerge: obj.changePartyUserIntegralScoreForm.isMerge,
 							changeTypeId: obj.changePartyUserIntegralScoreForm.icId
 						}
 						$.post(url, t, function(datas, status){
@@ -956,6 +1003,52 @@
 			ic_manage_resetChangePartyUserIntegralScoreForm() {
 				var obj = this;
         		obj.$refs.changePartyUserIntegralScoreForm.resetFields();
+			},
+			exportIntegralExcelExample() {
+				window.location = "/party/integral/exportIntegralExcelExample";
+			},
+			validateIntegralExcel(thisFile) {
+				var fileFormat = thisFile.name.split(".");
+				if (fileFormat == null || fileFormat == undefined) {
+					toast('格式错误',"只能上传excel文档（xlsx、xls）",'error');
+					return false;
+				}
+				var fileSuffix = fileFormat[fileFormat.length - 1];	/* 拿到文件后缀 */
+				if (fileSuffix == "xlsx" || fileSuffix == "xls") {
+					return true;
+				} else {
+					toast('格式错误',"只能上传excel文档（xlsx、xls）",'error');
+					return false;
+				}
+			},
+			importIntegralExcel(thisImport) {
+				var obj = this;
+				var formData = new FormData();
+				formData.append("file", thisImport.file);
+				$.ajax({
+                   url: "/party/integral/importIntegralExcel",
+                   data: formData,
+                   type: "Post",
+                   dataType: "json",
+                   cache: false,//上传文件无需缓存
+                   processData: false,//用于对data参数进行序列化处理 这里必须false
+                   contentType: false, //必须
+                   success: function (data) {
+                	   if (data.code == 200) {
+                		   toast('导入成功',data.msg,'success');
+                		   obj.importIntegralExcelErrorMsg = null;
+                		   obj.ic_manage_queryPartyIntegralRecords();
+                	   } else if (data.code == 500) {
+                		   toast('导入失败',data.msg,'error');
+                		   obj.importIntegralExcelErrorMsg = data.data;
+                		   obj.importIntegralExcelErrorMsgDialog = true;
+                	   }
+                   },
+               })
+			},
+			openImportIntegralExcelErrorMsgDialog() {
+				let obj = this;
+				obj.importIntegralExcelErrorMsgDialog = true;
 			}
 		}
 	});

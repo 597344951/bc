@@ -2,12 +2,15 @@ package com.zltel.broadcast.um.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.um.bean.PartyIntegralRecord;
@@ -56,6 +59,36 @@ public class PartyIntegralRecordController {
 			return partyIntegralRecordService.insertPartyUserIntegralRecord(pir);
 		} catch (Exception e) {
 			return R.error().setMsg("添加积分变更记录失败");
+		}
+	}
+	
+	/**
+	 * 下载积分记录明细导入excel格式示例
+	 * @param response 条件
+	 * @return
+	 */
+	@RequestMapping(value="/exportIntegralExcelExample", method=RequestMethod.GET)
+	@ApiOperation(value = "下载积分记录明细导入excel格式示例")
+	public void exportIntegralExcelExample(HttpServletResponse response) {
+		try {
+			partyIntegralRecordService.exportIntegralExcelExample(response);
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	/**
+	 * 批量导入积分记录明细
+	 * @param response 条件
+	 * @return
+	 */
+	@RequestMapping(value="/importIntegralExcel", method=RequestMethod.POST)
+	@ApiOperation(value = "批量导入积分记录明细")
+	public R importIntegralExcel(HttpServletResponse response, MultipartFile file) {
+		try {
+			return partyIntegralRecordService.importIntegralExcel(response, file);
+		} catch (Exception e) {
+			return R.error().setMsg("导入失败");
 		}
 	}
 }

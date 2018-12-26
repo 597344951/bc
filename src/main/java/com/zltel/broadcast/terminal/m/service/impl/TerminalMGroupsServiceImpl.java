@@ -40,8 +40,8 @@ public class TerminalMGroupsServiceImpl implements TerminalMGroupsService {
     }
 
     @Override
-    public List<TerminalMGroups> groups() {
-        List<TerminalMGroups> groupList = terminalMGroupsMapper.selectAll();
+    public List<TerminalMGroups> groups(Integer orgId) {
+        List<TerminalMGroups> groupList = terminalMGroupsMapper.selectAll(orgId);
         List<TerminalMGroups> group = new ArrayList<>();
         treeGroup(group, groupList);
         return group;

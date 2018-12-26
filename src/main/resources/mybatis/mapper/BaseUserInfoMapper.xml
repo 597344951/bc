@@ -58,6 +58,12 @@
     from base_user_info
     where base_user_id = #{baseUserId,jdbcType=INTEGER}
   </select>
+  <select id="selectByIdCard" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from base_user_info
+    where id_card = #{value,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from base_user_info
     where base_user_id = #{baseUserId,jdbcType=INTEGER}

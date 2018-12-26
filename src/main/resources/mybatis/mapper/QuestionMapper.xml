@@ -29,7 +29,6 @@
             <result column="category_update_date" jdbcType="TIMESTAMP" property="updateDate"/>
         </association>
         <collection property="answers" ofType="com.zltel.broadcast.question.bean.Answer">
-            <id property="question_id" jdbcType="INTEGER" column="questionId"/>
             <result column="answer_id" jdbcType="INTEGER" property="answerId"/>
             <result column="answer_content" jdbcType="VARCHAR" property="content"/>
             <result column="answer_type" jdbcType="INTEGER" property="type"/>

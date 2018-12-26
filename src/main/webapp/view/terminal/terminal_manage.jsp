@@ -166,6 +166,11 @@
                                         <td>：</td>
                                         <td>{{t.tel}}</td>
                                     </tr>
+                                    <tr>
+                                        <td>所属组织</td>
+                                        <td>：</td>
+                                        <td>{{t.orgInfo?t.orgInfo.orgInfoName:''}}</td>
+                                    </tr>
                                 </table>
                             </td>
                             <td>
@@ -213,6 +218,13 @@
                                     <el-tooltip class="item" effect="dark" :content="t.addr" placement="top-start">
                                         <p class="disInfo-overflow">{{t.addr}}</p>
                                     </el-tooltip>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="el-icon-location-outline"></i> 所属组织</td>
+                                <td></td>
+                                <td>
+                                    <p class="disInfo-overflow">{{t.orgInfo?t.orgInfo.orgInfoName:''}}</p>
                                 </td>
                             </tr>
                         </table>

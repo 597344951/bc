@@ -128,7 +128,7 @@ const app = new Vue({
     },
     conmmitSummary() {
       if (!this.summary.props.summary && this.summary.props.annex <= 0) {
-        this.$message.error('请填写会议纪要或者上传会议纪要附件')
+        return this.$message.error('请填写会议纪要或者上传会议纪要附件')
       }
       AJAX.postJson(
         '/threeone/summary',
@@ -177,14 +177,14 @@ const app = new Vue({
     },
     conmmitLearned() {
       if (!this.learned.props.learned && this.learned.props.annex <= 0) {
-        this.$message.error('请填写会议心得或者上传会议心得附件')
+        return this.$message.error('请填写会议心得或者上传会议心得附件')
       }
       AJAX.postJson(
         '/threeone/learned',
         {
           scheduleId: this.learned.belongs.id,
-          userId: this.learned.belongs.userId,
-          summary: this.learned.props.learned,
+          userId: this.learned.belongs.participantId,
+          learned: this.learned.props.learned,
           annex: JSON.stringify(this.learned.props.annex)
         },
         resp => {
@@ -205,11 +205,6 @@ const app = new Vue({
       )
     },
     onSummaryView(row) {
-      if (row.summary) {
-        this.summary.current.data = row.summary
-        this.summary.current.show = true
-        return
-      }
       AJAX.get(
         `/threeone/summary/${row.id}`,
         resp => {
@@ -227,11 +222,6 @@ const app = new Vue({
       )
     },
     onLearnedView(row) {
-      if (row.learned) {
-        this.learned.current.data = row.learned
-        this.learned.current.show = true
-        return
-      }
       AJAX.get(
         `/threeone/learned/${row.id}/${row.participantId}`,
         resp => {

@@ -27,8 +27,15 @@
 		<result column="warranty" jdbcType="VARCHAR"
 			property="warranty" />
 		<result column="loc" jdbcType="VARCHAR" property="loc" />
-		<result column="cover_image" jdbcType="VARCHAR" property="coverImage" />
-		<result column="last_syn_time" jdbcType="TIMESTAMP" property="lastSynTime" />
+		<result column="cover_image" jdbcType="VARCHAR"
+			property="coverImage" />
+		<result column="last_syn_time" jdbcType="TIMESTAMP"
+			property="lastSynTime" />
+		<result column="org_id" jdbcType="INTEGER" property="orgId" />
+		<result column="org_config_time" jdbcType="TIMESTAMP"
+			property="orgConfigTime" />
+		<association column="org_id" property="orgInfo"
+			select="com.zltel.broadcast.um.dao.OrganizationInformationMapper.selectByPrimaryKey"></association>
 	</resultMap>
 	<resultMap id="EChartsMap"
 		type="com.zltel.broadcast.terminal.bean.TerminalEcharts">
@@ -39,7 +46,8 @@
 		oid, name, id, code, type_id, res_time, online, last_time,
 		ip, mac, sys,
 		size, ratio,
-		rev, ver, typ, tel, addr, gis, warranty, loc , cover_image,last_syn_time
+		rev, ver, typ, tel, addr, gis, warranty, loc
+		, cover_image,last_syn_time , org_id
 	</sql>
 	<select id="selectByPrimaryKey"
 		parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -143,6 +151,9 @@
 			<if test="loc != null">
 				loc,
 			</if>
+			<if test="orgId != null">
+				org_id,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="oid != null">
@@ -207,6 +218,9 @@
 			</if>
 			<if test="loc != null">
 				#{loc,jdbcType=VARCHAR},
+			</if>
+			<if test="orgId != null">
+				#{orgId},
 			</if>
 		</trim>
 	</insert>
@@ -274,6 +288,9 @@
 			<if test="loc != null">
 				loc = #{loc,jdbcType=VARCHAR}
 			</if>
+			<if test="orgId != null">
+				org_id = #{orgId},
+			</if>
 		</set>
 		where oid = #{oid,jdbcType=INTEGER}
 	</update>
@@ -315,11 +332,17 @@
 		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
 		resultMap="BaseResultMap">
 		select
-		<!-- <include refid="Base_Column_List" /> -->
 		*
 		from terminal_basic_info
-		where
-		1 = 1
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+			<if test="online!= null and online !=''">
+				and online = #{online,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<!-- 查询条件,不包含 online -->
+	<sql id="TerminalBaseInfoQueryParams">
 		<if test="name != null and name !=''">
 			and name = #{name,jdbcType=VARCHAR}
 		</if>
@@ -335,9 +358,7 @@
 		<if test="resTime!= null and resTime !=''">
 			and res_time = #{resTime,jdbcType=VARCHAR}
 		</if>
-		<if test="online!= null and online !=''">
-			and online = #{online,jdbcType=VARCHAR}
-		</if>
+		
 		<if test="lastTime!= null and lastTime !=''">
 			and last_time = #{lastTime,jdbcType=VARCHAR}
 		</if>
@@ -380,37 +401,98 @@
 		<if test="loc != null and loc !=''">
 			and loc = #{loc,jdbcType=VARCHAR}
 		</if>
-	</select>
-	<select id="queryAll" resultMap="BaseResultMap"> select * from
+		<if test="orgId != null">
+			and org_id = #{orgId}
+		</if>
+		<if test="orgIds !=null ">
+			AND org_id in
+			<foreach collection="orgIds" item="id" index="index" open="("
+				close=")" separator=",">
+				#{id}
+			</foreach>
+		</if>
+	</sql>
+	<select id="queryAll" resultMap="BaseResultMap">
+		select * from
 		terminal_basic_info where 1=1
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
 	</select>
-	<select id="ratioEcharts" resultMap="EChartsMap"> select t.ratio name ,
-		count(t.oid) value from terminal_basic_info t group by ratio
+	<select id="ratioEcharts" resultMap="EChartsMap">
+		select t.ratio name ,
+		count(t.oid) value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by
+		ratio
 	</select>
-	<select id="onlineEcharts" resultMap="EChartsMap"> select case t.online when
-		'1' then '在线' when '0' then'离线' else t.online end name, count(t.oid)
-		value from terminal_basic_info t group by online
+	<select id="onlineEcharts" resultMap="EChartsMap">
+		select case t.online when
+		'1' then '在线' when '0' then'离线' else t.online
+		end
+		name, count(t.oid)
+		value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by online
 	</select>
-	<select id="locEcharts" resultMap="EChartsMap"> select t.loc name
-		,count(t.oid) value from terminal_basic_info t group by t.loc
+	<select id="locEcharts" resultMap="EChartsMap">
+		select t.loc name
+		,count(t.oid) value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by
+		t.loc
 	</select>
-	<select id="warrantyEcharts" resultMap="EChartsMap"> select t.warranty name
-		,count(t.oid) value from terminal_basic_info t group by t.warranty
+	<select id="warrantyEcharts" resultMap="EChartsMap">
+		select t.warranty name
+		,count(t.oid) value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by t.warranty
 	</select>
-	<select id="revEcharts" resultMap="EChartsMap"> select t.rev name
-		,count(t.oid) value from terminal_basic_info t group by t.rev
+	<select id="revEcharts" resultMap="EChartsMap">
+		select t.rev name
+		,count(t.oid) value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by t.rev
 	</select>
-	<select id="verEcharts" resultMap="EChartsMap"> select t.ver name
-		,count(t.oid) value from terminal_basic_info t group by t.ver
+	<select id="verEcharts" resultMap="EChartsMap">
+		select t.ver name
+		,count(t.oid) value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by t.ver
 	</select>
-	<select id="typEcharts" resultMap="EChartsMap"> select case t.typ when '1'
-		then '一体机' when '2' then'播放盒+显示屏' when '3' then '播放盒+投影仪' else t.typ
-		end name, count(t.oid) value from terminal_basic_info t group by t.typ
+	<select id="typEcharts" resultMap="EChartsMap">
+		select case t.typ when '1'
+		then '一体机' when '2' then'播放盒+显示屏' when '3'
+		then
+		'播放盒+投影仪' else t.typ
+		end name, count(t.oid) value from
+		terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		group by t.typ
 	</select>
-	<select id="tCountEcharts" resultMap="EChartsMap"> select count(t.oid) name
-		,count(t.oid) value from terminal_basic_info t where 1=1
+	<select id="tCountEcharts" resultMap="EChartsMap">
+		select count(t.oid) name
+		,count(t.oid) value from terminal_basic_info t
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
 	</select>
 	<select id="countOnlineTerminal"
+		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
 		resultType="com.zltel.broadcast.terminal.bean.OnlineCountBean">
 		SELECT
 		CASE
@@ -418,11 +500,38 @@
 		'online'
 		ELSE
 		'offline'
-		END type,
-		count(1) count
+		END
+		type,
+		count(1)
+		count
 		FROM
 		terminal_basic_info tbi
-		GROUP BY
-		tbi.online
+		<where>
+			<include refid="TerminalBaseInfoQueryParams" />
+		</where>
+		GROUP BY tbi.online
 	</select>
+
+	<select id="queryUnConfigTerminal"
+		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
+		resultMap="BaseResultMap">
+		select
+		*
+		from terminal_basic_info
+		<where>
+			<if test="orgId != null">
+				and org_id = 0
+			</if>
+			<if test="online!= null and online !=''">
+				and online = #{online,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<update id="orgConfig"
+		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+		update terminal_basic_info
+		set org_config_time =
+		now(),org_id=#{orgId}
+		where code = #{code} and org_id = 0
+	</update>
 </mapper>

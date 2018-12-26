@@ -4,10 +4,13 @@
   <resultMap id="BaseResultMap" type="com.zltel.broadcast.um.bean.OrganizationType">
     <id column="org_type_id" jdbcType="INTEGER" property="orgTypeId" />
     <result column="org_type_name" jdbcType="VARCHAR" property="orgTypeName" />
+    <result column="is_party_org" jdbcType="BIT" property="isPartyOrg" />
+    <result column="org_is_branch" jdbcType="BIT" property="orgIsBranch" />
+    <result column="org_set_join" jdbcType="BIT" property="orgSetJoin" />
     <result column="org_type_describe" jdbcType="VARCHAR" property="orgTypeDescribe" />
   </resultMap>
   <sql id="Base_Column_List">
-    org_type_id, org_type_name, org_type_describe
+    org_type_id, org_type_name, org_type_describe, is_party_org, org_is_branch, org_set_join
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -20,9 +23,10 @@
     where org_type_id = #{orgTypeId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
-    insert into organization_type (org_type_id, org_type_name, org_type_describe
+    insert into organization_type (org_type_id, org_type_name, org_type_describe, is_party_org, org_is_branch, org_set_join
       )
-    values (#{orgTypeId,jdbcType=INTEGER}, #{orgTypeName,jdbcType=VARCHAR}, #{orgTypeDescribe,jdbcType=VARCHAR}
+    values (#{orgTypeId,jdbcType=INTEGER}, #{orgTypeName,jdbcType=VARCHAR}, #{orgTypeDescribe,jdbcType=VARCHAR}, 
+    		#{isPartyOrg,jdbcType=BIT}, #{orgIsBranch,jdbcType=BIT}, #{orgSetJoin,jdbcType=BIT}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
@@ -37,6 +41,15 @@
       <if test="orgTypeDescribe != null">
         org_type_describe,
       </if>
+      <if test="isPartyOrg != null">
+        is_party_org,
+      </if>
+      <if test="orgIsBranch != null">
+        org_is_branch,
+      </if>
+      <if test="orgSetJoin != null">
+        org_set_join,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="orgTypeId != null">
@@ -47,6 +60,15 @@
       </if>
       <if test="orgTypeDescribe != null">
         #{orgTypeDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="isPartyOrg != null">
+        #{isPartyOrg,jdbcType=BIT},
+      </if>
+      <if test="orgIsBranch != null">
+        #{orgIsBranch,jdbcType=BIT},
+      </if>
+      <if test="orgSetJoin != null">
+        #{orgSetJoin,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -59,13 +81,25 @@
       <if test="orgTypeDescribe != null">
         org_type_describe = #{orgTypeDescribe,jdbcType=VARCHAR},
       </if>
+      <if test="isPartyOrg != null">
+        is_party_org = #{isPartyOrg,jdbcType=BIT},
+      </if>
+      <if test="orgIsBranch != null">
+        org_is_branch = #{orgIsBranch,jdbcType=BIT},
+      </if>
+      <if test="orgSetJoin != null">
+        org_set_join = #{orgSetJoin,jdbcType=BIT},
+      </if>
     </set>
     where org_type_id = #{orgTypeId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.um.bean.OrganizationType">
     update organization_type
     set org_type_name = #{orgTypeName,jdbcType=VARCHAR},
-      org_type_describe = #{orgTypeDescribe,jdbcType=VARCHAR}
+      org_type_describe = #{orgTypeDescribe,jdbcType=VARCHAR},
+      is_party_org = #{isPartyOrg,jdbcType=BIT},
+      org_is_branch = #{orgIsBranch,jdbcType=BIT},
+      org_set_join = #{orgSetJoin,jdbcType=BIT}
     where org_type_id = #{orgTypeId,jdbcType=INTEGER}
   </update>
   
@@ -80,6 +114,9 @@
 			</if>
 			<if test="orgTypeName != null"> and 
 				org_type_name = #{orgTypeName}
+			</if>
+			<if test="noOrgTypeName != null"> and 
+				org_type_name != #{noOrgTypeName}
 			</if>
 			<if test="orgTypeDescribe != null"> and 
 				org_type_describe = #{orgTypeDescribe}

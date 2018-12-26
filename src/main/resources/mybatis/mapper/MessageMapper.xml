@@ -136,18 +136,28 @@
   </update>
 
   <select id="queryPendingByUser" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from message
-    where type in (1, 2) and user_id in (#{userId}, -1) and state = 0
-    order by update_date desc
+      SELECT * FROM (
+          SELECT * FROM message
+          WHERE type IN (1 , 2) AND state = 0 AND user_id IN (#{userId} , - 1)
+          UNION
+          SELECT m.* FROM message m
+          INNER JOIN base_user_info u ON m.user_id = u.base_user_id
+          INNER JOIN sys_user su ON su.username = u.id_card
+          WHERE m.type IN (1 , 2) AND m.state = 0 AND su.user_id = #{userId}
+      ) msg
+      ORDER BY msg.update_date desc
   </select>
   <select id="queryNoticeByUser" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from message
-    where type = 3 and user_id in (#{userId}, -1) and state = 0
-    order by update_date desc
+      SELECT * FROM (
+          SELECT * FROM message
+          WHERE type = 3 AND state = 0 AND user_id IN (#{userId} , - 1)
+          UNION
+          SELECT m.* FROM message m
+          INNER JOIN base_user_info u ON m.user_id = u.base_user_id
+          INNER JOIN sys_user su ON su.username = u.id_card
+          WHERE m.type = 3 AND m.state = 0 AND su.user_id = #{userId}
+      ) msg
+      ORDER BY msg.update_date desc
   </select>
   <update id="updateStateBySource" parameterType="com.zltel.broadcast.message.bean.Message">
     update message

@@ -68,7 +68,7 @@
 		.template-preview {
 			width: 100%
 		}
-		
+
 		.image-box {
             width: 200px;
             height: 250px;
@@ -121,10 +121,10 @@
 			width: 20px;
 		}
 		.el-dialog {
-			border-radius: 7px;	
+			border-radius: 7px;
 
 		}
-		
+
 		.el-dialog__body{
 			padding: 0 15px 16px;
 			text-align:center;
@@ -247,7 +247,7 @@
 									</div>
 								</el-tab-pane>
 							</el-tabs>
-						</el-col>		
+						</el-col>
 					</el-row>
 				</div>
 				<%-- 内容编辑 --%>
@@ -315,7 +315,7 @@
 							<el-checkbox-group v-model="screenDirection" style="display: inline-block;">
 								<el-checkbox v-for="d in screenDirections" :label="d" :key="d">{{d}}</el-checkbox>
 							</el-checkbox-group>
-							
+
 						</el-col>
 					</el-row> -->
 					<el-row :gutter="20">
@@ -698,7 +698,7 @@
 							if(this.selectedProgramTemplateCategoryId) {
 								content.programTemplateCategoryId = this.selectedProgramTemplateCategoryId
 							}
-							
+
                             //附加素材
 							content.material = this.material;
                             //终端
@@ -774,7 +774,7 @@
 								this.activeCategory = key
 							}
 						}))
-						
+
 					})
 				},
 				startTemplate(id, programTemplateId, programTemplateCategoryId) {
@@ -788,7 +788,7 @@
 					} else {
 						window.location.href = '/publish/process'
 					}
-					
+
 				},
 				refresh() {
 					window.location.reload()
@@ -972,7 +972,7 @@
 						app.templateArr[name2].push(item)
 						app.showTemplateArr[name2].push(item)
 					}))
-					
+
                 }
             })
         }
@@ -1004,7 +1004,7 @@
 					} else {
 						callback(reps.data)
 					}
-                    
+
                 },
                 error: function (err) {
 					app.$message.error('系统错误, 请联系管理员')
@@ -1112,7 +1112,7 @@
 				}
 			})
 		}
-		
+
 		function commitMessage(callback) {
 			app.commitMessage.show = true
 			let message = [
@@ -1137,11 +1137,11 @@
 					if(callback) {
 						callback()
 					}
-					
+
 				}
 			}, 1000);
 		}
-	
+
 		function getTerminalGroupTree() {
 			get('/terminal/m/group/tree', reps => {
 				if(reps.status) {
@@ -1165,6 +1165,7 @@
 		function loadGroupTerminals(group) {
 			let ids = getChildIds(group)
 			postJson('/terminal/m/group/terminals', ids, data => {
+				/* if(item.online != 1) return */
 				let screenType = {
 					'1': '一体机',
 					'2': '播放盒+显示屏',

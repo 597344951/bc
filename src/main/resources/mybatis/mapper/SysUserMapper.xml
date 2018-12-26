@@ -14,6 +14,7 @@
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="user_type" jdbcType="INTEGER" property="userType" />
 		<result column="last_sign_in_time" jdbcType="TIMESTAMP" property="lastSignInTime" />
+		<association column="username" property="baseUserInfo" select="com.zltel.broadcast.um.dao.BaseUserInfoMapper.selectByIdCard"/>
 	</resultMap>
 	<sql id="Base_Column_List">
 		user_id, username, password, salt, email, mobile, theme, status, org_id, create_time, user_type, last_sign_in_time

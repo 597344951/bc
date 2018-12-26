@@ -10,7 +10,8 @@ const app = new Vue({
           { required: true, message: '请输入分组描述', trigger: 'blur' }
         ]
       },
-      operateNode: null
+      operateNode: null,
+      isRoot: false
     },
     group: [],
     terminals: {
@@ -22,18 +23,27 @@ const app = new Vue({
       addSelectShow: false,
       selected: [],
       all: [],
-      piece: []
+      piece: [],
+      orgListData:[],
     }
   },
   mounted() {
     this.loadGroup()
     this.loadTerminals()
+    this.loadOrgTree()
   },
   methods: {
+    loadOrgTree() {
+      let url = '/org/ifmt/queryOrgInfosToTree'
+      ajax_promise(url, 'post', {}).then(result => {
+        console.log(result)
+        this.orgListData = result.list
+      })
+    },
     addGroupItem() {
       this.$refs.groupItemForm.validate(valid => {
         if (valid) {
-          let parent = this.groupItem.operateNode
+          let parent = this.groupItem.isRoot ? null : this.groupItem.operateNode
           let item = {
             label: this.groupItem.props.label,
             description: this.groupItem.props.descripton,
@@ -59,6 +69,7 @@ const app = new Vue({
                 this.groupItem.show = false
                 this.resetForm('groupItemForm')
                 this.groupItem.operateNode = null
+                this.isRoot = false
               } else {
                 this.$message.error('添加失败：' + resp.msg)
               }
@@ -206,6 +217,11 @@ const app = new Vue({
         }
       }
       return ids
+    },
+    getOrgInfo(t){
+       let oi = this.orgListData.find(ele => ele.orgInfoId == t.org_id)
+       if(oi)return oi.orgInfoName
+       return '未配置所属组织'
     }
 
   }

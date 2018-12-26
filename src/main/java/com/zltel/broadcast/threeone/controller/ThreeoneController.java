@@ -35,12 +35,20 @@ public class ThreeoneController extends BaseController {
         return "/view/threeone/index";
     }
 
+    @RequestMapping("/democratic-appraisal")
+    public String democraticAppraisal(Model model, String meetingType) {
+        model.addAttribute("mediaServe", mediaServe);
+        return "/view/democratic-appraisal/index";
+    }
+
     @GetMapping("/{pageNum}/{pageSize}")
     @ResponseBody
     public R query(String meetingType, @PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize) {
         R r = R.ok();
         if("life".equals(meetingType)) {
             r.setData(new PageInfo<Schedule>(scheduleService.queryLifeCompletedSchedule(getSysUser(), pageNum, pageSize)));
+        } else if("democratic-appraisal".equals(meetingType)) {
+            r.setData(new PageInfo<Schedule>(scheduleService.queryDemocraticAppraisalCompletedSchedule(getSysUser(), pageNum, pageSize)));
         } else {
             r.setData(new PageInfo<Schedule>(scheduleService.queryThreeoneCompletedSchedule(getSysUser(), pageNum, pageSize)));
         }
@@ -54,6 +62,8 @@ public class ThreeoneController extends BaseController {
         R r = R.ok();
         if("life".equals(meetingType)) {
             r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryLifeParticipatedSchedule(getSysUser().getUsername(), pageNum, pageSize)));
+        } else if("democratic-appraisal".equals(meetingType)) {
+            r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryDemocraticAppraisalParticipatedSchedule(getSysUser().getUsername(), pageNum, pageSize)));
         } else {
             r.setData(new PageInfo<Map<String, Object>>(scheduleService.queryThreeoneParticipatedSchedule(getSysUser().getUsername(), pageNum, pageSize)));
         }

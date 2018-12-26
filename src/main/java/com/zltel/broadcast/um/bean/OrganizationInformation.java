@@ -35,6 +35,8 @@ public class OrganizationInformation {
     private String orgInfoManageDetail;
 
     private Integer orgInfoParentId;
+    
+    private Integer noOrgInfoParentId;
 
     private Integer orgInfoTypeId;
 
@@ -44,7 +46,15 @@ public class OrganizationInformation {
     
     private Integer orgInfoLevel;
 
-    public Integer getOrgInfoLevel() {
+    public Integer getNoOrgInfoParentId() {
+		return noOrgInfoParentId;
+	}
+
+	public void setNoOrgInfoParentId(Integer noOrgInfoParentId) {
+		this.noOrgInfoParentId = noOrgInfoParentId;
+	}
+
+	public Integer getOrgInfoLevel() {
 		return orgInfoLevel;
 	}
 

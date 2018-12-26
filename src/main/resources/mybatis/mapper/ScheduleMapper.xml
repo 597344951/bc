@@ -148,9 +148,6 @@
             <if test="orgId != null">
                 org_id = #{orgId,jdbcType=INTEGER},
             </if>
-            <if test="addDate != null">
-                add_date = #{addDate,jdbcType=TIMESTAMP},
-            </if>
             <if test="updateDate != null">
                 update_date = #{updateDate,jdbcType=TIMESTAMP},
             </if>
@@ -274,7 +271,8 @@
             S.org_id AS orgId,
             S.add_date AS addDate,
             S.update_date AS updateDate,
-            U.base_user_id AS participantId
+            U.base_user_id AS participantId,
+            P.is_participate AS isParticipate
         FROM threeone_schedule S
         INNER JOIN threeone_schedule_participant P ON P.schedule_id = S.id
         INNER JOIN base_user_info U ON U.base_user_id = P.user_id

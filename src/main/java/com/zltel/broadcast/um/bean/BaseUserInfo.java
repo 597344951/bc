@@ -1,9 +1,15 @@
 package com.zltel.broadcast.um.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BaseUserInfo {
+public class BaseUserInfo implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private Integer baseUserId;
 
     private String name;

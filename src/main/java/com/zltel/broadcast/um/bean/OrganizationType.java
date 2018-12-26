@@ -4,10 +4,52 @@ public class OrganizationType {
     private Integer orgTypeId;
 
     private String orgTypeName;
+    
+    private boolean isPartyOrg;
+    
+    private boolean orgIsBranch;
+    
+    private boolean orgSetJoin;
+    
+    private String noOrgTypeName;
 
     private String orgTypeDescribe;
 
-    public Integer getOrgTypeId() {
+    
+
+	public boolean isPartyOrg() {
+		return isPartyOrg;
+	}
+
+	public void setPartyOrg(boolean isPartyOrg) {
+		this.isPartyOrg = isPartyOrg;
+	}
+
+	public boolean isOrgIsBranch() {
+		return orgIsBranch;
+	}
+
+	public void setOrgIsBranch(boolean orgIsBranch) {
+		this.orgIsBranch = orgIsBranch;
+	}
+
+	public boolean isOrgSetJoin() {
+		return orgSetJoin;
+	}
+
+	public void setOrgSetJoin(boolean orgSetJoin) {
+		this.orgSetJoin = orgSetJoin;
+	}
+
+	public String getNoOrgTypeName() {
+		return noOrgTypeName;
+	}
+
+	public void setNoOrgTypeName(String noOrgTypeName) {
+		this.noOrgTypeName = noOrgTypeName;
+	}
+
+	public Integer getOrgTypeId() {
         return orgTypeId;
     }
 

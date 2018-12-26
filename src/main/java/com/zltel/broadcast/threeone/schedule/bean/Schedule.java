@@ -162,6 +162,10 @@ public class Schedule {
                 return "支部委员会";
             case 4:
                 return "党课";
+            case 5:
+                return "组织生活会";
+            case 6:
+                return "民主评议会";
             default:
                 return "未知类型";
         }

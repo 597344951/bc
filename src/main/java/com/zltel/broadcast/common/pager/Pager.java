@@ -13,6 +13,10 @@ public class Pager extends PageRowBounds {
     private int pageIndex;
     /** 默认最大值分页 **/
     public static final Pager DEFAULT_PAGER = new Pager(1, Integer.MAX_VALUE);
+    /** 限定一条记录 **/
+    public static final Pager ONE_RECORD = new Pager(1, 1);
+    /** 不需要记录返回 **/
+    public static final Pager NONE_RECORD = new Pager(1, 0);
 
     /**
      * 创建分页对象

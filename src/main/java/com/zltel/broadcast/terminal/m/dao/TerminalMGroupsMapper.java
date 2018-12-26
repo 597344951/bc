@@ -21,7 +21,7 @@ public interface TerminalMGroupsMapper {
 
     int updateByPrimaryKey(TerminalMGroups record);
 
-    List<TerminalMGroups> selectAll();
+    List<TerminalMGroups> selectAll(Integer orgId);
 
     int insertTerminalLink(Map<String, Object> terminalLink);
 

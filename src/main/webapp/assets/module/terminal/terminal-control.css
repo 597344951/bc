@@ -122,10 +122,17 @@
     cursor: auto !important;
     opacity: 1 !important;
 }
-
+.t-title .syn{
+    background-color: #20a0ff;
+    color:#fff;
+    padding: 8px;
+}
+.t-title .syn:hover{
+    background-color: #198bdf;
+}
 .online-icon {
-    background: green;
-    color: green !important;
+    background: #00e100;
+    color: white !important;
 }
 
 .offline-icon {
@@ -209,7 +216,9 @@
     overflow: auto;
     padding: 0 15px 15px 15px;
 }
-
+.el-dialog__body .button{
+    margin-top: 20px;
+}
 .el-menu-item i {
     color: auto;
 }
@@ -263,4 +272,71 @@
     color:#666;
 }
 
+table{
+    width:100%;
+}
+.el-upload__input {
+    display: none !important;
+}
+.guid-container {
+    margin:10px 5px;
+    overflow: auto;
+}
+.guid-container .guid-box{
+    text-align: center;
+    float:left;
+    margin-left:5px;
+}
+.guid-container .success{
+    color:green;
+    margin-bottom: 10px;
+}
 
+.guid-container .fail{
+    color:red;
+    margin-bottom: 10px;
+}
+
+.choice{
+    margin-top: 10px;
+    font-size: 18px;
+}
+.contact{
+    font-size: 18px;
+    border-top: 1px dotted #ddd;
+    margin-top: 0;
+    padding-top: 20px;
+    margin-bottom: 0;
+}
+.upload-demo{
+    padding-bottom: 10px;
+}
+.el-tree{
+    padding: 15px 0;
+    margin-bottom: 15px;
+    border-bottom: 1px dotted #ddd;
+}
+.el-dialog__header{
+    border-bottom: 1px solid #e1e1e1;
+}
+.el-dialog__body .el-card__body{
+    width: 220px;
+    height: 160px;
+    position: relative;
+}
+.el-dialog__body .el-card__body .bottom{
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    margin-left: -28px;
+}
+.el-popper .el-button,
+.el-dialog__body .el-button{
+    padding: 8px 14px;
+}
+.el-dialog__body .el-card__body h3{
+    word-break: break-all;
+}
+.el-tree-node__content:hover{
+    background-color: #e5efff;
+}

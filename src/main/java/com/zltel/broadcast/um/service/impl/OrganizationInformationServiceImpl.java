@@ -24,6 +24,7 @@ import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.tree.TreeNode;
 import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.common.util.TreeNodeCreateUtil;
 import com.zltel.broadcast.um.bean.IntegralChangeType;
 import com.zltel.broadcast.um.bean.IntegralConstitute;
 import com.zltel.broadcast.um.bean.OrganizationInformation;
@@ -60,13 +61,43 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
      * @param organizationInformation
      * @return
      */
-    public R queryOrgInfosSelect(OrganizationInformation organizationInformation) {
-    	List<OrganizationInformation> orgInfoSelects = organizationInformationMapper.queryOrgInfos(organizationInformation);
-		if(orgInfoSelects != null && orgInfoSelects.size() > 0) {
-			return R.ok().setData(orgInfoSelects);
-		} else {
-			return R.ok().setMsg("没有查询到组织信息");
-		}
+    public List<OrganizationInformation> queryOrgInfosSelect(OrganizationInformation organizationInformation) {
+    	return organizationInformationMapper.queryOrgInfos(organizationInformation);
+    }
+    
+    /**
+     * 查询组织信息（关联组织类型表的查询）
+     * @param organizationInformation
+     * @return
+     */
+    public List<Map<String, Object>> queryOrgInfosSelects(Map<String, Object> condition) {
+    	return organizationInformationMapper.queryOrgInfosForMap(condition);
+    }
+    
+    /**
+     * 入党时加入党组织组织信息
+     * @param organizationInformation
+     * @return
+     */
+    public R joinOrgQueryOrgInfosSelect(Map<String, Object> condition) {
+    	List<Map<String, Object>> orgInfoSelects = new ArrayList<>();
+    	List<Map<String, Object>> childrenOrg = organizationInformationMapper.queryOrgInfosForMap(condition);
+    	joinOrgQueryChildrenOrg(orgInfoSelects, childrenOrg);
+    	return R.ok().setData(orgInfoSelects);
+    }
+    
+    private void joinOrgQueryChildrenOrg(List<Map<String, Object>> orgInfoSelects, List<Map<String, Object>> childrenOrg) {
+    	if (childrenOrg != null && childrenOrg.size() > 0) {
+    		for (Map<String, Object> map : childrenOrg) {
+    			if ((boolean)map.get("isPartyOrg") && (boolean)map.get("orgIsBranch")) {
+    				orgInfoSelects.add(map);
+    			}
+    			Map<String, Object> condition = new HashMap<>();
+    			condition.put("orgInfoParentId", map.get("orgInfoId"));
+    			childrenOrg = organizationInformationMapper.queryOrgInfosForMap(condition);
+    			joinOrgQueryChildrenOrg(orgInfoSelects, childrenOrg);
+			}
+    	}
     }
 	
 	/**
@@ -420,24 +451,29 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 	@Transactional(rollbackFor=java.lang.Exception.class)
     @Deprecated
     public R queryOrgInfosToTree(OrganizationInformation organizationInformation) throws Exception {
-    	if (organizationInformation == null) organizationInformation = new OrganizationInformation();
-    	organizationInformation.setOrgInfoParentId(-1);	//查询最上级组织
-		List<OrganizationInformation> organizationInformations = organizationInformationMapper
+//    	if (organizationInformation == null) organizationInformation = new OrganizationInformation();
+//    	organizationInformation.setOrgInfoParentId(-1);	//查询最上级组织
+//		List<OrganizationInformation> organizationInformations = organizationInformationMapper
+//				.queryOrgInfos(organizationInformation);//这是根节点
+//		
+//		if (organizationInformations != null && organizationInformations.size() > 0) {
+//			List<TreeNode<OrganizationInformation>> orgInfoTrees = new ArrayList<>();
+//			for (OrganizationInformation orgInfo : organizationInformations) {
+//				TreeNode<OrganizationInformation> orgInfoTree = new TreeNode<>();
+//				orgInfoTree.setData(orgInfo);
+//				orgInfoTrees.add(orgInfoTree);
+//			}
+//			toTreeNode(orgInfoTrees);
+//			return R.ok().setData(orgInfoTrees).setMsg("查询组织上下级关系成功").set("list", data);
+//		} else {
+//			return R.ok().setMsg("没有查询到组织上下级关系");
+//		}
+    	List<OrganizationInformation> organizationInformations = organizationInformationMapper
 				.queryOrgInfos(organizationInformation);//这是根节点
-		
-		if (organizationInformations != null && organizationInformations.size() > 0) {
-			List<TreeNode<OrganizationInformation>> orgInfoTrees = new ArrayList<>();
-			for (OrganizationInformation orgInfo : organizationInformations) {
-				TreeNode<OrganizationInformation> orgInfoTree = new TreeNode<>();
-				orgInfoTree.setData(orgInfo);
-				orgInfoTrees.add(orgInfoTree);
-			}
-			toTreeNode(orgInfoTrees);
-			return R.ok().setData(orgInfoTrees).setMsg("查询组织上下级关系成功");
-		} else {
-			return R.ok().setMsg("没有查询到组织上下级关系");
-		}
-		
+    	List<TreeNode<OrganizationInformation>> treeNodes = TreeNodeCreateUtil.toTree(organizationInformations, 
+    			OrganizationInformation::getOrgInfoId, OrganizationInformation::getOrgInfoParentId);
+    	return R.ok().setData(treeNodes)
+    			.setMsg("查询组织上下级关系成功").set("list", organizationInformations);
     }
     
     /**

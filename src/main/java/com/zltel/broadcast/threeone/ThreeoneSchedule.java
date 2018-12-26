@@ -35,6 +35,7 @@ public class ThreeoneSchedule {
         schedules.stream().forEach(schedule -> {
             if (Schedule.STATE_READY == schedule.getState() && System.currentTimeMillis() + 24 * 60 * 60 * 1000 >= schedule.getStartTime().getTime()) {
                 //距开始时间小于24小时, 开始通知, 添加通知消息, 发布通知投屏
+                log.info("会议: " + schedule.getName() + "即将开始, 开始通知.");
                 List<Map<String, Object>> members = scheduleService.queryScheduleMembers(schedule.getId());
                 members.stream().forEach(member -> {
                     messageService.addMessage(Message.TYPE_NOTICE, schedule.getName(), schedule.getDescription(), (Integer) member.get("id"), schedule.getId(), "/threeone/schedule/notice/" + schedule.getId());
@@ -42,10 +43,10 @@ public class ThreeoneSchedule {
                 scheduleService.updateSchedule(new Schedule(schedule.getId(), Schedule.STATE_REPORTED));
                 //通知添加日程人员发布通知
                 String url = "/view/publish/new.jsp?title="
-                        + URLEncoder.encode("三会一课-" + schedule.getName())
+                        + URLEncoder.encode(schedule.getName())
                         + "&startStep=2&url="
                         + URLEncoder.encode("[{weburl: \"/threeone/schedule/notice/" + schedule.getId() + "\", playtime: 60}]");
-                messageService.addMessage(Message.TYPE_HANDLE_PENDING, schedule.getName(), schedule.getDescription(), schedule.getUserId(), schedule.getId(), URLEncoder.encode(url));
+                messageService.addMessage(Message.TYPE_HANDLE_PENDING, schedule.getName(), schedule.getDescription(), schedule.getUserId(), schedule.getId(), url);
             }
         });
     }

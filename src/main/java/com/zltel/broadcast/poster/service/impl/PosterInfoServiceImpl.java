@@ -142,6 +142,7 @@ public class PosterInfoServiceImpl implements PosterInfoService {
     }
 
     @Override
+    @Transactional
     public PosterInfo newPosterFromTemplateId(Integer templateId) {
         PosterInfo pi = this.posterInfoMapper.selectByPrimaryKey(templateId);
         if (pi != null) {
