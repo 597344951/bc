@@ -22,17 +22,24 @@ let ins = new Vue({
       mode: '', //insert,update
       data: {
         parent: 0,
-        orderNum:0,
+        orderNum: 0,
       }
     },
-    initBaseCategoryData:{
-      parent:0,
-      orderNum:0,
-		},
+    initBaseCategoryData: {
+      parent: 0,
+      orderNum: 0,
+    },
+    lessons: [],
+    pager: {
+      pageNum: 1,
+      pageSize: 15,
+      total: 0,
+    },
 
   },
   mounted() {
     this.loadCategory()
+    this.loadLessons()
   },
   computed: {
     allCategoryTree() {
@@ -142,11 +149,34 @@ let ins = new Vue({
       }
     },
     resetCategoryInfo() {
-			this.posterCategoryDialog.visible = false
-			this.posterCategoryDialog.data = this.initBaseCategoryData
+      this.posterCategoryDialog.visible = false
+      this.posterCategoryDialog.data = this.initBaseCategoryData
     },
-     // 类别点击
-     tptTreeClick: function (_data, node) {
+    // 类别点击
+    tptTreeClick: function (_data, node) {
+      this.loadLessons()
+    },
+    //加载学习课题
+    loadLessons() {
+      let url = `/lesson/unit/unit/search/${this.pager.pageNum}-${this.pager.pageSize}`
+      let node = this.$refs.tree.getCurrentNode()
+      let categoryId = node?node.categoryId:null
+      let data = {categoryId:categoryId,keyword:this.keyword}
+      ajax_json_promise(url,'post',data).then(result => {
+        this.pager.total = result.pager.total
+        this.lessons = result.data
+      })
+    },
+    handleSizeChange(val){
+      this.pager.pageSize = val
+      this.loadLessons()
+    },
+    handleCurrentChange(val){
+      this.pager.pageNum = val
+      this.loadLessons()
+    },
+    sumTotalTime(lesson){
+      return lesson.lessonList.map(el=>el.creditHours).reduce((a,b)=>a+b)
     },
   }
 });
