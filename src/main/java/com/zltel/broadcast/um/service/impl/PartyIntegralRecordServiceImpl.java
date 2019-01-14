@@ -1,5 +1,7 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,96 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
 	@Override
     public BaseDao<PartyIntegralRecord> getInstince() {
         return this.partyIntegralRecordMapper;
+    }
+	
+	/**
+     * 查询用户积分变更轨迹统计图
+     * @param condition
+     * @return
+     */
+    public Map<String, Object> queryUserIntegralChangeTrajectory(Map<String, Object> condition) {
+    	Date startTime = null;
+    	Date endTime = null;
+    	if (condition.get("startTime") != null && condition.get("startTime") != "") {
+    		startTime = DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)condition.get("startTime"));
+    		startTime = DateUtil.getDateOfMonthStartDayTime(startTime);
+    		if (condition.get("endTime") != null && condition.get("endTime") != "") {	//两个都有值
+    			endTime = DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)condition.get("endTime"));
+    			if (endTime.after(new Date())) {
+    				endTime = DateUtil.getDateOfEndTime(new Date());
+    			} else {    				
+    				endTime = DateUtil.getDateOfMonthEndDayTime(endTime);
+    			}
+    		} else {
+    			endTime = DateUtil.getDateOfEndTime(new Date());
+    		}
+    		if (endTime.before(startTime)) {
+				return R.error().setMsg("时间选择错误");
+			}
+    	} else if (condition.get("endTime") != null && condition.get("endTime") != "") {
+    		endTime = DateUtil.toDate(DateUtil.YYYY_MM_DD, (String)condition.get("endTime"));
+			endTime = DateUtil.getDateOfMonthEndDayTime(endTime);
+			startTime = DateUtil.getDateOfMonthStartDayTime(endTime);
+    	} else {
+    		endTime = DateUtil.getDateOfEndTime(new Date());
+    		startTime = DateUtil.getDateOfMonthStartDayTime(endTime);
+    	}
+    	
+    	List<String> datas = new ArrayList<>();
+    	List<String> lines = new ArrayList<>();
+    	
+    	Double totalIntegral = Double.parseDouble(String.valueOf(condition.get("totalIntegral")));
+    	Double nowIntegral = totalIntegral;
+    	Map<String, Object> queryCondition = new HashMap<>();
+    	//计算要开始搜索时间之前的积分变化后的情况
+    	queryCondition.put("orgId", condition.get("orgId"));
+		queryCondition.put("idCard", condition.get("idCard"));
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(startTime);
+		ca.add(Calendar.SECOND, -1);
+		queryCondition.put("endTime", ca.getTime());
+		List<Map<String, Object>> partyIntegralRecords = partyIntegralRecordMapper.queryPartyIntegralRecords(queryCondition);
+		if (partyIntegralRecords != null && partyIntegralRecords.size() > 0) {
+			for (Map<String, Object> priMap : partyIntegralRecords) {
+				Double changeIntegral = Double.parseDouble(String.valueOf(priMap.get("changeScore")));
+				nowIntegral += changeIntegral;
+				nowIntegral = nowIntegral < 0 ? 0 : nowIntegral > totalIntegral ? totalIntegral : nowIntegral;
+			}
+		}
+		
+    	while (startTime.before(endTime)) {	//每天循环
+    		Date queryEndTime = DateUtil.getDateOfEndTime(startTime);
+    		ca.setTime(startTime);
+    		//避免横坐标日期太长，年第一天显示年份，后续日期不用显示年份，只用显示月份和日
+    		if (ca.get(Calendar.MONTH) == 0 && ca.get(Calendar.DAY_OF_MONTH) == 1) {
+    			lines.add(String.valueOf(ca.get(Calendar.YEAR)) + "年");
+    			//一年第一天，重置积分值
+    			nowIntegral = totalIntegral;
+    		} else {
+    			lines.add((ca.get(Calendar.MONTH)) + 1 + "月" + ca.get(Calendar.DAY_OF_MONTH) + "日");
+    		}
+    		
+    		queryCondition.put("startTime", startTime);
+    		queryCondition.put("endTime", queryEndTime);
+    		partyIntegralRecords = partyIntegralRecordMapper.queryPartyIntegralRecords(queryCondition);
+    		if (partyIntegralRecords != null && partyIntegralRecords.size() > 0) {
+    			for (Map<String, Object> priMap : partyIntegralRecords) {
+    				Double changeIntegral = Double.parseDouble(String.valueOf(priMap.get("changeScore")));
+    				nowIntegral += changeIntegral;
+    				nowIntegral = nowIntegral < 0 ? 0 : nowIntegral > totalIntegral ? totalIntegral : nowIntegral;
+    			}
+    		}
+    		datas.add(String.valueOf(nowIntegral));
+    		
+    		ca.add(Calendar.DAY_OF_YEAR, +1);
+    		startTime = DateUtil.getDateOfStartTime(ca.getTime());
+    	}
+    	
+    	Map<String, Object> results = new HashMap<>();
+    	results.put("lines", lines);
+    	results.put("datas", datas);
+    	
+    	return results;
     }
 	
 	/**
@@ -119,7 +211,6 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
      * @param changeIcType  变更方法（加分，扣分）
      * @return
      */
-    @SuppressWarnings("unchecked")
 	public boolean automaticIntegralRecord(PartyIntegralRecord pir, IcType icType, IcChangeType icChangeType) {
     	if (icType == null || icChangeType == null || pir.getOrgId() == null 
     			|| pir.getPartyId() == null || (icType == IcType.ACTIVE && pir.getActivityId() == null)) {
@@ -141,7 +232,7 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     	conditions.put("orgId", pir.getOrgId());
     	conditions.put("parentIcId", -1);
     	Map<String, Object> result = integralConstituteService.queryOrgIntegralInfo(conditions);
-    	if ((boolean)((Map<String, Object>)result.get("data")).get("integralError")) {	//没有设置分值
+    	if ((boolean)(result.get("integralError"))) {	//没有设置分值
     		return false;
     	}
     	

@@ -97,7 +97,7 @@ public class ExcelForPartyMembersshipDuesManage {
                 //根据党费缴纳记录自动变更分值时需验证更此党费缴纳记录分值后不能超过该设置的上限也不能低于0
                 Map<String, Object> conditions = new HashMap<>();
                 conditions.put("orgId", pmdm.getOrgId());
-                conditions.put("type", "按时足额缴纳党费");
+                conditions.put("type", "缴纳党费");
                 conditions.put("isInnerIntegral", 1);
                 List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
                 if (ics != null && ics.size() == 1) {	//如果该组织有积分
@@ -118,11 +118,11 @@ public class ExcelForPartyMembersshipDuesManage {
 						pir.setChangeTypeId(Integer.parseInt(String.valueOf(ic.get("icId"))));
 						PartyMembershipDuesStatus pmds = partyMembershipDuesStatusMapper.selectByPrimaryKey(pmdm.getPayStatus());
 						if ("按时缴清".equals(pmds.getName())) {	//加分
-							pir.setChangeIntegralType(add_icts.get(0).getIctId());
+							pir.setChangeIntegralType(1);
 							pir.setChangeDescribes(pmds.getName() + "党费，加" + add_icts.get(0).getChangeProposalIntegral() + "分");
 							pir.setChangeScore(add_icts.get(0).getChangeProposalIntegral());
 						} else {	//扣分
-							pir.setChangeIntegralType(reduce_icts.get(0).getIctId());
+							pir.setChangeIntegralType(0);
 							pir.setChangeDescribes(pmds.getName() + "党费，扣" + reduce_icts.get(0).getChangeProposalIntegral() + "分");
 							pir.setChangeScore(reduce_icts.get(0).getChangeProposalIntegral());
 						}

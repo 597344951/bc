@@ -31,6 +31,21 @@ public class PartyIntegralRecordController {
 	private PartyIntegralRecordService partyIntegralRecordService;
 	
 	/**
+	 * 查询用户积分变更轨迹
+	 * @param conditions 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryUserIntegralChangeTrajectory", method=RequestMethod.POST)
+	@ApiOperation(value = "查询用户积分变更轨迹")
+	public R queryUserIntegralChangeTrajectory(@RequestParam Map<String, Object> conditions) {
+		try {
+			return R.ok().setData(partyIntegralRecordService.queryUserIntegralChangeTrajectory(conditions));
+		} catch (Exception e) {
+			return R.error().setMsg("查询用户积分变更轨迹");
+		}
+	}
+	
+	/**
 	 * 查询积分记录
 	 * @param conditions 条件
 	 * @return

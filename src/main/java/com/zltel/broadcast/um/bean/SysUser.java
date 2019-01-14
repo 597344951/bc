@@ -2,6 +2,7 @@ package com.zltel.broadcast.um.bean;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class SysUser implements Serializable {
     /**
@@ -34,6 +35,8 @@ public class SysUser implements Serializable {
     private Integer userType;
 
     private Date lastSignInTime;
+    /** 关联的角色 **/
+    private List<String> roleNames;
 
     public Integer getUserType() {
         return userType;
@@ -61,7 +64,7 @@ public class SysUser implements Serializable {
         if (null != baseUserInfo) return baseUserInfo.getName();
         return username;
     }
-    
+
     public String getTrueName() {
         return this.getDisName();
     }
@@ -213,5 +216,15 @@ public class SysUser implements Serializable {
     public void setBaseUserInfo(BaseUserInfo baseUserInfo) {
         this.baseUserInfo = baseUserInfo;
     }
+
+    public List<String> getRoleNames() {
+        return roleNames;
+    }
+
+    public void setRoleNames(List<String> roleNames) {
+        this.roleNames = roleNames;
+    }
+
+
 
 }

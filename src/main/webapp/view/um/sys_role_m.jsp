@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html;charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
 <%
     String path = request.getContextPath();
@@ -28,10 +27,10 @@
 </style>
 </head>
 <body>
-	<div id="app">
+	<div id="app" v-cloak>
 		<el-container>
 			<el-header>
-				<el-row class="toolbar" :gutter="20">
+				<el-row class="toolbar" >
 			  		<shiro:hasPermission name="sys:role:insert">  
 				 	    <el-button class="margin-left-10" size="small" type="primary" icon="el-icon-circle-plus-outline" @click="role_manager_showInsertSysRoleDialog">新建角色</el-button>
 				  	</shiro:hasPermission>
@@ -39,7 +38,7 @@
 			</el-header>
 			<el-main>
 				<template>
-			  		<el-table size="mini" stripe :data="role_manager_pager.list" style="width: 100%" max-height="550">
+			  		<el-table size="mini" stripe :data="sortedRoleData" style="width: 100%" max-height="550">
 					    <el-table-column fixed prop="roleId" label="角色ID" width="100">
 					    </el-table-column>
 					    <el-table-column prop="roleName" label="角色名（英）" width="200">
@@ -47,8 +46,23 @@
 					    <el-table-column prop="remark" label="角色名（中）" width="200">
 					    </el-table-column>
 					    <el-table-column prop="createTime" label="创建时间" width="300">
-					    </el-table-column>
-					    <el-table-column label="操作" width=180>
+							<template slot-scope="scope">
+								{{scope.row.createTime | datetime}}
+							</template>
+						</el-table-column>
+						<el-table-column label="是否内置" width="100">
+							<template slot-scope="scope">
+								<template v-if="scope.row.builtin">
+									<el-tag type="danger">内置</el-tag>
+								</template>
+								<template v-if="!scope.row.builtin">
+										<el-tag type="info">否</el-tag>
+								</template>
+							</template>
+						</el-table-column>
+						<el-table-column label="描述信息" prop="descript" >
+						</el-table-column>
+					    <el-table-column label="操作" width="200">
 						    <template slot-scope="scope">
 						      <shiro:hasPermission name="sys:role:delete">  
 							      <el-button v-if="signInAccountType != 'party_role'" @click="role_manager_deleteSysRole(scope.row)" type="text" size="small">删除</el-button>
@@ -101,7 +115,7 @@
 				    <el-input :disabled="true" v-model="role_manager_updateSysRoleForm.roleId"></el-input>
 				</el-form-item>
 				<el-form-item label="角色名>英" prop="roleName">
-				    <el-input v-model="role_manager_updateSysRoleForm.roleName" placeholder="仅支持字母和数字组合成的用户名填写"></el-input>
+				    <el-input :disabled="role_manager_updateSysRoleForm.builtin" v-model="role_manager_updateSysRoleForm.roleName" placeholder="仅支持字母和数字组合成的用户名填写"></el-input>
 				</el-form-item>
 				<el-form-item label="角色名>中" prop="remark">
 				    <el-input v-model="role_manager_updateSysRoleForm.remark"></el-input>
@@ -136,6 +150,10 @@
 </body>
 
 <script type="text/javascript">
+	window.onFocus = function () {
+		console.log('sys_role_m activated')
+		appInstince.role_manager_querySysRoles()
+	}
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
@@ -192,6 +210,13 @@
 		    	]
 		    },
 		    signInAccountType: null
+		},
+		computed:{
+			sortedRoleData(){
+				return this.role_manager_pager.list.sort((a,b) => {
+					return b.builtin -  a.builtin
+				})
+			}
 		},
 		created:function () {
 			this.role_manager_querySysRoles();	//页面加载完成就开始查询
@@ -276,16 +301,25 @@
 		        });
 			},
 			role_manager_deleteSysRole(row) {	/* 删除角色 */
-				var obj = this;
-				var url = "/sys/role/deleteSysRole";
-				var t = {
-					roleId: row.roleId
+				if(row.builtin){
+					this.$message({type:'error',message:'内置角色无法删除'})
+					return
 				}
-				$.post(url, t, function(data, status){
-					if (data.code == 200) {
-						toast('删除成功',data.msg,'success')
-						obj.role_manager_querySysRoles();
+				this.$confirm('是否删除该角色: '+row.remark, '是否删除该角色', {
+					type: 'warning'
+				}).then(()=>{
+					// 删除
+					var obj = this;
+					var url = "/sys/role/deleteSysRole";
+					var t = {
+						roleId: row.roleId
 					}
+					$.post(url, t, function(data, status){
+						if (data.code == 200) {
+							toast('删除成功',data.msg,'success')
+							obj.role_manager_querySysRoles();
+						}
+					})
 				})
 			},
 			role_manager_openUpdateSysRoleDialog(row) {	/* 打开修改角色窗口并初始化角色信息到窗口 */
@@ -295,6 +329,7 @@
 				obj.role_manager_updateSysRoleForm.roleName = row.roleName;
 				obj.role_manager_updateSysRoleForm.remark = row.remark;
 				obj.role_manager_updateSysRoleForm.createTime = row.createTime;
+				obj.role_manager_updateSysRoleForm.builtin = row.builtin
 			},
 			role_manager_updateSysRole(role_manager_updateSysRoleForm) {	/* 开始更新角色 */
 				var obj = this;

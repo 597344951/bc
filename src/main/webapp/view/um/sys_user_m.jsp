@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html;charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
 <%
     String path = request.getContextPath();
@@ -12,20 +11,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>系统用户管理</title>
 <%@include file="/include/head_notbootstrap.jsp"%>
-<style type="text/css">
+<style>
 	.el-row {
 		margin-bottom: 10px;
 	}
 	#pagesdididi {
 		text-align: center;
 	}
+	.el-transfer-panel{
+		width:40% !important;
+		min-width: 250px !important;
+	}
+	.el-transfer-panel__header{
+		padding-top:8px !important;
+	}
 </style>
 </head>
 <body>
-	<div id="app">
+	<div id="app" v-cloak>
 		<el-container>
 		  	<el-header>
-		  		<el-row class="toolbar" :gutter="20">
+		  		<el-row class="toolbar" >
 		  			<shiro:hasPermission name="sys:user:insert">  
 			 	    	<el-button class="margin-left-10" size="small" type="primary" icon="el-icon-circle-plus-outline" @click="insertSysUserDialog = true">添加用户</el-button>
 			  		</shiro:hasPermission>
@@ -69,28 +75,36 @@
 			</el-header>
 			<el-main>
 		  	<template>
-		  		<el-table size="mini" :data="pager.list" style="width: 100%" max-height="550">
-				    <el-table-column fixed prop="userId" label="ID" width=50>
+		  		<el-table size="mini" :data="pager.list" max-height="550">
+				    <el-table-column fixed prop="userId" label="ID" width="50">
 				    </el-table-column>
-				    <el-table-column prop="username" label="用户名" width=150>
+				    <el-table-column prop="username" label="用户名" width="150">
 				    </el-table-column>
-				    <el-table-column prop="email" label="邮箱" width=150>
+				    <el-table-column prop="email" label="邮箱" width="150">
 				    </el-table-column>
-				    <el-table-column prop="mobile" label="手机号" width=100>
+				    <el-table-column prop="mobile" label="手机号" width="100">
 				    </el-table-column>
-				    <el-table-column label="账户类型" width=80>
+				    <el-table-column label="账户类型" width="80">
 					    <template slot-scope="scope">
 					        <span>{{ scope.row.userType != 1 ? "一般账户" : "党员账户" }}</span>
 					    </template>
 				    </el-table-column>
-				    <el-table-column label="状态" width=80>
+				    <el-table-column label="状态" width="80">
 					    <template slot-scope="scope">
 					        <span>{{ scope.row.status == 0 ? "禁用" : "可用" }}</span>
 					    </template>
-				    </el-table-column>
+					</el-table-column>
+					<el-table-column label="角色" >
+						<template slot-scope="scope">
+							{{scope.row.roleNames.join(' , ')}}
+						</template>	
+					</el-table-column>
 				    <el-table-column prop="createTime" label="创建时间" width="270">
+						<template slot-scope="scope">
+							{{scope.row.createTime | datetime}}
+						</template>
 				    </el-table-column>
-				    <el-table-column label="操作">
+				    <el-table-column label="操作" width="270">
 					    <template slot-scope="scope">
 					      	<shiro:hasPermission name="sys:user:delete">  
 						      	<el-button @click="deleteSysUser(scope.row)" type="text" size="small">删除</el-button>
@@ -99,11 +113,14 @@
 						     	<el-button @click="openUpdateSysUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
 					      	</shiro:hasPermission>
 					      	<shiro:hasPermission name="sys:user:update">  
-						      	<el-button v-if="signInAccountType != 'party_role' && scope.row.userType != 1" @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
-					      	</shiro:hasPermission>
+							  	<!--v-if="signInAccountType != 'party_role' && scope.row.userType != 1"-->
+						      	<el-button  @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
+							</shiro:hasPermission>
+							<!-- 合并角色
 					      	<shiro:hasPermission name="sys:user:update">  
 						      	<el-button v-if="signInAccountType == 'plant_admin' && scope.row.userType != 1" type="text" size="small" slot="reference" @click="openSetInnerManageRolesDialog(scope.row)">赋予管理角色</el-button>
-						    </shiro:hasPermission>
+							</shiro:hasPermission>
+							-->
 					    </template>
 				    </el-table-column>
 				 </el-table>
@@ -204,7 +221,15 @@
 	    
 	    <el-dialog @close="resetChangeSysUserRoleForm" title="用户角色变更" :visible.sync="changeSysUserRoleDialog">
 			<div style="margin-bottom: 10px;">
-			  <el-transfer :props="{key: 'roleId', label: 'remark'}" v-model="sysUserRoles" :data="roleList" :titles="['角色列表', '用户拥有角色']" :button-texts="['移除角色', '添加角色']"></el-transfer>
+			  <el-transfer :props="{key: 'roleId', label: 'remark'}" v-model="sysUserRoles" :data="sortedRoleList" :titles="['角色列表', '用户拥有角色']" :button-texts="['移除角色', '添加角色']">
+				<span slot-scope="{ option }" :style="{color:option.builtin?'red':''}">
+					<template v-if="option.builtin">
+						内置 - 
+					</template>
+					<span >{{ option.remark }}</span>
+				</span>
+				
+			  </el-transfer>
 			</div>
 			<el-row style="margin-bottom: 20px;">
 			    <el-button size="small" type="primary" @click="changeSysUserRoles">变更角色</el-button>
@@ -228,6 +253,10 @@
 </body>
 
 <script type="text/javascript">
+	window.onFocus = function () {
+		console.log('sys_user_m activated')
+		appInstince.queryUsers(appInstince.pager.pageNum, appInstince.pager.pageSize)
+	}
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
@@ -389,6 +418,13 @@
 		    	isShow: 0
 		    },
 		    signInAccountType: null
+		},
+		computed: {
+			sortedRoleList(){
+				return this.roleList.sort((a,b) => {
+					return b.builtin -  a.builtin
+				})
+			}
 		},
 		created:function () {
 			this.queryUsers(1, 12); //这里定义这个方法，vue实例之后运行到这里就调用这个函数
@@ -673,11 +709,15 @@
 				var t = {
 					userId: row.userId
 				}
-				$.post(url, t, function(data, status){
-					if (data.code == 200) {
-						toast('删除成功',data.msg,'success')
-						appInstince.queryUsers(appInstince.pager.pageNum, appInstince.pager.pageSize);
-					}
+				this.$confirm('是否删除该用户: '+row.username, '是否删除该用户', {
+					type: 'warning'
+				}).then(()=>{
+					$.post(url, t, function(data, status){
+						if (data.code == 200) {
+							toast('删除成功',data.msg,'success')
+							appInstince.queryUsers(appInstince.pager.pageNum, appInstince.pager.pageSize);
+						}
+					})
 				})
 			},
 			initOrgInfoTree() {	/*打开加入组织的窗口*/

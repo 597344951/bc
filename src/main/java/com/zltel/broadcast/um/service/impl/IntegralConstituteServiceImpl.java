@@ -243,7 +243,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @param conditions
      * @return
      */
-    public R queryOrgIntegralInfo(Map<String, Object> conditions) {
+    @Override
+    public Map<String, Object> queryOrgIntegralInfo(Map<String, Object> conditions) {
         if (conditions == null) conditions = new HashMap<>();
         List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
         Double integralCount = new Double(0.0);
@@ -256,7 +257,7 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
             results.put("integralError", true);
         }
 
-        return R.ok().setData(results);
+        return results;
     }
 
     /**
@@ -303,21 +304,24 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
 
                 List<Map<String, Object>> icChildrens = integralConstituteMapper.queryOrgIntegralConstitute(condition);
                 //非内置积分可以不用设置加/扣分
-                if ((icChildrens == null || icChildrens.size() == 0) && "1".equals(String.valueOf(ic.get("isInnerIntegral")))) {
-                    // 当为最低级时，查看当前积分节点是否有对应的加分减分方法
-                    IntegralChangeType ict = new IntegralChangeType();
-                    ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
-                    ict.setOperation(0); // 是否有扣分处理方式
-                    List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
-                    if (icts == null || icts.size() == 0) throw new IntegralErrorException();
-                    icts.clear();
-                    ict.setOperation(1); // 是否有加分处理方式
-                    icts = integralChangeTypeMapper.queryICT(ict);
-                    if (icts == null || icts.size() == 0) throw new IntegralErrorException();
-
-                    BigDecimal bd = new BigDecimal(ic.get("integral").toString());
+                if ((icChildrens == null || icChildrens.size() == 0)) {
+                	BigDecimal bd = new BigDecimal(ic.get("integral").toString());
                     results.put("integralCount",
                             Double.parseDouble(results.get("integralCount").toString()) + bd.doubleValue());
+                    if ("1".equals(String.valueOf(ic.get("isInnerIntegral")))) {
+						// 当为最低级时，查看当前积分节点是否有对应的加分减分方法
+						IntegralChangeType ict = new IntegralChangeType();
+						ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
+						ict.setOperation(0); // 是否有扣分处理方式
+						List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+						if (icts == null || icts.size() == 0)
+							throw new IntegralErrorException();
+						icts.clear();
+						ict.setOperation(1); // 是否有加分处理方式
+						icts = integralChangeTypeMapper.queryICT(ict);
+						if (icts == null || icts.size() == 0)
+							throw new IntegralErrorException();
+					}
                 }
                 getIntegralInfoChildrens(icChildrens, results, condition);
             }

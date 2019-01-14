@@ -8,9 +8,11 @@
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_show" jdbcType="INTEGER" property="isShow" />
+    <result column="builtin" jdbcType="BOOLEAN" property="builtin" />
+    <result column="descript" jdbcType="VARCHAR" property="descript"/>
   </resultMap>
   <sql id="Base_Column_List">
-    role_id, role_name, remark, dept_id, create_time, is_show
+    role_id, role_name, remark, dept_id, create_time, is_show, builtin, descript
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -132,6 +134,9 @@
 			</if>
 			<if test="isShow != null"> and 
 				is_show = #{isShow}
+			</if>
+			<if test="builtin != null">
+				and builtin = #{builtin}
 			</if>
 	</select>
 </mapper>

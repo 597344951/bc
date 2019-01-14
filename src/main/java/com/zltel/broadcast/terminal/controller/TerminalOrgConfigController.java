@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,6 +75,13 @@ public class TerminalOrgConfigController extends BaseController {
     public R check(@RequestBody List<TerminalBasicInfo> infos) {
         List<R> rets =  this.configService.checkTerminals(infos);
         return R.ok().setData(rets);
+    }
+    @ApiOperation("删除指定终端关联配置信息")
+    @DeleteMapping("/config")
+    @RequiresPermissions("terminal:orgconfig:unconfig")
+    public R unConfig(@RequestBody TerminalBasicInfo info) {
+        this.configService.unOrgConfig(info);
+        return R.ok();
     }
 
 }

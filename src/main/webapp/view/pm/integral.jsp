@@ -210,6 +210,7 @@
 									<template slot-scope="scope">
 										<el-button @click="ic_manage_openChangePartyUserIntegralDialog(scope.row)" type="text" size="mini">积分变更</el-button>
 										<el-button @click="ic_manage_queryPartyIntegralRecordsForPartyUserClick(scope.row)" type="text" size="mini">查看积分记录</el-button>
+										<el-button @click="open_integral_change_trajectory_dialog(scope.row)" type="text" size="mini">积分变更轨迹</el-button>
 									</template>
 								</el-table-column>
 							</el-table>
@@ -263,6 +264,31 @@
 		</el-container>
 
 
+
+		<el-dialog @close="reset_integral_change_trajectory_dialog" title="积分变更轨迹" :visible.sync="integral_change_trajectory.dialog" width="70%">
+			<div style="margin: 10px;">
+				<el-date-picker
+					v-model="integral_change_trajectory.startTime" 
+					@change="open_integral_change_trajectory_dialog(integral_change_trajectory.userInfo)"
+					type="month"
+					size="small"
+					value-format="yyyy-MM-dd" 
+					placeholder="起始时间">
+			  	</el-date-picker>
+				 至
+			  	<el-date-picker
+					v-model="integral_change_trajectory.endTime" 
+					@change="open_integral_change_trajectory_dialog(integral_change_trajectory.userInfo)"
+					type="month"
+					size="small"
+					value-format="yyyy-MM-dd" 
+					placeholder="结束时间">
+			  	</el-date-picker>
+			</div>
+			<div style="margin: 10px;">
+				<div style="width: 100%; height: 400px;" id="integral_change_trajectory_chart"></div>
+			</div>
+		</el-dialog>
 
 		<el-dialog @close="ic_manage_resetChangePartyUserIntegralScoreForm" title="党员积分变更" :visible.sync="ic_manage_changePartyUserIntegralDialog" width="400px">
 			<el-form label-width="120px" size="small" :model="changePartyUserIntegralScoreForm" status-icon 
@@ -656,7 +682,13 @@
 			},
 			signInAccountType: null,
 			importIntegralExcelErrorMsgDialog: false,
-			importIntegralExcelErrorMsg: null
+			importIntegralExcelErrorMsg: null,
+			integral_change_trajectory: {
+				dialog: false,
+				startTime: null,
+				endTime: null,
+				userInfo: null
+			}
 		},
 		created: function () {
 			this.getScreenHeightForPageSize();
@@ -668,6 +700,103 @@
 			this.getSignInAccountType();
 		},
 		methods: {
+			reset_integral_change_trajectory_dialog() {
+				let obj = this;
+				obj.integral_change_trajectory = {
+					dialog: false,
+					startTime: null,
+					endTime: null,
+					userInfo: null
+				}
+			},
+			open_integral_change_trajectory_dialog(userInfo) {
+				let obj = this;
+				obj.integral_change_trajectory.userInfo = userInfo;
+				obj.integral_change_trajectory.dialog = true;
+
+				setTimeout(() => {
+					var myChart = echarts.init(document.getElementById("integral_change_trajectory_chart"));
+					myChart.clear();
+					myChart.showLoading({
+					　　text : '正在查找当前用户积分变更轨迹... ...\n为避免加载过长在时间选择上应避免太大的跨度'
+					});
+
+					var url = "/party/integral/queryUserIntegralChangeTrajectory";
+					var t = {
+						idCard: userInfo.idCard,
+						orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId,
+						totalIntegral: obj.orgIntegralInfo.integralCount,
+						startTime: obj.integral_change_trajectory.startTime,
+						endTime: obj.integral_change_trajectory.endTime
+					}
+					$.post(url, t, function(data, status){
+						if (data.code == 200) {
+							if (data.data != undefined) {	
+								// 基于准备好的dom，初始化echarts实例
+								var lines = data.data.lines;	/*x轴信息*/
+								var datas = data.data.datas;
+								var datasss = new Array;
+								var shuju = {name:null, type: "line", data: [], smooth: true};
+					        	shuju.name = "分数";
+					        	shuju.data = datas;
+					        	datasss[0] = shuju;
+								// 绘制图表
+								myChart.hideLoading();    //隐藏加载动画
+								var option = {
+									title: {
+										text: userInfo.name + '的积分变更轨迹'
+									},
+									tooltip: {
+										trigger: 'axis',
+										axisPointer: {
+											type: 'cross',
+											crossStyle: {
+												color: '#999'
+											}
+										}
+									},
+									toolbox: {
+										feature: {
+											dataView: {show: true, readOnly: false},
+											magicType: {show: true, type: ['line', 'bar']},
+											restore: {show: true},
+											saveAsImage: {show: true}
+										}
+									},
+									xAxis: [
+										{
+											type: 'category',
+											data: lines,
+											axisPointer: {
+												type: 'shadow'
+											}
+										}
+									],
+									yAxis: [
+										{
+											type: 'value',
+											name: '分数',
+											min: 0,
+											axisLabel: {
+												formatter: '{value} 分'
+											}
+										}
+									],
+									dataZoom: [
+										{
+											type: 'slider',
+											show: true
+										}
+									],
+									series: datasss
+								};
+								myChart.setOption(option);
+							} 
+						}
+						
+					})
+				}, 100);
+			},
 			getSignInAccountType() {	/*得到该登录用户的类型*/
 				var obj = this;
 

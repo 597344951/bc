@@ -204,5 +204,12 @@
       <if test="changeIntegralType != null and changeIntegralType != ''"> and
        	pir.change_integral_type = #{changeIntegralType}
       </if>
+      <if test="startTime != null"> and 
+		pir.change_time >= #{startTime}
+	  </if>
+	  <if test="endTime != null"> and 
+		pir.change_time &lt;= #{endTime}
+	  </if>
+	order by pir.change_time desc
   </select>
 </mapper>

@@ -120,7 +120,7 @@
 	  integral_change_type ict
   </select>
   
-  <select id="queryICT" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType" resultMap="BaseResultMap">
+  <select id="queryICT" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType" resultMap="BaseResultMap" flushCache="true">
   	select
 	  <include refid="Base_Column_List" />
 	from

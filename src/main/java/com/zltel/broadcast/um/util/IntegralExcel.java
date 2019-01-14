@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,6 @@ public class IntegralExcel {
         return R.ok().setMsg("信息导入成功");
     }
     
-    @SuppressWarnings("unchecked")
 	private boolean validateImportIntegralExcel(Sheet hs, StringBuffer validataErrorMsg, boolean validateSuccess, 
 			List<PartyIntegralRecord> pirs) {
     	for (int i = 2;; i++) {// 从第3行开始读取
@@ -101,7 +101,7 @@ public class IntegralExcel {
             		Map<String, Object> condition = new HashMap<>();
             		condition.put("orgId", Integer.parseInt(String.valueOf(row.getCell(0).getStringCellValue())));
             		condition.put("parentIcId", -1);
-            		HashMap<String, Object> result = (HashMap<String, Object>)integralConstituteService.queryOrgIntegralInfo(condition).get("data");
+            		Map<String, Object> result = integralConstituteService.queryOrgIntegralInfo(condition);
             		if (!(boolean)result.get("integralError")) {
             			pir.setOrgId(Integer.parseInt(String.valueOf(row.getCell(0).getStringCellValue())));
             		} else {
@@ -215,6 +215,18 @@ public class IntegralExcel {
             //分值变更说明
             if (row.getCell(5) != null && StringUtil.isNotEmpty(row.getCell(5).getStringCellValue())) {
             	pir.setChangeDescribes(row.getCell(5).getStringCellValue());
+            }
+            
+            //分支变更时间
+            if (row.getCell(6) != null) {
+            	try {
+					pir.setChangeTime(row.getCell(6).getDateCellValue());
+				} catch (IllegalStateException e) {
+					validateSuccess = false;
+	                validataErrorMsg.append("第" + (i + 1) + "行日期格式填写错误。\r\n");
+				}
+            } else {
+            	pir.setChangeTime(new Date());
             }
             
             pirs.add(pir);

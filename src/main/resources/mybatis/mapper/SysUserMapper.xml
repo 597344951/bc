@@ -15,6 +15,7 @@
 		<result column="user_type" jdbcType="INTEGER" property="userType" />
 		<result column="last_sign_in_time" jdbcType="TIMESTAMP" property="lastSignInTime" />
 		<association column="username" property="baseUserInfo" select="com.zltel.broadcast.um.dao.BaseUserInfoMapper.selectByIdCard"/>
+		<collection column="user_id" property="roleNames" select="queryUserRoleNames"/>
 	</resultMap>
 	<sql id="Base_Column_List">
 		user_id, username, password, salt, email, mobile, theme, status, org_id, create_time, user_type, last_sign_in_time
@@ -190,6 +191,10 @@
 	
 	<select id="queryAllRoles" resultType="string">
 		select role.role_name from  sys_user_role sur 
+			INNER JOIN sys_role ROLE on sur.role_id = ROLE.role_id and sur.user_id = #{userId}
+	</select>
+	<select id="queryUserRoleNames" resultType="string">
+		select role.remark from  sys_user_role sur 
 			INNER JOIN sys_role ROLE on sur.role_id = ROLE.role_id and sur.user_id = #{userId}
 	</select>
 	

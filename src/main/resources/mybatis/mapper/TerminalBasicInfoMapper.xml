@@ -534,4 +534,10 @@
 		now(),org_id=#{orgId}
 		where code = #{code} and org_id = 0
 	</update>
+	<update id="unOrgConfig"
+		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+		update terminal_basic_info
+		set org_config_time = null , org_id = 0
+		where code = #{code}
+	</update>
 </mapper>

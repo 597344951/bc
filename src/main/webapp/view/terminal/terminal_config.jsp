@@ -250,6 +250,7 @@
                             <div class="bottom clearfix">
                                 <el-button type="button" size="mini" class="button" @click="openTerminalConfig(t)">配置</el-button>
                                 <el-button type="danger" size="mini" class="button" @click="terminalDelete(t)">删除</el-button>
+                                <el-button v-if="t.orgId != 0" type="warning" size="mini" class="button" @click="terminalConfigDelete(t)">删除关联</el-button>
                             </div>
                         </div>
                     </el-card>

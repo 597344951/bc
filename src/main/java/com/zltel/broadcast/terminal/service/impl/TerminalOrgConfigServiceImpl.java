@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.zltel.broadcast.common.exception.RRException;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
@@ -38,7 +39,7 @@ public class TerminalOrgConfigServiceImpl implements TerminalOrgConfigService {
     @Override
     @Transactional
     public int orgConfig(TerminalBasicInfo info) {
-        
+
         return this.infoMapper.orgConfig(info);
     }
 
@@ -82,6 +83,12 @@ public class TerminalOrgConfigServiceImpl implements TerminalOrgConfigService {
 
 
         return R.ok("检测通过").set("source", info.getCode());
+    }
+
+    @Override
+    public int unOrgConfig(TerminalBasicInfo info) {
+        if (info == null || StringUtils.isBlank(info.getCode())) RRException.makeThrow("请选择要取消关联终端");
+        return this.infoMapper.unOrgConfig(info);
     }
 
 

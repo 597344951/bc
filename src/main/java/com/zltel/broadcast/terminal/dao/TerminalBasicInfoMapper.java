@@ -44,4 +44,6 @@ public interface TerminalBasicInfoMapper {
     List<TerminalBasicInfo> queryUnConfigTerminal(TerminalBasicInfo record);
 
     int orgConfig(TerminalBasicInfo record);
+
+    int unOrgConfig(TerminalBasicInfo info);
 }

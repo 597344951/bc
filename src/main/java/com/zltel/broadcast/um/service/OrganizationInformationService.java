@@ -22,6 +22,12 @@ public interface OrganizationInformationService {
     int updateByPrimaryKey(OrganizationInformation record);
     
     /**
+     * 变更组织结构
+     * @return
+     */
+    public int changeOrgStructureStart(OrganizationInformation oi);
+    
+    /**
      * 组织信息
      * @param organizationInformation
      * @return

@@ -18,6 +18,10 @@ public class SysRole {
 	private Date afterTime; // 用于时间区间查询
 	
 	private Integer isShow;
+	/**内置节点**/
+	private Boolean builtin;
+	
+	private String descript;
 
 	public Integer getIsShow() {
 		return isShow;
@@ -82,4 +86,21 @@ public class SysRole {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+
+    public Boolean getBuiltin() {
+        return builtin;
+    }
+
+    public void setBuiltin(Boolean builtin) {
+        this.builtin = builtin;
+    }
+
+    public String getDescript() {
+        return descript;
+    }
+
+    public void setDescript(String descript) {
+        this.descript = descript;
+    }
+	
 }

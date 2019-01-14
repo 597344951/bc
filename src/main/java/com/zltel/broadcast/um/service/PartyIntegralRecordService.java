@@ -60,6 +60,13 @@ public interface PartyIntegralRecordService {
     int updateByPrimaryKey(PartyIntegralRecord record);
     
     /**
+     * 查询用户积分变更轨迹统计图
+     * @param condition
+     * @return
+     */
+    public Map<String, Object> queryUserIntegralChangeTrajectory(Map<String, Object> condition);
+    
+    /**
      * 查询积分记录
      * @param conditions
      * @return

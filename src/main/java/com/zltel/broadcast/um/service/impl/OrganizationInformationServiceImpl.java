@@ -57,6 +57,19 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     }
 	
 	/**
+     * 变更组织结构
+     * @return
+     */
+	@Transactional(rollbackFor=java.lang.Exception.class)
+    public int changeOrgStructureStart(OrganizationInformation oi) {
+    	if (oi != null) {
+			return this.updateByPrimaryKeySelective(oi);	//开始修改组织职责
+		} else {
+			return 0;
+		}
+    }
+	
+	/**
      * 组织信息
      * @param organizationInformation
      * @return
@@ -85,7 +98,6 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
     	joinOrgQueryChildrenOrg(orgInfoSelects, childrenOrg);
     	return R.ok().setData(orgInfoSelects);
     }
-    
     private void joinOrgQueryChildrenOrg(List<Map<String, Object>> orgInfoSelects, List<Map<String, Object>> childrenOrg) {
     	if (childrenOrg != null && childrenOrg.size() > 0) {
     		for (Map<String, Object> map : childrenOrg) {

@@ -28,4 +28,9 @@ public interface SysUserRoleMapper extends BaseDao<SysUserRole> {
      * @return
      */
     public int deleteSysUserRolesByUpdateSysUserRole(SysUserRole sysUserRole);
+    /**
+     * 根据给定条件删除 用户和角色的关联
+     * @param record
+     */
+    public void deleteSysUserRole(SysUserRole record);
 }

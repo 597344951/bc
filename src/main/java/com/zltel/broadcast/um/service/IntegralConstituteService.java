@@ -51,7 +51,7 @@ public interface IntegralConstituteService {
      * @param conditions
      * @return
      */
-    public R queryOrgIntegralInfo(Map<String, Object> conditions);
+    public Map<String, Object> queryOrgIntegralInfo(Map<String, Object> conditions);
     
     /**
      * 查询组织积分信息（最后一级）

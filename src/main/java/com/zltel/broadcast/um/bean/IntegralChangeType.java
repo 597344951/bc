@@ -1,9 +1,15 @@
 package com.zltel.broadcast.um.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class IntegralChangeType {
-    private Integer ictId;
+public class IntegralChangeType implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Integer ictId;
 
     private String type;
 

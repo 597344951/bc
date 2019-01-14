@@ -131,7 +131,7 @@ public class IntegralConstituteController {
 	@ApiOperation(value = "得到积分的子节点信息")
 	public R queryOrgIntegralInfo(@RequestParam Map<String, Object> conditions) {
 		try {
-			return integralConstituteService.queryOrgIntegralInfo(conditions);
+			return R.ok().setData(integralConstituteService.queryOrgIntegralInfo(conditions));
 		} catch (Exception e) {
 			return R.error().setMsg("得到积分的子节点信息失败");
 		}

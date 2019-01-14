@@ -18,4 +18,7 @@ public interface TerminalOrgConfigService {
     /** 检测指定终端是否能导入 **/
     List<R> checkTerminals(List<TerminalBasicInfo> infos);
 
+    /** 取消终端关联 **/
+    int unOrgConfig(TerminalBasicInfo info);
+
 }

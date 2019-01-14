@@ -289,6 +289,10 @@
 						  	</div>
 						</el-popover>
 					</shiro:hasPermission>
+					<el-button v-if="signInAccountType == 'plant_admin'" class="margin-left-10" size="small" type="primary" @click="open_change_org_structure">
+						<i class="el-icon-sort"></i>
+						结构变更
+					</el-button>
 					<el-button-group class="margin-left-10" v-if="signInAccountType != 'party_role'">
                         <el-button size="small" :type="!dis_h_v?'primary':''" icon="el-icon-menu" @click="dis_h_v=false"></el-button>
                         <el-button size="small" :type="dis_h_v?'primary':''" icon="el-icon-tickets" @click="dis_h_v=true"></el-button>
@@ -486,6 +490,18 @@
 			</el-main>
 		</el-container>
 
+		<el-dialog @close="" title="变更组织结构" :visible.sync="change_org_structure.dialog">
+			<div style="margin: 10px;">
+				<el-tree :expand-on-click-node="false" 
+					:highlight-current="true" 
+					draggable
+					:default-expand-all="true"
+					@node-drop="change_org_structure_start"
+					:data="change_org_structure.org_tree" 
+					:props="change_org_structure.org_tree_props" >
+				</el-tree>
+			</div>
+		</el-dialog>
 
 		<el-dialog @close="reset_join_party" title="变更入党流程" :visible.sync="join_process_dialog" width="70%">
 			<div style="margin-bottom: 10px;">
@@ -1191,6 +1207,16 @@
 				label: function(_data, node){
 					return _data.data.orgDutyName;
 				}
+			},
+			change_org_structure: {
+				dialog: false,
+				org_tree: null,
+				org_tree_props: {
+					children: 'children',
+					label: function(_data, node){
+						return _data.data.orgInfoName;
+					}
+				}
 			}
 		},
 		created: function () {
@@ -1206,6 +1232,21 @@
 			this.getItaf();
 		},
 		methods: {
+			change_org_structure_start(draggingNode, dropNode, dropType, ev) {
+
+			},
+			open_change_org_structure() {
+				let obj = this;
+				var url = "/org/ifmt/queryOrgInfosToTree";
+				var t = {
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.change_org_structure.org_tree = datas.data;
+						obj.change_org_structure.dialog = true;
+					}
+				})
+			},
 			turnOutUpdateOrgRelation() {
 				var obj = this;
 				var checkedKeys = [];

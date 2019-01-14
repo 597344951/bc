@@ -394,7 +394,7 @@ window.appInstince = new Vue({
         },
         terminalDelete(t) {
             this.$confirm('是否删除此终端?', '警告', {
-                type: 'warning'
+                type: 'error'
             }).then(() => {
                 console.debug('删除终端oid: ', t.oid)
                 ajax_json_promise(`/terminal/basic/addup/${t.oid}`, 'delete', {}).then(result => {
@@ -407,6 +407,19 @@ window.appInstince = new Vue({
                     }
                 })
             }).catch(() => {});
+        },
+        terminalConfigDelete(t){
+            this.$confirm('删除关联配置信息后,可重新配置', '删除此联配置信息?', {
+                type: 'warning'
+            }).then(() => {
+                ajax_json_promise('/terminal/org-config/config', 'delete', t).then(result => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除关联配置成功'
+                    })
+                    this.loadTeminalInfo()
+                })
+            })
         },
         syn() {
             ajax_json_promise("/terminal/basic/addup", "post", "").then((result) => {
