@@ -1,8 +1,11 @@
 package com.zltel.broadcast.um.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zltel.broadcast.common.json.R;
@@ -22,6 +25,40 @@ import io.swagger.annotations.ApiOperation;
 public class IntegralChangeTypeController {
 	@Autowired
 	private IntegralChangeTypeService integralChangeTypeService;
+	
+	/**
+	 * 删除分值变更场景
+	 * @param ict 条件
+	 * @return
+	 */
+	@RequestMapping(value="/deleteIntegralChangeScene", method=RequestMethod.POST)
+	@ApiOperation(value = "删除分值变更场景")
+	public R deleteIntegralChangeScene(@RequestParam Map<String, Object> condition) {
+		try {
+			if (integralChangeTypeService.deleteIntegralChangeScene(condition)) {
+				return R.ok().setMsg("删除成功");
+			} else {
+				return R.error().setMsg("删除失败");
+			}
+		} catch (Exception e) {
+			return R.error().setMsg("删除失败");
+		}
+	}
+	
+	/**
+	 * 查询所有分值改变的场景和变更的分值（用于观察内置积分加扣分的设置情况）
+	 * @param ict 条件
+	 * @return
+	 */
+	@RequestMapping(value="/queryAllIntegralChangeScene", method=RequestMethod.POST)
+	@ApiOperation(value = "查询所有分值改变的场景和变更的分值（用于观察内置积分加扣分的设置情况）")
+	public R queryAllIntegralChangeScene(@RequestParam Map<String, Object> condition) {
+		try {
+			return R.ok().setData(integralChangeTypeService.queryAllIntegralChangeScene(condition));
+		} catch (Exception e) {
+			return R.error().setMsg("查询失败");
+		}
+	}
 	
 	/**
 	 * 查询积分变更类型

@@ -55,7 +55,15 @@ public class LessonUnitController extends BaseController {
         List<LessonUnit> lessons = this.unitService.queryCategoryRelatedData(record, pager);
         return R.ok().setData(lessons).setPager(pager);
     }
-
+    
+    @ApiOperation("管理查询")
+    @PostMapping("/unit/manage/{pageNum}-{pageSize}")
+    public R manage(@PathVariable("pageNum") int pageNum, @PathVariable("pageSize") int pageSize,
+            @RequestBody LessonUnit record) {
+        Pager pager = new Pager(pageNum, pageSize);
+        List<LessonUnit> lessons = this.unitService.queryCategoryRelatedData(record, pager);
+        return R.ok().setData(lessons).setPager(pager);
+    }
 
     @ApiOperation("增加")
     @PostMapping("/unit")
@@ -79,11 +87,7 @@ public class LessonUnitController extends BaseController {
     @ApiOperation("删除分类信息")
     @DeleteMapping("/unit/{lessonUnitId}")
     public R delete(@PathVariable("lessonUnitId") Integer lessonUnitId) {
-        LessonUnit lc = this.unitService.selectByPrimaryKey(lessonUnitId);
-        SysUser user = getSysUser();
-        if (null != lc && lc.getOrgId() == user.getOrgId() && lc.getUserId() == user.getUserId()) {
-            this.unitService.deleteByPrimaryKey(lessonUnitId);
-        }
+        this.unitService.deleteByPrimaryKey(lessonUnitId);
         return R.ok();
     }
 

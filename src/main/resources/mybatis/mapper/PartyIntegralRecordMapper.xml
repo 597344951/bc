@@ -14,10 +14,11 @@
     <result column="weight_coefficient" jdbcType="DECIMAL" property="weightCoefficient" />
     <result column="weight_type" jdbcType="INTEGER" property="weightType" />
     <result column="is_merge" jdbcType="INTEGER" property="isMerge" />
+    <result column="scene" jdbcType="VARCHAR" property="scene" />
   </resultMap>
   <sql id="Base_Column_List">
     pir_id, org_id, party_id, activity_id, change_type_id, change_describes, change_integral_type, 
-    change_time, change_score, weight_coefficient, weight_type, is_merge
+    change_time, change_score, weight_coefficient, weight_type, is_merge, scene
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -33,12 +34,12 @@
     insert into party_integral_record (pir_id, org_id, party_id, 
       activity_id, change_type_id, change_describes, 
       change_integral_type, change_time, change_score, weight_coefficient, 
-      weight_type, is_merge)
+      weight_type, is_merge, scene)
     values (#{pirId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{partyId,jdbcType=INTEGER}, 
       #{activityId,jdbcType=INTEGER}, #{changeTypeId,jdbcType=INTEGER}, #{changeDescribes,jdbcType=VARCHAR}, 
       #{changeIntegralType,jdbcType=INTEGER}, #{changeTime,jdbcType=TIMESTAMP}, #{changeScore,jdbcType=DECIMAL}, 
       #{weightCoefficient,jdbcType=DECIMAL}, 
-      #{weightType,jdbcType=INTEGER}, #{isMerge,jdbcType=INTEGER})
+      #{weightType,jdbcType=INTEGER}, #{isMerge,jdbcType=INTEGER}, #{scene,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.PartyIntegralRecord">
     insert into party_integral_record
@@ -79,6 +80,9 @@
       <if test="isMerge != null">
         is_merge,
       </if>
+      <if test="scene != null">
+        scene,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="pirId != null">
@@ -116,6 +120,9 @@
       </if>
       <if test="isMerge != null">
         #{isMerge,jdbcType=INTEGER},
+      </if>
+      <if test="scene != null">
+        #{scene,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -155,6 +162,9 @@
       <if test="isMerge != null">
         is_merge = #{isMerge,jdbcType=INTEGER},
       </if>
+      <if test="scene != null">
+        scene = #{scene,jdbcType=VARCHAR},
+      </if>
     </set>
     where pir_id = #{pirId,jdbcType=INTEGER}
   </update>
@@ -170,7 +180,8 @@
       change_score = #{changeScore,jdbcType=DECIMAL},
       weight_coefficient = #{weightCoefficient,jdbcType=DECIMAL},
       weight_type = #{weightType,jdbcType=INTEGER},
-      is_merge = #{isMerge,jdbcType=INTEGER}
+      is_merge = #{isMerge,jdbcType=INTEGER},
+      scene = #{scene,jdbcType=VARCHAR}
     where pir_id = #{pirId,jdbcType=INTEGER}
   </update>
   
@@ -186,7 +197,8 @@
 	  pir.change_score changeScore,
 	  pir.is_merge isMerge,
 	  ic.type type,
-	  pir.change_integral_type changeIntegralType
+	  pir.change_integral_type changeIntegralType,
+	  pir.scene scene
 	from
 	  party_integral_record pir 
 	  inner join organization_information oi on pir.org_id = oi.org_info_id 
@@ -210,6 +222,6 @@
 	  <if test="endTime != null"> and 
 		pir.change_time &lt;= #{endTime}
 	  </if>
-	order by pir.change_time desc
+	order by pir.change_time asc
   </select>
 </mapper>

@@ -36,5 +36,5 @@
     }
     window.sysInfo = sysInfo;
 </script>
-<link rel="shortcut icon" href="/assets/img/logo-icon2.png" />
-<link rel="bookmark" href="/assets/img/logo-icon2.png" />
+<link rel="shortcut icon" href="/assets/logo.png" />
+<link rel="bookmark" href="/assets/logo.png" />

@@ -1388,7 +1388,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			</el-form>
 		</el-dialog>
 
-		<el-dialog title="添加党员" class="bigClose" :fullscreen="true" :visible.sync="partyUser_manager_insertPartyUserDialog">
+		<el-dialog title="添加成员" class="bigClose" :fullscreen="true" :visible.sync="partyUser_manager_insertPartyUserDialog">
 			<el-form class="partyUserForm" size="small" :model="partyUser_manager_insertPartyUserForm" status-icon :rules="partyUser_manager_insertPartyUserRules" 
 				ref="partyUser_manager_insertPartyUserForm" label-width="100px">
 				<el-row :gutter="20">
@@ -1847,7 +1847,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			<el-button style="margin-bottom: 10px;" size="small" type="primary" @click="partyUser_manager_updatePartyUserIdPhoto">更改照片</el-button>
 		</el-dialog>
 
-		<el-dialog title="修改党员信息" class="bigClose" :fullscreen="true" :visible.sync="partyUser_manager_updatePartyUserDialog">
+		<el-dialog title="修改成员信息" class="bigClose" :fullscreen="true" :visible.sync="partyUser_manager_updatePartyUserDialog">
 			<el-form class="partyUserForm" size="small" :model="partyUser_manager_updatePartyUserForm" status-icon :rules="partyUser_manager_updatePartyUserRules" 
 				ref="partyUser_manager_updatePartyUserForm" label-width="100px">
 				<el-row>
@@ -2023,7 +2023,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				<el-row :gutter="20">
 					<el-col :span="6">
 						<el-form-item label="家庭住址：" prop="homeAddress_pca">
-							<el-cascader :disabled="true" clearable :props="partyUser_manager_address_prop"
+							<el-cascader clearable :props="partyUser_manager_address_prop"
 								@change="partyUser_managet_getPartyUserNativePlace"
 								v-model="partyUser_manager_updatePartyUserForm.homeAddress_pca"
 								separator="/"
@@ -2034,7 +2034,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="详细地址：" prop="homeAddressDetail">
-							<el-input :disabled="true" clearable v-model="partyUser_manager_updatePartyUserForm.homeAddressDetail" placeholder="家庭住址详细街道/乡镇"></el-input>
+							<el-input clearable v-model="partyUser_manager_updatePartyUserForm.homeAddressDetail" placeholder="家庭住址详细街道/乡镇"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6">
@@ -2885,27 +2885,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				wechat: [
 					{ pattern: /^[-_a-zA-Z0-9]{6,19}$/, message: '6至20长度，只能包含数字祖母下划线和减号!'}
 				],
-				education: [
-					{ required: true, message: '请选择受教育水平!' }
-				],
-				enrolmentTime: [
-					{ required: true, message: '请选择入学时间!' }
-				],
-				graduationTime: [
-					{ required: true, message: '请选择毕业时间时间!' }
-				],
-				graduationSchool: [
-					{ required: true, message: '请输入毕业学校!' }
-				],
-				major: [
-					{ required: true, message: '请输入在校学习专业!' }
-				],
-				presentAddress_pca: [
-					{ required: true, message: '请选择现住址的省市区!' }
-				],
-				presentAddressDetail: [
-					{ required: true, message: '请输入现住址详细地址!' }
-				],
 				type: [
 					{ required: true, message: '请选择党员类型!' }
 				],
@@ -2990,33 +2969,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				],
 				wechat: [
 					{ pattern: /^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/, message: '6至20长度，只能包含数字祖母下划线和减号!'}
-				],
-				education: [
-					{ required: true, message: '请选择受教育水平!' }
-				],
-				enrolmentTime: [
-					{ required: true, message: '请选择入学时间!' }
-				],
-				graduationTime: [
-					{ required: true, message: '请选择毕业时间时间!' }
-				],
-				graduationSchool: [
-					{ required: true, message: '请输入毕业学校!' }
-				],
-				major: [
-					{ required: true, message: '请输入在校学习专业!' }
-				],
-				homeAddress_pca: [
-					{ required: true, message: '请选择家庭住址的省市区!' }
-				],
-				homeAddressDetail: [
-					{ required: true, message: '请输入家庭住址详细地址!' }
-				],
-				presentAddress_pca: [
-					{ required: true, message: '请选择现住址的省市区!' }
-				],
-				presentAddressDetail: [
-					{ required: true, message: '请输入现住址详细地址!' }
 				],
 				type: [
 					{ required: true, message: '请选择党员类型!' }
@@ -5222,6 +5174,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							obj.partyUser_manager_updatePartyUserForm.presentAddressProvince = obj.partyUser_manager_updatePartyUserForm.presentAddress_pca[0];
 							obj.partyUser_manager_updatePartyUserForm.presentAddressCity = obj.partyUser_manager_updatePartyUserForm.presentAddress_pca[1];
 							obj.partyUser_manager_updatePartyUserForm.presentAddressArea = obj.partyUser_manager_updatePartyUserForm.presentAddress_pca[2];
+						}
+						if (obj.partyUser_manager_updatePartyUserForm.homeAddress_pca != null && 
+							obj.partyUser_manager_updatePartyUserForm.homeAddress_pca != undefined &&
+							obj.partyUser_manager_updatePartyUserForm.homeAddress_pca.length == 3) {
+							obj.partyUser_manager_updatePartyUserForm.homeAddressProvince = obj.partyUser_manager_updatePartyUserForm.homeAddress_pca[0];
+							obj.partyUser_manager_updatePartyUserForm.homeAddressCity = obj.partyUser_manager_updatePartyUserForm.homeAddress_pca[1];
+							obj.partyUser_manager_updatePartyUserForm.homeAddressArea = obj.partyUser_manager_updatePartyUserForm.homeAddress_pca[2];
 						}
 						var t = obj.partyUser_manager_updatePartyUserForm;
 						$.post(url, t, function(data, status){

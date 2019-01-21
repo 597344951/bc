@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="com.zltel.broadcast.terminal.dao.TerminalBasicInfoMapper">
-	<resultMap id="BaseResultMap"
-		type="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+<mapper namespace="com.zltel.broadcast.terminal.dao.TerminalBasicInfoMapper">
+	<resultMap id="BaseResultMap" type="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		<!-- <id column="oid" jdbcType="INTEGER" property="oid" /> -->
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="id" jdbcType="VARCHAR" property="id" />
@@ -11,8 +9,7 @@
 		<result column="type_id" jdbcType="VARCHAR" property="typeId" />
 		<result column="res_time" jdbcType="VARCHAR" property="resTime" />
 		<result column="online" jdbcType="VARCHAR" property="online" />
-		<result column="last_time" jdbcType="VARCHAR"
-			property="lastTime" />
+		<result column="last_time" jdbcType="VARCHAR" property="lastTime" />
 		<result column="ip" jdbcType="VARCHAR" property="ip" />
 		<result column="mac" jdbcType="VARCHAR" property="mac" />
 		<result column="sys" jdbcType="VARCHAR" property="sys" />
@@ -24,21 +21,17 @@
 		<result column="tel" jdbcType="VARCHAR" property="tel" />
 		<result column="addr" jdbcType="VARCHAR" property="addr" />
 		<result column="gis" jdbcType="VARCHAR" property="gis" />
-		<result column="warranty" jdbcType="VARCHAR"
-			property="warranty" />
+		<result column="warranty" jdbcType="VARCHAR" property="warranty" />
 		<result column="loc" jdbcType="VARCHAR" property="loc" />
-		<result column="cover_image" jdbcType="VARCHAR"
-			property="coverImage" />
-		<result column="last_syn_time" jdbcType="TIMESTAMP"
-			property="lastSynTime" />
+		<result column="cover_image" jdbcType="VARCHAR" property="coverImage" />
+		<result column="principal" jdbcType="VARCHAR" property="principal"/>
+		<result column="last_syn_time" jdbcType="TIMESTAMP" property="lastSynTime" />
 		<result column="org_id" jdbcType="INTEGER" property="orgId" />
-		<result column="org_config_time" jdbcType="TIMESTAMP"
-			property="orgConfigTime" />
+		<result column="org_config_time" jdbcType="TIMESTAMP" property="orgConfigTime" />
 		<association column="org_id" property="orgInfo"
 			select="com.zltel.broadcast.um.dao.OrganizationInformationMapper.selectByPrimaryKey"></association>
 	</resultMap>
-	<resultMap id="EChartsMap"
-		type="com.zltel.broadcast.terminal.bean.TerminalEcharts">
+	<resultMap id="EChartsMap" type="com.zltel.broadcast.terminal.bean.TerminalEcharts">
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="value" jdbcType="VARCHAR" property="value" />
 	</resultMap>
@@ -46,46 +39,47 @@
 		oid, name, id, code, type_id, res_time, online, last_time,
 		ip, mac, sys,
 		size, ratio,
-		rev, ver, typ, tel, addr, gis, warranty, loc
-		, cover_image,last_syn_time , org_id
+		rev, ver, typ, tel,
+		addr, gis, warranty, loc
+		, principal,cover_image,last_syn_time , org_id
 	</sql>
-	<select id="selectByPrimaryKey"
-		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from terminal_basic_info
 		where oid = #{oid,jdbcType=INTEGER}
 	</select>
-	<delete id="deleteByPrimaryKey"
-		parameterType="java.lang.Integer">
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from terminal_basic_info
 		where oid =
 		#{oid,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+	<insert id="insert" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		insert into terminal_basic_info ( name, id,
 		code,
 		type_id, res_time,
-		online, last_time, ip,
+		online,
+		last_time, ip,
 		mac, sys, size, ratio,
 		rev,
 		ver, typ, tel,
-		addr, gis, warranty, loc)
+		addr, gis, warranty, loc,principal)
 		values
-		(#{name,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR},
+		(#{name,jdbcType=VARCHAR},
+		#{id,jdbcType=VARCHAR},
 		#{code,jdbcType=VARCHAR}, #{typeId,jdbcType=VARCHAR},
 		#{resTime,jdbcType=VARCHAR},
 		#{online,jdbcType=VARCHAR},
 		#{lastTime,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR},
-		#{mac,jdbcType=VARCHAR}, #{sys,jdbcType=VARCHAR},
+		#{mac,jdbcType=VARCHAR},
+		#{sys,jdbcType=VARCHAR},
 		#{size,jdbcType=VARCHAR}, #{ratio,jdbcType=VARCHAR},
-		#{rev,jdbcType=VARCHAR}, #{ver,jdbcType=VARCHAR},
+		#{rev,jdbcType=VARCHAR},
+		#{ver,jdbcType=VARCHAR},
 		#{typ,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR},
-		#{addr,jdbcType=VARCHAR},#{gis,jdbcType=VARCHAR},#{warranty,jdbcType=VARCHAR},#{loc,jdbcType=VARCHAR})
+		#{addr,jdbcType=VARCHAR},#{gis,jdbcType=VARCHAR},#{warranty,jdbcType=VARCHAR},#{loc,jdbcType=VARCHAR},#{principal,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+	<insert id="insertSelective" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		insert into terminal_basic_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="oid != null">
@@ -150,6 +144,9 @@
 			</if>
 			<if test="loc != null">
 				loc,
+			</if>
+			<if test="principal != null">
+				principal,
 			</if>
 			<if test="orgId != null">
 				org_id,
@@ -219,13 +216,15 @@
 			<if test="loc != null">
 				#{loc,jdbcType=VARCHAR},
 			</if>
+			<if test="principal != null">
+				#{principal,jdbcType=VARCHAR},
+			</if>
 			<if test="orgId != null">
 				#{orgId},
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+	<update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		update terminal_basic_info
 		<set>
 			<if test="name != null">
@@ -286,7 +285,10 @@
 				warranty = #{warranty,jdbcType=VARCHAR},
 			</if>
 			<if test="loc != null">
-				loc = #{loc,jdbcType=VARCHAR}
+				loc = #{loc,jdbcType=VARCHAR},
+			</if>
+			<if test="principal != null">
+				principal = #{principal,jdbcType=VARCHAR},
 			</if>
 			<if test="orgId != null">
 				org_id = #{orgId},
@@ -294,20 +296,22 @@
 		</set>
 		where oid = #{oid,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKey"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+	<update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		update terminal_basic_info
 		set name =
 		#{name,jdbcType=VARCHAR},
-		id = #{id,jdbcType=VARCHAR},
+		id =
+		#{id,jdbcType=VARCHAR},
 		code =
 		#{code,jdbcType=VARCHAR},
 		type_id = #{typeId,jdbcType=VARCHAR},
-		res_time = #{resTime,jdbcType=VARCHAR},
+		res_time =
+		#{resTime,jdbcType=VARCHAR},
 		online =
 		#{online,jdbcType=VARCHAR},
 		last_time = #{lastTime,jdbcType=VARCHAR},
-		ip = #{ip,jdbcType=VARCHAR},
+		ip =
+		#{ip,jdbcType=VARCHAR},
 		mac = #{mac,jdbcType=VARCHAR},
 		sys =
 		#{sys,jdbcType=VARCHAR},
@@ -317,7 +321,8 @@
 		rev = #{rev,jdbcType=VARCHAR},
 		ver =
 		#{ver,jdbcType=VARCHAR},
-		typ = #{typ,jdbcType=VARCHAR},
+		typ =
+		#{typ,jdbcType=VARCHAR},
 		tel =
 		#{tel,jdbcType=VARCHAR},
 		addr = #{addr,jdbcType=VARCHAR},
@@ -325,11 +330,11 @@
 		#{gis,jdbcType=VARCHAR},
 		warranty = #{warranty,jdbcType=VARCHAR},
 		loc =
-		#{loc,jdbcType=VARCHAR}
+		#{loc,jdbcType=VARCHAR},
+		principal=#{principal,jdbcType=VARCHAR}
 		where oid = #{oid,jdbcType=INTEGER}
 	</update>
-	<select id="queryBasicInfo"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
+	<select id="queryBasicInfo" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
 		resultMap="BaseResultMap">
 		select
 		*
@@ -358,7 +363,7 @@
 		<if test="resTime!= null and resTime !=''">
 			and res_time = #{resTime,jdbcType=VARCHAR}
 		</if>
-		
+
 		<if test="lastTime!= null and lastTime !=''">
 			and last_time = #{lastTime,jdbcType=VARCHAR}
 		</if>
@@ -401,13 +406,15 @@
 		<if test="loc != null and loc !=''">
 			and loc = #{loc,jdbcType=VARCHAR}
 		</if>
+		<if test="principal != null and principal !=''">
+			and principal = #{principal,jdbcType=VARCHAR}
+		</if>
 		<if test="orgId != null">
 			and org_id = #{orgId}
 		</if>
 		<if test="orgIds !=null ">
 			AND org_id in
-			<foreach collection="orgIds" item="id" index="index" open="("
-				close=")" separator=",">
+			<foreach collection="orgIds" item="id" index="index" open="(" close=")" separator=",">
 				#{id}
 			</foreach>
 		</if>
@@ -433,7 +440,8 @@
 		'1' then '在线' when '0' then'离线' else t.online
 		end
 		name, count(t.oid)
-		value from terminal_basic_info t
+		value from
+		terminal_basic_info t
 		<where>
 			<include refid="TerminalBaseInfoQueryParams" />
 		</where>
@@ -477,7 +485,8 @@
 		then '一体机' when '2' then'播放盒+显示屏' when '3'
 		then
 		'播放盒+投影仪' else t.typ
-		end name, count(t.oid) value from
+		end name, count(t.oid)
+		value from
 		terminal_basic_info t
 		<where>
 			<include refid="TerminalBaseInfoQueryParams" />
@@ -491,8 +500,7 @@
 			<include refid="TerminalBaseInfoQueryParams" />
 		</where>
 	</select>
-	<select id="countOnlineTerminal"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
+	<select id="countOnlineTerminal" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
 		resultType="com.zltel.broadcast.terminal.bean.OnlineCountBean">
 		SELECT
 		CASE
@@ -512,8 +520,7 @@
 		GROUP BY tbi.online
 	</select>
 
-	<select id="queryUnConfigTerminal"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
+	<select id="queryUnConfigTerminal" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
 		resultMap="BaseResultMap">
 		select
 		*
@@ -527,17 +534,17 @@
 			</if>
 		</where>
 	</select>
-	<update id="orgConfig"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+	<update id="orgConfig" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		update terminal_basic_info
 		set org_config_time =
 		now(),org_id=#{orgId}
-		where code = #{code} and org_id = 0
+		where
+		code = #{code} and org_id = 0
 	</update>
-	<update id="unOrgConfig"
-		parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
+	<update id="unOrgConfig" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo">
 		update terminal_basic_info
 		set org_config_time = null , org_id = 0
-		where code = #{code}
+		where
+		code = #{code}
 	</update>
 </mapper>

@@ -1,0 +1,25 @@
+#app {
+  margin: 5px 10px;
+}
+.el-tabs__header {
+  margin: 0;
+  padding-top: 10px;
+}
+.el-main {
+  padding: 0;
+}
+.header p {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: bolder;
+}
+.header .el-pagination {
+  float: right;
+}
+.el-card {
+  margin-bottom: 20px;
+  border: 0;
+}
+.el-alert {
+  margin: 15px 0px;
+}

@@ -10,6 +10,7 @@
     <%@include file="/include/head.jsp"%>
 
     <link href="${urls.getForLookupPath('/assets/module/terminal/terminal-control.css')}" rel="stylesheet">
+    <%@include file="/include/map-gaode.jsp"%>
 </head>
 
 <body>
@@ -248,6 +249,7 @@
                                 </tr>
                             </table>
                             <div class="bottom clearfix">
+                                <el-button size="mini" icon="el-icon-edit" type="primary" @click="updateTbi(t)">编辑</el-button>
                                 <el-button type="button" size="mini" class="button" @click="openTerminalConfig(t)">配置</el-button>
                                 <el-button type="danger" size="mini" class="button" @click="terminalDelete(t)">删除</el-button>
                                 <el-button v-if="t.orgId != 0" type="warning" size="mini" class="button" @click="terminalConfigDelete(t)">删除关联</el-button>
@@ -296,6 +298,180 @@
                 </div>
             </div>
         </el-dialog>
+
+        <el-dialog title="" :visible.sync="tbi.visible" width="40%">
+			<el-form :model="tbi" label-width="100px" size="mini">
+				<el-row type="flex" justify="center">
+					<el-col :span="10">
+
+						<el-form-item label="责任人">
+							<el-input v-model="tbi.data.principal"></el-input>
+						</el-form-item>
+					</el-col>
+
+					<el-col :span="10">
+						<el-form-item label="所属地区">
+							<el-input v-model="tbi.data.loc"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+						<el-form-item label="在线状态">
+							<el-input v-model="tbi.data.online"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="屏幕方向">
+							<el-input v-model="tbi.data.rev"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+						<el-form-item label="屏幕尺寸">
+							<el-input v-model="tbi.data.size"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="屏幕分辨率">
+							<el-input v-model="tbi.data.ratio"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center">
+					<el-col :span="10">
+						<el-form-item label="联系电话">
+							<el-input v-model="tbi.data.tel"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="终端地址">
+							<el-input v-model="tbi.data.addr"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+						<el-form-item label="标识ID">
+							<el-input v-model="tbi.data.id"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="标识code">
+							<el-input v-model="tbi.data.code"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+
+						<el-form-item label="类别id">
+							<el-input v-model="tbi.data.typeId"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="注册时间">
+							<el-input v-model="tbi.data.resTime"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+
+						<el-form-item label="最新时间">
+							<el-input v-model="tbi.data.lastTime"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="ip地址">
+							<el-input v-model="tbi.data.ip"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+
+						<el-form-item label="mac地址">
+							<el-input v-model="tbi.data.mac"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+						<el-form-item label="系统">
+							<el-input v-model="tbi.data.sys"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center" v-if="tbi.search">
+					<el-col :span="10">
+
+						<el-form-item label="系统版本">
+							<el-input v-model="tbi.data.ver"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+
+						<el-form-item label="终端类型">
+							<el-input v-model="tbi.data.typ"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center">
+					<el-col :span="10">
+
+						<el-form-item label="GIS信息">
+							<el-input v-model="tbi.data.gis"></el-input>
+							<el-button type="primary" size="mini" @click="mapThings2()" v-if="!tbi.search">地图支持</el-button>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+
+						<el-form-item label="保修信息">
+							<el-input v-model="tbi.data.warranty"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="center">
+					<el-col :span="10">
+						<el-form-item label="终端名称" v-if="tbi.search">
+							<el-input v-model="tbi.data.name"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+
+						<!-- <el-form-item label="责任人">
+							<el-input v-model="tbi.data.principal"></el-input>
+						</el-form-item> -->
+					</el-col>
+
+				</el-row>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="refresh()" size="mini">取 消</el-button>
+				<el-button type="primary" @click="updateorinsert(tbi)" size="mini">确 定</el-button>
+
+			</div>
+			<div v-if="tbi.visibleMap2" style="height: 500px">
+				<div id="myPageTop">
+					<table>
+						<tr>
+							<td>
+								<label>请输入关键字：</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<el-input v-model="tbi.helpMap" size="mini"></el-input>
+							</td>
+							<td>
+								<el-button type="primary" size="mini" @click="drawmap2()"> 搜索</el-button>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div id="container1" style="height: 100% ; width: 100%"></div>
+			</div>
+		</el-dialog>
         <!--dialog-->
     </div>
 </body>

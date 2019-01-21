@@ -75,7 +75,7 @@
 			</el-header>
 			<el-main>
 		  	<template>
-		  		<el-table size="mini" :data="pager.list" max-height="550">
+		  		<el-table :data="pager.list">
 				    <el-table-column fixed prop="userId" label="ID" width="50">
 				    </el-table-column>
 				    <el-table-column prop="username" label="用户名" width="150">
@@ -112,12 +112,12 @@
 					      	<shiro:hasPermission name="sys:user:update">  
 						     	<el-button @click="openUpdateSysUserDialog(scope.row)" type="text" size="small">修改信息</el-button>
 					      	</shiro:hasPermission>
-					      	<shiro:hasPermission name="sys:user:update">  
+					      	<shiro:hasPermission name="sys:userRole:update">  
 							  	<!--v-if="signInAccountType != 'party_role' && scope.row.userType != 1"-->
 						      	<el-button  @click="openChangeSysUserRoleDialog(scope.row)" type="text" size="small">角色变更</el-button>
 							</shiro:hasPermission>
 							<!-- 合并角色
-					      	<shiro:hasPermission name="sys:user:update">  
+					      	<shiro:hasPermission name="sys:userRole:update">  
 						      	<el-button v-if="signInAccountType == 'plant_admin' && scope.row.userType != 1" type="text" size="small" slot="reference" @click="openSetInnerManageRolesDialog(scope.row)">赋予管理角色</el-button>
 							</shiro:hasPermission>
 							-->

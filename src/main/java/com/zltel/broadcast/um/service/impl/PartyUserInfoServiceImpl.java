@@ -536,6 +536,10 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     	baseUserInfo.setSpecialityMajor((String)partyUser.get("specialityMajor"));
     	baseUserInfo.setMarriageStatus((String)partyUser.get("marriageStatus"));
     	baseUserInfo.setChildrenStatus((String)partyUser.get("childrenStatus"));
+    	baseUserInfo.setHomeAddressProvince((String)partyUser.get("homeAddressProvince"));
+		baseUserInfo.setHomeAddressCity((String)partyUser.get("homeAddressCity"));
+		baseUserInfo.setHomeAddressArea((String)partyUser.get("homeAddressArea"));
+    	baseUserInfo.setHomeAddressDetail((String)partyUser.get("homeAddressDetail"));
 		baseUserInfo.setPresentAddressProvince((String)partyUser.get("presentAddressProvince"));
 		baseUserInfo.setPresentAddressCity((String)partyUser.get("presentAddressCity"));
 		baseUserInfo.setPresentAddressArea((String)partyUser.get("presentAddressArea"));
@@ -593,37 +597,6 @@ public class PartyUserInfoServiceImpl extends BaseDaoImpl<PartyUserInfo> impleme
     			if (insertPartyUserInfoCount != 1) {	//更新失败，抛异常回滚
             		throw new Exception();
             	}
-    			
-    			SysUser su = new SysUser();
-            	su.setUsername(baseUserInfo.getIdCard());
-            	su.setPassword(baseUserInfo.getIdCard().substring(baseUserInfo.getIdCard().length() - 6));
-            	String salt = UUID.randomUUID().toString();
-            	su.setSalt(salt);	//保存盐
-            	su.setPassword(PasswordHelper.encryptPassword(su.getPassword(), salt));	//加密
-            	su.setEmail(baseUserInfo.getEmail());
-            	su.setMobile(baseUserInfo.getMobilePhone());
-            	su.setStatus(true);
-            	su.setUserType(1);
-            	su.setCreateTime(new Date());
-    			int count = sysUserMapper.insertSelective(su);
-    			if (count != 1) {
-    				throw new Exception();
-    			}
-    			//赋予默认角色
-    			SysRole sysRole = new SysRole();
-    			sysRole.setRoleName("party_role");
-    			List<SysRole> srs = sysRoleMapper.querySysRoles(sysRole);
-    			if (srs != null && srs.size() == 1) {
-    				SysUserRole sur = new SysUserRole();
-    				sur.setUserId((long)su.getUserId());
-    				sur.setRoleId(srs.get(0).getRoleId());
-    				count = sysUserRoleMapper.insertSelective(sur);
-    				if (count != 1) {
-    					throw new Exception();
-    				}
-    			} else {
-    				throw new Exception();
-    			}
     		} else {
     			int updatePartyUserInfoCount = partyUserInfoMapper.updateByPrimaryKeySelective(partyUserInfo);	//更新党员信息
             	if (updatePartyUserInfoCount != 1) {	//更新失败，抛异常回滚

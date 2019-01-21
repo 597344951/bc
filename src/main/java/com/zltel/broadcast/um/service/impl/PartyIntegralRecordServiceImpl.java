@@ -1,5 +1,6 @@
 package com.zltel.broadcast.um.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,6 +60,15 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     }
 	
 	/**
+     * 积分排行榜
+     * @param condition
+     * @return
+     */
+    public Map<String, Object> queryIntegralRanking(Map<String, Object> condition) {
+    	return null;
+    }
+	
+	/**
      * 查询用户积分变更轨迹统计图
      * @param condition
      * @return
@@ -94,22 +104,25 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     	List<String> datas = new ArrayList<>();
     	List<String> lines = new ArrayList<>();
     	
-    	Double totalIntegral = Double.parseDouble(String.valueOf(condition.get("totalIntegral")));
-    	Double nowIntegral = totalIntegral;
+    	BigDecimal totalIntegral = new BigDecimal(String.valueOf(condition.get("totalIntegral")));
+    	BigDecimal nowIntegral = totalIntegral;
     	Map<String, Object> queryCondition = new HashMap<>();
-    	//计算要开始搜索时间之前的积分变化后的情况
+    	//计算要开始搜索年初到时间之前的积分变化后的情况
     	queryCondition.put("orgId", condition.get("orgId"));
 		queryCondition.put("idCard", condition.get("idCard"));
 		Calendar ca = Calendar.getInstance();
 		ca.setTime(startTime);
 		ca.add(Calendar.SECOND, -1);
 		queryCondition.put("endTime", ca.getTime());
+		ca.set(Calendar.MONTH, 0); //调到1月
+		queryCondition.put("startTime", DateUtil.getDateOfMonthStartDayTime(ca.getTime()));
 		List<Map<String, Object>> partyIntegralRecords = partyIntegralRecordMapper.queryPartyIntegralRecords(queryCondition);
 		if (partyIntegralRecords != null && partyIntegralRecords.size() > 0) {
 			for (Map<String, Object> priMap : partyIntegralRecords) {
-				Double changeIntegral = Double.parseDouble(String.valueOf(priMap.get("changeScore")));
-				nowIntegral += changeIntegral;
-				nowIntegral = nowIntegral < 0 ? 0 : nowIntegral > totalIntegral ? totalIntegral : nowIntegral;
+				BigDecimal changeIntegral = new BigDecimal(String.valueOf(priMap.get("changeScore")));
+				nowIntegral = nowIntegral.add(changeIntegral);
+				nowIntegral = nowIntegral.compareTo(new BigDecimal(0)) == -1 ? new BigDecimal(0) : 
+					nowIntegral.compareTo(totalIntegral) == 1 ? totalIntegral : nowIntegral;
 			}
 		}
 		
@@ -130,9 +143,10 @@ public class PartyIntegralRecordServiceImpl extends BaseDaoImpl<PartyIntegralRec
     		partyIntegralRecords = partyIntegralRecordMapper.queryPartyIntegralRecords(queryCondition);
     		if (partyIntegralRecords != null && partyIntegralRecords.size() > 0) {
     			for (Map<String, Object> priMap : partyIntegralRecords) {
-    				Double changeIntegral = Double.parseDouble(String.valueOf(priMap.get("changeScore")));
-    				nowIntegral += changeIntegral;
-    				nowIntegral = nowIntegral < 0 ? 0 : nowIntegral > totalIntegral ? totalIntegral : nowIntegral;
+    				BigDecimal changeIntegral = new BigDecimal(String.valueOf(priMap.get("changeScore")));
+    				nowIntegral = nowIntegral.add(changeIntegral);
+    				nowIntegral = nowIntegral.compareTo(new BigDecimal(0)) == -1 ? new BigDecimal(0) : 
+    					nowIntegral.compareTo(totalIntegral) == 1 ? totalIntegral : nowIntegral;
     			}
     		}
     		datas.add(String.valueOf(nowIntegral));

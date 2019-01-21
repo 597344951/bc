@@ -46,4 +46,13 @@ public class LessonLearnerLimitServiceImpl implements LessonLearnerLimitService 
         return this.limitDao.selectListByLessonUnitId(lessonUnitId);
     }
 
+    @Override
+    public void configOrgLimit(List<LessonLearnerLimit> list) {
+        Integer luid = list.get(0).getLessonUnitId();
+        List<LessonLearnerLimit> ll = this.selectListByLessonUnitId(luid);
+        ll.forEach(l -> this.deleteByPrimaryKey(l.getId()));
+        
+        list.forEach(l -> this.limitDao.insertSelective(l));
+    }
+
 }

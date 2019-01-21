@@ -27,8 +27,18 @@ public class PartyIntegralRecord {
     private Integer weightType;
 
     private Integer isMerge;
+    
+    private String scene;
 
-    public BigDecimal getChangeScore() {
+    public String getScene() {
+		return scene;
+	}
+
+	public void setScene(String scene) {
+		this.scene = scene;
+	}
+
+	public BigDecimal getChangeScore() {
 		return changeScore;
 	}
 

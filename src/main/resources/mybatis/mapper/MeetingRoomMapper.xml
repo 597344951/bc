@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.meeting.room.dao.MeetingRoomMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.meeting.room.bean.MeetingRoom">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="park" jdbcType="VARCHAR" property="park" />
+    <result column="building" jdbcType="VARCHAR" property="building" />
+    <result column="floor" jdbcType="VARCHAR" property="floor" />
+    <result column="number" jdbcType="VARCHAR" property="number" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, org_id, park, building, floor, number, type, update_date, add_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from meeting_room
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from meeting_room
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.meeting.room.bean.MeetingRoom">
+    insert into meeting_room (id, org_id, park, 
+      building, floor, number, 
+      type, update_date, add_date
+      )
+    values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{park,jdbcType=VARCHAR}, 
+      #{building,jdbcType=VARCHAR}, #{floor,jdbcType=VARCHAR}, #{number,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{addDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.meeting.room.bean.MeetingRoom">
+    insert into meeting_room
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="park != null">
+        park,
+      </if>
+      <if test="building != null">
+        building,
+      </if>
+      <if test="floor != null">
+        floor,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="addDate != null">
+        add_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="park != null">
+        #{park,jdbcType=VARCHAR},
+      </if>
+      <if test="building != null">
+        #{building,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null">
+        #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addDate != null">
+        #{addDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.meeting.room.bean.MeetingRoom">
+    update meeting_room
+    <set>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="park != null">
+        park = #{park,jdbcType=VARCHAR},
+      </if>
+      <if test="building != null">
+        building = #{building,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null">
+        floor = #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addDate != null">
+        add_date = #{addDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.meeting.room.bean.MeetingRoom">
+    update meeting_room
+    set org_id = #{orgId,jdbcType=INTEGER},
+      park = #{park,jdbcType=VARCHAR},
+      building = #{building,jdbcType=VARCHAR},
+      floor = #{floor,jdbcType=VARCHAR},
+      number = #{number,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      add_date = #{addDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectEnabled" resultMap="BaseResultMap">
+    SELECT
+      rooms.*
+    FROM meeting_room rooms
+    LEFT JOIN (
+      SELECT id, meeting_room_id
+      FROM meeting_room_order
+      WHERE start_date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+      UNION ALL
+      SELECT id, meeting_room_id
+      FROM meeting_room_order
+      WHERE end_date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+      UNION ALL
+      SELECT id, meeting_room_id
+      FROM meeting_room_order
+      WHERE <![CDATA[ start_date <= #{startDate,jdbcType=TIMESTAMP} AND end_date >= #{endDate,jdbcType=TIMESTAMP} ]]>
+    ) orders
+    ON rooms.id = orders.meeting_room_id
+    WHERE orders.id IS NULL
+    <if test="orgId != null">
+      AND org_id=#{orgId,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByOrg" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from meeting_room
+    <if test="orgId != null">
+      WHERE org_id=#{orgId,jdbcType=INTEGER}
+    </if>
+  </select>
+</mapper>

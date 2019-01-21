@@ -38,18 +38,22 @@
                 <el-form-item label="时 间" required>
                     <el-col :span="11">
                         <el-form-item prop="startTime">
-                            <el-date-picker type="datetime" placeholder="选择开始时间" v-model="schedule.startTime" style="width: 100%;"></el-date-picker>
+                            <el-date-picker type="datetime" @change="loadEnabledMeetingRoom" placeholder="选择开始时间" v-model="schedule.startTime" style="width: 100%;"></el-date-picker>
                         </el-form-item>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="11">
                         <el-form-item prop="endTime">
-                            <el-date-picker type="datetime" placeholder="选择结束时间" v-model="schedule.endTime" style="width: 100%;"></el-date-picker>
+                            <el-date-picker type="datetime" @change="loadEnabledMeetingRoom" placeholder="选择结束时间" v-model="schedule.endTime" style="width: 100%;"></el-date-picker>
                         </el-form-item>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="场 地" prop="place">
-                    <el-input v-model="schedule.place" placeholder="会议场地"></el-input>
+                    <!-- <el-input v-model="schedule.place" placeholder="会议场地"></el-input> -->
+                    <el-select style="width: 100%;" v-model="schedule.place" placeholder="选择会议室" clearable>
+                        <el-option v-for="room in meetingRooms" :key="room.value" :label="room.label" :value="room.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="描 述" prop="description">
                     <el-input type="textarea" rows="5" v-model="schedule.description" placeholder="会议主要内容描述"></el-input>

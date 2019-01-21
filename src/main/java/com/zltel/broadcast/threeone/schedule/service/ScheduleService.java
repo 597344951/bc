@@ -38,4 +38,7 @@ public interface ScheduleService {
     public List<Map<String, Object>> queryDemocraticAppraisalParticipatedSchedule(String username, int pageNum, int pageSize);
 
     public void scheduleSign(List<Map<String, Object>> participantLinks);
+    public void scheduleSign(int scheduleId, int userId);
+
+    public Map<String, Object> getSignInfo(Integer scheduleId, SysUser user);
 }

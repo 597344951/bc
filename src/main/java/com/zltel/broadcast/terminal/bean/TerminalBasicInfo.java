@@ -45,6 +45,18 @@ public class TerminalBasicInfo {
     private String warranty;
 
     private String loc;
+    
+    private String principal;
+    
+    
+    
+    public String getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(String principal) {
+        this.principal = principal;
+    }
 
     /** 屏幕截图 **/
     private String coverImage;

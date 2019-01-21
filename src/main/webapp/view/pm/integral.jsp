@@ -22,6 +22,31 @@
 	    width: 100%;
 	    box-shadow: 0 2px 15px 2px #ddd;
 	}
+	.el-select.el-select--mini {
+		width: 220px;
+	}
+	.el-input-number.el-input-number--mini {
+		width: 220px;
+	}
+	.el-input.el-input--mini {
+		width: 220px;
+	}
+	.el-textarea.el-input--mini {
+		width: 220px;
+	}
+
+	.el-select.el-select--small {
+		width: 220px;
+	}
+	.el-input-number.el-input-number--small {
+		width: 220px;
+	}
+	.el-input.el-input--small {
+		width: 220px;
+	}
+	.el-textarea.el-input--small {
+		width: 220px;
+	}
 	.orgInfoNameList {
 		padding: 3px 0;
 		font-size: 12px;
@@ -36,6 +61,13 @@
 	}
 	.el-tree-node__label {
 		font-size: 12px;
+	}
+	.el-table .error-row {
+		background: oldlace;
+	}
+
+	.el-table .success-row {
+		background: #f0f9eb;
 	}
 </style>
 </head>
@@ -160,7 +192,7 @@
 							<div>
 								<ul>
 					  				<li class="orgInfoNameList" v-for="item in ic_manage_orgInfoForIcPages.list"
-					  						@click="ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(item.orgId)">
+					  						@click="ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(item.orgId, item.orgInfoName)">
 					  					<span>{{item.orgInfoName}}</span>
 					  				</li>
 					  				<li class="orgInfoNameList" v-if="ic_manage_orgInfoForIcPages.list.length == 0">
@@ -177,7 +209,8 @@
 				  			</el-row>
 				  			<el-row>
 				  				<p style="font-size: 12px; float: left;">
-				  					该组织积分总分为 
+									<span style="color:red;font-weight: bold;">{{showIntegralInfoThisOrgName}}</span>  
+									的积分总分为 
 				  					<span style="font-size: 18px; font-weight: bold; color: red;">
 				  						<a style="color: red;" href="javascript: void(0)" @click="ic_manager_openUpdateOrgIntegralConstitute(queryPartyUserInfoAndIcInfoCondition.orgId)">
 				  							{{orgIntegralInfo.integralCount}}
@@ -242,6 +275,7 @@
 								</span>
 							</template>
 						</el-table-column>
+						<el-table-column label="变更场景" prop="scene"></el-table-column>
 						<el-table-column label="积分变更">
 							<template slot-scope="scope">
 								<span :style="getChangeOperation(scope.row.changeIntegralType)">
@@ -298,7 +332,6 @@
 						<el-form-item label="积分项类型" prop="icId">
 							<el-select size="small" clearable 
 									@change=""
-									style="width: 180px;"
 									v-model="changePartyUserIntegralScoreForm.icId" filterable placeholder="请选择变更类型">
 								<el-option
 									v-for="item in selectBox.integralType"
@@ -310,12 +343,28 @@
 						</el-form-item>
 					</div>
 					<div>
-						<el-form-item label="变更操作" prop="ictId">
+						<el-form-item label="变更操作" prop="changeIntegralType">
 							<el-select size="small" clearable 
-									style="width: 180px;"
-									v-model="changePartyUserIntegralScoreForm.ictId" filterable placeholder="请选择变更分类">
+									@change="queryIntegralChangeSceneForOperation"
+									v-model="changePartyUserIntegralScoreForm.changeIntegralType" filterable placeholder="请选择变更分类">
 								<el-option label="加分" value="1"></el-option>
 								<el-option label="扣分" value="0"></el-option>
+								</el-option>
+							</el-select>
+						</el-form-item>
+					</div>
+					<div>
+						<el-form-item label="变更场景" prop="scene">
+							<el-select size="small" clearable 
+								allow-create
+								v-model="changePartyUserIntegralScoreForm.scene" filterable 
+								placeholder="可自己创建">
+								<el-option
+									v-for="item in changePartyUserIntegralScoreForm.scenes"
+									:label="item.name"
+									:value="item.name">
+									<span style="float: left">{{ item.name }}</span>
+      								<span style="float: right;color: #8492a6;">{{ item.score }}分</span>
 								</el-option>
 							</el-select>
 						</el-form-item>
@@ -326,7 +375,6 @@
 						<el-form-item label="变更分值" prop="changeScore">
 							<el-input 
 								clearable 
-								style="width: 180px;" 
 								size="small" 
 								v-model="changePartyUserIntegralScoreForm.changeScore" 
 								placeholder="例：-3、0、5"></el-input>
@@ -338,7 +386,6 @@
 						<el-form-item label="积分变更说明" prop="changeDescribes">
 							<el-input 
 							  	type="textarea"
-							  	style="width: 180px;"
 							 	:autosize="{ minRows: 3, maxRows: 5}"
 							 	placeholder="积分变更说明"
 								v-model="changePartyUserIntegralScoreForm.changeDescribes">
@@ -386,14 +433,33 @@
 					  		<div v-show="!updateIntegralInfo">
 					  			<el-form label-width="120px" size="mini" :model="updateIntegralInfoForm" status-icon 
 									ref="updateIntegralInfoForm" label-width="100px" :rules="updateIntegralInfoFormRules">
-									<div style="border-bottom: 1px solid #ddd;">
+									<div style="border-bottom: 1px solid #ddd; " v-if="!updateIntegralInfoForm.isChildrens">
+										<el-table size="mini" 
+											:row-class-name="sceneRowStyle"
+											:data="updateIntegralInfoForm.scenes">
+											<el-table-column label="操作">
+												<template slot-scope="scope">
+													<span :style="scope.row.type == '加分' ? 'color: green;font-weight: bold;' : 'color: red;font-weight: bold;'">
+														{{scope.row.type}}
+													</span>
+												</template>
+											</el-table-column>
+											<el-table-column label="场景" prop="name"></el-table-column>
+											<el-table-column label="建议修改分值" prop="score"></el-table-column>
+											<el-table-column label="操作">
+												<template slot-scope="scope">
+													<el-button @click="deleteIntegralChangeScene(scope.row)" type="text" size="mini">删除</el-button>
+												</template>
+											</el-table-column>
+										</el-table>
+									</div>
+									<div style="border-bottom: 1px solid #ddd;margin-top: 20px;">
 										<div>
 											<div>
 												<el-form-item label="分值类型" prop="type">
 													<el-input 
 														clearable 
 														:disabled="updateIntegralInfoForm.isInnerIntegral == 1 ? true : false"
-														style="width: 230px;" 
 														size="mini" 
 														v-model="updateIntegralInfoForm.type" 
 														placeholder="分值类型"></el-input>
@@ -405,7 +471,6 @@
 												<el-form-item label="积分值" prop="integral">
 													<el-input 
 														clearable 
-														style="width: 230px;" 
 														size="mini" 
 														v-model="updateIntegralInfoForm.integral" 
 														placeholder="必须大于零"></el-input>
@@ -418,8 +483,7 @@
 													<el-input 
 													  	type="textarea"
 													  	size="mini"
-													  	style="width: 230px;"
-													 	:autosize="{ minRows: 1, maxRows: 2}"
+													 	:autosize="{ minRows: 2, maxRows: 2}"
 													 	placeholder="积分说明"
 														v-model="updateIntegralInfoForm.describes">
 													</el-input>
@@ -430,81 +494,34 @@
 									<div style="border-bottom: 1px solid #ddd; margin-top: 20px;" v-if="!updateIntegralInfoForm.isChildrens">
 										<div>
 											<div>
-												<el-form-item label="操作类型" prop="add_operation">
+												<el-form-item label="操作类型" prop="operation">
+													<el-select clearable v-model="updateIntegralInfoForm.operation">
+														<el-option label="加分" value="1"></el-option>
+														<el-option label="扣分" value="0"></el-option>
+													</el-select>
+												</el-form-item>
+											</div>
+										</div>
+										<div>
+											<div>
+												<el-form-item label="场景" prop="scene">
 													<el-input 
 														clearable 
-														:disabled="true"
-														style="width: 230px;" 
 														size="mini" 
-														v-model="updateIntegralInfoForm.add_operation" 
-														placeholder="操作类型"></el-input>
+														v-model="updateIntegralInfoForm.scene" 
+														placeholder="什么场景下会变更分值，尽量精短"></el-input>
 												</el-form-item>
 											</div>
 										</div>
 										<div>
 											<div>
-												<el-form-item label="建议加分值" prop="add_integral">
-													<el-input 
-														clearable 
-														style="width: 230px;" 
+												<el-form-item label="建议加分值" prop="score">
+													<el-input-number 
 														size="mini" 
-														v-model="updateIntegralInfoForm.add_integral" 
-														placeholder="分数必须要大于或等于0"></el-input>
-												</el-form-item>
-											</div>
-										</div>
-										<div>
-											<div>
-												<el-form-item label="加分说明" prop="add_describes">
-													<el-input 
-													  	type="textarea"
-													  	size="mini"
-													  	style="width: 230px;"
-													 	:autosize="{ minRows: 1, maxRows: 2}"
-													 	placeholder="加分说明"
-														v-model="updateIntegralInfoForm.add_describes">
-													</el-input>
-												</el-form-item>
-											</div>
-										</div>
-									</div>
-									<div style="border-bottom: 1px solid #ddd; margin-top: 20px;" v-if="!updateIntegralInfoForm.isChildrens">
-										<div>
-											<div>
-												<el-form-item label="操作类型" prop="reduce_operation">
-													<el-input 
-														clearable 
-														:disabled="true"
-														style="width: 230px;" 
-														size="mini" 
-														v-model="updateIntegralInfoForm.reduce_operation" 
-														placeholder="操作类型"></el-input>
-												</el-form-item>
-											</div>
-										</div>
-										<div>
-											<div>
-												<el-form-item label="建议扣分值" prop="reduce_integral">
-													<el-input 
-														clearable 
-														style="width: 230px;" 
-														size="mini" 
-														v-model="updateIntegralInfoForm.reduce_integral" 
-														placeholder="分数必须要小于或等于0"></el-input>
-												</el-form-item>
-											</div>
-										</div>
-										<div>
-											<div>
-												<el-form-item label="扣分说明" prop="reduce_describes">
-													<el-input 
-													  	type="textarea"
-													  	size="mini"
-													  	style="width: 230px;"
-													 	:autosize="{ minRows: 1, maxRows: 2}"
-													 	placeholder="扣分说明"
-														v-model="updateIntegralInfoForm.reduce_describes">
-													</el-input>
+														v-model="updateIntegralInfoForm.score" 
+														:precision="2" :step="1"
+														placeholder="扣分带上 - 号">
+													</el-input-number>
 												</el-form-item>
 											</div>
 										</div>
@@ -543,22 +560,19 @@
 	var appInstince = new Vue({
 		el: '#app',
 		data: {
+			showIntegralInfoThisOrgName: null,
 			updateIntegralInfoForm: {	/*修改积分信息表单*/
 				type: null,
 				integral: null,
 				describes: null,
-				add_ictId: null,
-				add_operation: "加分",
-				add_integral: null,
-				add_describes: null,
-				reduce_ictId: null,
-				reduce_operation: "扣分",
-				reduce_integral: null,
-				reduce_describes: null,
+				operation: null,
+				scene: null,
+				score: 0,
 				icId: null,
 				isChildrens: null,
 				isInnerIntegral: null,
-				currentNode: null
+				currentNode: null,
+				scenes: null
 			},
 			updateIntegralInfoFormRules: {
 				type: [
@@ -593,11 +607,53 @@
 		        		trigger: 'blur'
 					}
 				],
-				add_integral: [
-					{ pattern: /^\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
+				scene: [
+					{
+						validator: function(rule, value, callback){
+							var operation = appInstince.updateIntegralInfoForm.operation;
+							var scene = appInstince.updateIntegralInfoForm.scene;
+							var score = appInstince.updateIntegralInfoForm.score;
+							if (operation != null && operation != '' && operation != undefined && 
+								(scene == null || scene == '' || scene == undefined)) {
+								callback(new Error('请填写分值变更的场景'));
+							} else {
+								callback();
+							}
+						},
+						trigger: 'blur'
+					}
 				],
-				reduce_integral: [
-					{ pattern: /^-\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'}
+				score: [
+					{
+						validator: function(rule, value, callback){
+							var operation = appInstince.updateIntegralInfoForm.operation;
+							var scene = appInstince.updateIntegralInfoForm.scene;
+							var score = appInstince.updateIntegralInfoForm.score;
+
+							if (operation != null && operation != '' && operation != undefined &&
+								(score == null || score == '' || score == undefined)) {
+								callback(new Error('请填写变更的分值'));
+							} else {
+								callback();
+							}
+
+							if (scene != null && scene != '' && scene != undefined && 
+								(score == null || score == '' || score == undefined)) {
+								callback(new Error('请填写变更的分值'));
+							} else {
+								callback();
+							}
+
+							if (operation == 1 && appInstince.updateIntegralInfoForm.score < 0) {
+								callback(new Error('分值输入错误'));
+							} else if (operation == 0 && appInstince.updateIntegralInfoForm.score > 0) {
+								callback(new Error('分值输入错误'));
+							} else {
+								callback();
+							}
+						},
+		        		trigger: 'blur'
+					}
 				]
 			},
 			dis_h_v: false,
@@ -635,9 +691,11 @@
 			changePartyUserIntegralScoreForm: {
 				partyUserId: null,
 				icId: null,	/*用于判断类型选择框是否有值，不提交*/
-				ictId: null,
+				changeIntegralType: null,
 				changeScore: null,
-				changeDescribes: null
+				changeDescribes: null,
+				scene: null,
+				scenes: null
 			},
 			selectBox: {
 				integralType: [],
@@ -648,17 +706,20 @@
 				icId: [
 					{ required: true, message: '请选择积分变更类型', trigger: 'blur' }
 				],
-				ictId: [
+				scene: [
+					{ required: true, message: '请填写积分变更场景', trigger: 'blur' }
+				],
+				changeIntegralType: [
 					{ required: true, message: '请选择分数变更类型', trigger: 'blur' }
 				],
 				changeScore: [
 					{ required: true, message: '请输入变更分值', trigger: 'blur' },
-					{ pattern: /^(-|)?\d+(\.\d{1})?$/, message: '分值输入有误', trigger: 'blur'},
+					{ pattern: /^(-|)?\d+((\.\d{1})|\.\d{2})?$/, message: '分值输入有误', trigger: 'blur'},
 					{ 
 		        		validator: function(rule, value, callback){
-	        				if (appInstince.changePartyUserIntegralScoreForm.ictId == 1 && appInstince.changePartyUserIntegralScoreForm.changeScore < 0) {
+	        				if (appInstince.changePartyUserIntegralScoreForm.changeIntegralType == 1 && appInstince.changePartyUserIntegralScoreForm.changeScore < 0) {
 								callback(new Error('加分分值应大于0'));
-							} else if (appInstince.changePartyUserIntegralScoreForm.ictId == 0 && appInstince.changePartyUserIntegralScoreForm.changeScore > 0) {
+							} else if (appInstince.changePartyUserIntegralScoreForm.changeIntegralType == 0 && appInstince.changePartyUserIntegralScoreForm.changeScore > 0) {
 								callback(new Error('扣分分值应小于0!'));
 							} else {
 								callback();
@@ -675,9 +736,9 @@
 			ic_manager_orgInfoTreeOfIntegralConstituteProps: {
 				children: 'children',
 	            label: function(_data, node){
-	            	return _data.data.type + "==>" + (_data.data.integral == undefined ? "分值未设置" : _data.data.integral + "分") + 
-	            		(_data.data.isInnerIntegral == 1 ? (_data.data.isChildrens ? "" : (_data.data.isReduceIntegral ? "" : " / 扣分未设置")) : "") + 
-	            		(_data.data.isInnerIntegral == 1 ? (_data.data.isChildrens ? "" : (_data.data.isAddIntegral ? "" : " / 加分未设置")) : "");
+	            	return _data.data.type + "==>" + (_data.data.integral == undefined ? "分值未设置" : _data.data.integral + "分");
+					// + (_data.data.isInnerIntegral == 1 ? (_data.data.isChildrens ? "" : (_data.data.isReduceIntegral ? "" : " / 扣分未设置")) : "") + 
+	            	// (_data.data.isInnerIntegral == 1 ? (_data.data.isChildrens ? "" : (_data.data.isAddIntegral ? "" : " / 加分未设置")) : "")
 	            }
 			},
 			signInAccountType: null,
@@ -700,6 +761,57 @@
 			this.getSignInAccountType();
 		},
 		methods: {
+			queryIntegralChangeSceneForOperation() {
+				let obj = this;
+				var url = "/org/ict/queryAllIntegralChangeScene";
+				var t = {
+					icId: obj.changePartyUserIntegralScoreForm.icId,
+					operation: obj.changePartyUserIntegralScoreForm.changeIntegralType
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.changePartyUserIntegralScoreForm.scenes = datas.data;
+					}
+				})
+			},
+			sceneRowStyle({row, rowIndex}) {
+				if (row.type == '扣分') {
+					return 'error-row';
+				} else {
+					return 'success-row';
+				}
+			},
+			deleteIntegralChangeScene(row) {
+				let obj = this;
+				obj.$confirm(
+					'确认要删除吗？', 
+					'提示', 
+					{
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+		        	}
+		        ).then(function(){
+	        		var url = "/org/ict/deleteIntegralChangeScene";
+					var t = {
+						type: row.type,
+						ictId: row.ictId,
+						icsId: row.icsId
+					}
+					$.post(url, t, function(data, status){
+						if (data.code == 200) {
+							toast("提示", data.msg, "success");
+							obj.queryAllIntegralChangeScene();
+							obj.ic_manager_openUpdateOrgIntegralConstitute(row.orgId);
+						}
+					})
+		        }).catch(function(){
+		        	obj.$message({
+			            type: 'info',
+			            message: '已取消此操作'
+			        });  
+				});
+			},
 			reset_integral_change_trajectory_dialog() {
 				let obj = this;
 				obj.integral_change_trajectory = {
@@ -884,7 +996,8 @@
 						if (data.data == undefined) {	
 							obj.ic_manage_initOrgInfoForIcPager();/* 没有查询到数据时，初始化页面信息，使页面正常显示 */
 						} else {
-							obj.ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(data.data.list[0].orgId);
+							obj.ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(data.data.list[0].orgId, null);
+							obj.showIntegralInfoThisOrgName = data.data.list[0].orgInfoName;
 							obj.ic_manage_orgInfoForIcPages = data.data;
 						}
 					}
@@ -904,8 +1017,9 @@
 
 
 			/*点击左侧组织导航栏查询组织的积分信息和组织下党员的积分信息*/
-			ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(orgId) {	/*点击组织查询组织下的成员和积分信息*/
+			ic_manage_setOrgIdForQueryPartyUserInfoAndIcInfo(orgId, orgInfoName) {	/*点击组织查询组织下的成员和积分信息*/
 				var obj = this;
+				obj.showIntegralInfoThisOrgName = orgInfoName;
 				obj.queryPartyUserInfoAndIcInfoCondition.orgId = orgId;
 				obj.ic_manage_queryOrgIntegralInfo();	/*查询积分信息*/
 			},
@@ -921,6 +1035,7 @@
 						if (data.data != undefined)  {
 							if (data.data.integralError) {	/*如果积分里有没有设置分值、加分或扣分时*/
 								obj.orgIntegralInfo.integralCount = "NULL";	/*积分值设置未null*/
+								obj.ic_manage_initPartyUserInfoAndIcInfoPager();
 								obj.ic_manager_openUpdateOrgIntegralConstitute(obj.queryPartyUserInfoAndIcInfoCondition.orgId);
 							} else {
 								obj.orgIntegralInfo.integralCount = data.data.integralCount;
@@ -965,20 +1080,25 @@
 						obj.updateIntegralInfoForm.type = datas.data.type;
 						obj.updateIntegralInfoForm.integral = datas.data.integral;
 						obj.updateIntegralInfoForm.describes = datas.data.describes;
-						obj.updateIntegralInfoForm.add_ictId = datas.data.add_ictId;
-						obj.updateIntegralInfoForm.add_operation = datas.data.add_operation;
-						obj.updateIntegralInfoForm.add_integral = datas.data.add_integral;
-						obj.updateIntegralInfoForm.add_describes = datas.data.add_describes;
-						obj.updateIntegralInfoForm.reduce_ictId = datas.data.reduce_ictId;
-						obj.updateIntegralInfoForm.reduce_operation = datas.data.reduce_operation;
-						obj.updateIntegralInfoForm.reduce_integral = datas.data.reduce_integral;
-						obj.updateIntegralInfoForm.reduce_describes = datas.data.reduce_describes;
 						obj.updateIntegralInfoForm.isInnerIntegral = datas.data.isInnerIntegral;
+						obj.queryAllIntegralChangeScene();
 					}
 					
 				})
 
 				obj.updateIntegralInfo = false;	/*显示修改控件*/
+			},
+			queryAllIntegralChangeScene() {	//查询所有分值改变的场景和变更的分值（用于观察内置积分加扣分的设置情况）
+				let obj = this;
+				var url = "/org/ict/queryAllIntegralChangeScene";
+				var t = {
+					icId: obj.updateIntegralInfoForm.icId
+				}
+				$.post(url, t, function(datas, status){
+					if (datas.code == 200) {
+						obj.updateIntegralInfoForm.scenes = datas.data;
+					}
+				})
 			},
 			ic_manage_updateOrgIntegral() {
 				var obj = this;
@@ -990,20 +1110,16 @@
 							type: obj.updateIntegralInfoForm.type,
 							integral: obj.updateIntegralInfoForm.integral,
 							describes: obj.updateIntegralInfoForm.describes,
-							add_ictId: obj.updateIntegralInfoForm.add_ictId,
-							add_operation: obj.updateIntegralInfoForm.add_operation,
-							add_integral: obj.updateIntegralInfoForm.add_integral,
-							add_describes: obj.updateIntegralInfoForm.add_describes,
-							reduce_ictId: obj.updateIntegralInfoForm.reduce_ictId,
-							reduce_operation: obj.updateIntegralInfoForm.reduce_operation,
-							reduce_integral: obj.updateIntegralInfoForm.reduce_integral,
-							reduce_describes: obj.updateIntegralInfoForm.reduce_describes
+							operation: obj.updateIntegralInfoForm.operation,
+							scene: obj.updateIntegralInfoForm.scene,
+							score: obj.updateIntegralInfoForm.score
 						}
 						$.post(url, t, function(datas, status){
 							if (datas.code == 200) {
 								obj.ic_manage_getIntegralInfo(obj.updateIntegralInfoForm.currentNode);	/*从新获取该积分项的信息*/
 								obj.ic_manager_openUpdateOrgIntegralConstitute(obj.queryPartyUserInfoAndIcInfoCondition.orgId);	/*重新获取该积分结构信息*/
 								obj.ic_manage_queryOrgIntegralInfo();
+								obj.queryAllIntegralChangeScene();
 							}
 							
 						})
@@ -1088,7 +1204,7 @@
 			ic_manage_queryICTForOperation() {
 				var obj = this;
 				obj.selectBox.ict = null;
-				obj.changePartyUserIntegralScoreForm.ictId = null;
+				obj.changePartyUserIntegralScoreForm.changeIntegralType = null;
 				if (obj.changePartyUserIntegralScoreForm.icId == null || obj.changePartyUserIntegralScoreForm.icId == "") {
 					return;
 				}
@@ -1113,9 +1229,10 @@
 							orgId: obj.queryPartyUserInfoAndIcInfoCondition.orgId,
 							partyId: obj.changePartyUserIntegralScoreForm.partyUserId,
 							changeDescribes: obj.changePartyUserIntegralScoreForm.changeDescribes,
-							changeIntegralType: obj.changePartyUserIntegralScoreForm.ictId,
+							changeIntegralType: obj.changePartyUserIntegralScoreForm.changeIntegralType,
 							changeScore: obj.changePartyUserIntegralScoreForm.changeScore,
-							changeTypeId: obj.changePartyUserIntegralScoreForm.icId
+							changeTypeId: obj.changePartyUserIntegralScoreForm.icId,
+							scene: obj.changePartyUserIntegralScoreForm.scene
 						}
 						$.post(url, t, function(datas, status){
 							if (datas.code == 200) {

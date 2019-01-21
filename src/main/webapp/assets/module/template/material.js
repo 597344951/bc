@@ -810,7 +810,7 @@ let ins = new Vue({
       if (!isLt1G) {
         this.$message.error('上传资源大小不能超过1GB!');
       }
-      return isType && isLt2M;
+      return isType && isLt1G;
     },
     choseProgramTemplate(pt) {
       console.log("已选择节目模版", pt)

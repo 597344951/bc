@@ -44,4 +44,6 @@ public interface ScheduleMapper {
     int updateMemberLink(Map<String, Object> memberLink);
 
     int deleteMemberLinkBySchedule(Integer scheduleId);
+
+    Map<String, Object> selectSignInfo(@Param("scheduleId") int scheduleId, @Param("userId") int userId);
 }

@@ -88,7 +88,7 @@ public class SysUserRoleController extends BaseController {
 	 */
 	@RequestMapping(value="/insertSysUserRole", method=RequestMethod.POST)
 	@LogPoint("添加用户角色信息")
-	@RequiresPermissions(value = {"sys:userRole:insert"})
+	@RequiresPermissions(value = {"sys:user:role:update"})
 	@ApiOperation(value = "添加用户角色信息")
 	public R insertSysUserRole(SysUserRole sysUserRole) {
 		try {

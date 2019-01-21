@@ -62,6 +62,39 @@ window.appInstince = new Vue({
             },
             children: 'children'
         },
+        tbi: {
+            title: "测试标题",
+            visible: false,
+            visibleMap2: false,
+            update: false, // 是否是更新
+            search: false,
+            style: false,
+            helpMap: "",
+            data: {
+                oid: "",
+                name: "",
+                id: "",
+                code: "",
+                typeId: "",
+                resTime: "",
+                online: "",
+                lastTime: "",
+                ip: "",
+                mac: "",
+                sys: "",
+                size: "",
+                ratio: "",
+                rev: "",
+                ver: "",
+                typ: "",
+                tel: "",
+                addr: "",
+                gis: "",
+                warranty: "",
+                loc: "",
+                principal: ""
+            },
+        }
 
 
     },
@@ -93,7 +126,7 @@ window.appInstince = new Vue({
         loadTeminalInfo() {
             let me = this;
             let url = '/terminal/org-config/unconfig/' + this.tpager.current + '-' + this.tpager.size;
-            if(this.tqueryIf.orgId == -1) delete this.tqueryIf.orgId
+            if (this.tqueryIf.orgId == -1) delete this.tqueryIf.orgId
             ajax_json_promise(url, 'post', this.tqueryIf).then((result) => {
                 if (result.data) {
                     me.tpager.total = result.pager.total;
@@ -320,7 +353,9 @@ window.appInstince = new Vue({
             reader.onload = (event) => {
                 let result = event.target.result
                 console.log('读取到guid: ', result)
-                this.addNewGuid({code:result})
+                this.addNewGuid({
+                    code: result
+                })
             }
         },
         handleClose(tag) {
@@ -330,14 +365,14 @@ window.appInstince = new Vue({
             this.pgw.visiable = true
             this.addNewGuid(t)
         },
-        addNewGuid(t){
+        addNewGuid(t) {
             if (!this.guidTags.find(e => e.guid == t.code)) {
                 this.guidTags.push({
                     guid: t.code,
                     type: 'success',
                     checked: false,
                     status: false,
-                    msg:'',
+                    msg: '',
 
                 })
             }
@@ -408,7 +443,7 @@ window.appInstince = new Vue({
                 })
             }).catch(() => {});
         },
-        terminalConfigDelete(t){
+        terminalConfigDelete(t) {
             this.$confirm('删除关联配置信息后,可重新配置', '删除此联配置信息?', {
                 type: 'warning'
             }).then(() => {
@@ -427,37 +462,188 @@ window.appInstince = new Vue({
                     message: result.msg,
                     type: result.status ? 'success' : 'error'
                 });
-                setTimeout(this.loadTeminalInfo,1000)
+                setTimeout(this.loadTeminalInfo, 1000)
             });
         },
         //获取所属组织
-        getBelowOrg(t){
-            if(t.orgId == 0)return '未配置所属组织'
-            if(!this.orgListData || this.orgListData.length == 0)return '未找到组织信息'
+        getBelowOrg(t) {
+            if (t.orgId == 0) return '未配置所属组织'
+            if (!this.orgListData || this.orgListData.length == 0) return '未找到组织信息'
             let org = this.orgListData.find(e => e.orgInfoId == t.orgId)
-            if(org)return org.orgInfoName
-            
+            if (org) return org.orgInfoName
+
             return '未配置'
         },
-        checkTerminal(){
+        checkTerminal() {
             let tags = this.guidTags.filter(e => e.checked == false)
-            if(tags.length == 0)return
+            if (tags.length == 0) return
             let n = tags.map(e => {
-                return {code:e.guid,orgId:0}
+                return {
+                    code: e.guid,
+                    orgId: 0
+                }
             })
-            ajax_json_promise('/terminal/org-config/check','post',n).then(result =>{
+            ajax_json_promise('/terminal/org-config/check', 'post', n).then(result => {
                 console.log(result)
                 let ay = result.data
                 ay.forEach(ele => {
                     let f = this.guidTags.find(e => e.guid == ele.source)
-                    if(f){
+                    if (f) {
                         f.checked = true
                         f.msg = ele.msg
                         f.status = ele.status
-                    } 
+                    }
                 })
             })
-        }
+        },
+        // 基础信息编辑
+        updateTbi(a) {
+            var tbi = this.tbi;
+            tbi.search = false;
+            tbi.data = a;
+            tbi.visible = true;
+            tbi.title = "修改终端信息";
+            tbi.update = true;
+            tbi.visibleMap2 = false;
+            tbi.helpMap = "";
+        },
+        updateTbi(a) {
+
+            var tbi = this.tbi;
+            tbi.search = false;
+            tbi.data = a;
+            tbi.visible = true;
+            tbi.title = "修改终端信息";
+            tbi.update = true;
+            tbi.visibleMap2 = false;
+            tbi.helpMap = "";
+        },
+        cancel(tbi) {
+            tbi.visible = false;
+            this.queryTerminals(1, 12);
+        },
+        updateorinsert(tbi) {
+            var a = this;
+            if (tbi.search) {
+                tbi.search = false;
+                this.querySearch(tbi, 1, 12);
+            } else {
+                if (tbi.update) {
+                    ajax_json("/terminal/basic/addup", "put", tbi.data, function (result) {
+                        if (result.status) {
+                            tbi.visible = false;
+                            a.refresh();
+                        }
+                    });
+                } else {
+                    ajax_json("/terminal/basic/addup", "post", tbi.data, function (result) {
+                        if (result.status) {
+                            tbi.visible = false;
+                            a.refresh();
+                        }
+                    });
+                }
+            }
+        },
+        mapThings2() {
+            var tbi = this.tbi;
+            tbi.visibleMap2 = true;
+            setTimeout(() => {
+                this.drawmap2()
+            }, 200);
+        },
+        drawmap2() {
+            var tbi = this.tbi;
+            var centerString = "";
+            var centers = [120.024583, 30.290275];
+            if (tbi.data.gis) {
+                centerString = tbi.data.gis;
+                centers = [centerString.split(",")[0], centerString.split(",")[1]];
+            };
+
+            var map = new AMap.Map("container1", {
+                resizeEnable: true,
+                center: centers,
+                zoom: 13
+            });
+            var placeSearch = new AMap.PlaceSearch({
+                map: map
+            }); //构造地点查询类
+            var geocoder;
+
+            function regeoCode() {
+                if (!geocoder) {
+                    geocoder = new AMap.Geocoder({
+
+                    });
+                }
+                var lnglat = tbi.data.gis.split(',');
+
+                geocoder.getAddress(lnglat, function (status, result) {
+                    if (status === 'complete' && result.regeocode) {
+                        var address = result.regeocode.formattedAddress;
+                        tbi.data.addr = address;
+                    }
+                });
+            }
+            map.on('click', function (e) {
+                tbi.data.gis = e.lnglat.toString();
+                regeoCode();
+            });
+
+            placeSearch.search(tbi.helpMap, function (status, result) {
+                // 搜索成功时，result即是对应的匹配数据
+                console.log(result)
+                var pois = result.poiList.pois;
+                for (var i = 0; i < pois.length; i++) {
+                    var poi = pois[i];
+                    var marker = [];
+                    marker[i] = new AMap.Marker({
+                        position: poi.location, // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+                        title: poi.name
+                    });
+                    // 将创建的点标记添加到已有的地图实例：
+                    map.add(marker[i]);
+                }
+                map.setFitView();
+            });
+        },
+        refresh() {
+            this.visibleMap2 = false
+            this.tbi.visible = false
+            this.tbi.update = false
+            this.tbi.search = false
+            this.tbi.style = false
+            this.tbi.data.oid = ""
+            this.tbi.data.name = ""
+            this.tbi.data.id = ""
+            this.tbi.data.code = ""
+            this.tbi.data.typeId = ""
+            this.tbi.data.resTime = ""
+            this.tbi.data.online = ""
+            this.tbi.data.lastTime = ""
+            this.tbi.data.ip = ""
+            this.tbi.data.mac = ""
+            this.tbi.data.sys = ""
+            this.tbi.data.size = ""
+            this.tbi.data.ratio = ""
+            this.tbi.data.rev = ""
+            this.tbi.data.ver = ""
+            this.tbi.data.typ = ""
+            this.tbi.data.tel = ""
+            this.tbi.data.addr = ""
+            this.tbi.data.gis = ""
+            this.tbi.data.warranty = ""
+            this.tbi.data.loc = ""
+            this.tbi.data.principal = ""
+            this.statistics = false
+            this.onesta = true
+            this.twosta = false
+            this.threesta = false
+            this.foursta = false
+            this.tbi.helpMap = ""
+            this.loadTeminalInfo()
+        },
     },
     watch: {
         'selectLogType': function (val, oldval) {
@@ -472,7 +658,7 @@ window.appInstince = new Vue({
         'tqueryIf.online': function (val, oldval) {
             this.saveSetting();
         },
-        'guidTags': function(val){
+        'guidTags': function (val) {
             console.log(val)
         }
     }

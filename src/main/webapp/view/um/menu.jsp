@@ -51,7 +51,8 @@
                     <div class="grid-content bg-purple">
                         <el-button type="success" icon="el-icon-plus" @click="addMenu">新增菜单</el-button>
                         <el-button type="primary" icon="el-icon-edit" @click="updateMenu">修改菜单</el-button>
-                        <el-button type="danger" icon="el-icon-delete" @click="deleteMenuItem">删除菜单</el-button>
+						<el-button type="danger" icon="el-icon-delete" @click="deleteMenuItem">删除菜单</el-button>
+						<el-button type="success" icon="el-icon-refresh" @click="loadTreeData">刷新菜单</el-button>
                     </div>
                 </el-col>
             </el-row>

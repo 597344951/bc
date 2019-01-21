@@ -44,7 +44,7 @@
     position: absolute;
     top: 10px;
     left: 8px;
-    background: url(/assets/img/logo-icon2.png) no-repeat;
+    background: url(/assets/logo.png) no-repeat;
     background-size: cover;
 }
 .wanke{

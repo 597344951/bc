@@ -187,11 +187,19 @@ public class IntegralExcel {
                 validataErrorMsg.append("第" + (i + 1) + "行变更操作不能为空。\r\n");
             }
             
-            //变更分值
+            //变更场景
             if (row.getCell(4) != null && StringUtil.isNotEmpty(row.getCell(4).getStringCellValue())) {
+            	pir.setScene(row.getCell(4).getStringCellValue());
+            } else {
+            	validateSuccess = false;
+                validataErrorMsg.append("第" + (i + 1) + "行变更场景不能为空。\r\n");
+            }
+            
+            //变更分值
+            if (row.getCell(5) != null && StringUtil.isNotEmpty(row.getCell(5).getStringCellValue())) {
             	if (pir.getChangeIntegralType() != null) {
 					try {
-						BigDecimal integralF = new BigDecimal(row.getCell(4).getStringCellValue());
+						BigDecimal integralF = new BigDecimal(row.getCell(5).getStringCellValue());
 						if (pir.getChangeIntegralType() == 1 && integralF.doubleValue() < 0) {
 							validateSuccess = false;
 							validataErrorMsg.append("第" + (i + 1) + "行加分变更分值应该大于0。\r\n");
@@ -213,14 +221,14 @@ public class IntegralExcel {
             }
             
             //分值变更说明
-            if (row.getCell(5) != null && StringUtil.isNotEmpty(row.getCell(5).getStringCellValue())) {
-            	pir.setChangeDescribes(row.getCell(5).getStringCellValue());
+            if (row.getCell(6) != null && StringUtil.isNotEmpty(row.getCell(6).getStringCellValue())) {
+            	pir.setChangeDescribes(row.getCell(6).getStringCellValue());
             }
             
             //分支变更时间
-            if (row.getCell(6) != null) {
+            if (row.getCell(7) != null) {
             	try {
-					pir.setChangeTime(row.getCell(6).getDateCellValue());
+					pir.setChangeTime(row.getCell(7).getDateCellValue());
 				} catch (IllegalStateException e) {
 					validateSuccess = false;
 	                validataErrorMsg.append("第" + (i + 1) + "行日期格式填写错误。\r\n");

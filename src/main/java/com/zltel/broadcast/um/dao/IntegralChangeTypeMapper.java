@@ -1,6 +1,7 @@
 package com.zltel.broadcast.um.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.um.bean.IntegralChangeType;
@@ -17,6 +18,8 @@ public interface IntegralChangeTypeMapper extends BaseDao<IntegralChangeType> {
     int updateByPrimaryKeySelective(IntegralChangeType record);
 
     int updateByPrimaryKey(IntegralChangeType record);
+    
+    public List<Map<String, Object>> queryAllIntegralChangeScene(Map<String, Object> condition);
     
     /**
      * 查询分值改变类型

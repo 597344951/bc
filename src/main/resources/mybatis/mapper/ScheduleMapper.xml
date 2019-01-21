@@ -170,28 +170,41 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByTime" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from threeone_schedule
+        SELECT
+            s.id,
+            s.name,
+            s.description,
+            s.type,
+            CONCAT(r.park, ' - ', r.building, ' - ', r.floor, ' - ', r.number) as place,
+            s.start_time,
+            s.end_time,
+            s.state,
+            s.user_id,
+            s.org_id,
+            s.add_date,
+            s.update_date
+        FROM threeone_schedule s
+        INNER JOIN meeting_room_order o ON o.meeting_id = s.id
+        INNER JOIN meeting_room r ON r.id = o.meeting_room_id
         <where>
             <if test="orgId != null">
-                AND org_id >= #{orgId,jdbcType=INTEGER}
+                AND s.org_id >= #{orgId,jdbcType=INTEGER}
             </if>
             <if test="timeStartFrom != null">
-                AND start_time >= #{timeStartFrom,jdbcType=TIMESTAMP}
+                AND s.start_time >= #{timeStartFrom,jdbcType=TIMESTAMP}
             </if>
             <if test="timeStartTo != null">
-                <![CDATA[ AND start_time <= #{timeStartTo,jdbcType=TIMESTAMP} ]]>
+                <![CDATA[ AND s.start_time <= #{timeStartTo,jdbcType=TIMESTAMP} ]]>
             </if>
 
             <if test="timeEndFrom != null">
-                AND end_time >= #{timeEndFrom,jdbcType=TIMESTAMP}
+                AND s.end_time >= #{timeEndFrom,jdbcType=TIMESTAMP}
             </if>
             <if test="timeEndTo != null">
-                <![CDATA[ AND end_time <= #{timeEndTo,jdbcType=TIMESTAMP} ]]>
+                <![CDATA[ AND s.end_time <= #{timeEndTo,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="types != null">
-                AND type in
+                AND s.type in
                 <foreach collection="types" item="type" open="(" close=")" separator=",">
                     #{type,jdbcType=INTEGER}
                 </foreach>
@@ -284,6 +297,27 @@
                 #{type,jdbcType=INTEGER}
             </foreach>
         </if>
+    </select>
+
+    <select id="selectSignInfo" resultType="java.util.Map">
+        SELECT
+            s.id,
+            s.name,
+            s.description,
+            s.type,
+            s.place,
+            s.start_time AS startTime,
+            s.end_time AS endTime,
+            s.state,
+            s.org_id AS orgId,
+            p.user_id AS participantId,
+            p.is_participate AS isParticipate,
+            bu.name AS participantName
+        FROM threeone_schedule s
+        INNER JOIN threeone_schedule_participant p ON p.schedule_id = s.id
+        INNER JOIN base_user_info bu ON bu.base_user_id = p.user_id
+        INNER JOIN sys_user u ON u.username = bu.id_card
+        WHERE s.id = #{scheduleId} AND u.user_id = #{userId}
     </select>
 
 </mapper>

@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -18,9 +19,11 @@ import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.support.BaseDao;
 import com.zltel.broadcast.common.support.BaseDaoImpl;
 import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.um.bean.IntegralChangeScene;
 import com.zltel.broadcast.um.bean.IntegralChangeType;
 import com.zltel.broadcast.um.bean.IntegralConstitute;
 import com.zltel.broadcast.um.bean.SysUser;
+import com.zltel.broadcast.um.dao.IntegralChangeSceneMapper;
 import com.zltel.broadcast.um.dao.IntegralChangeTypeMapper;
 import com.zltel.broadcast.um.dao.IntegralConstituteMapper;
 import com.zltel.broadcast.um.dao.PartyIntegralRecordMapper;
@@ -39,6 +42,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
     private IntegralChangeTypeMapper integralChangeTypeMapper;
     @Resource
     private PartyIntegralRecordMapper partyIntegralRecordMapper;
+    @Resource
+    private IntegralChangeSceneMapper integralChangeSceneMapper;
 
     @Override
     public BaseDao<IntegralConstitute> getInstince() {
@@ -50,6 +55,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @param ic
      * @return
      */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
     public R updateIntegralConstitute(IntegralConstitute ic) {
     	if (ic != null) {
     		int count = integralConstituteMapper.updateByPrimaryKeySelective(ic);
@@ -67,6 +74,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @param ic
      * @return
      */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
     public R deleteIntegralConstitute(IntegralConstitute ic) {
     	Map<String, Object> condition = new HashMap<>();
     	condition.put("parentIcId", ic.getIcId());
@@ -133,6 +142,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @param conditions
      * @return
      */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
     public R insertIntegralConstitute(IntegralConstitute ic) {
         if (ic.getOrgId() == null) return R.error().setMsg("添加发生错误");
         int count = integralConstituteMapper.insertSelective(ic);
@@ -303,25 +314,25 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
                 if (ic.get("integral") == null) throw new IntegralErrorException(); // 某一节点如果没有设置积分值，抛异常
 
                 List<Map<String, Object>> icChildrens = integralConstituteMapper.queryOrgIntegralConstitute(condition);
-                //非内置积分可以不用设置加/扣分
                 if ((icChildrens == null || icChildrens.size() == 0)) {
                 	BigDecimal bd = new BigDecimal(ic.get("integral").toString());
+                	//最后一层加统计总积分
                     results.put("integralCount",
                             Double.parseDouble(results.get("integralCount").toString()) + bd.doubleValue());
-                    if ("1".equals(String.valueOf(ic.get("isInnerIntegral")))) {
-						// 当为最低级时，查看当前积分节点是否有对应的加分减分方法
-						IntegralChangeType ict = new IntegralChangeType();
-						ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
-						ict.setOperation(0); // 是否有扣分处理方式
-						List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
-						if (icts == null || icts.size() == 0)
-							throw new IntegralErrorException();
-						icts.clear();
-						ict.setOperation(1); // 是否有加分处理方式
-						icts = integralChangeTypeMapper.queryICT(ict);
-						if (icts == null || icts.size() == 0)
-							throw new IntegralErrorException();
-					}
+//                    if ("1".equals(String.valueOf(ic.get("isInnerIntegral")))) {
+//						// 当为最低级时，查看当前积分节点是否有对应的加分减分方法
+//						IntegralChangeType ict = new IntegralChangeType();
+//						ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
+//						ict.setOperation(0); // 是否有扣分处理方式
+//						List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+//						if (icts == null || icts.size() == 0)
+//							throw new IntegralErrorException();
+//						icts.clear();
+//						ict.setOperation(1); // 是否有加分处理方式
+//						icts = integralChangeTypeMapper.queryICT(ict);
+//						if (icts == null || icts.size() == 0)
+//							throw new IntegralErrorException();
+//					}
                 }
                 getIntegralInfoChildrens(icChildrens, results, condition);
             }
@@ -338,27 +349,27 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
         List<Map<String, Object>> ics = integralConstituteMapper.queryOrgIntegralConstitute(conditions);
         if (ics != null && ics.size() == 1) {
             Map<String, Object> ic = ics.get(0);
-            IntegralChangeType ict = new IntegralChangeType();
-            ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
-            ict.setOperation(0); // 是否有扣分处理方式
-            List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
-            ic.put("reduce_operation", "扣分");
-            ic.put("add_operation", "加分");
-            if (icts != null && icts.size() == 1) {
-                IntegralChangeType _ict = icts.get(0);
-                ic.put("reduce_ictId", _ict.getIctId());
-                ic.put("reduce_integral", _ict.getChangeProposalIntegral());
-                ic.put("reduce_describes", _ict.getDescribes() == null ? "" : _ict.getDescribes());
-            }
-            if (icts != null) icts.clear();
-            ict.setOperation(1); // 是否有加分处理方式
-            icts = integralChangeTypeMapper.queryICT(ict);
-            if (icts != null && icts.size() == 1) {
-                IntegralChangeType _ict = icts.get(0);
-                ic.put("add_ictId", _ict.getIctId());
-                ic.put("add_integral", _ict.getChangeProposalIntegral());
-                ic.put("add_describes", _ict.getDescribes() == null ? "" : _ict.getDescribes());
-            }
+//            IntegralChangeType ict = new IntegralChangeType();
+//            ict.setIcId(Integer.parseInt(String.valueOf(ic.get("icId"))));
+//            ict.setOperation(0); // 是否有扣分处理方式
+//            List<IntegralChangeType> icts = integralChangeTypeMapper.queryICT(ict);
+//            ic.put("reduce_operation", "扣分");
+//            ic.put("add_operation", "加分");
+//            if (icts != null && icts.size() == 1) {
+//                IntegralChangeType _ict = icts.get(0);
+//                ic.put("reduce_ictId", _ict.getIctId());
+//                ic.put("reduce_integral", _ict.getChangeProposalIntegral());
+//                ic.put("reduce_describes", _ict.getDescribes() == null ? "" : _ict.getDescribes());
+//            }
+//            if (icts != null) icts.clear();
+//            ict.setOperation(1); // 是否有加分处理方式
+//            icts = integralChangeTypeMapper.queryICT(ict);
+//            if (icts != null && icts.size() == 1) {
+//                IntegralChangeType _ict = icts.get(0);
+//                ic.put("add_ictId", _ict.getIctId());
+//                ic.put("add_integral", _ict.getChangeProposalIntegral());
+//                ic.put("add_describes", _ict.getDescribes() == null ? "" : _ict.getDescribes());
+//            }
             return R.ok().setData(ic);
         } else {
             return R.error().setMsg("出现错误");
@@ -371,6 +382,8 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
      * @param conditions
      * @return
      */
+    @Override
+	@Transactional(rollbackFor=java.lang.Exception.class)
     public R updateOrgIntegralConstituteInfo(Map<String, Object> conditions) {
         if (conditions == null) return R.error().setMsg("发生错误");
         IntegralConstitute ic = new IntegralConstitute();
@@ -380,49 +393,25 @@ public class IntegralConstituteServiceImpl extends BaseDaoImpl<IntegralConstitut
         ic.setIntegral(new BigDecimal(String.valueOf(conditions.get("integral"))));
         ic.setDescribes(conditions.get("describes") == null ? null : String.valueOf(conditions.get("describes")));
         integralConstituteMapper.updateByPrimaryKeySelective(ic);
-
-        if (conditions.get("add_integral") != null && conditions.get("add_integral") != "") {
-            IntegralChangeType add_ict = new IntegralChangeType();
-            add_ict.setIcId(ic.getIcId());
-            add_ict.setType("加分");
-            add_ict.setChangeProposalIntegral(new BigDecimal(String.valueOf(conditions.get("add_integral"))));
-            add_ict.setDescribes(
-                    conditions.get("add_describes") == null ? null : String.valueOf(conditions.get("add_describes")));
-            add_ict.setOperation(1);
-            if (conditions.get("add_ictId") != null && conditions.get("add_ictId") != "") {
-                add_ict.setIctId(Integer.parseInt(String.valueOf(conditions.get("add_ictId"))));
-                integralChangeTypeMapper.updateByPrimaryKeySelective(add_ict);
-            } else {
-                integralChangeTypeMapper.insertSelective(add_ict);
-            }
-        } else {
-        	IntegralChangeType add_ict = new IntegralChangeType();
-            add_ict.setIcId(ic.getIcId());
-            add_ict.setType("加分");
-            integralChangeTypeMapper.deleteChangeIntegralIsNull(add_ict);
-        }
-
-        if (conditions.get("reduce_integral") != null && conditions.get("reduce_integral") != "") {
-            IntegralChangeType reduce_ict = new IntegralChangeType();
-            reduce_ict.setIcId(ic.getIcId());
-            reduce_ict.setType("扣分");
-            reduce_ict.setChangeProposalIntegral(new BigDecimal(String.valueOf(conditions.get("reduce_integral"))));
-            reduce_ict.setDescribes(conditions.get("reduce_describes") == null
-                    ? null
-                    : String.valueOf(conditions.get("reduce_describes")));
-            reduce_ict.setOperation(0);
-            if (conditions.get("reduce_ictId") != null && conditions.get("reduce_ictId") != "") {
-                reduce_ict.setIctId(Integer.parseInt(String.valueOf(conditions.get("reduce_ictId"))));
-                integralChangeTypeMapper.updateByPrimaryKeySelective(reduce_ict);
-            } else {
-                integralChangeTypeMapper.insertSelective(reduce_ict);
-            }
-        } else {
-        	IntegralChangeType add_ict = new IntegralChangeType();
-            add_ict.setIcId(ic.getIcId());
-            add_ict.setType("扣分");
-            integralChangeTypeMapper.deleteChangeIntegralIsNull(add_ict);
-        }
+        
+        IntegralChangeType ict = new IntegralChangeType();
+        List<IntegralChangeType> icts = null;
+        IntegralChangeScene ics = new IntegralChangeScene();
+        if ("1".equals(conditions.get("operation")) || "0".equals(conditions.get("operation"))) {
+        	ict.setOperation(Integer.parseInt(String.valueOf(conditions.get("operation"))));
+        	ict.setIcId(Integer.parseInt(String.valueOf(conditions.get("icId"))));
+        	icts = integralChangeTypeMapper.queryICT(ict);
+        	if (icts != null && icts.size() > 0) {
+        		ics.setIctId(icts.get(0).getIctId());
+        	} else {
+        		ict.setType("1".equals(conditions.get("operation")) ? "加分" : "扣分");
+        		integralChangeTypeMapper.insertSelective(ict);
+        		ics.setIctId(ict.getIctId());
+        	}
+        	ics.setName(String.valueOf(conditions.get("scene")));
+    		ics.setScore(new BigDecimal(String.valueOf(conditions.get("score"))));
+    		integralChangeSceneMapper.insertSelective(ics);
+        } 
         return R.ok().setMsg("修改成功");
     }
 

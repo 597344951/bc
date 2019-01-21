@@ -32,6 +32,26 @@ public class OrganizationInformationController extends BaseController {
 	
 	
 	/**
+	 * 变更组织结构
+	 * @param organizationInformation 条件
+	 * @return
+	 */
+	@RequestMapping(value="/changeOrgStructureStart", method=RequestMethod.POST)
+	@ApiOperation(value = "变更组织结构")
+	public R changeOrgStructureStart(OrganizationInformation organizationInformation) {
+		try {
+			if(organizationInformationService.changeOrgStructureStart(organizationInformation) == 1) {
+				return R.ok().setMsg("变更组织结构成功");
+			} else {
+				return R.error().setMsg("变更组织结构失败");
+			}
+		} catch (Exception e) {
+			logout.error(e.getMessage());
+			return R.error().setMsg("变更组织结构失败");
+		}
+	}
+	
+	/**
 	 * 查询到组织信息
 	 * @param organizationInformation 条件
 	 * @return

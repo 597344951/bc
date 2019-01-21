@@ -29,7 +29,7 @@
     values (#{ictId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{describes,jdbcType=VARCHAR}, #{operation,jdbcType=INTEGER}, #{icId,jdbcType=INTEGER}, #{changeProposalIntegral,jdbcType=DECIMAL})
   </insert>
-  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType">
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType" useGeneratedKeys="true" keyProperty="ictId" keyColumn="ict_id">
     insert into integral_change_type
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="ictId != null">
@@ -112,6 +112,37 @@
       change_proposal_integral = #{changeProposalIntegral,jdbcType=DECIMAL}
     where ict_id = #{ictId,jdbcType=INTEGER}
   </update>
+  
+  <select id="queryAllIntegralChangeScene" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select
+  	  ict.ict_id ictId,
+  	  ics.id icsId,
+  	  ic.org_id orgId,
+	  ict.type type,
+	  ics.name name,
+	  ics.score score
+	from
+	  integral_constitute ic 
+	  inner join integral_change_type ict on ic.ic_id = ict.ic_id
+	  inner join integral_change_scene ics on ict.ict_id = ics.ict_id
+	where
+	  1 = 1
+	  <if test="ictId != null"> and 
+        ict.ict_id = #{ictId}
+      </if>
+      <if test="icId != null"> and 
+        ict.ic_id = #{icId}
+      </if>
+      <if test="icsId != null"> and 
+        ics.id = #{icsId}
+      </if>
+      <if test="type != null"> and 
+        ict.type = #{type}
+      </if>
+      <if test="operation != null"> and 
+        ict.operation = #{operation}
+      </if>
+  </select>
   
   <select id="queryICT_ChangeType" parameterType="com.zltel.broadcast.um.bean.IntegralChangeType" resultMap="BaseResultMap">
   	select

@@ -1,6 +1,7 @@
- <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+
 <head>
 	<base href="/">
 	<meta charset="UTF-8">
@@ -10,8 +11,8 @@
 	<%@include file="/include/vcharts.jsp"%>
 	<%@include file="/include/map-gaode.jsp"%>
 
-<style>
-	html,body{
+	<style>
+		html,body{
 		width:100% ;
 		height: 100%;
 	}
@@ -135,10 +136,10 @@
 						</el-popover>
 						<el-button type="primary" size="small" icon="el-icon-refresh" @click="syn()">同步数据</el-button>
 						<el-button type="primary" size="small" icon="el-icon-info" @click="statistic()">统计图表</el-button>
-						<el-button-group >
+						<el-button-group>
 							<el-button size="small" :type="tbi.style?'primary':''" icon="el-icon-location" @click="mapThings()"></el-button>
-                            <el-button size="small" :type="!tbi.style?'primary':''"  icon="el-icon-menu" @click="tbi.style=false"></el-button>                           
-                        </el-button-group>
+							<el-button size="small" :type="!tbi.style?'primary':''" icon="el-icon-menu" @click="tbi.style=false"></el-button>
+						</el-button-group>
 
 					</div>
 				</div>
@@ -149,7 +150,7 @@
 			<el-main>
 				<div v-show="tbi.style" style="height:100%;border-radius: 6px;overflow: hidden;box-shadow: inset 0px 0px 12px 2px #ccc;padding: 10px;background: #fcf9f2;">
 					<div id="container">
-			
+
 					</div>
 					<div class="button-group">
 						<input id="setFitView" class="button" type="button" value="地图自适应显示" />
@@ -293,9 +294,9 @@
 															<td>{{props.row.warranty}}</td>
 														</tr>
 														<tr>
-															<td>其他</td>
+															<td>负责人</td>
 															<td> </td>
-															<td></td>
+															<td>{{props.row.principal}}</td>
 														</tr>
 													</table>
 												</td>
@@ -310,11 +311,11 @@
 									{{scope.row.orgInfo ? scope.row.orgInfo.orgInfoName:'未配置'}}
 								</template>
 							</el-table-column>
-							<el-table-column prop="loc" label="所属地区"></el-table-column>
+							<el-table-column prop="principal" label="责任人"></el-table-column>
 							<el-table-column prop="tel" label="联系电话"></el-table-column>
 							<el-table-column prop="addr" label="终端地址"></el-table-column>
 							<el-table-column prop="ip" label="ip地址"></el-table-column>
-			
+
 							<el-table-column label="操作" fixed="right" width="200">
 								<template slot-scope="scope">
 									<el-button size="mini" icon="el-icon-edit" type="warning" @click="updateTbi(scope.row)">编辑</el-button>
@@ -324,13 +325,14 @@
 					</template>
 				</div>
 			</el-main>
-			
+
 			<el-footer>
 				<el-pagination id="pagesdididi " layout="total, prev, pager, next, jumper " @current-change="pagerCurrentChange(pager.pageNum,
-									    pager.pageSize) " :current-page.sync="pager.pageNum " :page-size.sync="pager.pageSize " :total="pager.total ">
+									    pager.pageSize) "
+				 :current-page.sync="pager.pageNum " :page-size.sync="pager.pageSize " :total="pager.total ">
 				</el-pagination>
 			</el-footer>
-			
+
 		</el-container>
 
 
@@ -339,10 +341,12 @@
 			<el-form :model="tbi" label-width="100px" size="mini">
 				<el-row type="flex" justify="center">
 					<el-col :span="10">
-						<el-form-item label="终端名称" v-if="tbi.search">
-							<el-input v-model="tbi.data.name"></el-input>
+
+						<el-form-item label="责任人">
+							<el-input v-model="tbi.data.principal"></el-input>
 						</el-form-item>
 					</el-col>
+
 					<el-col :span="10">
 						<el-form-item label="所属地区">
 							<el-input v-model="tbi.data.loc"></el-input>
@@ -455,6 +459,7 @@
 
 						<el-form-item label="GIS信息">
 							<el-input v-model="tbi.data.gis"></el-input>
+							<el-button type="primary" size="mini" @click="mapThings2()" v-if="!tbi.search">地图支持</el-button>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
@@ -464,10 +469,46 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
+				<el-row type="flex" justify="center">
+					<el-col :span="10">
+						<el-form-item label="终端名称" v-if="tbi.search">
+							<el-input v-model="tbi.data.name"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="10">
+
+						<!-- <el-form-item label="责任人">
+							<el-input v-model="tbi.data.principal"></el-input>
+						</el-form-item> -->
+					</el-col>
+
+				</el-row>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="refresh()" size="mini">取 消</el-button>
 				<el-button type="primary" @click="updateorinsert(tbi)" size="mini">确 定</el-button>
+
+			</div>
+			<div v-if="tbi.visibleMap2" style="height: 500px">
+				<div id="myPageTop">
+					<table>
+						<tr>
+							<td>
+								<label>请输入关键字：</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<el-input v-model="tbi.helpMap" size="mini"></el-input>
+							</td>
+							<td>
+								<el-button type="primary" size="mini" @click="drawmap2()"> 搜索</el-button>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div id="container1" style="height: 100% ; width: 100%"></div>
+
 			</div>
 		</el-dialog>
 		<el-dialog title="统计" :visible.sync="statistics" width="80%">
@@ -483,47 +524,48 @@
 						<el-col :span="8">
 							<h2>屏幕分辨率统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="ratiochartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="8">
 							<h2>屏幕方向统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="revchartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 					</el-row>
 					<el-row type="flex" justify="center" v-if="twosta">
 						<el-col :span="8">
 							<h2>终端在线统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="onlinechartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="8">
 							<h2>终端所属地区统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="locchartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 					</el-row>
 					<el-row v-if="threesta" type="flex" justify="center">
 						<el-col :span="8">
 							<h2>终端类型统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="typchartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="8">
 							<h2>终端保修信息统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="warrantychartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 					</el-row>
 					<el-row v-if="foursta" type="flex" justify="center">
 						<el-col :span="8">
 							<h2>软件版本统计</h2>
 							<ve-pie :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="verchartData" :settings="chartSettings"
-							    :legend="chartConfig.legend"></ve-pie>
+							 :legend="chartConfig.legend"></ve-pie>
 						</el-col>
 						<el-col :span="16">
 							<h2>全局统计</h2>
-							<ve-bar :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="totalData" :settings="chartSettings" :legend="chartConfig.legend"></ve-bar>
+							<ve-bar :theme-name="chartConfig.themeName" :toolbox="chartConfig.toolbox" :data="totalData" :settings="chartSettings"
+							 :legend="chartConfig.legend"></ve-bar>
 						</el-col>
 					</el-row>
 				</template>
@@ -536,4 +578,5 @@
 </body>
 
 <script type="module" src="${urls.getForLookupPath('/assets/module/terminal/terminal_basic.js')}"></script>
+
 </html>

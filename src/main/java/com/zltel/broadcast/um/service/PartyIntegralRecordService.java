@@ -32,7 +32,6 @@ public interface PartyIntegralRecordService {
 		MONEY("缴纳党费"),
 		QUESTION_AND_ANSWER("知识问答"),
 		WATCH_VIDEO("观看视频"),
-		COMPLY_WITH_FARO("遵纪守法"),
 		LEARNING_AND_EDUCATION("学习教育");
 	    
 	    private final String name;
@@ -58,6 +57,13 @@ public interface PartyIntegralRecordService {
     int updateByPrimaryKeySelective(PartyIntegralRecord record);
 
     int updateByPrimaryKey(PartyIntegralRecord record);
+    
+    /**
+     * 积分排行榜
+     * @param condition
+     * @return
+     */
+    public Map<String, Object> queryIntegralRanking(Map<String, Object> condition);
     
     /**
      * 查询用户积分变更轨迹统计图

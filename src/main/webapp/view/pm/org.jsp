@@ -464,7 +464,7 @@
 								</shiro:hasPermission>
 								<shiro:hasPermission name="party:user:update">  
 									<el-button 
-										@click="partyOrg_manager_openAddOrgIntegralConstituteDialog(scope.row)" 
+										@click="partyOrg_manager_openAddOrgIntegralConstituteDialog(scope.row.orgInfoId)" 
 										type="text" size="small">添加积分结构
 									</el-button>
 								</shiro:hasPermission>
@@ -568,7 +568,8 @@
 								draggable
 								node-key="icId" 
 								@node-drop="change_integral_structure"
-						    	:highlight-current="true" 
+								:highlight-current="true" 
+								:default-expand-all="true"
 						    	:data="partyOrg_manager_orgInfoTreeOfIntegralConstitute" 
 						    	:props="partyOrg_manager_orgInfoTreeOfIntegralConstituteProps" 
 								@node-click="partyOrg_manager_setIntegralparentId">
@@ -1216,6 +1217,9 @@
 					label: function(_data, node){
 						return _data.data.orgInfoName;
 					}
+				},
+				saveTemporaryNode: {	//保存临时节点
+					node: []
 				}
 			}
 		},
@@ -1233,7 +1237,55 @@
 		},
 		methods: {
 			change_org_structure_start(draggingNode, dropNode, dropType, ev) {
-
+				let obj = this;
+				var url = "/org/ifmt/changeOrgStructureStart";
+				let t = null;
+				if (dropType == "inner") {
+					t = {
+						orgInfoId: draggingNode.data.data.orgInfoId,
+						orgInfoParentId: dropNode.data.data.orgInfoId
+					}
+					$.post(url, t, function(datas, status){
+						if (datas != null && datas.code == 200) {
+							toast("提示", "组织结构变更成功", "success");
+						}
+					})
+				} else if (dropType == "after" || dropType == "before") {
+					if (dropNode.data.data.orgInfoParentId == -1) {
+						draggingNode.data.data.orgInfoParentId = dropNode.data.data.orgInfoParentId;
+						obj.$confirm(
+							'不能拥有两个主节点，是要把移动的这个节点变更为主节点吗？', 
+							'提示', 
+							{
+								confirmButtonText: '确定',
+								cancelButtonText: '取消',
+								type: 'warning'
+							}
+						).then(function(){
+							t = {
+								orgInfoId: draggingNode.data.data.orgInfoId,
+								orgInfoParentId: -1
+							}
+							$.post(url, t, function(datas, status){
+								if (datas != null && datas.code == 200) {
+									t = {
+										orgInfoId: dropNode.data.data.orgInfoId,
+										orgInfoParentId: draggingNode.data.data.orgInfoId
+									}
+									$.post(url, t, function(datas, status){
+										if (datas != null && datas.code == 200) {
+											toast("提示", "组织结构变更成功", "success");
+											obj.open_change_org_structure();
+										}
+									})
+								}
+							})
+						}).catch(function(){
+							obj.open_change_org_structure();
+							return;
+						});
+					}
+				}
 			},
 			open_change_org_structure() {
 				let obj = this;
@@ -2585,13 +2637,13 @@
 					}
 				}
 			},
-			partyOrg_manager_openAddOrgIntegralConstituteDialog(row) {
+			partyOrg_manager_openAddOrgIntegralConstituteDialog(orgInfoId) {
 				var obj = this;
-				obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId = row.orgInfoId;
+				obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId = orgInfoId;
 
 				var url = "/org/ifmt/queryOrgIntegralConstituteToTree";
 				var t = {
-					orgId: row.orgInfoId,
+					orgId: obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId,
 					parentIcId: -1
 				}
 				$.post(url, t, function(datas, status){
@@ -2628,9 +2680,8 @@
         					if (data.code == 200) {
         						toast('添加成功',data.msg,'success');
         						obj.partyOrg_manager_resetAddOrgIntegralConstituteForm();
-        						obj.partyOrg_manager_addOrgIntegralConstituteDialog = false;
+								obj.partyOrg_manager_openAddOrgIntegralConstituteDialog(obj.partyOrg_manager_addOrgIntegralConstituteForm.orgId);
         					}
-        					
         				})
         			}
         		})

@@ -30,7 +30,8 @@ const app = new Vue({
     operate: 'add',
     member: {
       list: []
-    }
+    },
+    meetingRooms: []
   },
   mounted() {
     this.loadEnableSchedule()
@@ -189,6 +190,31 @@ const app = new Vue({
           this.$message.error('系统错误， 请联系管理员')
         }
       )
+    },
+    loadEnabledMeetingRoom() {
+      if(this.schedule.startTime && this.schedule.endTime) {
+        AJAX.post(
+          '/meeting/room/enabled',
+          {
+            startDate: this.schedule.startTime.getTime(),
+            endDate: this.schedule.endTime.getTime()
+          },
+          resp => {
+            if (resp.status) {
+              this.meetingRooms = []
+              resp.data.forEach(room => {
+                this.meetingRooms.push({
+                  value: `${room.id}`,
+                  label: `${room.park} - ${room.building} - ${room.floor} - ${room.number}`
+                })
+              })
+            }
+          },
+          err => {
+            this.$message.error('系统错误， 请联系管理员')
+          }
+        )
+      }
     }
   }
 })

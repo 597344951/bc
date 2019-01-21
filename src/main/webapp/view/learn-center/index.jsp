@@ -26,7 +26,7 @@
                 <button @click="loadLessons">搜索</button>
             </div>
             <div class="account">
-                
+
             </div>
         </div>
         <div role="nav">
@@ -80,7 +80,7 @@
         </div>
 
         <!--dialog-->
-        <el-dialog :title="currentLesson.name" :fullscreen="false" width='90%' :visible.sync="lessonViewDialog.visible">
+        <el-dialog :title="currentLesson.name" :fullscreen="false" width="90%" :visible.sync="lessonViewDialog.visible">
             <div>
                 <div class="detail-box">
                     <div class="detail">
@@ -111,7 +111,8 @@
                                     <a class="join" @click="joinLessonUnit(currentLesson)">立即报名</a>
                                 </template>
                                 <template v-if="currentLesson.lessonRegistration.length > 0">
-                                    <a class="consult" :href="'/lesson/unit/unit/play/'+currentLesson.lessonUnitId" target="_blank">立即学习</a>
+                                    <a class="consult" :href="'/lesson/unit/unit/play/'+currentLesson.lessonUnitId"
+                                        target="_blank">立即学习</a>
                                 </template>
 
                             </div>
@@ -144,7 +145,8 @@
                                                     <li>
                                                         <el-popover placement="right-start" width="200" trigger="hover">
                                                             <div v-html="ls.descript"></div>
-                                                            <a href="#" slot="reference">{{$index1+1}}.{{$index2+1}}
+                                                            <a :href="'/lesson/unit/unit/play/'+ls.lessonUnitId+'?lessonId='+ls.lessonId"
+                                                                slot="reference" target="_blank">{{$index1+1}}.{{$index2+1}}
                                                                 {{ls.name}}</a>
                                                         </el-popover>
                                                         <span>({{ls.addTime|datetime}})</span>
@@ -164,7 +166,11 @@
                                     <div class="list-content">
                                         <p class="list-menu">{{$index1+1}} {{node.name}}</p>
                                         <ol class="list-item">
-                                            <div v-html="node.descript"></div>
+                                            <div >
+                                                <p v-for="str in node.descript.split('\n')">
+                                                    {{str}}
+                                                </p>
+                                            </div>
                                         </ol>
                                     </div>
                                 </template>

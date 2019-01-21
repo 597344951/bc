@@ -25,13 +25,14 @@ const app = new Vue({
       description: [
         { required: true, message: '请输入描述信息', trigger: 'blur' }
       ],
-      place: [{ required: true, message: '请输入场地信息', trigger: 'blur' }],
+      place: [{ required: true, message: '请选择会议室', trigger: 'blur' }],
       members: [{ required: true, message: '请添加参加人员', trigger: 'blur' }]
     },
     operate: 'add',
     member: {
       list: []
-    }
+    },
+    meetingRooms: []
   },
   mounted() {
     this.loadEnableSchedule()
@@ -190,6 +191,31 @@ const app = new Vue({
           this.$message.error('系统错误， 请联系管理员')
         }
       )
+    },
+    loadEnabledMeetingRoom() {
+      if(this.schedule.startTime && this.schedule.endTime) {
+        AJAX.post(
+          '/meeting/room/enabled',
+          {
+            startDate: this.schedule.startTime.getTime(),
+            endDate: this.schedule.endTime.getTime()
+          },
+          resp => {
+            if (resp.status) {
+              this.meetingRooms = []
+              resp.data.forEach(room => {
+                this.meetingRooms.push({
+                  value: `${room.id}`,
+                  label: `${room.park} - ${room.building} - ${room.floor} - ${room.number}`
+                })
+              })
+            }
+          },
+          err => {
+            this.$message.error('系统错误， 请联系管理员')
+          }
+        )
+      }
     }
   }
 })

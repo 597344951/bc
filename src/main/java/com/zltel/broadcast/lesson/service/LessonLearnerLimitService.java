@@ -15,5 +15,12 @@ public interface LessonLearnerLimitService {
 
     List<LessonLearnerLimit> query(LessonLearnerLimit record);
 
-    public List<LessonLearnerLimit> selectListByLessonUnitId(Integer lessonUnitId);
+    List<LessonLearnerLimit> selectListByLessonUnitId(Integer lessonUnitId);
+
+    /**
+     * 配置课程限定组织
+     * 
+     * @param list
+     */
+    void configOrgLimit(List<LessonLearnerLimit> list);
 }

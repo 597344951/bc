@@ -1,5 +1,7 @@
 package com.zltel.broadcast.um.bean;
 
+import java.util.List;
+
 public class OrganizationInformation {
     private Integer orgInfoId;
 
@@ -15,6 +17,8 @@ public class OrganizationInformation {
     
     @SuppressWarnings("unused")
 	private String orgInfoCommitteeAddress;
+    
+    private List<OrganizationInformation> children;
 
     public String getOrgInfoCommitteeAddress() {
 		return orgInfoCommitteeProvince + "-" + orgInfoCommitteeCity + "-" + orgInfoCommitteeArea
@@ -172,5 +176,13 @@ public class OrganizationInformation {
 
     public void setOrgInfoDescribe(String orgInfoDescribe) {
         this.orgInfoDescribe = orgInfoDescribe == null ? null : orgInfoDescribe.trim();
+    }
+
+    public List<OrganizationInformation> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<OrganizationInformation> children) {
+        this.children = children;
     }
 }

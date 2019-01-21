@@ -484,8 +484,10 @@ public class OrganizationInformationServiceImpl extends BaseDaoImpl<Organization
 				.queryOrgInfos(organizationInformation);//这是根节点
     	List<TreeNode<OrganizationInformation>> treeNodes = TreeNodeCreateUtil.toTree(organizationInformations, 
     			OrganizationInformation::getOrgInfoId, OrganizationInformation::getOrgInfoParentId);
+    	List<OrganizationInformation> nt = TreeNodeCreateUtil.toTree(organizationInformations, 
+                OrganizationInformation::getOrgInfoId, OrganizationInformation::getOrgInfoParentId,OrganizationInformation::setChildren);
     	return R.ok().setData(treeNodes)
-    			.setMsg("查询组织上下级关系成功").set("list", organizationInformations);
+    			.setMsg("查询组织上下级关系成功").set("list", organizationInformations).set("normalTree", nt);
     }
     
     /**

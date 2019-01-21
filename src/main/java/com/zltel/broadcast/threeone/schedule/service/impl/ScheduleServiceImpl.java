@@ -2,6 +2,8 @@ package com.zltel.broadcast.threeone.schedule.service.impl;
 
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.util.AdminRoleUtil;
+import com.zltel.broadcast.meeting.room.bean.MeetingRoomOrder;
+import com.zltel.broadcast.meeting.room.service.MeetingRoomService;
 import com.zltel.broadcast.threeone.schedule.bean.Schedule;
 import com.zltel.broadcast.threeone.schedule.dao.ScheduleMapper;
 import com.zltel.broadcast.threeone.schedule.service.ScheduleService;
@@ -29,12 +31,15 @@ public class ScheduleServiceImpl implements ScheduleService {
     private static final Log log = LogFactory.getLog(ScheduleServiceImpl.class);
     @Autowired
     private ScheduleMapper scheduleMapper;
+    @Autowired
+    private MeetingRoomService meetingRoomService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public void addSchedule(Schedule schedule) {
         scheduleMapper.insertSelective(schedule);
         addMembers(schedule, schedule.getMembers());
+        meetingRoomService.orderMeetingRoom(new MeetingRoomOrder(schedule.getId(), schedule.getName(), Integer.parseInt(schedule.getPlace()), schedule.getStartTime(), schedule.getEndTime()));
     }
 
     @Override
@@ -47,6 +52,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
     public int deleteSchedule(int id) {
         scheduleMapper.deleteMemberLinkBySchedule(id);
+        meetingRoomService.deleteMeetingRoomOrder(id);
         return scheduleMapper.deleteByPrimaryKey(id);
     }
 
@@ -322,5 +328,21 @@ public class ScheduleServiceImpl implements ScheduleService {
             link.put("participatedDate", new Date(System.currentTimeMillis()));
             scheduleMapper.updateMemberLink(link);
         });
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, isolation = Isolation.DEFAULT)
+    public void scheduleSign(int scheduleId, int userId) {
+        Map<String, Object> link = new HashMap<>();
+        link.put("userId", userId);
+        link.put("scheduleId", scheduleId);
+        link.put("isParticipate", 1);
+        link.put("participatedDate", new Date(System.currentTimeMillis()));
+        scheduleMapper.updateMemberLink(link);
+    }
+
+    @Override
+    public Map<String, Object> getSignInfo(Integer scheduleId, SysUser user) {
+        return scheduleMapper.selectSignInfo(scheduleId, user.getUserId());
     }
 }
