@@ -12,6 +12,7 @@ import com.zltel.broadcast.question.dao.SubjectMapper;
 import com.zltel.broadcast.question.service.QuestionService;
 import io.swagger.models.auth.In;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -124,6 +125,7 @@ public class QuestionServiceImpl implements QuestionService {
             try {
 
                 String questionContent = row.getCell(0).getStringCellValue();
+                if(StringUtils.isEmpty(questionContent)) continue;
                 double answerCount = row.getCell(1).getNumericCellValue();
                 double correctAnswerIndex = row.getCell(2).getNumericCellValue();
                 List<Answer> answers = new ArrayList<>();

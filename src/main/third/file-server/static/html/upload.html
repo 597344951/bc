@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        #wordcloud {
+            margin: 10px 0px;
+            width: 80%;
+        }
+        #wordcloud input {
+            margin: 10px 0px;
+        }
+        .line {
+            margin: 10px 0;
+            text-align: center;
+            line-height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <img :src="image"> -->
+
+        <el-upload action="/image" multiple list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt>
+        </el-dialog>
+        <br />
+        <el-upload class="upload-demo" action="/upload" :on-remove="handleRemove" :on-preview="handlePreview" multiple>
+            <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+        <br />
+        <el-upload class="upload-demo" ref="upload" action="/upload" :on-preview="handlePreview" :on-remove="handleRemove"
+            :auto-upload="false" multiple>
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+        </el-upload>
+        <br>
+        <el-upload class="upload-demo" action="/font" :on-remove="handleRemove" :on-preview="handlePreview" multiple>
+            <el-button size="small" type="primary">上传字体</el-button>
+        </el-upload>
+
+        <!-- <form id="multipleFiles" name="multipleFiles" action="/upload" method="post" enctype="multipart/form-data" >
+            <input type="file" multiple="multiple" name="file"/>
+            <input text="Submit" type="submit"/>
+        </form> -->
+
+        <form id="wordcloud" action="/image/wordcloud" method="post" target="_blank">
+            <el-input type="textarea" :rows="8" placeholder="贴入文本段落" name="text"></el-input>
+            <el-input name="imageShape" placeholder="图形底图链接"></el-input>
+            <el-col :span="2">
+                <el-input name="width" placeholder="宽"></el-input>
+            </el-col>
+            <el-col class="line" :span="1">x</el-col>
+            <el-col :span="2">
+                <el-input name="height" placeholder="高"></el-input>
+            </el-col>
+            <el-col>
+                <input type="submit" class="el-button el-button--primary el-button--small" />
+            </el-col>
+        </form>
+
+
+    </div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    const app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                dialogImageUrl: '',
+                dialogVisible: false,
+                image: '/imageText?text=Welcom ! ! !&font=STCAIYUN&size=50px&color=f0f0f0'
+            }
+        },
+        methods: {
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            handlePreview(file) {
+                window.open(file.response ? file.response.url : file.url)
+            },
+            submitUpload() {
+                this.$refs.upload.submit()
+            }
+        }
+    })
+</script>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>添加新闻动态</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="news.css">
+</head>
+
+
+<body>
+    <div id="app">
+        <el-container>
+            <el-header>
+                <el-card class="header" shadow="never">
+                    <p>新闻动态</p>
+                    <el-pagination background layout="prev, pager, next" :page-size="newses.pageSize" :total="newses.total" @current-change="changePage">
+                    </el-pagination>
+                </el-card>
+            </el-header>
+            <el-main>
+                <el-button type="primary" size="small" icon="el-icon-plus" @click="news.show = true">添加新闻动态</el-button>
+                <el-table :data="newses.list" stripe height="80%">
+                    <el-table-column type="index"></el-table-column>
+                    <el-table-column label="时间" width="250">
+                        <template slot-scope="scope">
+                            {{new Date(scope.row.update_date).toLocaleString()}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="title" label="标题"></el-table-column>
+                    <el-table-column label="操作" width="100">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="preview(scope.row)">预览</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-main>
+        </el-container>
+        <el-dialog title="添加新闻动态" :visible.sync="news.show" width="70%">
+            <el-form :model="news.props" label-width="100px">
+                <el-form-item label="新闻标题">
+                    <el-input v-model="news.props.title"></el-input>
+                </el-form-item>
+                <el-form-item label="新闻内容">
+                    <div class="paragraph" v-for="(p, index) in news.props.paragraph">
+                        <p v-if="p.type == 'text'">{{p.text}}</p>
+                        <img v-if="p.type == 'image'" :src="p.src">
+                        <el-button type="danger" size="mini" icon="el-icon-delete" circle @click="deleteParagraph(index)"></el-button>
+                    </div>
+                    <div v-show="news.paragraphAddShow" class="paragraph--add">
+                        <el-input type="textarea" :rows="5" v-model="news.props.text"></el-input>
+                        <el-button type="success" icon="el-icon-plus" circle @click="addText"></el-button>
+                    </div>
+
+                    <el-upload action="/image" name="image" :on-success="addImage" :show-file-list="false" style="display: inline; margin-right: 20px;">
+                        <el-button size="small" type="primary">添加图片</el-button>
+                    </el-upload>
+
+                    <el-button type="primary" size="small" @click="news.paragraphAddShow = true">添加段落文本</el-button>
+
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="news.show = false">取 消</el-button>
+                <el-button type="primary" @click="addNews">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog title="预览新闻动态" :visible.sync="news.preview.show" width="70%">
+            <div class="news">
+                <h2>{{news.preview.title}}</h2>
+                <div v-for="(p, index) in news.preview.paragraph" :key="index">
+                    <p v-if="p.type == 'text'">{{p.text}}</p>
+                    <img v-if="p.type == 'image'" :src="p.src">
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="news.preview.show = false">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</body>
+<script src="https://aliyun.beecdn.cn/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="news.js"></script>
+
+</html>

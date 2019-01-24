@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Query Table</title>
+</head>
+
+
+<body>
+
+</body>
+<script src="https://aliyun.beecdn.cn/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    function query(table, page, size, cb) {
+        $.ajax({
+            type: 'GET',
+            url: `/query?table=${table}&page=${page}&size=${size}`,
+            dataType: 'json',
+            success: function (resp) {
+                cb(null, resp)
+            },
+            error: function (err) {
+                cb(err)
+            }
+        })
+    }
+
+    function queryNews() {
+        query('news', 1, 10, (err, resp) => {
+            if(err) console.error(err)
+            console.log(resp)
+            $('body').html(JSON.stringify(resp))
+        })
+    }
+
+    queryNews()
+</script>
+
+</html>

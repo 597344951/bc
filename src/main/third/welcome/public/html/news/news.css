@@ -1,0 +1,65 @@
+#app {
+    margin: 5px 10px;
+}
+.el-main {
+    padding: 30px 0 0 0;
+}
+.header p {
+    display: inline-block;
+    font-size: 20px;
+    font-weight: bolder;
+    margin-top: 0px;
+}
+.header .el-pagination {
+    float: right;
+}
+.el-card {
+    border: 0;
+}
+.paragraph {
+    padding-right: 50px;
+    position:relative;
+    text-align: center;
+}
+.paragraph p {
+    text-indent:2em;
+    margin-top: 0;
+    text-align: left;
+}
+.paragraph img {
+    max-width: 100%;
+    max-height: 300px;
+}
+.paragraph button {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+}
+.paragraph--add {
+    position: relative;
+}
+.paragraph--add button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+.el-table__body-wrapper {
+    height: 80% !important;
+}
+
+.news {
+    text-align: center;
+}
+.news h2 {
+    text-align: center;
+}
+.news p {
+    text-indent:2em;
+    text-align: left;
+    line-height: 30px;
+}
+.news img {
+    max-width: 100%;
+    max-height: 300px;
+}
+

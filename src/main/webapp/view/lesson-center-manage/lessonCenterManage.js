@@ -258,7 +258,7 @@ let ins = new Vue({
     },
     resetCategoryInfo() {
       this.posterCategoryDialog.visible = false
-      this.posterCategoryDialog.data = this.initBaseCategoryData
+      this.posterCategoryDialog.data = JSON.parse(JSON.stringify(this.initBaseCategoryData))
     },
     // 类别点击
     tptTreeClick: function (_data, node) {
@@ -367,7 +367,7 @@ let ins = new Vue({
     },
     resetLessonUnitInfo() {
       this.lessonUnitDialog.visible = false
-      this.lessonUnitDialog.data = this.initBaseLessonUnitData
+      this.lessonUnitDialog.data = JSON.parse(JSON.stringify(this.initBaseLessonUnitData))
     },
     editLessonUnit(data) {
       this.lessonUnitDialog.visible = true
@@ -443,14 +443,19 @@ let ins = new Vue({
       this.lessonSectionDialog.lessonUnit = lesson
     },
     newSection(lessonUnit, lesson) {
+      if(!lesson) lesson = {sourceType:2}
       this.resetLessonSectionInfo()
       // 自动 推测相关参数
       // 如果是当前是目录，则设置添加默认也是目录
-      if (lesson.sourceType == 2) {
+      if (lesson && lesson.sourceType == 2) {
         this.lessonSectionEditorDialog.data.sourceType = 2
         this.lessonSectionEditorDialog.data.parent = 0
-        this.lessonSectionEditorDialog.data.sortNum = lessonUnit.lessonTree[lessonUnit.lessonTree.length - 1].sortNum + 1
-      } else if (lesson.sourceType != 2) {
+        if(lessonUnit.lessonTree.length > 0){
+          this.lessonSectionEditorDialog.data.sortNum = lessonUnit.lessonTree[lessonUnit.lessonTree.length - 1].sortNum + 1
+        }else{
+          this.lessonSectionEditorDialog.data.sortNum = 1
+        }
+      } else if (lesson && lesson.sourceType != 2) {
         // 不是目录
         this.lessonSectionEditorDialog.data.sourceType = lesson.sourceType
         this.lessonSectionEditorDialog.data.parent = lesson.parent
@@ -471,6 +476,7 @@ let ins = new Vue({
       this.lessonSectionEditorDialog.lessons = lessonUnit.lessonTree
       this.lessonSectionEditorDialog.lessonUnitId = lessonUnit.lessonUnitId
       this.lessonSectionEditorDialog.data = lesson
+      this.materialExplorer.selecteds = [{name:lesson.sourceData}]
     },
     saveOrUpdateLessonSection() {
       let mode = this.lessonSectionEditorDialog.mode
@@ -526,7 +532,7 @@ let ins = new Vue({
     },
     resetLessonSectionInfo() {
       this.lessonSectionEditorDialog.visible = false
-      this.lessonSectionEditorDialog.data = this.initBaseLessonSectionData
+      this.lessonSectionEditorDialog.data = JSON.parse(JSON.stringify(this.initBaseLessonSectionData))
     },
     deleteSection(lesson) {
       this.$confirm('是否删除此章节', '提示', {
@@ -620,8 +626,9 @@ let ins = new Vue({
       })
     },
     resetLessonUnitTest() {
-      this.lessonUnitTestEditorDialog.data = this.initLessonUnitTestData
+      this.lessonUnitTestEditorDialog.data = JSON.parse(JSON.stringify(this.initLessonUnitTestData))
       this.lessonUnitTestEditorDialog.visible = false
+      this.materialExplorer.selecteds = []
     }
 
 

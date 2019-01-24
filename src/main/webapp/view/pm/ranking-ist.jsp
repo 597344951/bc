@@ -26,7 +26,7 @@
 		        transition: transform 0.2s,box-shadow 0.3s;
                 box-shadow: 0 8px 15px rgba(0,0,0,0.15);
                 width: 350px; 
-                height: 500px; 
+                height: 570px; 
                 border: 1px solid #ebeef5;
             }
             #integralRankingBox:hover {

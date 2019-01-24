@@ -118,6 +118,7 @@ let ins = new Vue({
       this.loadLessons()
     },
     sumTotalTime(lesson){
+      if(!lesson.lessonList || lesson.lessonList.length == 0) return 0
       return lesson.lessonList.map(el=>el.creditHours).reduce((a,b)=>a+b)
     },
     openLessonUnit(lesson){

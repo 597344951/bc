@@ -1,0 +1,36 @@
+{
+  "name": "xx-mail-client",
+  "version": "1.0.0",
+  "description": "A mail client.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TouSS/xx-mail-client.git"
+  },
+  "keywords": [
+    "welcome"
+  ],
+  "author": "xx",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-body": "^4.0.6",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "log4js": "^3.0.6",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-config-koa": "^2.0.2",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}

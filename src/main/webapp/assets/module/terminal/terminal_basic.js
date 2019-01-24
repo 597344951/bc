@@ -270,6 +270,7 @@ var appInstince = new Vue({
 		drawmap2() {
 			var tbi = this.tbi;
 			var centerString="";
+			var centers;
 			//var centers=[120.024583,30.290275];
 			if(tbi.data.gis){
 				centerString=tbi.data.gis;
@@ -389,7 +390,7 @@ var appInstince = new Vue({
 				// var center = map.getCenter();
 				var center = map.setFitView();
 				// var centerText = '当前中心点坐标：' + center.getLng() + ',' + center.getLat();
-				document.getElementById('centerCoord').innerHTML = center.getCenter;
+				document.getElementById('centerCoord').innerHTML = center.getCenter();
 				document.getElementById('tips').innerHTML = '';
 
 				// 添加事件监听, 使地图自适应显示到合适的范围
