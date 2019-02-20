@@ -1,6 +1,7 @@
 package com.zltel.broadcast.terminal.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zltel.broadcast.terminal.bean.OnlineCountBean;
 import com.zltel.broadcast.terminal.bean.TerminalBasicInfo;
@@ -32,6 +33,8 @@ public interface TerminalBasicInfoMapper {
     List<TerminalEcharts> warrantyEcharts();
 
     List<TerminalEcharts> revEcharts();
+    
+    public  List<TerminalBasicInfo> queryTbi_Area(Map<String, Object> condition);
 
     List<TerminalEcharts> verEcharts();
 

@@ -102,7 +102,12 @@ public class ScheduleController extends BaseController {
     @GetMapping("/notice/{id}")
     public String notice(Model model, @PathVariable("id") int id) {
         model.addAttribute("schedule", scheduleService.getSchedule(id));
-        messageService.handleMessage(getSysUser(), id);
+        try {
+            messageService.handleMessage(getSysUser(), id);
+        } catch (Exception e) {
+            //do nothing ...
+        }
+
         return "/html/threeone/notice/notice01";
     }
 }

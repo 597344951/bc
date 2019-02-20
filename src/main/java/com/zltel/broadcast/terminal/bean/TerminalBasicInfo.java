@@ -48,9 +48,20 @@ public class TerminalBasicInfo {
     
     private String principal;
     
+    private Integer mapAreaId;
     
     
-    public String getPrincipal() {
+
+
+    public Integer getMapAreaId() {
+		return mapAreaId;
+	}
+
+	public void setMapAreaId(Integer mapAreaId) {
+		this.mapAreaId = mapAreaId;
+	}
+
+	public String getPrincipal() {
         return principal;
     }
 

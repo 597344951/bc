@@ -63,13 +63,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> queryEnableSchedule() {
-        Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
+        Date timeStartFrom = new Date(System.currentTimeMillis() + 10 * 60 * 1000);
         return scheduleMapper.selectByTime(null, timeStartFrom, null, null, null, null, null, 1, Integer.MAX_VALUE);
     }
 
     @Override
     public List<Schedule> queryEnableSchedule(SysUser user) {
-        Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
+        Date timeStartFrom = new Date(System.currentTimeMillis() + 10 * 60 * 1000);
         Integer orgId = user == null ? null : user.getOrgId();
         if(AdminRoleUtil.isPlantAdmin()) {
             orgId = null;
@@ -99,7 +99,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> queryThreeoneCompletedSchedule(SysUser user, int pageNum, int pageSize) {
-        Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
+        Date timeEndTo = new Date(System.currentTimeMillis());
         Integer orgId = user == null ? null : user.getOrgId();
         if(AdminRoleUtil.isPlantAdmin()) {
             orgId = null;
@@ -261,7 +261,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> queryDemocraticAppraisalEnableSchedule(SysUser user) {
-        Date timeStartFrom = new Date(System.currentTimeMillis() + 30 * 60 * 1000);
+        Date timeStartFrom = new Date(System.currentTimeMillis() + 10 * 60 * 1000);
         Integer orgId = user == null ? null : user.getOrgId();
         if(AdminRoleUtil.isPlantAdmin()) {
             orgId = null;
@@ -276,7 +276,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> queryLifeCompletedSchedule(SysUser user, int pageNum, int pageSize) {
-        Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
+        Date timeEndTo = new Date(System.currentTimeMillis());
         Integer orgId = user == null ? null : user.getOrgId();
         if(AdminRoleUtil.isPlantAdmin()) {
             orgId = null;
@@ -291,7 +291,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> queryDemocraticAppraisalCompletedSchedule(SysUser user, int pageNum, int pageSize) {
-        Date timeEndTo = new Date(System.currentTimeMillis() - 30 * 60 * 1000);
+        Date timeEndTo = new Date(System.currentTimeMillis());
         Integer orgId = user == null ? null : user.getOrgId();
         if(AdminRoleUtil.isPlantAdmin()) {
             orgId = null;

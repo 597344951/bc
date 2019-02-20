@@ -9,14 +9,14 @@
 			<property name="suppressAllComments" value="true" />
 		</commentGenerator>
 		<!--数据库链接URL，用户名、密码 -->
-		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.1.8:3306/broadcast"
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.0.8:3306/broadcast"
 			userId="root" password="123456">
 		</jdbcConnection>
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		<!-- 生成模型的包名和位置 -->
-		<javaModelGenerator targetPackage="com.zltel.broadcast.lesson.bean" targetProject="broadcast/src/main/java">
+		<javaModelGenerator targetPackage="com.zltel.broadcast.program_statistic.bean" targetProject="broadcast/src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
@@ -25,7 +25,7 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- 生成DAO的包名和位置 -->
-		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zltel.broadcast.lesson.dao" targetProject="broadcast/src/main/java">
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zltel.broadcast.program_statistic.dao" targetProject="broadcast/src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 
@@ -35,7 +35,7 @@
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		 -->
-		<table tableName="lesson_unit_registration" domainObjectName="LessonUnitRegistration" enableCountByExample="false" enableUpdateByExample="false"
+		<table tableName="program_statistic" domainObjectName="ProgramStatistic" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		

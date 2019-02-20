@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.program_statistic.dao.ProgramStatisticMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.program_statistic.bean.ProgramStatistic">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="program_id" jdbcType="INTEGER" property="programId" />
+    <result column="program_template_id" jdbcType="INTEGER" property="programTemplateId" />
+    <result column="program_page" jdbcType="VARCHAR" property="programPage" />
+    <result column="program_name" jdbcType="VARCHAR" property="programName" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, code, program_id, program_template_id, program_page, program_name, start_time, 
+    end_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from program_statistic
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from program_statistic
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.program_statistic.bean.ProgramStatistic">
+    insert into program_statistic (id, code, program_id, 
+      program_template_id, program_page, program_name, 
+      start_time, end_time)
+    values (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{programId,jdbcType=INTEGER}, 
+      #{programTemplateId,jdbcType=INTEGER}, #{programPage,jdbcType=VARCHAR}, #{programName,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.program_statistic.bean.ProgramStatistic">
+    insert into program_statistic
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="programId != null">
+        program_id,
+      </if>
+      <if test="programTemplateId != null">
+        program_template_id,
+      </if>
+      <if test="programPage != null">
+        program_page,
+      </if>
+      <if test="programName != null">
+        program_name,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="programId != null">
+        #{programId,jdbcType=INTEGER},
+      </if>
+      <if test="programTemplateId != null">
+        #{programTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="programPage != null">
+        #{programPage,jdbcType=VARCHAR},
+      </if>
+      <if test="programName != null">
+        #{programName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.program_statistic.bean.ProgramStatistic">
+    update program_statistic
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="programId != null">
+        program_id = #{programId,jdbcType=INTEGER},
+      </if>
+      <if test="programTemplateId != null">
+        program_template_id = #{programTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="programPage != null">
+        program_page = #{programPage,jdbcType=VARCHAR},
+      </if>
+      <if test="programName != null">
+        program_name = #{programName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.program_statistic.bean.ProgramStatistic">
+    update program_statistic
+    set code = #{code,jdbcType=VARCHAR},
+      program_id = #{programId,jdbcType=INTEGER},
+      program_template_id = #{programTemplateId,jdbcType=INTEGER},
+      program_page = #{programPage,jdbcType=VARCHAR},
+      program_name = #{programName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

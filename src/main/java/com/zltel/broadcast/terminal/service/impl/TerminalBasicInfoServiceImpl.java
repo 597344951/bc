@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zltel.broadcast.area_manage.service.MapAreaInfoService;
+import com.zltel.broadcast.area_manage.service.impl.MapAreaInfoServiceImpl;
 import com.zltel.broadcast.common.dao.SimpleDao;
 import com.zltel.broadcast.common.json.R;
 import com.zltel.broadcast.common.pager.Pager;
@@ -66,11 +68,13 @@ public class TerminalBasicInfoServiceImpl implements TerminalBasicInfoService {
     @Override
     public int updateByPrimaryKeySelective(TerminalBasicInfo record) {
         record.setLastTime(new Date().toString());
+        MapAreaInfoServiceImpl.distributionArea(record);
         return tbm.updateByPrimaryKeySelective(record);
     }
 
     @Override
     public int updateByPrimaryKey(TerminalBasicInfo record) {
+        MapAreaInfoServiceImpl.distributionArea(record);
         return tbm.updateByPrimaryKey(record);
     }
 
