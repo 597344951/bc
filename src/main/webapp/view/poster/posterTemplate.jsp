@@ -37,10 +37,10 @@
             <span>用途: </span>
             <el-radio-group v-model="filter.useCategory" size="mini" @change="doSearch">
                 <el-radio-button label="0">所有</el-radio-button>
-                <el-radio-button label="-1">其他用途</el-radio-button>
                 <template v-for="ps in useCategory">
                     <el-radio-button :label="ps.categoryId">{{ps.name}}</el-radio-button>
                 </template>
+                <el-radio-button label="-1">其他用途</el-radio-button>
                 <el-button type="primary" style="margin-left:20px;" size="mini" icon="el-icon-edit" circle @click="editPosterCategoryVisible=true"></el-button>
             </el-radio-group>
         </div>

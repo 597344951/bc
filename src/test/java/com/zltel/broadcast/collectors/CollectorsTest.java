@@ -16,8 +16,8 @@ public class CollectorsTest {
     public void test() {
         List<Book> books = Arrays.asList(new Book(12, "Sun Java"), new Book(12, "Oracle Java"), new Book(15, "Scala"));
 
-        List<Book> unique = books.stream().collect(Collectors.collectingAndThen( // 将Set集合 转换为
-                                                                                 // List集合
+        List<Book> unique = books.stream().collect(Collectors.collectingAndThen(
+                // 将Set集合 转换为List集合
                 Collectors.toCollection(// 收集指定集合
                         () -> new TreeSet<>(Comparator.comparing(o -> o.id))),
                 ArrayList::new));
