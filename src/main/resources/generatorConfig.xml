@@ -35,7 +35,7 @@
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		 -->
-		<table tableName="program_statistic" domainObjectName="ProgramStatistic" enableCountByExample="false" enableUpdateByExample="false"
+		<table tableName="program_playlist" domainObjectName="ProgramPlaylist" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		

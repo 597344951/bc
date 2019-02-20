@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.program_statistic.dao.ProgramPlaylistMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo">
+    <id column="program_id" jdbcType="INTEGER" property="programId" />
+    <id column="code" jdbcType="VARCHAR" property="code" />
+    <result column="program_template_id" jdbcType="INTEGER" property="programTemplateId" />
+    <result column="program_name" jdbcType="VARCHAR" property="programName" />
+    <result column="publish_time" jdbcType="VARCHAR" property="publishTime" />
+    <result column="active_start_time" jdbcType="VARCHAR" property="activeStartTime" />
+    <result column="active_end_time" jdbcType="VARCHAR" property="activeEndTime" />
+    <result column="weeks" jdbcType="VARCHAR" property="weeks" />
+    <result column="times" jdbcType="VARCHAR" property="times" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="play_time" jdbcType="INTEGER" property="playTime" />
+    <result column="resolution" jdbcType="VARCHAR" property="resolution" />
+    <result column="expire_time" jdbcType="VARCHAR" property="expireTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    program_id, code, program_template_id, program_name, publish_time, active_start_time, 
+    active_end_time, weeks, times, category_id, play_time, resolution, expire_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from program_playlist
+    where program_id = #{programId,jdbcType=INTEGER}
+      and code = #{code,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo">
+    delete from program_playlist
+    where program_id = #{programId,jdbcType=INTEGER}
+      and code = #{code,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo">
+    insert into program_playlist (program_id, code, program_template_id, 
+      program_name, publish_time, active_start_time, 
+      active_end_time, weeks, times, 
+      category_id, play_time, resolution, 
+      expire_time)
+    values (#{programId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{programTemplateId,jdbcType=INTEGER}, 
+      #{programName,jdbcType=VARCHAR}, #{publishTime,jdbcType=VARCHAR}, #{activeStartTime,jdbcType=VARCHAR}, 
+      #{activeEndTime,jdbcType=VARCHAR}, #{weeks,jdbcType=VARCHAR}, #{times,jdbcType=VARCHAR}, 
+      #{categoryId,jdbcType=INTEGER}, #{playTime,jdbcType=INTEGER}, #{resolution,jdbcType=VARCHAR}, 
+      #{expireTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo">
+    insert into program_playlist
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="programId != null">
+        program_id,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="programTemplateId != null">
+        program_template_id,
+      </if>
+      <if test="programName != null">
+        program_name,
+      </if>
+      <if test="publishTime != null">
+        publish_time,
+      </if>
+      <if test="activeStartTime != null">
+        active_start_time,
+      </if>
+      <if test="activeEndTime != null">
+        active_end_time,
+      </if>
+      <if test="weeks != null">
+        weeks,
+      </if>
+      <if test="times != null">
+        times,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="playTime != null">
+        play_time,
+      </if>
+      <if test="resolution != null">
+        resolution,
+      </if>
+      <if test="expireTime != null">
+        expire_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="programId != null">
+        #{programId,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="programTemplateId != null">
+        #{programTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="programName != null">
+        #{programName,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null">
+        #{publishTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activeStartTime != null">
+        #{activeStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activeEndTime != null">
+        #{activeEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="weeks != null">
+        #{weeks,jdbcType=VARCHAR},
+      </if>
+      <if test="times != null">
+        #{times,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="playTime != null">
+        #{playTime,jdbcType=INTEGER},
+      </if>
+      <if test="resolution != null">
+        #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="expireTime != null">
+        #{expireTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo">
+    update program_playlist
+    <set>
+      <if test="programTemplateId != null">
+        program_template_id = #{programTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="programName != null">
+        program_name = #{programName,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null">
+        publish_time = #{publishTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activeStartTime != null">
+        active_start_time = #{activeStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activeEndTime != null">
+        active_end_time = #{activeEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="weeks != null">
+        weeks = #{weeks,jdbcType=VARCHAR},
+      </if>
+      <if test="times != null">
+        times = #{times,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="playTime != null">
+        play_time = #{playTime,jdbcType=INTEGER},
+      </if>
+      <if test="resolution != null">
+        resolution = #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="expireTime != null">
+        expire_time = #{expireTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where program_id = #{programId,jdbcType=INTEGER}
+      and code = #{code,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.program_statistic.bean.BaseProgramInfo">
+    update program_playlist
+    set program_template_id = #{programTemplateId,jdbcType=INTEGER},
+      program_name = #{programName,jdbcType=VARCHAR},
+      publish_time = #{publishTime,jdbcType=VARCHAR},
+      active_start_time = #{activeStartTime,jdbcType=VARCHAR},
+      active_end_time = #{activeEndTime,jdbcType=VARCHAR},
+      weeks = #{weeks,jdbcType=VARCHAR},
+      times = #{times,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      play_time = #{playTime,jdbcType=INTEGER},
+      resolution = #{resolution,jdbcType=VARCHAR},
+      expire_time = #{expireTime,jdbcType=VARCHAR}
+    where program_id = #{programId,jdbcType=INTEGER}
+      and code = #{code,jdbcType=VARCHAR}
+  </update>
+</mapper>

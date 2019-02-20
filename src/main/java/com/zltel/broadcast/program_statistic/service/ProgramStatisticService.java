@@ -10,5 +10,10 @@ public interface ProgramStatisticService {
      * @param pss
      */
     void saveStatistic(List<ProgramStatistic> pss);
+    /**
+     * 保存播放节目列表
+     * @param list
+     */
+    void saveProgramPlayList(List<ProgramStatistic> list);
 
 }
