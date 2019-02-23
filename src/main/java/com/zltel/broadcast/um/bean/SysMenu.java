@@ -23,6 +23,8 @@ public class SysMenu implements Serializable{
     private String icon;
 
     private Integer orderNum;
+    /**是否启用该功能**/
+    private Boolean enable;
 
 
     /* (non-Javadoc)
@@ -104,4 +106,13 @@ public class SysMenu implements Serializable{
     public void setOrderNum(Integer orderNum) {
         this.orderNum = orderNum;
     }
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
+    
 }

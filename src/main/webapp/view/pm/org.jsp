@@ -2130,7 +2130,7 @@
         		obj.partyOrg_manager_showThisOrgPeoples();
         	},
         	getPath(row) {	/* 得到党员用户id并返回请求路径 */
-				return "http://192.168.1.8:3000" + row.idPhoto;
+				return "http://192.168.0.8:3000" + row.idPhoto;
 			},
 			thisOrgInfoChildrensPagerInit() {
         		var obj = this;

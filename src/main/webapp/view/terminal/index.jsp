@@ -12,7 +12,7 @@
 
 <body>
     <div id="app">
-        <el-container>
+        <el-container style="height: 100%;">
             <el-header>
                 <h3>设备接入管理</h3>
             </el-header>

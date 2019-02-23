@@ -126,7 +126,7 @@
 						<p style="margin-bottom: 10px;">以下是上传的附加材料：</p>
 						<template v-for="item in joinPartyOrgUser.joinStatus.joinPartyOrgStepInfo.stepFiles">
 							<div style="width: 80px; height: 150px; float: left; margin-right: 10px; margin-bottom: 10px;">
-								<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.1.8:3000' + item.filePath" :title="item.fileTitle">
+								<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.0.8:3000' + item.filePath" :title="item.fileTitle">
 									<div style="text-align: center">
 										<img 
 											:src="getFileTypeImg(item.fileType)" style="width: 60px; height: 80px;" />

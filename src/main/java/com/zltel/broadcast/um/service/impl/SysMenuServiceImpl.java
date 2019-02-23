@@ -80,8 +80,8 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
     @Override
     @Transactional(rollbackFor = java.lang.Exception.class)
     public R querySysMenusNotPage(SysMenu sysMenu) throws Exception {
-        List<TreeNode<SysMenu>> sysMenus =  this.queryAllMenuInfo();
-        //this.queryTreeMenu(); // 开始查询，没有条件则查询所有菜单
+        List<TreeNode<SysMenu>> sysMenus = this.queryAllMenuInfo();
+        // this.queryTreeMenu(); // 开始查询，没有条件则查询所有菜单
         if (sysMenus != null && sysMenus.size() > 0) { // 是否查询到数据
             return R.ok().setData(sysMenus).setMsg("查询菜单成功");
         } else {
@@ -94,7 +94,8 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         Subject subject = SecurityUtils.getSubject();
         SysUser user = (SysUser) subject.getPrincipal();
         List<SysMenu> datas = this.query(null, null);
-        Stream<SysMenu> streams = datas.stream().filter(e -> e.getType() != Constant.MenuType.BUTTON.getValue());
+        Stream<SysMenu> streams =
+                datas.stream().filter(e -> e.getEnable() && e.getType() != Constant.MenuType.BUTTON.getValue());
         if (!Constant.isSuperAdmin(user.getUserId())) {
             // 非超级用户 ，按照登陆用的权限字符串，过滤没有权限的菜单
             streams = streams.filter(it -> {
@@ -108,6 +109,7 @@ public class SysMenuServiceImpl extends BaseDaoImpl<SysMenu> implements SysMenuS
         List<SysMenu> menus = streams.collect(Collectors.toList());
         return toTree(menus);
     }
+
 
     @Override
     public List<SysMenuTreeNode> queryAllMenuForTree() {

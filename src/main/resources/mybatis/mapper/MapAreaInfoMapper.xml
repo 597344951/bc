@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.area_manage.dao.MapAreaInfoMapper">
+  <resultMap id="BaseResultMap" type="com.zltel.broadcast.area_manage.bean.MapAreaInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="basic_id" jdbcType="INTEGER" property="basicId" />
+    <result column="shape" jdbcType="VARCHAR" property="shape" />
+    <result column="fill_color" jdbcType="VARCHAR" property="fillColor" />
+    <result column="line_color" jdbcType="VARCHAR" property="lineColor" />
+    <result column="area_level" jdbcType="INTEGER" property="areaLevel" />
+    <result column="discount" jdbcType="DECIMAL" property="discount" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, basic_id, shape, fill_color, line_color, area_level, discount
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from map_area_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from map_area_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zltel.broadcast.area_manage.bean.MapAreaInfo">
+    insert into map_area_info (id, basic_id, shape, fill_color, line_color, area_level, discount)
+    values (#{id,jdbcType=INTEGER}, #{basicId,jdbcType=INTEGER}, #{shape,jdbcType=VARCHAR}, #{fillColor,jdbcType=VARCHAR}, #{lineColor,jdbcType=VARCHAR}, 
+      #{areaLevel,jdbcType=INTEGER}, #{discount,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zltel.broadcast.area_manage.bean.MapAreaInfo" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into map_area_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="basicId != null">
+        basic_id,
+      </if>
+      <if test="shape != null">
+        shape,
+      </if>
+      <if test="fillColor != null">
+        fill_color,
+      </if>
+      <if test="lineColor != null">
+        line_color,
+      </if>
+      <if test="areaLevel != null">
+        area_level,
+      </if>
+      <if test="discount != null">
+        discount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="basicId != null">
+        #{basicId,jdbcType=INTEGER},
+      </if>
+      <if test="shape != null">
+        #{shape,jdbcType=VARCHAR},
+      </if>
+      <if test="fillColor != null">
+        #{fillColor,jdbcType=VARCHAR},
+      </if>
+      <if test="lineColor != null">
+        #{lineColor,jdbcType=VARCHAR},
+      </if>
+      <if test="areaLevel != null">
+        #{areaLevel,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null">
+        #{discount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zltel.broadcast.area_manage.bean.MapAreaInfo">
+    update map_area_info
+    <set>
+      <if test="basicId != null">
+        basic_id = #{basicId,jdbcType=INTEGER},
+      </if>
+      <if test="shape != null">
+        shape = #{shape,jdbcType=VARCHAR},
+      </if>
+      <if test="fillColor != null">
+        fill_color = #{fillColor,jdbcType=VARCHAR},
+      </if>
+      <if test="lineColor != null">
+        line_color = #{lineColor,jdbcType=VARCHAR},
+      </if>
+      <if test="areaLevel != null">
+        area_level = #{areaLevel,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null">
+        discount = #{discount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zltel.broadcast.area_manage.bean.MapAreaInfo">
+    update map_area_info
+    set basic_id = #{basicId,jdbcType=INTEGER},
+      shape = #{shape,jdbcType=VARCHAR},
+      fill_color = #{fillColor,jdbcType=VARCHAR},
+      line_color = #{lineColor,jdbcType=VARCHAR},
+      area_level = #{areaLevel,jdbcType=INTEGER},
+      discount = #{discount,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryMais" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+  	select 
+		<include refid="Base_Column_List" />
+	from 
+	  map_area_info mai 
+    where 
+    	1=1
+    	<if test="basicId != null"> and
+       	  basic_id = #{basicId}
+        </if>
+        <if test="infoId != null"> and
+       	  id = #{infoId}
+        </if>
+  </select>
+</mapper>

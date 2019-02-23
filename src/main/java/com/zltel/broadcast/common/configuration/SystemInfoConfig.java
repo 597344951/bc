@@ -26,6 +26,9 @@ public class SystemInfoConfig {
     /** 信任的跨域域名 **/
     @Value("${zltel.trustCrossDomains}")
     private String trustCrossDomains;
+    /**所属行业定义,默认medical 医疗行业**/
+    @Value("${zltel.industry}")
+    private String industry = "medical";
 
     public static final SystemInfoConfig getInstince() {
         return SpringContextUtils.getBean(SystemInfoConfig.class);
@@ -35,6 +38,7 @@ public class SystemInfoConfig {
     public String getCustomizeUploadUrl() {
 
         return getMediaServerUrl().append("customize").toString();
+        
     }
 
     /** 获取媒体服务器地址 **/

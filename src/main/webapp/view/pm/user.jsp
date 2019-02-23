@@ -1253,7 +1253,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							<p style="margin-bottom: 10px;">以下是你本次上传的资料：</p>
 							<template v-for="item in joinPartyOrg.joinPartyOrgStepInfo.stepFiles">
 								<div style="width: 80px; height: 150px; float: left; margin-right: 10px; margin-bottom: 10px;">
-									<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.1.8:3000' + item.filePath" :title="item.fileTitle">
+									<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.0.8:3000' + item.filePath" :title="item.fileTitle">
 										<div style="text-align: center">
 											<img 
 												:src="getFileTypeImg(item.fileType)" style="width: 60px; height: 80px;" />
@@ -2606,7 +2606,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 							<p style="margin-bottom: 10px;">以下是你本次上传的资料：</p>
 							<template v-for="item in turn_out_org.stepInfo.stepFiles">
 								<div style="width: 80px; height: 150px; float: left; margin-right: 10px; margin-bottom: 10px;">
-									<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.1.8:3000' + item.filePath" :title="item.fileTitle">
+									<a target="_blank" style="text-decoration:none; color: dimgray;" :href="'http://192.168.0.8:3000' + item.filePath" :title="item.fileTitle">
 										<div style="text-align: center">
 											<img 
 												:src="getFileTypeImg(item.fileType)" style="width: 60px; height: 80px;" />
@@ -3367,7 +3367,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						var formData = new FormData();
 						formData.append("file", supplementFiles[i].raw);
 						$.ajax({
-							url: "http://192.168.1.8:3000/upload",
+							url: "http://192.168.0.8:3000/upload",
 							data: formData,
 							type: "Post",
 							cache: false,//上传文件无需缓存
@@ -3468,7 +3468,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					var formData = new FormData();
 					formData.append("file", turnOutFiles[i].raw);
 					$.ajax({
-						url: "http://192.168.1.8:3000/upload",
+						url: "http://192.168.0.8:3000/upload",
 						data: formData,
 						type: "Post",
 						cache: false,//上传文件无需缓存
@@ -3827,7 +3827,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						var formData = new FormData();
 						formData.append("file", supplementFiles[i].raw);
 						$.ajax({
-							url: "http://192.168.1.8:3000/upload",
+							url: "http://192.168.0.8:3000/upload",
 							data: formData,
 							type: "Post",
 							cache: false,//上传文件无需缓存
@@ -4077,7 +4077,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					var formData = new FormData();
 					formData.append("file", joinFiles[i].raw);
 					$.ajax({
-						url: "http://192.168.1.8:3000/upload",
+						url: "http://192.168.0.8:3000/upload",
 						data: formData,
 						type: "Post",
 						cache: false,//上传文件无需缓存
@@ -4367,7 +4367,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								var formData = new FormData();
 								formData.append("file", imgs[i].raw);
 								$.ajax({
-				                   	url: "http://192.168.1.8:3000/image",
+				                   	url: "http://192.168.0.8:3000/image",
 				                   	data: formData,
 				                   	type: "Post",
 				                   	cache: false,//上传文件无需缓存
@@ -4445,7 +4445,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				if (it.diMgs != null && it.diMgs.length > 0) {
 					for (var i = 0; i < it.diMgs.length; i++) {
 						var diMg = {url: null, id: null};
-						diMg.url = "http://192.168.1.8:3000" + it.diMgs[i].paths;
+						diMg.url = "http://192.168.0.8:3000" + it.diMgs[i].paths;
 						diMg.id = it.diMgs[i].id;
 						obj.partyUser_manager_updateDeedsUserForm.diMgs.push(diMg);
 					}
@@ -4506,7 +4506,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 								var formData = new FormData();
 								formData.append("file", imgs[i].raw);
 								$.ajax({
-				                   	url: "http://192.168.1.8:3000/image",
+				                   	url: "http://192.168.0.8:3000/image",
 				                   	data: formData,
 				                   	type: "Post",
 				                   	cache: false,//上传文件无需缓存
@@ -4633,7 +4633,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 						var formData = new FormData();
 						formData.append("file", fileList[i].raw);
 						$.ajax({
-		                   	url: "http://192.168.1.8:3000/image",
+		                   	url: "http://192.168.0.8:3000/image",
 		                   	data: formData,
 		                   	type: "Post",
 		                   	cache: false,//上传文件无需缓存
@@ -4865,10 +4865,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 			},
 			getPath(row) {	/* 得到党员用户id并返回请求路径 */
 				/*给予一个随机数，保证每次请求的参数都不一样，防止从缓存里取值，用于证件照的更新*/
-				return "http://192.168.1.8:3000" + row.idPhoto;
+				return "http://192.168.0.8:3000" + row.idPhoto;
 			},
 			getNewPath(path) {
-				return "http://192.168.1.8:3000" + path;
+				return "http://192.168.0.8:3000" + path;
 			},
 			partyUser_manager_queryNationType() {	/* 查询民族信息 */
 				var obj = this;
@@ -4992,7 +4992,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					var formData = new FormData();
 					formData.append("file", fileList[0].raw);
 					$.ajax({
-	                   url: "http://192.168.1.8:3000/image",
+	                   url: "http://192.168.0.8:3000/image",
 	                   data: formData,
 	                   type: "Post",
 	                   cache: false,//上传文件无需缓存
@@ -5102,7 +5102,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 					var formData = new FormData();
 					formData.append("file", file[0].raw);
 					$.ajax({
-	                   url: "http://192.168.1.8:3000/image",
+	                   url: "http://192.168.0.8:3000/image",
 	                   data: formData,
 	                   type: "Post",
 	                   cache: false,//上传文件无需缓存

@@ -11,9 +11,10 @@
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="icon" jdbcType="VARCHAR" property="icon" />
 		<result column="order_num" jdbcType="INTEGER" property="orderNum" />
+		<result column="enable" jdbcType="BOOLEAN" property="enable" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		menu_id, parent_id, name, url, perms, type, icon, order_num
+		menu_id, parent_id, name, url, perms, type, icon, order_num, enable
 	</sql>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
@@ -30,12 +31,13 @@
 		insert into sys_menu (menu_id, parent_id, name,
 		url, perms,
 		type, icon,
-		order_num)
+		order_num,enable)
 		values (#{menuId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT},
 		#{name,jdbcType=VARCHAR},
 		#{url,jdbcType=VARCHAR}, #{perms,jdbcType=VARCHAR},
 		#{type,jdbcType=INTEGER}, #{icon,jdbcType=VARCHAR},
-		#{orderNum,jdbcType=INTEGER})
+		#{orderNum,jdbcType=INTEGER},
+		#{enable})
 	</insert>
 	<insert id="insertSelective" parameterType="com.zltel.broadcast.um.bean.SysMenu">
 		insert into sys_menu
@@ -64,6 +66,9 @@
 			<if test="orderNum != null">
 				order_num,
 			</if>
+			<if test="enable != null">
+				enable,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="menuId != null">
@@ -89,6 +94,9 @@
 			</if>
 			<if test="orderNum != null">
 				#{orderNum,jdbcType=INTEGER},
+			</if>
+			<if test="enable != null">
+				#{enable},
 			</if>
 		</trim>
 	</insert>
@@ -116,6 +124,9 @@
 			<if test="orderNum != null">
 				order_num = #{orderNum,jdbcType=INTEGER},
 			</if>
+			<if test="enable != null">
+				enable = #{enable},
+			</if>
 		</set>
 		where menu_id = #{menuId,jdbcType=BIGINT}
 	</update>
@@ -131,7 +142,8 @@
 		type =
 		#{type,jdbcType=INTEGER},
 		icon = #{icon,jdbcType=VARCHAR},
-		order_num = #{orderNum,jdbcType=INTEGER}
+		order_num = #{orderNum,jdbcType=INTEGER},
+		enable = #{enable}
 		where menu_id =
 		#{menuId,jdbcType=BIGINT}
 	</update>
@@ -177,6 +189,9 @@
 			<if test="orderNum != null">
 				and order_num = #{orderNum}
 			</if>
+			<if test="enable != null">
+				and enable = #{enable}
+			</if>
 		</where>
 	</sql>
 
@@ -210,6 +225,9 @@
 		</if>
 		<if test="orderNum != null"> and
 			order_num = #{orderNum}
+		</if>
+		<if test="enable != null">
+			and	enable=#{enable}
 		</if>
 	</select>
 </mapper>

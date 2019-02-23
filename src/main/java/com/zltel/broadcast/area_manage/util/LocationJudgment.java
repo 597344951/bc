@@ -1,11 +1,14 @@
 package com.zltel.broadcast.area_manage.util;
 
+import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
@@ -101,26 +104,35 @@ public class LocationJudgment {
 				}
 			}
 		}
-        List<MapAreaInfo> finalMapAreas = null;	//保存优先级最高的区域，可能有两个或更多
         if (innerMapAreas != null && innerMapAreas.size() > 0) {
         	if (innerMapAreas.size() == 1) {
         		return innerMapAreas.get(0);
         	} else {
         		//该设备在多个区域内
-        		finalMapAreas = new ArrayList<>();
-        		int level = -1;
+        		//把优先级最高的放第一个
+        		Map<Integer, List<MapAreaInfo>> finalMapAreas = new TreeMap<>(
+    				new Comparator<Integer>() {
+    	                public int compare(Integer first, Integer second) {
+    	                    return first.compareTo(second);
+    	                }
+    	            }
+    			);
         		for (MapAreaInfo mai : innerMapAreas) {
-					if (level == -1 || level >= mai.getAreaLevel()) {	//发现优先级更高或相同的区域
-						level = mai.getAreaLevel();	
-						finalMapAreas = new ArrayList<>();
-						finalMapAreas.add(mai);
-					}
+        			if (finalMapAreas.get(mai.getAreaLevel()) == null) {
+        				List<MapAreaInfo> finalAreas = new ArrayList<>();
+        				finalAreas.add(mai);
+        				finalMapAreas.put(mai.getAreaLevel(), finalAreas);
+        			} else {
+        				finalMapAreas.get(mai.getAreaLevel()).add(mai);
+        			}
 				}
-        		if (finalMapAreas != null && finalMapAreas.size() == 1) {
-        			return finalMapAreas.get(0);
+        		List<MapAreaInfo> finalAreas = finalMapAreas.get(finalMapAreas.keySet().iterator().next());
+        		if (finalAreas != null && finalAreas.size() == 1) {
+        			return finalAreas.get(0);
         		} else {
         			//该设备所处的地方在多个区域的相交点，且这些区域优先级一样，不知道把该设备划分到哪个区域
-        			throw new AreaConflictException("该设备所处的地方在多个区域的相交点，且这些区域优先级一样，不知道把该设备划分到哪个区域");
+        			throw new AreaConflictException("该设备所处的地方在多个区域的相交点，且这些区域最高优先级有 " + finalAreas.size() + 
+        					"个，不知道把该设备划分到哪个区域");
         		}
         	}
         } else {
@@ -168,6 +180,7 @@ public class LocationJudgment {
         peneralPath.lineTo(first.x, first.y);
         peneralPath.closePath();
         // 测试指定的 Point2D 是否在 Shape 的边界内。
-        return peneralPath.contains(tbi_point);
+        Area area = new Area(peneralPath);	//使用Area类，方便以后用exclusiveOr(Shape)方法在此区域内扣洞
+        return area.contains(tbi_point);
     }
 }

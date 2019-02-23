@@ -293,6 +293,9 @@
 			<if test="orgId != null">
 				org_id = #{orgId},
 			</if>
+			<if test="mapAreaId != null">
+				map_area_id = #{mapAreaId},
+			</if>
 		</set>
 		where oid = #{oid,jdbcType=INTEGER}
 	</update>
@@ -331,7 +334,8 @@
 		warranty = #{warranty,jdbcType=VARCHAR},
 		loc =
 		#{loc,jdbcType=VARCHAR},
-		principal=#{principal,jdbcType=VARCHAR}
+		principal=#{principal,jdbcType=VARCHAR},
+		map_area_id = #{mapAreaId}
 		where oid = #{oid,jdbcType=INTEGER}
 	</update>
 	<select id="queryBasicInfo" parameterType="com.zltel.broadcast.terminal.bean.TerminalBasicInfo"
@@ -425,6 +429,23 @@
 		<where>
 			<include refid="TerminalBaseInfoQueryParams" />
 		</where>
+	</select>
+	<select id="queryTbi_Area" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select 
+			* 
+		from
+			terminal_basic_info 
+		where 
+			1=1
+			<if test="mapAreaId != null">
+				and map_area_id = #{mapAreaId}
+			</if>
+			<if test="mapAreaIdIsNull != null">
+				and map_area_id is null
+			</if>
+			<if test="mapAreaIdIsNotNull != null">
+				and map_area_id is not null
+			</if>
 	</select>
 	<select id="ratioEcharts" resultMap="EChartsMap">
 		select t.ratio name ,

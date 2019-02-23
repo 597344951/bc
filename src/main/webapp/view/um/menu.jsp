@@ -40,6 +40,9 @@
 	.row-type-2{
 		 
 	}
+	.tr-disable{
+		color:#ddd;
+	}
 </style>
 </head>
 
@@ -75,7 +78,7 @@
                 </thead>
                 <tbody>
                     <!--一级目录-->
-                    <tr v-for="(item,index) in menuData" v-show="item.open || item.data.type == 0" :class="'row-type-'+item.data.type" v-on:click="menuItemClick(item)">
+                    <tr v-for="(item,index) in menuData" :class="item.data.enable?'':'tr-disable'" v-show="item.open || item.data.type == 0" :class="'row-type-'+item.data.type" v-on:click="menuItemClick(item)">
                         <td style="text-align:center;width:36px">
                             <input name="select_item" type="radio" v-model="selectMenu" :value="item.data">
                         </td>
@@ -100,7 +103,9 @@
 						<td>
 							<el-button type="success" icon="el-icon-plus" @click="addMenu(this,item)" size="small"></el-button>
                         	<el-button type="primary" icon="el-icon-edit" @click="updateMenu(this,item)" size="small"></el-button>
-                        	<el-button type="danger" icon="el-icon-delete" @click="deleteMenuItem(this,item)" size="small"></el-button>
+							<el-button type="danger" icon="el-icon-delete" @click="deleteMenuItem(this,item)" size="small"></el-button>
+							<el-button @click="enableMenuItem(this,item)" :title="item.data.enable?'功能已启用':'功能已禁用'" 
+							:type="item.data.enable?'success':'danger'" :icon="item.data.enable?'el-icon-check':'el-icon-close'" size="small"></el-button>
 						</td>
                     </tr>
 
@@ -316,8 +321,12 @@ var appInstince = new Vue({
 				this.menuWindow.visible = true;
 				this.menuWindow.update = true;
 				this.form = this.selectMenu;
-				let temp = breadPath(this.selectMenu, this.menuDataNormal, item => item.children, item => item.parentId, self => self.menuId, item => item);
-				this.form.parentIds = temp.map(item => item.menuId);
+				if(item.data.parentId == 0){
+					this.form.parentIds = [0]
+				}else{
+					let temp = breadPath(this.selectMenu, this.menuDataNormal, item => item.children, item => item.parentId, self => self.menuId, item => item);
+					this.form.parentIds = temp.map(item => item.menuId);
+				}
 				console.log('parendIds ', this.form.parentIds);
 			},
 			deleteMenuItem(target,item) {
@@ -339,6 +348,17 @@ var appInstince = new Vue({
 						}
 					});
 				})
+			},
+			enableMenuItem(target,item){
+				item.data.enable = !item.data.enable
+				// 启用禁用菜单
+				let data = {enable:item.data.enable,menuId:item.data.menuId};
+				let url = '/sys/menu/menu';
+				ajax_json_promise(url, 'put', data).then(result => {
+					if (result.status) {
+						$message('操作菜单成功', 'success', this);
+					}
+				});
 			},
 			deleteMenu() {
 				//if (!this.selectMenu.menuId) return;

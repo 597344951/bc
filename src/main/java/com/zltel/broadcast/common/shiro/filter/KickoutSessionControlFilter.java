@@ -17,6 +17,7 @@ import org.apache.shiro.web.filter.AccessControlFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.zltel.broadcast.common.configuration.IndustryLanguageConfig;
 import com.zltel.broadcast.common.configuration.ResourceProviderConfig;
 import com.zltel.broadcast.common.configuration.SystemInfoConfig;
 import com.zltel.broadcast.common.util.CacheUtil;
@@ -67,6 +68,7 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
         //设定url加载资源对象
         request.setAttribute("urls", ResourceProviderConfig.getResourceProvider());
         request.setAttribute("sysInfo", SystemInfoConfig.getInstince());
+        request.setAttribute("languageMap", IndustryLanguageConfig.getInstince().getLanguageMap());
         
         Subject subject = getSubject(request, response);
         if (!subject.isAuthenticated() && !subject.isRemembered()) {

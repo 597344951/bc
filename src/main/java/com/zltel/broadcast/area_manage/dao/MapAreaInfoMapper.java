@@ -26,12 +26,5 @@ public interface MapAreaInfoMapper extends BaseDao<MapAreaInfo> {
      * @param mai
      * @return
      */
-    public List<Map<String, Object>> queryMapAreaInfos(Map<String, Object> condition);
-    
-    /**
-     * 查询区域信息
-     * @param mai
-     * @return
-     */
     public List<MapAreaInfo> queryMais(Map<String, Object> condition);
 }

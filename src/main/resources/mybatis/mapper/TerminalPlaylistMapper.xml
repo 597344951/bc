@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zltel.broadcast.terminal.dao.TerminalPlaylistMapper">	
+	<resultMap id="OptionMap" type="com.zltel.broadcast.terminal.bean.TerminalEcharts">
+		<result column="title" jdbcType="VARCHAR" property="name" />
+		<result column="snapshot" jdbcType="VARCHAR" property="value" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		
+	</sql>
+	<select id="userProgram" parameterType="java.lang.Integer" resultMap="OptionMap">
+		select title , snapshot from publish_content 
+		where start_date is not null and end_date is not null
+		<if test="userId!=null">
+		and user_id=#{userId,jdbcType=INTEGER}
+		</if>
+		group by snapshot
+	</select>
+</mapper>
