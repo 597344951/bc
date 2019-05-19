@@ -70,21 +70,30 @@ public class MyBatisScriptCreateUtil {
         return sb;
     }
 
-    /** 生成 WHERE 参数条件 **/
-    public static <T> StringBuilder createWhereParamsScript(Class<T> c) {
+    /**
+     * 生成 WHERE 参数条件
+     * @param c
+     * @param prefix 生成引用的前缀
+     * @param <T>
+     * @return
+     */
+    public static <T> StringBuilder createWhereParamsScript(Class<T> c,String prefix) {
         StringBuilder sb = new StringBuilder();
         sb.append("<sql id=\"" + getWhereId(c.getSimpleName()) + "\">").append("\n");
         sb.append(" ").append(WHERE_START).append("\n");
         Set<String> fs = readFieldNames(c);
         for (String k : fs) {
             // if
-            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, k)).append("\n");
-            sb.append("    AND ").append(toDataBaseName(k)).append("=#{").append(k).append("} \n");
+            sb.append("  ").append(IF_TEST_START.replaceAll(FIELD_REPLACE, wrapperFieldName(k,prefix))).append("\n");
+            sb.append("    AND ").append(toDataBaseName(k)).append("=#{").append(wrapperFieldName(k,prefix)).append("} \n");
             sb.append("  ").append(IF_TEST_END).append("\n");
         }
         sb.append("").append(WHERE_END).append("\n");
         sb.append("</sql>").append("\n");
         return sb;
+    }
+    public static <T> StringBuilder createWhereParamsScript(Class<T> c){
+        return createWhereParamsScript(c,null);
     }
 
     public static String getId(String cn) {
